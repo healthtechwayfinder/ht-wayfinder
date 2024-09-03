@@ -52,7 +52,7 @@ import csv
 
 st.set_page_config(page_title="Create a Need Statement", page_icon="🔍")
 
-st.markdown("# Add a New Observation")
+st.markdown("# Create a Need Statement")
 
 # UPDATE BELOW WITH NEW CSV FILE: *************************************
 # observations_csv = "observations.csv"
