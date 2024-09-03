@@ -44,9 +44,9 @@ def main():
     )
 
     
-    st.write("")
-    if st.button("Sign In"):
-        st.info("New licenses coming soon!")
+   # st.write("")
+   # if st.button("Sign In"):
+   #     st.info("New licenses coming soon!")
     
     # # Login Form
 
