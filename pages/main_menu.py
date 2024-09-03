@@ -77,13 +77,13 @@ with col2:
     if st.button("✅ Tips for your Observations"):
         switch_page("Tips_for_Observations")
 
-    if st.button("❓ Ask the team's Observations"):
+    if st.button("❓ Chat with Observations"):
         switch_page("Ask_the_Observations")
 
     if st.button("📊 Glossary"):
         switch_page("Glossary")
 
-    if st.button("📊 View All Observations"):
+    if st.button("📒 View All Observations"):
         switch_page("View_All_Observations")
 
 st.markdown("---")
