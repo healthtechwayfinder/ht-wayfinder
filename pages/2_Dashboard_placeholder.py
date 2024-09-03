@@ -1,0 +1,82 @@
+import streamlit as st
+from streamlit_extras.switch_page_button import switch_page
+
+from pydantic import BaseModel, Field
+from typing import Optional
+import csv
+import os
+
+
+# Apply custom CSS to use Helvetica font
+st.markdown(
+    """
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
+
+    html, body, [class*="css"]  {
+        font-family: 'Helvetica', sans-serif;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+
+
+# Your logo URL
+logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with the actual URL of your logo
+
+# Display the title with the logo below it
+st.markdown(
+    f"""
+    <div style="text-align: center;">
+        <h1>Observation Assistant</h1>
+         <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+st.markdown("---")
+
+st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
+
+
+
+# # def main():
+# st.markdown("<h1 style='text-align: center;'>HealthTech Wayfinder</h1>", unsafe_allow_html=True)
+# st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
+
+col1, col2 = st.columns([1, 3])
+with col2:
+    if st.button("🔍 Record a New Observation"):
+        switch_page("Record_New_Observation")
+
+    if st.button("✅ Tips for your Observations"):
+        switch_page("Tips_for_Observations")
+
+    if st.button("❓ Chat with Observations"):
+        switch_page("Ask_the_Observations")
+
+    if st.button("📊 Glossary"):
+        switch_page("Glossary")
+
+    if st.button("📒 View All Observations"):
+        switch_page("View_All_Observations")
+
+st.markdown("---")
+    
+# Create columns to position the Log Out button on the right
+col1, col2, col3 = st.columns([3, 1, 1])
+with col3:
+    if st.button("Log Out"):
+        # switch_page("/")
+
+    # Adjust the URL to the correct path of your main script
+        st.markdown('<meta http-equiv="refresh" content="0; url=/streamlit_app" />', unsafe_allow_html=True)
+
+
+#    if st.button("Go to Main"):
+#        st.markdown('<meta http-equiv="refresh" content="0; url=./" />', unsafe_allow_html=True)
