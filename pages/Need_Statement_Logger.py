@@ -1,7 +1,30 @@
 # test page
+# importing this from observation Logger, know its not all needed
+import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-import pandas as pd
+
+
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.chains import LLMChain
+from langchain.output_parsers import PydanticOutputParser
+# from langchain.callbacks import get_openai_callback
+from langchain.schema import StrOutputParser
+from langchain.schema.runnable import RunnableLambda
+from langchain.prompts import PromptTemplate
+from langchain_pinecone import PineconeVectorStore
+
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import date, datetime
+
+import json
+import os
+import csv
 
 
 # //// PROCESS ////
@@ -24,3 +47,18 @@ import pandas as pd
 # -> could the observation bot page have a widget in the right-hand sidebar for entering need satements from that page? (in case something comes up from a conversation)
 
 # I propose copying the code over form the Add Observation page, but removing the AI components -- only entering info from the user right to the log
+
+
+
+st.set_page_config(page_title="Create a Need Statement", page_icon="🔍")
+
+st.markdown("# Add a New Observation")
+
+# UPDATE BELOW WITH NEW CSV FILE: *************************************
+# observations_csv = "observations.csv"
+
+
+
+
+
+
