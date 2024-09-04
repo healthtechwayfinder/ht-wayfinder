@@ -83,7 +83,7 @@ with col2:
     if st.button("📊 Glossary"):
         switch_page("Glossary")
 
-    if st.button("📒 View All OBSERVATIONS"):
+    if st.button("📒 View All Observations"):
         switch_page("View_All_Observations")
 
 st.markdown("---")
