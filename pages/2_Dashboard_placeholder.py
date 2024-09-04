@@ -25,15 +25,15 @@ st.markdown(
 logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
 
 # Display the title with the logo below it
-st.markdown(
-    f"""
-    <div style="text-align: center;">
-        <h1>Dashboard</h1>
-        <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     f"""
+#     <div style="text-align: center;">
+#         <h1>Dashboard</h1>
+#         <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
+#     </div>
+#     """,
+#     unsafe_allow_html=True,
+# )
 
 st.markdown("---")
 
