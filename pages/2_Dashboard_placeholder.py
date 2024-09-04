@@ -38,6 +38,9 @@ Display the title with the logo below it
 #     unsafe_allow_html=True,
 # )
 
+
+st.markdown("---")
+
 # Display the title with the logo below it
 st.markdown(
     f"""
@@ -49,10 +52,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-
-st.markdown("---")
-
 st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
+
 
 
 
