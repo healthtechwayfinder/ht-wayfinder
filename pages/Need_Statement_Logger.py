@@ -32,6 +32,14 @@ from oauth2client.service_account import ServiceAccountCredentials
 from pydantic import BaseModel, Field
 from streamlit_extras.switch_page_button import switch_page
 
+# Lil bit of testing here $$$$$$$$$$$$$$$$$$$$$$
+
+st.set_page_config(page_title="Log a New Need Statement", page_icon="🔍")
+
+st.markdown("# Log a New Need Statement")
+
+
+
 
 # Constants
 observations_csv = "observations.csv"
