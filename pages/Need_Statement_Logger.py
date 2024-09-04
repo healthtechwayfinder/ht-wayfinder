@@ -39,7 +39,7 @@ from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
 
 # Streamlit configuration
-st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
+st.set_page_config(page_title="Log a Need Statement", page_icon="✏️")
 st.markdown("# Add a New Observation")
 
 # Constants
