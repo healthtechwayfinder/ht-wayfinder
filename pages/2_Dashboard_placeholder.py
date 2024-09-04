@@ -42,34 +42,34 @@ import os
 # st.markdown("---")
 
 # Apply custom CSS to use Helvetica font
-st.markdown(
-    """
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
+# st.markdown(
+#     """
+#     <style>
+#     @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
 
-    html, body, [class*="css"]  {
-        font-family: 'Helvetica', sans-serif;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+#     html, body, [class*="css"]  {
+#         font-family: 'Helvetica', sans-serif;
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True,
+# )
 
-# Your logo URL
-logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with a different URL if necessary
+# # Your logo URL
+# logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with a different URL if necessary
 
-# Display the title with the logo below it
-st.markdown(
-        f"""
-        <div style="text-align: center;">
-            <h1>Dashboard</h1>
-             <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-        </div>
-        """,
-        unsafe_allow_html=True,
-)
+# # Display the title with the logo below it
+# st.markdown(
+#         f"""
+#         <div style="text-align: center;">
+#             <h1>Dashboard</h1>
+#              <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
+#         </div>
+#         """,
+#         unsafe_allow_html=True,
+# )
     
-st.markdown("---")
+# st.markdown("---")
 
 st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
 
