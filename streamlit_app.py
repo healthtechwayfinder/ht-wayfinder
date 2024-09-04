@@ -3,7 +3,7 @@ from streamlit_extras.switch_page_button import switch_page
 
 
 def main():
-    st.markdown("<h2 style='text-align: center;'>Welcome back! AGAIN </h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
         # Your logo URL
     logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with the actual URL of your logo
     
