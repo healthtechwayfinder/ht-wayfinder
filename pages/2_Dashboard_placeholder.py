@@ -27,7 +27,7 @@ st.markdown(
 # Your logo URL
 logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with the actual URL of your logo
 
-Display the title with the logo below it
+# Display the title with the logo below it
 # st.markdown(
 #     f"""
 #     <div style="text-align: center;">
