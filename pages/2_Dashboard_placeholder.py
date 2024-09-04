@@ -73,7 +73,6 @@ import os
 
 st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
 
-st.experimental_rerun()  # Forces a rerun of the app, ensuring fresh state
 
 
 # # def main():
