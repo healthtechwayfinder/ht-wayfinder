@@ -58,15 +58,20 @@ st.markdown(
 # Your logo URL
 logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with a different URL if necessary
 
-# Test to see if the logo works by using st.image (this is more reliable in Streamlit)
-st.markdown("<h1 style='text-align: center;'>THIS IS A TEST 👺</h1>", unsafe_allow_html=True)
-st.image(logo_url, width=350)
-
+# Display the title with the logo below it
+st.markdown(
+        f"""
+        <div style="text-align: center;">
+            <h1>Dashboard</h1>
+             <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
+        </div>
+        """,
+        unsafe_allow_html=True,
+)
+    
 st.markdown("---")
 
 st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
-
-st.markdown("<h1 style='text-align: center;'>GRAMOLA</h1>", unsafe_allow_html=True)
 
 
 # # def main():
