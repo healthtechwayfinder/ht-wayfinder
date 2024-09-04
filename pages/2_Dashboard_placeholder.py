@@ -41,20 +41,10 @@ Display the title with the logo below it
 
 st.markdown("---")
 
-# Display the title with the logo below it
-st.markdown(
-    f"""
-    <div style="text-align: center;">
-        <h1>THIS IS A TEST</h1>  <!-- Removed the emoji for testing purposes -->
-        <img src="{logo_url}" alt="Logo" style="width:350px; height:auto; display:block; margin: 0 auto;">
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
 
 st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
 
-
+st.markdown("<h1 style='text-align: center;'>GRAMOLA</h1>", unsafe_allow_html=True)
 
 
 # # def main():
