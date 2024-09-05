@@ -24,7 +24,7 @@ import json
 import os
 import csv
 
-st.set_page_config(page_title="Add a New Case", page_icon="🔍")
+st.set_page_config(page_title="Add a New Case", page_icon="🏥")
 
 st.markdown("# Add a New Case")
 
@@ -306,7 +306,7 @@ with col2:
 
 with col3:
     #Display attendees options 
-    attendees = st.selectbox("attendees", ["Ana", "Bridget"])
+    attendees = st.multiselect("Attendees", ["Ana", "Bridget"])
 
 ############
 
