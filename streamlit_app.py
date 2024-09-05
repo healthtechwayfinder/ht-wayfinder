@@ -149,24 +149,16 @@ from streamlit_extras.switch_page_button import switch_page
 if "login_status" not in st.session_state:
     st.session_state["login_status"] = "not_logged_in"
 
-# Function to hide the sidebar toggle button (hamburger icon)
-def hide_sidebar_toggle():
-    hide_toggle_style = """
+# Function to hide the entire sidebar (including the toggle button)
+def hide_sidebar():
+    hide_sidebar_style = """
     <style>
-    /* Hide the hamburger button to prevent opening the sidebar */
-    [data-testid="collapsedControl"] {
+    [data-testid="stSidebar"] {
         display: none;
     }
     </style>
     """
-    st.markdown(hide_toggle_style, unsafe_allow_html=True)
-
-# Collapse the sidebar and hide the toggle button before login
-if st.session_state["login_status"] == "success":
-    st.set_page_config(initial_sidebar_state="expanded")
-else:
-    st.set_page_config(initial_sidebar_state="collapsed")
-    hide_sidebar_toggle()  # Hide the sidebar toggle to lock it
+    st.markdown(hide_sidebar_style, unsafe_allow_html=True)
 
 # Main login function
 def main():
@@ -186,7 +178,7 @@ def main():
     # Login form
     with st.form(key="login_form"):
         st.write("Login:")
-        username = st.text_input("Username:", key="username")
+        username = st.text_input("Username", key="username")
         password = st.text_input("Password", type="password", key="password")
         stay_logged_in = st.checkbox("Stay logged in")
         submit_button = st.form_submit_button("Submit")
@@ -197,7 +189,7 @@ def main():
             if username == user_dict["username"] and password == user_dict["password"]:
                 st.success("Login successful")
                 st.session_state["login_status"] = "success"
-                st.experimental_rerun()  # Rerun the app to expand the sidebar
+                st.experimental_rerun()  # Rerun the app to show the sidebar
                 return  # Exit the function after rerun is triggered
         else:
             st.error("Invalid username or password")
@@ -205,10 +197,15 @@ def main():
 # Main app logic
 if __name__ == "__main__":
     if st.session_state["login_status"] == "success":
-        # Show sidebar and other content after login
+        # After successful login, display the sidebar and content
         st.sidebar.write("You are logged in!")
         st.sidebar.write("You can access the menu.")
         switch_page("main_menu")  # Redirect to main menu
     else:
-        # Before login, collapse the sidebar, lock it, and show the login form
+        # Hide the sidebar and show the login form
+        hide_sidebar()  # Completely hide the sidebar
         main()
+
+    # Only rerun after login is successful
+    if st.session_state["login_status"] == "success":
+        st.experimental_rerun()
