@@ -141,7 +141,6 @@
 # #         main()
 
 #####
-
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
@@ -149,73 +148,31 @@ from streamlit_extras.switch_page_button import switch_page
 if "login_status" not in st.session_state:
     st.session_state["login_status"] = "not_logged_in"
 
-# Function to hide sidebar contents
-def hide_sidebar():
-    hide_sidebar_style = """
-    <style>
-    [data-testid="stSidebar"] > div:first-child {
-        display: none;
-    }
-    </style>
-    """
-    st.markdown(hide_sidebar_style, unsafe_allow_html=True)
-
-# Function to display sidebar contents after login
-def show_sidebar():
-    show_sidebar_style = """
-    <style>
-    [data-testid="stSidebar"] > div:first-child {
-        display: block;
-    }
-    </style>
-    """
-    st.markdown(show_sidebar_style, unsafe_allow_html=True)
-
-# Main login function
+# Function to handle login
 def main():
-    st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
-    
-    logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
-    st.markdown(
-        f"""
-        <div style="text-align: center;">
-            <h1>HealthTech Wayfinder</h1>
-            <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.title("Login Page")
 
-    # Login form
     with st.form(key="login_form"):
         st.write("Login:")
-        username = st.text_input("Username:", key="username")
-        password = st.text_input("Password", type="password", key="password")
-        stay_logged_in = st.checkbox("Stay logged in")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
         submit_button = st.form_submit_button("Submit")
-    
+
     if submit_button:
         user_list = st.secrets["login-credentials"]
         for user_dict in user_list:
             if username == user_dict["username"] and password == user_dict["password"]:
-                st.success("Login successful")
                 st.session_state["login_status"] = "success"
-                break  # Exit loop after successful login
-        else:
-            st.error("Invalid username or password")
+                st.experimental_rerun()  # Only trigger rerun after successful login
+                return  # Exit after rerun is triggered to prevent further execution
+        st.error("Invalid username or password")
 
 # Main app logic
 if __name__ == "__main__":
     if st.session_state["login_status"] == "success":
-        show_sidebar()  # Show sidebar content after login
-        # Add your sidebar content here
-        st.sidebar.write("You are now logged in!")
-        st.sidebar.write("You can access the menu.")
-        switch_page("main_menu")  # Redirect to main menu
+        # User is logged in, show sidebar and main content
+        st.sidebar.write("You are logged in!")
+        switch_page("main_menu")  # Replace with your main page logic
     else:
-        hide_sidebar()  # Hide sidebar content before login
+        # User is not logged in, show the login form
         main()
-
-    # Only rerun after login is successful and sidebar content needs to be revealed
-    if st.session_state["login_status"] == "success":
-        st.experimental_rerun()
