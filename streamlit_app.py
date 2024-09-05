@@ -213,7 +213,6 @@
 
 
 #####
-
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_cookies_manager
@@ -279,9 +278,8 @@ def main():
                     cookies["logged_in"] = "false"
                     cookies.save()
 
-                # Avoid further execution of the form after login
-                st.experimental_rerun()  # Trigger a rerun to go to the main menu
-                return  # Exit after triggering the rerun
+                # Since session state is updated, Streamlit will automatically rerun the app
+                return  # Exit after successful login
         else:
             st.error("Invalid username or password")
 
