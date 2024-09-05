@@ -6,6 +6,22 @@ st.set_page_config(page_title="View All Observations", page_icon="📒")
 
 st.markdown("# All Observations")
 
+
+st.markdown(
+    "<p style='font-size:25px; font-weight:bold; margin-bottom:5px;'>Go to the Observations Dataset</p>", 
+    unsafe_allow_html=True
+)
+
+
+st.markdown("""
+Click the link below to open your team's observation record in Google Sheets:
+<a href="https://docs.google.com/spreadsheets/d/1wid5imrlhkXOvmpWCbZzhAUrVSTS5iNOX3JASOxtJM4/edit?usp=sharing" target="_blank">Team's Observation Record</a>
+""", unsafe_allow_html=True)
+
+
+
+st.markdown("---")
+
 # Embedding Google Sheets using an iframe
 st.markdown("""
     <iframe src="https://docs.google.com/spreadsheets/d/1wid5imrlhkXOvmpWCbZzhAUrVSTS5iNOX3JASOxtJM4/edit?usp=sharing"
@@ -33,16 +49,6 @@ st.markdown("---")
 # st.set_page_config(page_title="View Observations Dataset", page_icon="📊")
 
 #st.markdown("# Go to the Observations Dataset")
-st.markdown(
-    "<p style='font-size:25px; font-weight:bold; margin-bottom:5px;'>Go to the Observations Dataset</p>", 
-    unsafe_allow_html=True
-)
-
-
-st.markdown("""
-Click the link below to open your team's observation record in Google Sheets:
-<a href="https://docs.google.com/spreadsheets/d/1wid5imrlhkXOvmpWCbZzhAUrVSTS5iNOX3JASOxtJM4/edit?usp=sharing" target="_blank">Team's Observation Record</a>
-""", unsafe_allow_html=True)
 
 df = pd.read_csv("observations.csv", delimiter=';')
 
