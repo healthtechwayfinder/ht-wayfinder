@@ -52,6 +52,9 @@ creds_dict = {
 if 'case_description' not in st.session_state:
     st.session_state['case_description'] = ""
 
+if 'location' not in st.session_state:
+    st.session_state['location'] = ""
+
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
 
@@ -65,18 +68,18 @@ if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
 class caseRecord(BaseModel):
-  #  location: Optional[str] = Field(default=None, description="Location or setting where this case made. e.g. operating room (OR), hospital, exam room,....")
+   # location: Optional[str] = Field(default=None, description="Location or setting where this case made. e.g. operating room (OR), hospital, exam room,....")
     People_Present: Optional[str] = Field(default=None, description="People present during the case. e.g. patient, clinician, scrub tech, family member, ...")
     Sensory_Observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
     Specific_Facts: Optional[str] = Field(default=None, description="The facts noted in the case. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
     Insider_Language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     Process_Actions: Optional[str] = Field(default=None, description="Which actions occurred during the case, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
     # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-    Other_Notes: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
+    Notes_and_Impressions: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
 
 if not os.path.exists(case_csv):
     case_keys = list(caseRecord.__fields__.keys())
-    case_keys = ['case_summary', 'attendees', 'case_description', 'case_date', 'case_ID'] + case_keys        
+    case_keys = ['case_ID', 'case_date', 'case_summary', 'attendees', 'location', 'case_description'] + case_keys        
     csv_file = open(case_csv, "w")
     csv_writer = csv.writer(csv_file, delimiter=";")
     csv_writer.writerow(case_keys)
@@ -295,6 +298,9 @@ col1, col2, col3 = st.columns(3)
 with col1:
     # st calendar for date input with a callback to update the case_ID
     st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
+  #  st.location("Location", date.today(), on_change=update_case_ID, key="case_date")
+    st.location['location'] = st.text_area("Location:", value=st.session_state["location"], height=200)
+
 
 with col2:
     # Ensure the case ID is set the first time the script runs
