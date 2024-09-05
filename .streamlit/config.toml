@@ -1,4 +1,4 @@
 [theme]
-base = "dark"
+base = "light"
 
-secondaryBackgroundColor = "#715499"  # Background color for sidebar and widgets
+secondaryBackgroundColor = "#ababab"  # Background color for sidebar and widgets
