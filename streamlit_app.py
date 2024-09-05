@@ -141,7 +141,6 @@
 # #         main()
 
 #####
-
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
@@ -149,13 +148,29 @@ from streamlit_extras.switch_page_button import switch_page
 if "login_status" not in st.session_state:
     st.session_state["login_status"] = "not_logged_in"
 
-# Dynamically set sidebar state based on login status
-if st.session_state["login_status"] == "success":
-    st.set_page_config(initial_sidebar_state="expanded")
-else:
-    st.set_page_config(initial_sidebar_state="collapsed")
+# Function to hide sidebar contents
+def hide_sidebar():
+    hide_sidebar_style = """
+    <style>
+    [data-testid="stSidebar"] > div:first-child {
+        display: none;
+    }
+    </style>
+    """
+    st.markdown(hide_sidebar_style, unsafe_allow_html=True)
 
-# Function to handle login
+# Function to display sidebar contents after login
+def show_sidebar():
+    show_sidebar_style = """
+    <style>
+    [data-testid="stSidebar"] > div:first-child {
+        display: block;
+    }
+    </style>
+    """
+    st.markdown(show_sidebar_style, unsafe_allow_html=True)
+
+# Main login function
 def main():
     st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
     
@@ -174,7 +189,7 @@ def main():
     with st.form(key="login_form"):
         st.write("Login:")
         username = st.text_input("Username:", key="username")
-        password = st.text_input("Password:", type="password", key="password")
+        password = st.text_input("Password", type="password", key="password")
         stay_logged_in = st.checkbox("Stay logged in")
         submit_button = st.form_submit_button("Submit")
     
@@ -184,14 +199,18 @@ def main():
             if username == user_dict["username"] and password == user_dict["password"]:
                 st.success("Login successful")
                 st.session_state["login_status"] = "success"
-                st.experimental_rerun()  # Rerun the app to expand the sidebar
-        st.error("Try again please")
+                st.experimental_rerun()  # Rerun the app to reveal the sidebar contents
+        st.error("Invalid username or password")
 
-# Main code execution
+# Main app logic
 if __name__ == "__main__":
+    # Dynamically control the sidebar state
     if st.session_state["login_status"] == "success":
-        # After login, switch to the main page
-        switch_page("main_menu")
+        show_sidebar()  # Show sidebar content after login
+        # Add your sidebar content here
+        st.sidebar.write("You are now logged in!")
+        st.sidebar.write("You can access the menu.")
+        switch_page("main_menu")  # Redirect to main menu
     else:
-        # Before login, keep the sidebar collapsed and show the login form
+        hide_sidebar()  # Hide sidebar content before login
         main()
