@@ -7,3 +7,4 @@ gspread
 oauth2client
 langchain_pinecone
 streamlit-extras
+streamlit-cookies-manager
