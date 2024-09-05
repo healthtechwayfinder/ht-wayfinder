@@ -233,12 +233,13 @@ def hide_sidebar():
     """
     st.markdown(hide_sidebar_style, unsafe_allow_html=True)
 
-# Load cookies and check if user is already logged in
+# Check if the user selected "Stay logged in" and is already logged in via cookies
 def check_stay_logged_in():
     if "login_status" not in st.session_state:
         st.session_state["login_status"] = "not_logged_in"
     
-    if cookies.get("logged_in") == "true":
+    # Check if the 'logged_in' cookie is present and set to "true"
+    if cookies["logged_in"] == "true":
         st.session_state["login_status"] = "success"
 
 # Main login function
@@ -286,8 +287,6 @@ def main():
 
 # Main app logic
 if __name__ == "__main__":
-    cookies.load()  # Load cookies from the browser
-    
     # Check if the user chose to stay logged in
     check_stay_logged_in()
 
