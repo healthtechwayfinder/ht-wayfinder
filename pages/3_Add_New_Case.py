@@ -49,8 +49,8 @@ creds_dict = {
 }
 
 
-if 'case' not in st.session_state:
-    st.session_state['case'] = ""
+if 'case_description' not in st.session_state:
+    st.session_state['case_description'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
@@ -91,7 +91,7 @@ def parseCase(case_description: str):
 
     case_prompt = PromptTemplate.from_template(
 """
-You help me parse observations of medical procedures to extract details such as  surgeon, procedure and date, whichever is available.
+You help me parse descriptions of medical procedures or cases to extract details such as surgeon, procedure and date, whichever is available.
 Format Instructions for output: {format_instructions}
 
 case_description: {case_description}
@@ -185,7 +185,7 @@ def embedCase(attendees, case_description, case_summary, case_date, case_ID):
             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
         )
     
-    db.add_texts([case_description], metadatas=[{'attendees': attendees, 'case_date': case_date, 'case_ID': case_ID}])
+    db.add_texts([case_description], metadatas=[{'attendees': Attendees, 'case_date': Case_Date, 'case_ID': Case_ID}])
 
     parsed_case = parseCase(case_description)
 
