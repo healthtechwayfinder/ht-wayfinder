@@ -145,6 +145,17 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
+# Initialize session state for login status
+if "login_status" not in st.session_state:
+    st.session_state["login_status"] = "not_logged_in"
+
+# Dynamically set sidebar state based on login status
+if st.session_state["login_status"] == "success":
+    st.set_page_config(initial_sidebar_state="expanded")
+else:
+    st.set_page_config(initial_sidebar_state="collapsed")
+
+# Function to handle login
 def main():
     st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
     
@@ -159,25 +170,7 @@ def main():
         unsafe_allow_html=True,
     )
 
-    st.markdown("""
-        <style>
-        .assistant-label {
-            font-size: 20px;
-            margin-bottom: -30px;
-        }
-        .stSelectbox {
-            margin-top: -20px;
-        }
-        </style>
-        <h3 class='assistant-label'>Choose an Assistant:</h3>
-        """, unsafe_allow_html=True)
-
-    assistant = st.selectbox(
-        '',
-        ('Observation Assistant', 'Need Statement Assistant (Coming Soon)'),
-        index=0
-    )
-
+    # Login form
     with st.form(key="login_form"):
         st.write("Login:")
         username = st.text_input("Username:", key="username")
@@ -191,20 +184,14 @@ def main():
             if username == user_dict["username"] and password == user_dict["password"]:
                 st.success("Login successful")
                 st.session_state["login_status"] = "success"
-                st.rerun()  # Rerun the app to trigger the page switch
+                st.experimental_rerun()  # Rerun the app to expand the sidebar
         st.error("Try again please")
 
+# Main code execution
 if __name__ == "__main__":
-    st.set_page_config(initial_sidebar_state="collapsed")
-
-    # Initialize login status
-    if "login_status" not in st.session_state:
-        st.session_state["login_status"] = "not_logged_in"
-
-    # If logged in, switch to the main menu
     if st.session_state["login_status"] == "success":
-        switch_page("main_menu")  # Ensure "main_menu" exists as a page
+        # After login, switch to the main page
+        switch_page("main_menu")
     else:
+        # Before login, keep the sidebar collapsed and show the login form
         main()
-
-
