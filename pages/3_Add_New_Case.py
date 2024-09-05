@@ -299,7 +299,7 @@ with col1:
     # st calendar for date input with a callback to update the case_ID
     st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
   #  st.location("Location", date.today(), on_change=update_case_ID, key="case_date")
-    st.location['location'] = st.text_area("Location:", value=st.session_state["Location"])
+    #st.location['location'] = st.text_area("Location:", value=st.session_state["location"])
 
 
 with col2:
