@@ -90,7 +90,7 @@ df = pd.read_csv("observations.csv", delimiter=';')
 
 ###############
 
-st.markdown("---")
+#st.markdown("---")
 
 # # Add custom CSS for a larger button
 # st.markdown("""
@@ -122,7 +122,7 @@ st.markdown("---")
 #     </div>
 #     """, unsafe_allow_html=True)
 
-import streamlit as st
+#import streamlit as st
 
 # Create a container to hold the button with the custom class
 # Apply custom CSS to make the button blue
