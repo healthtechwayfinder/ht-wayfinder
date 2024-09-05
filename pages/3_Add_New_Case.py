@@ -216,7 +216,7 @@ def generateCaseSummary(case_description):
 
     case_prompt = PromptTemplate.from_template(
 """
-You help me by giving me the a one line summary of the following medical case description.
+You help me by creating a brief, one-sentence summary of the following medical case description.
 
 case_description: {case_description}
 Output Summary:"""
@@ -404,7 +404,6 @@ with col3:
 # col11, col21 = st.columns(2)
 
 
-# with col11:
 #     if st.button("Generate Observation Summary"):
 #         st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
 
@@ -413,12 +412,12 @@ with col3:
     
 
 with col1:
-    if st.button("Evaluate Case"):
+    if st.button("Generate Case Summary"):
         st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
         st.session_state['case_summary']  = generateCaseSummary(st.session_state['case_description'])
     
 if st.session_state['case_summary'] != "":
-    st.session_state['case_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_summary'], height=50)
+    st.session_state['case_summary'] = st.text_area("Case Summary (editable):", value=st.session_state['case_summary'], height=50)
 
 # st.write(f":green[{st.session_state['result']}]")
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
