@@ -213,8 +213,6 @@
 
 
 #####
-
-
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_cookies_manager
@@ -237,9 +235,9 @@ def hide_sidebar():
 def check_stay_logged_in():
     if "login_status" not in st.session_state:
         st.session_state["login_status"] = "not_logged_in"
-    
-    # Check if the 'logged_in' cookie is present and set to "true"
-    if cookies["logged_in"] == "true":
+
+    # Check if the 'logged_in' cookie exists
+    if "logged_in" in cookies and cookies["logged_in"] == "true":
         st.session_state["login_status"] = "success"
 
 # Main login function
@@ -303,4 +301,3 @@ if __name__ == "__main__":
     # Only rerun after login is successful
     if st.session_state["login_status"] == "success":
         st.experimental_rerun()
-
