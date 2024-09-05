@@ -278,8 +278,8 @@ def main():
                     cookies["logged_in"] = "false"
                     cookies.save()
 
-                st.experimental_rerun()  # Rerun the app to show the sidebar
-                return  # Exit the function after rerun is triggered
+                # No need to rerun manually, Streamlit will update automatically
+                return  # Exit the function after successful login
         else:
             st.error("Invalid username or password")
 
@@ -297,7 +297,3 @@ if __name__ == "__main__":
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
         main()
-
-    # Only rerun after login is successful
-    if st.session_state["login_status"] == "success":
-        st.experimental_rerun()
