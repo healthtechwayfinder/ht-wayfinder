@@ -141,6 +141,7 @@
 # #         main()
 
 #####
+
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
@@ -199,12 +200,12 @@ def main():
             if username == user_dict["username"] and password == user_dict["password"]:
                 st.success("Login successful")
                 st.session_state["login_status"] = "success"
-                st.experimental_rerun()  # Rerun the app to reveal the sidebar contents
-        st.error("Invalid username or password")
+                break  # Exit loop after successful login
+        else:
+            st.error("Invalid username or password")
 
 # Main app logic
 if __name__ == "__main__":
-    # Dynamically control the sidebar state
     if st.session_state["login_status"] == "success":
         show_sidebar()  # Show sidebar content after login
         # Add your sidebar content here
@@ -214,3 +215,7 @@ if __name__ == "__main__":
     else:
         hide_sidebar()  # Hide sidebar content before login
         main()
+
+    # Only rerun after login is successful and sidebar content needs to be revealed
+    if st.session_state["login_status"] == "success":
+        st.experimental_rerun()
