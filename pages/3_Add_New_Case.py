@@ -24,12 +24,12 @@ import json
 import os
 import csv
 
-st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
+st.set_page_config(page_title="Add a New Case", page_icon="🔍")
 
-st.markdown("# Add a New Observation")
+st.markdown("# Add a New Case")
 
 
-observations_csv = "observations.csv"
+case_csv = "case.csv"
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 # Access the credentials from Streamlit secrets
@@ -49,39 +49,39 @@ creds_dict = {
 }
 
 
-if 'observation' not in st.session_state:
-    st.session_state['observation'] = ""
+if 'case' not in st.session_state:
+    st.session_state['case'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
 
-if 'observation_summary' not in st.session_state:
-    st.session_state['observation_summary'] = ""
+if 'case_summary' not in st.session_state:
+    st.session_state['case_summary'] = ""
 
-if 'observation_date' not in st.session_state:
-    st.session_state['observation_date'] = date.today()
+if 'case_date' not in st.session_state:
+    st.session_state['case_date'] = date.today()
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
-class ObservationRecord(BaseModel):
-    location: Optional[str] = Field(default=None, description="Location or setting where this observation made. e.g. operating room (OR), hospital, exam room,....")
-    people_present: Optional[str] = Field(default=None, description="People present during the observation. e.g. patient, clinician, scrub tech, family member, ...")
-    sensory_observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
-    specific_facts: Optional[str] = Field(default=None, description="The facts noted in the observation. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
-    insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-    process_actions: Optional[str] = Field(default=None, description="Which actions occurred during the observation, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
+class caseRecord(BaseModel):
+  #  location: Optional[str] = Field(default=None, description="Location or setting where this case made. e.g. operating room (OR), hospital, exam room,....")
+    People_Present: Optional[str] = Field(default=None, description="People present during the case. e.g. patient, clinician, scrub tech, family member, ...")
+    Sensory_Observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
+    Specific_Facts: Optional[str] = Field(default=None, description="The facts noted in the case. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
+    Insider_Language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
+    Process_Actions: Optional[str] = Field(default=None, description="Which actions occurred during the case, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
     # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-    questions: Optional[str] = Field(default=None, description="Recorded open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
+    Other_Notes: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
 
-if not os.path.exists(observations_csv):
-    observation_keys = list(ObservationRecord.__fields__.keys())
-    observation_keys = ['observation_summary', 'observer', 'observation', 'observation_date', 'observation_id'] + observation_keys        
-    csv_file = open(observations_csv, "w")
+if not os.path.exists(case_csv):
+    case_keys = list(caseRecord.__fields__.keys())
+    case_keys = ['case_summary', 'attendees', 'case_description', 'case_date', 'case_ID'] + case_keys        
+    csv_file = open(case_csv, "w")
     csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(observation_keys)
+    csv_writer.writerow(case_keys)
 
-def parseObservation(observation: str):
+def parseCase(case_description: str):
     llm = ChatOpenAI(
         model_name="gpt-4o",
         temperature=0.7,
@@ -89,41 +89,41 @@ def parseObservation(observation: str):
         max_tokens=500,
     )
 
-    observation_prompt = PromptTemplate.from_template(
+    case_prompt = PromptTemplate.from_template(
 """
 You help me parse observations of medical procedures to extract details such as  surgeon, procedure and date, whichever is available.
 Format Instructions for output: {format_instructions}
 
-Observation: {observation}
+case_description: {case_description}
 Output:"""
 )
-    observationParser = PydanticOutputParser(pydantic_object=ObservationRecord)
-    observation_format_instructions = observationParser.get_format_instructions()
+    caseParser = PydanticOutputParser(pydantic_object=caseRecord)
+    case_format_instructions = caseParser.get_format_instructions()
 
-    observation_chain = (
-        observation_prompt | llm | observationParser
+    case_chain = (
+        case_prompt | llm | caseParser
     )
 
     # with get_openai_callback() as cb:
-    output = observation_chain.invoke({"observation": observation, "format_instructions": observation_format_instructions})
+    output = case_chain.invoke({"case_description": case_description, "format_instructions": case_format_instructions})
 
     return json.loads(output.json())
 
-def extractObservationFeatures(observation):
+def extractCaseFeatures(case_description):
 
-    # Parse the observation
-    parsed_observation = parseObservation(observation)
+    # Parse the case
+    parsed_case = parseCase(case_description)
 
-    input_fields = list(ObservationRecord.__fields__.keys())
+    input_fields = list(caseRecord.__fields__.keys())
 
-    missing_fields = [field for field in input_fields if parsed_observation[field] is None]
+    missing_fields = [field for field in input_fields if parsed_case[field] is None]
 
     output = ""
 
     for field in input_fields:
         if field not in missing_fields:
             key_output = field.replace("_", " ").capitalize()
-            output += f"**{key_output}**: {parsed_observation[field]}\n"
+            output += f"**{key_output}**: {parsed_case[field]}\n"
             output += "\n"
 
     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
@@ -146,7 +146,7 @@ def extractObservationFeatures(observation):
     # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
-def addToGoogleSheets(observation_dict):
+def addToGoogleSheets(case_dict):
     try:
         scope = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -154,57 +154,57 @@ def addToGoogleSheets(observation_dict):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        observation_sheet = client.open("BioDesign Observation Record").sheet1
+        case_sheet = client.open("BioDesign Observation Record").Case_Log
 
-        headers = observation_sheet.row_values(1)
+        headers = case_sheet.row_values(1)
 
         # Prepare the row data matching the headers
         row_to_append = []
         for header in headers:
-            if header in observation_dict:
-                value = observation_dict[header]
+            if header in case_dict:
+                value = case_dict[header]
                 if value is None:
                     row_to_append.append("")
                 else:
-                    row_to_append.append(str(observation_dict[header]))
+                    row_to_append.append(str(case_dict[header]))
             else:
                 row_to_append.append("")  # Leave cell blank if header not in dictionary
 
         # Append the row to the sheet
-        observation_sheet.append_row(row_to_append)
+        case_sheet.append_row(row_to_append)
         return True
     except Exception as e:
         print("Error adding to Google Sheets: ", e)
         return False
 
-def embedObservation(observer, observation, observation_summary, observation_date, observation_id):
+def embedCase(attendees, case_description, case_summary, case_date, case_ID):
     db = PineconeVectorStore(
             index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-            namespace="observations",
+            namespace="cases",
             embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
         )
     
-    db.add_texts([observation], metadatas=[{'observer': observer, 'observation_date': observation_date, 'observation_id': observation_id}])
+    db.add_texts([case_description], metadatas=[{'attendees': attendees, 'case_date': case_date, 'case_ID': case_ID}])
 
-    parsed_observation = parseObservation(observation)
+    parsed_case = parseCase(case_description)
 
-    # write observer, observatoin and parsed observation to csv
-    observation_keys = list(ObservationRecord.__fields__.keys())
-    all_observation_keys = ['observation_summary', 'observer', 'observation', 'observation_date', 'observation_id'] + observation_keys
-    observation_values = [observation_summary, observer, observation, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
+    # write attendees, observatoin and parsed case to csv
+    case_keys = list(caseRecord.__fields__.keys())
+    all_case_keys = ['case_summary', 'attendees', 'case_description', 'case_date', 'case_ID'] + case_keys
+    case_values = [case_summary, attendees, case_description, case_date, case_ID] + [parsed_case[key] for key in case_keys]
 
-    observation_dict = dict(zip(all_observation_keys, observation_values))
-    csv_file = open(observations_csv, "a")
+    case_dict = dict(zip(all_case_keys, case_values))
+    csv_file = open(case_csv, "a")
     csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(observation_values)
+    csv_writer.writerow(case_values)
 
-    status = addToGoogleSheets(observation_dict)
+    status = addToGoogleSheets(case_dict)
 
     return status
 
 
-def generateObservationSummary(observation):
+def generateCaseSummary(case_description):
 
     llm = ChatOpenAI(
         model_name="gpt-4o",
@@ -214,129 +214,129 @@ def generateObservationSummary(observation):
     )
 
 
-    observation_prompt = PromptTemplate.from_template(
+    case_prompt = PromptTemplate.from_template(
 """
-You help me by giving me the a one line summary of the following medical observation.
+You help me by giving me the a one line summary of the following medical case description.
 
-Observation: {observation}
+case_description: {case_description}
 Output Summary:"""
 )
 
-    observation_chain = (
-        observation_prompt | llm | StrOutputParser()
+    case_chain = (
+        case_prompt | llm | StrOutputParser()
     )
 
     # with get_openai_callback() as cb:
-    output = observation_chain.invoke({"observation": observation})
+    output = case_chain.invoke({"case_description": case_description})
 
     return output
 
 
-def clear_observation():
-    if 'observation' in st.session_state:
-        st.session_state['observation'] = ""
-    if 'observation_summary' in st.session_state:
-        st.session_state['observation_summary'] = ""
+def clear_case():
+    if 'case_description' in st.session_state:
+        st.session_state['case_description'] = ""
+    if 'case_summary' in st.session_state:
+        st.session_state['case_summary'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
-    update_observation_id()
+    update_case_ID()
 
 import streamlit as st
 from datetime import date
 
-# Initialize or retrieve the observation counters dictionary from session state
-if 'observation_counters' not in st.session_state:
-    st.session_state['observation_counters'] = {}
+# Initialize or retrieve the clear_case counters dictionary from session state
+if 'case_counters' not in st.session_state:
+    st.session_state['case_counters'] = {}
 
-# Function to generate observation ID with the format OBYYMMDDxxxx
-def generate_observation_id(observation_date, counter):
-    return f"OB{observation_date.strftime('%y%m%d')}{counter:04d}"
+# Function to generate case ID with the format OBYYMMDDxxxx
+def generate_case_ID(case_date, counter):
+    return f"OB{case_date.strftime('%y%m%d')}{counter:04d}"
 
-# Function to update observation ID when the date changes
-def update_observation_id():
-    obs_date_str = st.session_state['observation_date'].strftime('%y%m%d')
+# Function to update case ID when the date changes
+def update_case_ID():
+    obs_date_str = st.session_state['case_date'].strftime('%y%m%d')
 
-    # get all observation ids from the sheets and update the counter
+    # get all case ids from the sheets and update the counter
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive.metadata.readonly"
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    observation_sheet = client.open("BioDesign Observation Record").sheet1
-    column_values = observation_sheet.col_values(1) 
+    case_sheet = client.open("BioDesign Observation Record").sheet1
+    column_values = case_sheet.col_values(1) 
 
-    # find all observation ids with the same date
+    # find all case ids with the same date
     obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")]
     obs_date_ids.sort()
 
-    # get the counter from the last observation id
+    # get the counter from the last case id
     if len(obs_date_ids) > 0:
         counter = int(obs_date_ids[-1][-4:])+1
     else:
         counter = 1
     
     # # Check if the date is already in the dictionary
-    # if obs_date_str in st.session_state['observation_counters']:
+    # if obs_date_str in st.session_state['case_counters']:
     #     # Increment the counter for this date
-    #     st.session_state['observation_counters'][obs_date_str] += 1
+    #     st.session_state['case_counters'][obs_date_str] += 1
     # else:
     #     # Initialize the counter to 1 for a new date
-    #     st.session_state['observation_counters'][obs_date_str] = 1
+    #     st.session_state['case_counters'][obs_date_str] = 1
     
-    # Generate the observation ID using the updated counter
-    # counter = st.session_state['observation_counters'][obs_date_str]
+    # Generate the case ID using the updated counter
+    # counter = st.session_state['case_counters'][obs_date_str]
 
-    st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
+    st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
 
-# Use columns to place observation_date, observation_id, and observer side by side
+# Use columns to place case_date, case_ID, and attendees side by side
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    # st calendar for date input with a callback to update the observation_id
-    st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+    # st calendar for date input with a callback to update the case_ID
+    st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
 
 with col2:
-    # Ensure the observation ID is set the first time the script runs
-    if 'observation_id' not in st.session_state:
-        update_observation_id()
+    # Ensure the case ID is set the first time the script runs
+    if 'case_ID' not in st.session_state:
+        update_case_ID()
 
-    # Display the observation ID
-    st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+    # Display the case ID
+    st.text_input("Case ID:", value=st.session_state['case_ID'], disabled=True)
 
 with col3:
-    #Display Observer options 
-    observer = st.selectbox("Observer", ["Ana", "Bridget"])
+    #Display attendees options 
+    attendees = st.selectbox("attendees", ["Ana", "Bridget"])
 
 ############
 
-# # Function to generate observation ID with the format OBYYYYMMDDxxxx
-# def generate_observation_id(observation_date, counter):
-#     return f"OB{observation_date.strftime('%y%m%d')}{counter:04d}"
+# # Function to generate case ID with the format OBYYYYMMDDxxxx
+# def generate_case_ID(case_date, counter):
+#     return f"OB{case_date.strftime('%y%m%d')}{counter:04d}"
 
-# # Initialize or retrieve observation ID counter from session state
-# if 'observation_id_counter' not in st.session_state:
-#     st.session_state['observation_id_counter'] = 1
+# # Initialize or retrieve case ID counter from session state
+# if 'case_ID_counter' not in st.session_state:
+#     st.session_state['case_ID_counter'] = 1
 
-# # Function to update observation ID when the date changes
-# def update_observation_id():
-#     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], st.session_state['observation_id_counter'])
+# # Function to update case ID when the date changes
+# def update_case_ID():
+#     st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], st.session_state['case_ID_counter'])
 
-# # st calendar for date input with a callback to update the observation_id
-# st.session_state['observation_date'] = st.date_input("Observation Date", date.today(), on_change=update_observation_id)
+# # st calendar for date input with a callback to update the case_ID
+# st.session_state['case_date'] = st.date_input("Observation Date", date.today(), on_change=update_case_ID)
 
-# # Initialize observation_id based on the observation date and counter
-# st.session_state['observation_id'] = st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+# # Initialize case_ID based on the observation date and counter
+# st.session_state['case_ID'] = st.text_input("Observation ID:", value=st.session_state['case_ID'], disabled=True)
 
 ##########
 
-#new_observation_id = st.observation_date().strftime("%Y%m%d")+"%03d"%observation_id_counter
-#st.session_state['observation_id'] = st.text_input("Observation ID:", value=new_observation_id)
+#new_case_ID = st.case_date().strftime("%Y%m%d")+"%03d"%case_ID_counter
+#st.session_state['case_ID'] = st.text_input("Observation ID:", value=new_case_ID)
 
 #########
 
 # Textbox for name input
-#observer = st.selectbox("Observer", ["Ana", "Bridget"])
+#attendees = st.selectbox("attendees", ["Ana", "Bridget"])
 
 # ######
 
@@ -347,12 +347,13 @@ with col3:
 
 
 # Initialize the observation text in session state if it doesn't exist
-if "observation" not in st.session_state:
-    st.session_state["observation"] = ""
+
+if "case_description" not in st.session_state:
+    st.session_state["case_description"] = ""
 
 # Function to clear the text area
 def clear_text():
-    st.session_state["observation"] = ""
+    st.session_state["case_description"] = ""
 
 #st.markdown("---")
 
@@ -361,15 +362,15 @@ def clear_text():
 
 #observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
 
-# Add Your Observation Text with larger font size
-st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
+# Add Your case Text with larger font size
+st.markdown("<h4 style='font-size:20px;'>Add Your Case:</h4>", unsafe_allow_html=True)
 
 # Button for voice input (currently as a placeholder)
-if st.button("🎤 Record Observation (Coming Soon)"):
-    st.info("Voice recording feature coming soon!")
+#if st.button("🎤 Record Case (Coming Soon)"):
+ #   st.info("Voice recording feature coming soon!")
 
-# Observation Text Area
-st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
+# case Text Area
+st.session_state['case_description'] = st.text_area("Case:", value=st.session_state["case_description"], height=200)
 
 
 # Create columns to align the buttons
@@ -393,8 +394,8 @@ with col3:
     #     </style>
     #     """, unsafe_allow_html=True)
 
-    # Button to Clear the Observation Text Area
-    st.button("Clear Observation", on_click=clear_text)
+    # Button to Clear the case Text Area
+    st.button("Clear Case", on_click=clear_text)
     
     # Container for result display
     result_container = st.empty()
@@ -405,65 +406,65 @@ with col3:
 
 # with col11:
 #     if st.button("Generate Observation Summary"):
-#         st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+#         st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
 
-#     if st.session_state['observation_summary'] != "":
-#         st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
+#     if st.session_state['case_summary'] != "":
+#         st.session_state['case_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_summary'], height=50)
     
 
 with col1:
-    if st.button("Evaluate Observation"):
-        st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
-        st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+    if st.button("Evaluate Case"):
+        st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+        st.session_state['case_summary']  = generateCaseSummary(st.session_state['case_description'])
     
-if st.session_state['observation_summary'] != "":
-    st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
+if st.session_state['case_summary'] != "":
+    st.session_state['case_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_summary'], height=50)
 
 # st.write(f":green[{st.session_state['result']}]")
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
 if st.session_state['rerun']:
     time.sleep(3)
-    clear_observation()
+    clear_case()
     st.session_state['rerun'] = False
     st.rerun()
     
     ##########
 
-if st.button("Add Observation to Team Record", disabled=st.session_state['observation_summary'] == ""):
-    # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+if st.button("Log Case", disabled=st.session_state['case_summary'] == ""):
+    # st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
     st.session_state["error"] = ""
 
-    if st.session_state['observation'] == "":
-        st.session_state["error"] = "Error! Please enter observation first"
+    if st.session_state['case_description'] == "":
+        st.session_state["error"] = "Error: Please enter case."
         st.markdown(
             f"<span style='color:red;'>{st.session_state['error']}</span>", 
             unsafe_allow_html=True
         )
-    elif st.session_state['observation_summary'] == "":
-        st.session_state["error"] = "Error! Please evaluate observation first"
+    elif st.session_state['case_summary'] == "":
+        st.session_state["error"] = "Error: Please evaluate case."
         st.markdown(
             f"<span style='color:red;'>{st.session_state['error']}</span>", 
             unsafe_allow_html=True
         )
     else:
-        status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
-                            st.session_state['observation_date'],
-                            st.session_state['observation_id'])
-        # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
-        # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
+        status = embedCase(attendees, st.session_state['case_description'],  st.session_state['case_summary'], 
+                            st.session_state['case_date'],
+                            st.session_state['case_ID'])
+        # st.session_state['case_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_summary'])
+        # "Generated Summary: "+st.session_state['case_summary']+"\n\n"
         if status:
-            st.session_state['result'] = "Observation added to your team's database."
+            st.session_state['result'] = "Case added to your team's database."
             st.session_state['rerun'] = True
             st.rerun()
         else:
-            st.session_state['result'] = "Error adding observation to your team's database, try again!"
-        # clear_observation()
+            st.session_state['result'] = "Error adding case to your team's database. Please try again!"
+        # clear_case()
 
 st.markdown("---")
 
 # if st.button("Back to Main Menu"):
-#     clear_observation()
+#     clear_case()
 #     switch_page("main_menu")
 
 
