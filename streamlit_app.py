@@ -149,11 +149,24 @@ from streamlit_extras.switch_page_button import switch_page
 if "login_status" not in st.session_state:
     st.session_state["login_status"] = "not_logged_in"
 
-# Set the sidebar state depending on login status
+# Function to hide the sidebar toggle button (hamburger icon)
+def hide_sidebar_toggle():
+    hide_toggle_style = """
+    <style>
+    /* Hide the hamburger button to prevent opening the sidebar */
+    [data-testid="collapsedControl"] {
+        display: none;
+    }
+    </style>
+    """
+    st.markdown(hide_toggle_style, unsafe_allow_html=True)
+
+# Collapse the sidebar and hide the toggle button before login
 if st.session_state["login_status"] == "success":
     st.set_page_config(initial_sidebar_state="expanded")
 else:
     st.set_page_config(initial_sidebar_state="collapsed")
+    hide_sidebar_toggle()  # Hide the sidebar toggle to lock it
 
 # Main login function
 def main():
@@ -197,5 +210,5 @@ if __name__ == "__main__":
         st.sidebar.write("You can access the menu.")
         switch_page("main_menu")  # Redirect to main menu
     else:
-        # Before login, collapse the sidebar and show the login form
+        # Before login, collapse the sidebar, lock it, and show the login form
         main()
