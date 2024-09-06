@@ -312,10 +312,10 @@ with st.form(key="my_form"):
     
     submit_button = st.form_submit_button(label="Submit")
     # Button to Clear the need Text Area
-    col21, col22, col23 = st.columns(3)  # Adjust column widths as needed
+    # col21, col22, col23 = st.columns(3)  # Adjust column widths as needed
     
-    with col23:
-        st.button("Clear need", on_click=clear_text)
+    # with col23:
+    st.button("Clear need", on_click=clear_text)
     
 
     if submit_button:
