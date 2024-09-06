@@ -6,6 +6,8 @@ from typing import Optional
 import csv
 import os
 
+
+
 #import streamlit as st
 
 # Apply custom CSS to use Helvetica font
@@ -23,10 +25,25 @@ import os
 
 
 
+
+
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 
 st.markdown("# Welcome!")
 
+
+
+
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.header("Test 1")
+    #st.image("https://static.streamlit.io/examples/cat.jpg")
+
+with col2:
+    st.header("Test 2")
+    #st.image("https://static.streamlit.io/examples/dog.jpg")
 
 
 # Your logo URL (replace if necessary)
