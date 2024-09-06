@@ -100,12 +100,12 @@ if 'need_date' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
-if not os.path.exists(need_csv):
-    need_keys = list(needRecord.__fields__.keys())
-    need_keys = ['need_ID', 'need_date', 'need_summary', 'observation_ID', 'location', 'need_statement'] + need_keys        
-    csv_file = open(need_csv, "w")
-    csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(need_keys)
+# if not os.path.exists(need_csv):
+#     need_keys = list(needRecord.__fields__.keys())
+#     need_keys = ['need_ID', 'need_date', 'need_summary', 'observation_ID', 'location', 'need_statement'] + need_keys        
+#     csv_file = open(need_csv, "w")
+#     csv_writer = csv.writer(csv_file, delimiter=";")
+#     csv_writer.writerow(need_keys)
 
 
 def addToGoogleSheets(need_dict):
