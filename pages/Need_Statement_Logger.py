@@ -423,12 +423,12 @@ if st.session_state['rerun']:
     #                         st.session_state['need_ID'])
         # st.session_state['need_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['need_summary'])
         # "Generated Summary: "+st.session_state['need_summary']+"\n\n"
-        if status:
-            st.session_state['result'] = "Need statement added to your team's database."
-            st.session_state['rerun'] = True
-            st.rerun()
-        else:
-            st.session_state['result'] = "Error adding need statement to your team's database. Please try again!"
+        # if status:
+        #     st.session_state['result'] = "Need statement added to your team's database."
+        #     st.session_state['rerun'] = True
+        #     st.rerun()
+        # else:
+        #     st.session_state['result'] = "Error adding need statement to your team's database. Please try again!"
         # clear_need()
 
 st.markdown("---")
