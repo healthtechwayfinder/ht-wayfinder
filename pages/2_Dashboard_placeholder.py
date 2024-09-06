@@ -21,6 +21,14 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+
+
+st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
+
+st.markdown("# Welcome!")
+
+
+
 # Your logo URL (replace if necessary)
 logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
 
