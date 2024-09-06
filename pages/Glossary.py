@@ -37,19 +37,41 @@ observation_sheet = client.open("Glossary").sheet1
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
+
 # Combine terms and definitions into a list of tuples
 terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
 # Sort the list alphabetically by the term
 sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
-# Display the sorted terms and definitions
-st.write("Sorted Glossary:")
+# Add custom CSS to make the container scrollable
+st.markdown("""
+    <style>
+    .scrollable-container {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-for term, definition in sorted_terms_definitions:
-    st.write(f"**{term}:** {definition}")
+# Search bar for filtering terms
+search_term = st.text_input("Search Glossary")
 
-# Sort terms alphabetically for display
+# Create a scrollable container
+with st.container():
+    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+
+    # Filter the glossary based on the search term (case-insensitive)
+    filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+
+    if filtered_terms_definitions:
+        for term, definition in filtered_terms_definitions:
+            st.write(f"**{term}:** {definition}")
+    else:
+        st.write("No matching terms found.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 ########################## past retrieval of glossary: 
