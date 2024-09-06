@@ -311,10 +311,8 @@ with st.form(key="my_form"):
     need_input = st.text_input(label="")
     
     submit_button = st.form_submit_button(label="Submit")
-
-    with col3:
-     # Button to Clear the need Text Area
-        st.button("Clear need", on_click=clear_text)
+    # Button to Clear the need Text Area
+    st.button("Clear need", on_click=clear_text)
     
 
     if submit_button:
