@@ -45,6 +45,7 @@ terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 # Sort the list alphabetically by the term
 sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
+
 # Add custom CSS to make the container scrollable
 st.markdown("""
     <style>
@@ -53,6 +54,7 @@ st.markdown("""
         overflow-y: scroll;
         border: 1px solid #ccc;
         padding: 10px;
+        font-size: 16px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -61,19 +63,21 @@ st.markdown("""
 search_term = st.text_input("Search Glossary")
 
 # Create a scrollable container using HTML
-st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+html_content = "<div class='scrollable-container'>"
 
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
 if filtered_terms_definitions:
     for term, definition in filtered_terms_definitions:
-        st.markdown(f"**{term}:** {definition}")
+        html_content += f"<p><strong>{term}:</strong> {definition}</p>"
 else:
-    st.markdown("No matching terms found.")
+    html_content += "<p>No matching terms found.</p>"
 
-st.markdown("</div>", unsafe_allow_html=True)
+html_content += "</div>"
 
+# Render the HTML content inside the scrollable container
+st.markdown(html_content, unsafe_allow_html=True)
 
 ########################## past retrieval of glossary: 
 
