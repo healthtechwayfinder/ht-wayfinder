@@ -332,7 +332,7 @@ with st.form(key="my_form"):
 # Create columns to align the buttons
 # col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
 
- with col3:
+with col3:
      # Container for result display
     result_container = st.empty()
     # Use custom CSS for the red button
