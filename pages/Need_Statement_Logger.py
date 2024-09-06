@@ -328,7 +328,7 @@ st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_htm
 #st.session_state['need_statement'] = st.text_area("need:", value=st.session_state["need_statement"], height=100)
 
 with st.form(key="my_form"):
-    need_input = st.text_input(label="Draft Need Statement Here:")
+    need_input = st.text_input(label="There is a need for...")
     notes_input = st.text_input(label="Relevant Notes:")
     #notes_input = st.text_area("Relevant Notes:", value=st.session_state["notes_input"], height=100)
     submit_button = st.form_submit_button(label="Submit")
