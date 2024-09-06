@@ -286,10 +286,16 @@ def clear_text():
 #observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
 
 # Add Your need Text with larger font size
+col1, col2, col3 = st.columns(3)
 
-problem_input = st.text_input(label="Problem:")
-population_input = st.text_input(label="Population:")
-outcome_input = st.text_input(label="Outcome:")
+with col1:
+    problem_input = st.text_input(label="Problem:")
+
+with col2:
+    population_input = st.text_input(label="Population:")
+
+with col3:
+    outcome_input = st.text_input(label="Outcome:")
 
 st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_html=True)
 
