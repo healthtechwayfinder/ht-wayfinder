@@ -81,19 +81,29 @@ creds_dict = {
 # population
 # outcome
 
+# variables recorded: need_ID, need_date, need_statement, problem, population, outcome, observation_ID,
 
 if 'need_statement' not in st.session_state:
     st.session_state['need_statement'] = ""
 
-# if 'location' not in st.session_state:
-#     st.session_state['location'] = ""
+if 'need_ID' not in st.session_state:
+    st.session_state['need_ID'] = ""
+
+if 'problem' not in st.session_state:
+    st.session_state['problem'] = ""
+
+if 'population' not in st.session_state:
+    st.session_state['population'] = ""
+
+if 'outcome' not in st.session_state:
+    st.session_state['outcome'] = ""
+
+if 'observation_ID' not in st.session_state:
+    st.session_state['observation_ID'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
-
-# if 'need_summary' not in st.session_state:
-#     st.session_state['need_summary'] = ""
-
+    
 if 'need_date' not in st.session_state:
     st.session_state['need_date'] = date.today()
 
@@ -138,11 +148,12 @@ def addToGoogleSheets(need_dict):
     except Exception as e:
         print("Error adding to Google Sheets: ", e)
         return False
+    # variables recorded: 'need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'
 
     # write observation_ID, to csv
-    need_keys = list(needRecord.__fields__.keys())
-    all_need_keys = ['observation_ID', 'need_statement', 'need_date', 'need_ID'] + need_keys
-    need_values = [observation_ID, need_statement, need_date, need_ID] + [parsed_need[key] for key in need_keys]
+    #need_keys = list(needRecord.__fields__.keys())
+    all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'] # + need_keys
+    need_values = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'] # + [parsed_need[key] for key in need_keys]
 
     need_dict = dict(zip(all_need_keys, need_values))
     csv_file = open(need_csv, "a")
@@ -230,6 +241,7 @@ with col2:
 with col3:
     # Display observation_ID options 
     # need to create a variable that's just an array of all the obervation IDs
+    # ob_ID_list = read the column of google sheets called Observation_ID and make a list
     observation_ID = st.multiselect("Relevant Observations (multi-select)", ["Test 1", "Test 2"]) 
 
 ############
@@ -308,7 +320,7 @@ st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_htm
 #st.session_state['need_statement'] = st.text_area("need:", value=st.session_state["need_statement"], height=100)
 
 with st.form(key="my_form"):
-    need_input = st.text_input(label="")
+    need_input = st.text_input(label="Draft Need Statement Here:")
     
     submit_button = st.form_submit_button(label="Submit")
     # st.button("Clear need", on_click=clear_text)
@@ -323,7 +335,7 @@ with st.form(key="my_form"):
         if text_input:
             need_statement = need_input
             problem = problem_input
-            population = populaiton_input
+            population = population_input
             outcome = outcome_input
             st.write("Need statement recorded!")
             #update so that all variables are saved from text input and then logged
