@@ -100,16 +100,6 @@ if 'need_date' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
-# class needRecord(BaseModel):
-#    # location: Optional[str] = Field(default=None, description="Location or setting where this need made. e.g. operating room (OR), hospital, exam room,....")
-#     People_Present: Optional[str] = Field(default=None, description="People present during the need. e.g. patient, clinician, scrub tech, family member, ...")
-#     Sensory_Observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
-#     Specific_Facts: Optional[str] = Field(default=None, description="The facts noted in the need. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
-#     Insider_Language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-#     Process_Actions: Optional[str] = Field(default=None, description="Which actions occurred during the need, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
-#     # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-#     Notes_and_Impressions: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
-
 if not os.path.exists(need_csv):
     need_keys = list(needRecord.__fields__.keys())
     need_keys = ['need_ID', 'need_date', 'need_summary', 'observation_ID', 'location', 'need_statement'] + need_keys        
@@ -117,70 +107,6 @@ if not os.path.exists(need_csv):
     csv_writer = csv.writer(csv_file, delimiter=";")
     csv_writer.writerow(need_keys)
 
-# def parseneed(need_statement: str):
-#     llm = ChatOpenAI(
-#         model_name="gpt-4o",
-#         temperature=0.7,
-#         openai_api_key=OPENAI_API_KEY,
-#         max_tokens=500,
-#     )
-
-#     need_prompt = PromptTemplate.from_template(
-# """
-# You help me parse descriptions of medical procedures or needs to extract details such as surgeon, procedure and date, whichever is available.
-# Format Instructions for output: {format_instructions}
-
-# need_statement: {need_statement}
-# Output:"""
-# )
-#     needParser = PydanticOutputParser(pydantic_object=needRecord)
-#     need_format_instructions = needParser.get_format_instructions()
-
-#     need_chain = (
-#         need_prompt | llm | needParser
-#     )
-
-#     # with get_openai_callback() as cb:
-#     output = need_chain.invoke({"need_statement": need_statement, "format_instructions": need_format_instructions})
-
-#     return json.loads(output.json())
-
-# def extractneedFeatures(need_statement):
-
-    # # Parse the need
-    # parsed_need = parseneed(need_statement)
-
-    # input_fields = list(needRecord.__fields__.keys())
-
-    # missing_fields = [field for field in input_fields if parsed_need[field] is None]
-
-    # output = ""
-
-    # for field in input_fields:
-    #     if field not in missing_fields:
-    #         key_output = field.replace("_", " ").capitalize()
-    #         output += f"**{key_output}**: {parsed_need[field]}\n"
-    #         output += "\n"
-
-    # missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
-
-    # output += "\n\n **Missing fields**:"
-    # # for field in missing_fields:
-    #     output += f" {field},"
-
-    # # output += "\n\n"
-    # # output += "="*75
-    # output += "\nPlease add the missing fields to the observation if needed, then proceed with adding observation to your team record."
-
-    # return f"{output}"
-
-    #  # Add each missing field in red
-    # for field in missing_fields:
-    #     output += f" <span style='color:red;'>{field}</span>,"
-
-    # # Display the output
-    # # st.markdown(output, unsafe_allow_html=True)
-    # return f"{output}"
 
 def addToGoogleSheets(need_dict):
     try:
@@ -213,21 +139,9 @@ def addToGoogleSheets(need_dict):
         print("Error adding to Google Sheets: ", e)
         return False
 
-# def embedneed(observation_ID, need_statement, need_summary, need_date, need_ID):
-#     db = PineconeVectorStore(
-#             index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-#             namespace="needs",
-#             embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-#             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-#         )
-    
-#     db.add_texts([need_statement], metadatas=[{'observation_ID': observation_ID, 'need_date': need_Date, 'need_ID': need_ID}])
-
-#     parsed_need = parseneed(need_statement)
-
-    # write observation_ID, observatoin and parsed need to csv
+    # write observation_ID, to csv
     need_keys = list(needRecord.__fields__.keys())
-    all_need_keys = ['need_summary', 'observation_ID', 'need_statement', 'need_date', 'need_ID'] + need_keys
+    all_need_keys = ['observation_ID', 'need_statement', 'need_date', 'need_ID'] + need_keys
     need_values = [need_summary, observation_ID, need_statement, need_date, need_ID] + [parsed_need[key] for key in need_keys]
 
     need_dict = dict(zip(all_need_keys, need_values))
@@ -238,34 +152,6 @@ def addToGoogleSheets(need_dict):
     status = addToGoogleSheets(need_dict)
 
     return status
-
-
-# def generateneedSummary(need_statement):
-
-#     llm = ChatOpenAI(
-#         model_name="gpt-4o",
-#         temperature=0.7,
-#         openai_api_key=OPENAI_API_KEY,
-#         max_tokens=500,
-# #     )
-
-
-#     need_prompt = PromptTemplate.from_template(
-# """
-# You help me by creating a brief, one-sentence summary of the following medical need description.
-
-# need_statement: {need_statement}
-# Output Summary:"""
-# )
-
-#     need_chain = (
-#         need_prompt | llm | StrOutputParser()
-#     )
-
-    # # with get_openai_callback() as cb:
-    # output = need_chain.invoke({"need_statement": need_statement})
-
-    # return output
 
 
 def clear_need():
@@ -283,7 +169,7 @@ def clear_need():
 if 'need_counters' not in st.session_state:
     st.session_state['need_counters'] = {}
 
-# Function to generate need ID with the format OBYYMMDDxxxx
+# Function to generate need ID with the format NSYYMMDDxxxx
 def generate_need_ID(need_date, counter):
     return f"NS{need_date.strftime('%y%m%d')}{counter:04d}"
 
@@ -343,7 +229,7 @@ with col2:
 
 with col3:
     #Display observation_ID options 
-    observation_ID = st.multiselect("observation_ID", ["Test 1", "Test 2"]) #need to create a variable that's just an array of all the obervation IDs
+    observation_ID = st.multiselect("Select Relevant Observations", ["Test 1", "Test 2"]) #need to create a variable that's just an array of all the obervation IDs
 
 ############
 
@@ -407,7 +293,17 @@ st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_htm
  #   st.info("Voice recording feature coming soon!")
 
 # need Text Area
-st.session_state['need_statement'] = st.text_area("need:", value=st.session_state["need_statement"], height=100)
+#st.session_state['need_statement'] = st.text_area("need:", value=st.session_state["need_statement"], height=100)
+
+with st.form(key="my_form"):
+    text_input = st.text_input(label="Need Statement:")
+    submit_button = st.form_submit_button(label="Submit")
+
+    if submit_button:
+        if text_input:
+            need_statement = text_input
+            st.write("Need statement recorded!")
+
 
 
 # Create columns to align the buttons
