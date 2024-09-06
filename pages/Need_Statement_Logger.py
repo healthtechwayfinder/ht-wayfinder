@@ -312,7 +312,10 @@ with st.form(key="my_form"):
     
     submit_button = st.form_submit_button(label="Submit")
     # Button to Clear the need Text Area
-    st.button("Clear need", on_click=clear_text)
+    col21, col22, col23 = st.columns([2, 2, 2])  # Adjust column widths as needed
+    
+    with col23:
+        st.button("Clear need", on_click=clear_text)
     
 
     if submit_button:
@@ -327,9 +330,11 @@ with st.form(key="my_form"):
 
 
 # Create columns to align the buttons
-col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
+# col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
 
-with col3:
+ with col3:
+     # Container for result display
+    result_container = st.empty()
     # Use custom CSS for the red button
     # st.markdown("""
     #     <style>
@@ -349,8 +354,7 @@ with col3:
 
    
     
-    # Container for result display
-    result_container = st.empty()
+    
 
 # #Use columns to place buttons side by side
 # col11, col21 = st.columns(2)
