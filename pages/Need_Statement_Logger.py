@@ -312,7 +312,7 @@ with st.form(key="my_form"):
     
     submit_button = st.form_submit_button(label="Submit")
     # Button to Clear the need Text Area
-    col21, col22, col23 = st.columns([2, 2, 2])  # Adjust column widths as needed
+    col21, col22, col23 = st.columns(3)  # Adjust column widths as needed
     
     with col23:
         st.button("Clear need", on_click=clear_text)
@@ -385,9 +385,6 @@ if st.session_state['rerun']:
     st.rerun()
     
     ##########
-
-# if st.button("Say hello"):
-#     st.write("Why hello there")
 
 if st.button("Log need", disabled=st.session_state['need_statement'] == ""):
     # st.session_state['need_summary']  = generateneedSummary(st.session_state['observation'])
