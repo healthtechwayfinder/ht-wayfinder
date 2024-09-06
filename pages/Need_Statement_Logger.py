@@ -158,19 +158,20 @@ def addToGoogleSheets(need_dict):
         return False
     # variables recorded: 'need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'
 
-    # write observation_ID, to csv
-    #need_keys = list(needRecord.__fields__.keys())
-    all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'] # + need_keys
-    need_values = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'] # + [parsed_need[key] for key in need_keys]
+#     put in format to upload to google sheets    
 
-    need_dict = dict(zip(all_need_keys, need_values))
-    csv_file = open(need_csv, "a")
-    csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(need_values)
+def recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
+    
+     all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes'] # + need_keys
+     need_values = [need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes] # + [parsed_need[key] for key in need_keys]
+     need_dict = dict(zip(all_need_keys, need_values))
+#     csv_file = open(need_csv, "a")
+#     csv_writer = csv.writer(csv_file, delimiter=";")
+#     csv_writer.writerow(need_values)
 
-    status = addToGoogleSheets(need_dict)
+     status = addToGoogleSheets(need_dict)
 
-    return status
+     return status
 
 
 def clear_need():
@@ -478,3 +479,43 @@ st.markdown("""
 # Create a button using Streamlit's native functionality
 if st.button("Back to Main Menu"):
     switch_page("main_menu")
+
+
+# REVIEW BELOW FOR MAKING LIST OF OBSERVATIONS
+
+
+def update_observation_id():
+    obs_date_str = st.session_state['observation_date'].strftime('%y%m%d')
+
+    # get all observation ids from the sheets and update the counter
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    observation_sheet = client.open("BioDesign Observation Record").sheet1
+    column_values = observation_sheet.col_values(1) 
+
+    # find all observation ids with the same date
+    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")]
+    obs_date_ids.sort()
+
+    # get the counter from the last observation id
+    if len(obs_date_ids) > 0:
+        counter = int(obs_date_ids[-1][-4:])+1
+    else:
+        counter = 1
+    
+    # # Check if the date is already in the dictionary
+    # if obs_date_str in st.session_state['observation_counters']:
+    #     # Increment the counter for this date
+    #     st.session_state['observation_counters'][obs_date_str] += 1
+    # else:
+    #     # Initialize the counter to 1 for a new date
+    #     st.session_state['observation_counters'][obs_date_str] = 1
+    
+    # Generate the observation ID using the updated counter
+    # counter = st.session_state['observation_counters'][obs_date_str]
+
+    st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
