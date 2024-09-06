@@ -24,6 +24,7 @@
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
+from datetime import date
 
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -71,9 +72,18 @@ creds_dict = {
     "universe_domain": st.secrets["gcp_service_account"]["universe_domain"],
 }
 
+# Recorded variables:
+# need_date
+# need_ID
+# observation_ID
+# need_statement
+# problem
+# population
+# outcome
 
-if 'need_description' not in st.session_state:
-    st.session_state['need_description'] = ""
+
+if 'need_statement' not in st.session_state:
+    st.session_state['need_statement'] = ""
 
 if 'location' not in st.session_state:
     st.session_state['location'] = ""
@@ -81,8 +91,8 @@ if 'location' not in st.session_state:
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
 
-if 'need_summary' not in st.session_state:
-    st.session_state['need_summary'] = ""
+# if 'need_summary' not in st.session_state:
+#     st.session_state['need_summary'] = ""
 
 if 'need_date' not in st.session_state:
     st.session_state['need_date'] = date.today()
@@ -90,72 +100,72 @@ if 'need_date' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
-class needRecord(BaseModel):
-   # location: Optional[str] = Field(default=None, description="Location or setting where this need made. e.g. operating room (OR), hospital, exam room,....")
-    People_Present: Optional[str] = Field(default=None, description="People present during the need. e.g. patient, clinician, scrub tech, family member, ...")
-    Sensory_Observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
-    Specific_Facts: Optional[str] = Field(default=None, description="The facts noted in the need. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
-    Insider_Language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-    Process_Actions: Optional[str] = Field(default=None, description="Which actions occurred during the need, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
-    # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-    Notes_and_Impressions: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
+# class needRecord(BaseModel):
+#    # location: Optional[str] = Field(default=None, description="Location or setting where this need made. e.g. operating room (OR), hospital, exam room,....")
+#     People_Present: Optional[str] = Field(default=None, description="People present during the need. e.g. patient, clinician, scrub tech, family member, ...")
+#     Sensory_Observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
+#     Specific_Facts: Optional[str] = Field(default=None, description="The facts noted in the need. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
+#     Insider_Language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
+#     Process_Actions: Optional[str] = Field(default=None, description="Which actions occurred during the need, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
+#     # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
+#     Notes_and_Impressions: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
 
 if not os.path.exists(need_csv):
     need_keys = list(needRecord.__fields__.keys())
-    need_keys = ['need_ID', 'need_date', 'need_summary', 'attendees', 'location', 'need_description'] + need_keys        
+    need_keys = ['need_ID', 'need_date', 'need_summary', 'observation_ID', 'location', 'need_statement'] + need_keys        
     csv_file = open(need_csv, "w")
     csv_writer = csv.writer(csv_file, delimiter=";")
     csv_writer.writerow(need_keys)
 
-def parseneed(need_description: str):
-    llm = ChatOpenAI(
-        model_name="gpt-4o",
-        temperature=0.7,
-        openai_api_key=OPENAI_API_KEY,
-        max_tokens=500,
-    )
+# def parseneed(need_statement: str):
+#     llm = ChatOpenAI(
+#         model_name="gpt-4o",
+#         temperature=0.7,
+#         openai_api_key=OPENAI_API_KEY,
+#         max_tokens=500,
+#     )
 
-    need_prompt = PromptTemplate.from_template(
-"""
-You help me parse descriptions of medical procedures or needs to extract details such as surgeon, procedure and date, whichever is available.
-Format Instructions for output: {format_instructions}
+#     need_prompt = PromptTemplate.from_template(
+# """
+# You help me parse descriptions of medical procedures or needs to extract details such as surgeon, procedure and date, whichever is available.
+# Format Instructions for output: {format_instructions}
 
-need_description: {need_description}
-Output:"""
-)
-    needParser = PydanticOutputParser(pydantic_object=needRecord)
-    need_format_instructions = needParser.get_format_instructions()
+# need_statement: {need_statement}
+# Output:"""
+# )
+#     needParser = PydanticOutputParser(pydantic_object=needRecord)
+#     need_format_instructions = needParser.get_format_instructions()
 
-    need_chain = (
-        need_prompt | llm | needParser
-    )
+#     need_chain = (
+#         need_prompt | llm | needParser
+#     )
 
-    # with get_openai_callback() as cb:
-    output = need_chain.invoke({"need_description": need_description, "format_instructions": need_format_instructions})
+#     # with get_openai_callback() as cb:
+#     output = need_chain.invoke({"need_statement": need_statement, "format_instructions": need_format_instructions})
 
-    return json.loads(output.json())
+#     return json.loads(output.json())
 
-def extractneedFeatures(need_description):
+# def extractneedFeatures(need_statement):
 
-    # Parse the need
-    parsed_need = parseneed(need_description)
+    # # Parse the need
+    # parsed_need = parseneed(need_statement)
 
-    input_fields = list(needRecord.__fields__.keys())
+    # input_fields = list(needRecord.__fields__.keys())
 
-    missing_fields = [field for field in input_fields if parsed_need[field] is None]
+    # missing_fields = [field for field in input_fields if parsed_need[field] is None]
 
-    output = ""
+    # output = ""
 
-    for field in input_fields:
-        if field not in missing_fields:
-            key_output = field.replace("_", " ").capitalize()
-            output += f"**{key_output}**: {parsed_need[field]}\n"
-            output += "\n"
+    # for field in input_fields:
+    #     if field not in missing_fields:
+    #         key_output = field.replace("_", " ").capitalize()
+    #         output += f"**{key_output}**: {parsed_need[field]}\n"
+    #         output += "\n"
 
-    missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
+    # missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
-    output += "\n\n **Missing fields**:"
-    # for field in missing_fields:
+    # output += "\n\n **Missing fields**:"
+    # # for field in missing_fields:
     #     output += f" {field},"
 
     # # output += "\n\n"
@@ -164,13 +174,13 @@ def extractneedFeatures(need_description):
 
     # return f"{output}"
 
-     # Add each missing field in red
-    for field in missing_fields:
-        output += f" <span style='color:red;'>{field}</span>,"
+    #  # Add each missing field in red
+    # for field in missing_fields:
+    #     output += f" <span style='color:red;'>{field}</span>,"
 
-    # Display the output
-    # st.markdown(output, unsafe_allow_html=True)
-    return f"{output}"
+    # # Display the output
+    # # st.markdown(output, unsafe_allow_html=True)
+    # return f"{output}"
 
 def addToGoogleSheets(need_dict):
     try:
@@ -180,7 +190,7 @@ def addToGoogleSheets(need_dict):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        need_sheet = client.open("BioDesign Observation Record").need_Log
+        need_sheet = client.open("BioDesign Observation Record").Need_Log
 
         headers = need_sheet.row_values(1)
 
@@ -203,22 +213,22 @@ def addToGoogleSheets(need_dict):
         print("Error adding to Google Sheets: ", e)
         return False
 
-def embedneed(attendees, need_description, need_summary, need_date, need_ID):
-    db = PineconeVectorStore(
-            index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-            namespace="needs",
-            embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-            pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-        )
+# def embedneed(observation_ID, need_statement, need_summary, need_date, need_ID):
+#     db = PineconeVectorStore(
+#             index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+#             namespace="needs",
+#             embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+#             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+#         )
     
-    db.add_texts([need_description], metadatas=[{'attendees': Attendees, 'need_date': need_Date, 'need_ID': need_ID}])
+#     db.add_texts([need_statement], metadatas=[{'observation_ID': observation_ID, 'need_date': need_Date, 'need_ID': need_ID}])
 
-    parsed_need = parseneed(need_description)
+#     parsed_need = parseneed(need_statement)
 
-    # write attendees, observatoin and parsed need to csv
+    # write observation_ID, observatoin and parsed need to csv
     need_keys = list(needRecord.__fields__.keys())
-    all_need_keys = ['need_summary', 'attendees', 'need_description', 'need_date', 'need_ID'] + need_keys
-    need_values = [need_summary, attendees, need_description, need_date, need_ID] + [parsed_need[key] for key in need_keys]
+    all_need_keys = ['need_summary', 'observation_ID', 'need_statement', 'need_date', 'need_ID'] + need_keys
+    need_values = [need_summary, observation_ID, need_statement, need_date, need_ID] + [parsed_need[key] for key in need_keys]
 
     need_dict = dict(zip(all_need_keys, need_values))
     csv_file = open(need_csv, "a")
@@ -230,45 +240,44 @@ def embedneed(attendees, need_description, need_summary, need_date, need_ID):
     return status
 
 
-def generateneedSummary(need_description):
+# def generateneedSummary(need_statement):
 
-    llm = ChatOpenAI(
-        model_name="gpt-4o",
-        temperature=0.7,
-        openai_api_key=OPENAI_API_KEY,
-        max_tokens=500,
-    )
+#     llm = ChatOpenAI(
+#         model_name="gpt-4o",
+#         temperature=0.7,
+#         openai_api_key=OPENAI_API_KEY,
+#         max_tokens=500,
+# #     )
 
 
-    need_prompt = PromptTemplate.from_template(
-"""
-You help me by creating a brief, one-sentence summary of the following medical need description.
+#     need_prompt = PromptTemplate.from_template(
+# """
+# You help me by creating a brief, one-sentence summary of the following medical need description.
 
-need_description: {need_description}
-Output Summary:"""
-)
+# need_statement: {need_statement}
+# Output Summary:"""
+# )
 
-    need_chain = (
-        need_prompt | llm | StrOutputParser()
-    )
+#     need_chain = (
+#         need_prompt | llm | StrOutputParser()
+#     )
 
-    # with get_openai_callback() as cb:
-    output = need_chain.invoke({"need_description": need_description})
+    # # with get_openai_callback() as cb:
+    # output = need_chain.invoke({"need_statement": need_statement})
 
-    return output
+    # return output
 
 
 def clear_need():
-    if 'need_description' in st.session_state:
-        st.session_state['need_description'] = ""
+    if 'need_statement' in st.session_state:
+        st.session_state['need_statement'] = ""
     if 'need_summary' in st.session_state:
         st.session_state['need_summary'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
     update_need_ID()
 
-import streamlit as st
-from datetime import date
+
 
 # Initialize or retrieve the clear_need counters dictionary from session state
 if 'need_counters' not in st.session_state:
@@ -276,7 +285,7 @@ if 'need_counters' not in st.session_state:
 
 # Function to generate need ID with the format OBYYMMDDxxxx
 def generate_need_ID(need_date, counter):
-    return f"OB{need_date.strftime('%y%m%d')}{counter:04d}"
+    return f"NS{need_date.strftime('%y%m%d')}{counter:04d}"
 
 # Function to update need ID when the date changes
 def update_need_ID():
@@ -293,7 +302,7 @@ def update_need_ID():
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
-    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")]
+    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")] #how to make this work
     obs_date_ids.sort()
 
     # get the counter from the last need id
@@ -315,7 +324,7 @@ def update_need_ID():
 
     st.session_state['need_ID'] = generate_need_ID(st.session_state['need_date'], counter)
 
-# Use columns to place need_date, need_ID, and attendees side by side
+# Use columns to place need_date, need_ID, and observation_ID side by side
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -323,9 +332,6 @@ with col1:
     st.date_input("need Date", date.today(), on_change=update_need_ID, key="need_date")
     #st.location['location'] = st.text_input("Location:", "")
     st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
-
-
-
 
 with col2:
     # Ensure the need ID is set the first time the script runs
@@ -336,8 +342,8 @@ with col2:
     st.text_input("need ID:", value=st.session_state['need_ID'], disabled=True)
 
 with col3:
-    #Display attendees options 
-    attendees = st.multiselect("Attendees", ["Ana", "Bridget"])
+    #Display observation_ID options 
+    observation_ID = st.multiselect("observation_ID", ["Test 1", "Test 2"]) #need to create a variable that's just an array of all the obervation IDs
 
 ############
 
@@ -367,7 +373,7 @@ with col3:
 #########
 
 # Textbox for name input
-#attendees = st.selectbox("attendees", ["Ana", "Bridget"])
+#observation_ID = st.selectbox("observation_ID", ["Ana", "Bridget"])
 
 # ######
 
@@ -379,12 +385,12 @@ with col3:
 
 # Initialize the observation text in session state if it doesn't exist
 
-if "need_description" not in st.session_state:
-    st.session_state["need_description"] = ""
+if "need_statement" not in st.session_state:
+    st.session_state["need_statement"] = ""
 
 # Function to clear the text area
 def clear_text():
-    st.session_state["need_description"] = ""
+    st.session_state["need_statement"] = ""
 
 #st.markdown("---")
 
@@ -394,14 +400,14 @@ def clear_text():
 #observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
 
 # Add Your need Text with larger font size
-st.markdown("<h4 style='font-size:20px;'>Add Your need:</h4>", unsafe_allow_html=True)
+st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_html=True)
 
 # Button for voice input (currently as a placeholder)
 #if st.button("🎤 Record need (Coming Soon)"):
  #   st.info("Voice recording feature coming soon!")
 
 # need Text Area
-st.session_state['need_description'] = st.text_area("need:", value=st.session_state["need_description"], height=200)
+st.session_state['need_statement'] = st.text_area("need:", value=st.session_state["need_statement"], height=100)
 
 
 # Create columns to align the buttons
@@ -443,9 +449,9 @@ with col3:
     
 
 with col1:
-    if st.button("Generate need Summary"):
-        st.session_state['result'] = extractneedFeatures(st.session_state['need_description'])
-        st.session_state['need_summary']  = generateneedSummary(st.session_state['need_description'])
+    # if st.button("Generate need Summary"):
+    #     st.session_state['result'] = extractneedFeatures(st.session_state['need_statement'])
+    #     st.session_state['need_summary']  = generateneedSummary(st.session_state['need_statement'])
     
 if st.session_state['need_summary'] != "":
     st.session_state['need_summary'] = st.text_area("need Summary (editable):", value=st.session_state['need_summary'], height=50)
@@ -461,11 +467,14 @@ if st.session_state['rerun']:
     
     ##########
 
-if st.button("Log need", disabled=st.session_state['need_summary'] == ""):
+# if st.button("Say hello"):
+#     st.write("Why hello there")
+
+if st.button("Log need", disabled=st.session_state['need_statement'] == ""):
     # st.session_state['need_summary']  = generateneedSummary(st.session_state['observation'])
     st.session_state["error"] = ""
 
-    if st.session_state['need_description'] == "":
+    if st.session_state['need_statement'] == "":
         st.session_state["error"] = "Error: Please enter need."
         st.markdown(
             f"<span style='color:red;'>{st.session_state['error']}</span>", 
@@ -478,17 +487,17 @@ if st.button("Log need", disabled=st.session_state['need_summary'] == ""):
             unsafe_allow_html=True
         )
     else:
-        status = embedneed(attendees, st.session_state['need_description'],  st.session_state['need_summary'], 
+        status = embedneed(observation_ID, st.session_state['need_statement'],  st.session_state['need_summary'], 
                             st.session_state['need_date'],
                             st.session_state['need_ID'])
         # st.session_state['need_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['need_summary'])
         # "Generated Summary: "+st.session_state['need_summary']+"\n\n"
         if status:
-            st.session_state['result'] = "need added to your team's database."
+            st.session_state['result'] = "Need statement added to your team's database."
             st.session_state['rerun'] = True
             st.rerun()
         else:
-            st.session_state['result'] = "Error adding need to your team's database. Please try again!"
+            st.session_state['result'] = "Error adding need statement to your team's database. Please try again!"
         # clear_need()
 
 st.markdown("---")
