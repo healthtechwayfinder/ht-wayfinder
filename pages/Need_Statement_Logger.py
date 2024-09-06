@@ -448,7 +448,7 @@ with col3:
 #         st.session_state['need_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['need_summary'], height=50)
     
 
-with col1:
+# with col1:
     # if st.button("Generate need Summary"):
     #     st.session_state['result'] = extractneedFeatures(st.session_state['need_statement'])
     #     st.session_state['need_summary']  = generateneedSummary(st.session_state['need_statement'])
