@@ -38,6 +38,7 @@ terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
 
+
 # Combine terms and definitions into a list of tuples
 terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
@@ -48,8 +49,10 @@ sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 st.markdown("""
     <style>
     .scrollable-container {
-        max-height: 400px;
-        overflow-y: auto;
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -57,21 +60,19 @@ st.markdown("""
 # Search bar for filtering terms
 search_term = st.text_input("Search Glossary")
 
-# Create a scrollable container
-with st.container():
-    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+# Create a scrollable container using HTML
+st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-    # Filter the glossary based on the search term (case-insensitive)
-    filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+# Filter the glossary based on the search term (case-insensitive)
+filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-    if filtered_terms_definitions:
-        for term, definition in filtered_terms_definitions:
-            st.write(f"**{term}:** {definition}")
-    else:
-        st.write("No matching terms found.")
+if filtered_terms_definitions:
+    for term, definition in filtered_terms_definitions:
+        st.markdown(f"**{term}:** {definition}")
+else:
+    st.markdown("No matching terms found.")
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 ########################## past retrieval of glossary: 
