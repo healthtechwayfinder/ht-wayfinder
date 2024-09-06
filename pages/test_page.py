@@ -8,7 +8,10 @@ with st.form(key="my_form"):
     if submit_button:
         if text_input:
             need_statement = text_input
-            st.write(f'You entered: {need_statement}')
+            st.write("Need statement recorded!")
+            # st.write(f'You entered: {need_statement}')
+
+
         else:
             st.warning("Please enter a need statement!")
 
