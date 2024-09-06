@@ -6,20 +6,20 @@ from typing import Optional
 import csv
 import os
 
-import streamlit as st
+#import streamlit as st
 
 # Apply custom CSS to use Helvetica font
-st.markdown(
-    """
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
-    html, body, [class*="css"]  {
-        font-family: 'Helvetica', sans-serif;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     """
+#     <style>
+#     @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
+#     html, body, [class*="css"]  {
+#         font-family: 'Helvetica', sans-serif;
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True,
+# )
 
 
 
