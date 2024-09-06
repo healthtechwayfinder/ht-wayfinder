@@ -101,6 +101,9 @@ if 'outcome' not in st.session_state:
 if 'observation_ID' not in st.session_state:
     st.session_state['observation_ID'] = ""
 
+if 'Notes' not in st.session_state:
+    st.session_state['Notes'] = ""
+
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
     
@@ -321,6 +324,7 @@ st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_htm
 
 with st.form(key="my_form"):
     need_input = st.text_input(label="Draft Need Statement Here:")
+    notes_input = st.text_area("Notes:", value=st.session_state["notes_input"], height=100)
     
     submit_button = st.form_submit_button(label="Submit")
     # st.button("Clear need", on_click=clear_text)
@@ -337,6 +341,7 @@ with st.form(key="my_form"):
             problem = problem_input
             population = population_input
             outcome = outcome_input
+            notes = notes_input
             st.write("Need statement recorded!")
             #update so that all variables are saved from text input and then logged
 
