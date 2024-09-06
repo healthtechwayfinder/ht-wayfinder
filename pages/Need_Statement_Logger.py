@@ -85,8 +85,8 @@ creds_dict = {
 if 'need_statement' not in st.session_state:
     st.session_state['need_statement'] = ""
 
-if 'location' not in st.session_state:
-    st.session_state['location'] = ""
+# if 'location' not in st.session_state:
+#     st.session_state['location'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
@@ -216,8 +216,8 @@ col1, col2, col3 = st.columns(3)
 with col1:
     # st calendar for date input with a callback to update the need_ID
     st.date_input("need Date", date.today(), on_change=update_need_ID, key="need_date")
-    #st.location['location'] = st.text_input("Location:", "")
-    st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
+    # st.location['location'] = st.text_input("Location:", "")
+    # st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
 
 with col2:
     # Ensure the need ID is set the first time the script runs
