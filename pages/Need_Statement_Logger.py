@@ -286,6 +286,11 @@ def clear_text():
 #observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
 
 # Add Your need Text with larger font size
+
+problem_input = st.text_input(label="Problem:")
+population_input = st.text_input(label="Population:")
+outcome_input = st.text_input(label="Outcome:")
+
 st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_html=True)
 
 # Button for voice input (currently as a placeholder)
@@ -296,13 +301,19 @@ st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_htm
 #st.session_state['need_statement'] = st.text_area("need:", value=st.session_state["need_statement"], height=100)
 
 with st.form(key="my_form"):
-    text_input = st.text_input(label="Need Statement:")
+    need_input = st.text_input(label="")
+    
     submit_button = st.form_submit_button(label="Submit")
+    
 
     if submit_button:
         if text_input:
-            need_statement = text_input
+            need_statement = need_input
+            problem = problem_input
+            population = populaiton_input
+            outcome = outcome_input
             st.write("Need statement recorded!")
+            #update so that all variables are saved from text input and then logged
 
 
 
