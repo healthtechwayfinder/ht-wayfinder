@@ -311,6 +311,10 @@ with st.form(key="my_form"):
     need_input = st.text_input(label="")
     
     submit_button = st.form_submit_button(label="Submit")
+
+    with col3:
+     # Button to Clear the need Text Area
+    st.button("Clear need", on_click=clear_text)
     
 
     if submit_button:
@@ -345,8 +349,7 @@ with col3:
     #     </style>
     #     """, unsafe_allow_html=True)
 
-    # Button to Clear the need Text Area
-    st.button("Clear need", on_click=clear_text)
+   
     
     # Container for result display
     result_container = st.empty()
