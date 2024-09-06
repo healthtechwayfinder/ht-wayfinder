@@ -37,21 +37,27 @@ with col1:
     if st.button("🔍 Record a New Observation"):
         switch_page("Record_New_Observation")
 
-    if st.button("✅ Tips for your Observations"):
-        switch_page("Tips_for_Observations")
-
     if st.button("❓ Chat with Observations"):
         switch_page("Ask_the_Observations")
 
+    if st.button("📒 View All Observations"):
+        switch_page("View_All_Observations")
+        
     if st.button("📊 Glossary"):
         switch_page("Glossary")
 
-    if st.button("📒 View All Observations"):
-        switch_page("View_All_Observations")
+ if st.button("✅ Weekly Review (coming soon)"):
+        switch_page("Tips_for_Observations")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
 with col2:
     st.header("Need Statement Tools")
+    if st.button("🔍 Create a Need Statement"):
+        switch_page("Need_Statement_Logger")
+
+    if st.button("✅ Scope Need Statements (coming soon)"):
+        switch_page("Tips_for_Observations")
+
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
 
@@ -91,7 +97,7 @@ st.markdown("---")
 #     if st.button("📒 View All Observations"):
 #         switch_page("View_All_Observations")
 
-st.markdown("---")
+# st.markdown("---")
 
 # Log Out Button with rerun or meta refresh
 col1, col2, col3 = st.columns([3, 1, 1])
