@@ -46,7 +46,7 @@ with col1:
     if st.button("📊 Glossary"):
         switch_page("Glossary")
 
- if st.button("✅ Weekly Review (coming soon)"):
+    if st.button("✅ Weekly Review (coming soon)"):
         switch_page("Tips_for_Observations")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
