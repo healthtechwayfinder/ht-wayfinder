@@ -215,7 +215,7 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     # st calendar for date input with a callback to update the need_ID
-    st.date_input("need Date", date.today(), on_change=update_need_ID, key="need_date")
+    st.date_input("Need Date", date.today(), on_change=update_need_ID, key="need_date")
     # st.location['location'] = st.text_input("Location:", "")
     # st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
 
@@ -225,7 +225,7 @@ with col2:
         update_need_ID()
 
     # Display the need ID
-    st.text_input("need ID:", value=st.session_state['need_ID'], disabled=True)
+    st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
 
 with col3:
     #Display observation_ID options 
