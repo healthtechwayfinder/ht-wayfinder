@@ -334,7 +334,9 @@ with st.form(key="my_form"):
 # col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
 
 with col3:
-     # Container for result display
+      # Button to Clear the Observation Text Area
+  #  st.button("Clear Observation", on_click=clear_text) 
+    # Container for result display
     result_container = st.empty()
     # Use custom CSS for the red button
     # st.markdown("""
