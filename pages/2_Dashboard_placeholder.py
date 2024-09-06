@@ -24,25 +24,20 @@ import os
 # )
 
 
-
-
-
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 
 st.markdown("# Welcome!")
 
 
 
-
-
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("Test 1")
+    st.header("Observation Assistant")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
 with col2:
-    st.header("Test 2")
+    st.header("Need Statement Workshop")
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
 
