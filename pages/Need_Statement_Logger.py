@@ -401,16 +401,16 @@ if st.session_state['rerun']:
     
     ##########
 
-if st.button("Log need", disabled=st.session_state['need_statement'] == ""):
-    # st.session_state['need_summary']  = generateneedSummary(st.session_state['observation'])
-    st.session_state["error"] = ""
+# if st.button("Log need", disabled=st.session_state['need_statement'] == ""):
+#     # st.session_state['need_summary']  = generateneedSummary(st.session_state['observation'])
+#     st.session_state["error"] = ""
 
-    if st.session_state['need_statement'] == "":
-        st.session_state["error"] = "Error: Please enter need."
-        st.markdown(
-            f"<span style='color:red;'>{st.session_state['error']}</span>", 
-            unsafe_allow_html=True
-        )
+#     if st.session_state['need_statement'] == "":
+#         st.session_state["error"] = "Error: Please enter need."
+#         st.markdown(
+#             f"<span style='color:red;'>{st.session_state['error']}</span>", 
+#             unsafe_allow_html=True
+#         )
     # elif st.session_state['need_summary'] == "":
     #     st.session_state["error"] = "Error: Please evaluate need."
     #     st.markdown(
