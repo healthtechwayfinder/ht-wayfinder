@@ -228,8 +228,9 @@ with col2:
     st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
 
 with col3:
-    #Display observation_ID options 
-    observation_ID = st.multiselect("Select Relevant Observations", ["Test 1", "Test 2"]) #need to create a variable that's just an array of all the obervation IDs
+    # Display observation_ID options 
+    # need to create a variable that's just an array of all the obervation IDs
+    observation_ID = st.multiselect("Relevant Observations (multi-select)", ["Test 1", "Test 2"]) 
 
 ############
 
