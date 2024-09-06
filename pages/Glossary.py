@@ -62,6 +62,25 @@ st.markdown("""
 # Search bar for filtering terms
 search_term = st.text_input("Search Glossary")
 
+
+# Create input fields for manually adding a new term and definition
+st.markdown("## Add a New Term")
+new_term = st.text_input("Enter a new term:")
+new_definition = st.text_area("Enter the definition for the new term:")
+
+# Button to add the new term and definition
+if st.button("Add Term"):
+    if new_term and new_definition:
+        # Add the new term and definition to the list
+        sorted_terms_definitions.append((new_term, new_definition))
+        sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+        
+        # Optionally, you could also update Google Sheets here
+        observation_sheet.append_row([new_term, new_definition])
+        st.success(f"Term '{new_term}' has been added successfully!")
+    else:
+        st.error("Please enter both a term and a definition.")
+
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
 
