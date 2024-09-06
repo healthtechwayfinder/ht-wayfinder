@@ -348,14 +348,13 @@ with st.form(key="my_form"):
             outcome = outcome_input
             notes = notes_input
             st.write("Need statement recorded!")
-            st.write(f'Notes: {problem}')
-            st.write(f'Notes: {population}')
-            st.write(f'Notes: {outcome}')
+            st.write(f'Relevant Observations: {observation_ID}')
+            st.write(f'Problem: {problem}')
+            st.write(f'Population: {population}')
+            st.write(f'Outcome: {outcome}')
             st.write(f'Notes: {notes}')
-            
-            
-
-            #update so that all variables are saved from text input and then logged
+            #TO DO: clear text boxes after
+            #TO DO: update so that all variables are saved from text input and then logged
 
 
 
