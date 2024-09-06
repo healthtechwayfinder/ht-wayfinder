@@ -341,7 +341,7 @@ with st.form(key="my_form"):
     
 
     if submit_button:
-        if text_input:
+        if need_input:
             need_statement = need_input
             problem = problem_input
             population = population_input
