@@ -34,34 +34,6 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("Observation Tools")
-    #st.image("https://static.streamlit.io/examples/cat.jpg")
-
-with col2:
-    st.header("Need Statement Tools")
-    #st.image("https://static.streamlit.io/examples/dog.jpg")
-
-
-# Your logo URL (replace if necessary)
-logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
-
-# Display the title with the logo below it
-# st.markdown(
-#     f"""
-#     <div style="text-align: center;">
-#         <h1>Dashboard</h1>
-#         <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-#     </div>
-#     """,
-#     unsafe_allow_html=True,
-# )
-
-st.markdown("---")
-
-st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
-
-# Button functionality
-col1, col2 = st.columns([1, 3])
-with col2:
     if st.button("🔍 Record a New Observation"):
         switch_page("Record_New_Observation")
 
@@ -76,6 +48,48 @@ with col2:
 
     if st.button("📒 View All Observations"):
         switch_page("View_All_Observations")
+    #st.image("https://static.streamlit.io/examples/cat.jpg")
+
+with col2:
+    st.header("Need Statement Tools")
+    #st.image("https://static.streamlit.io/examples/dog.jpg")
+
+
+# Your logo URL (replace if necessary)
+# logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
+
+# Display the title with the logo below it
+# st.markdown(
+#     f"""
+#     <div style="text-align: center;">
+#         <h1>Dashboard</h1>
+#         <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
+#     </div>
+#     """,
+#     unsafe_allow_html=True,
+# )
+
+st.markdown("---")
+
+# st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
+
+# Button functionality
+# col1, col2 = st.columns([1, 3])
+# with col2:
+#     if st.button("🔍 Record a New Observation"):
+#         switch_page("Record_New_Observation")
+
+#     if st.button("✅ Tips for your Observations"):
+#         switch_page("Tips_for_Observations")
+
+#     if st.button("❓ Chat with Observations"):
+#         switch_page("Ask_the_Observations")
+
+#     if st.button("📊 Glossary"):
+#         switch_page("Glossary")
+
+#     if st.button("📒 View All Observations"):
+#         switch_page("View_All_Observations")
 
 st.markdown("---")
 
