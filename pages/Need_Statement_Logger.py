@@ -142,7 +142,7 @@ def addToGoogleSheets(need_dict):
     # write observation_ID, to csv
     need_keys = list(needRecord.__fields__.keys())
     all_need_keys = ['observation_ID', 'need_statement', 'need_date', 'need_ID'] + need_keys
-    need_values = [need_summary, observation_ID, need_statement, need_date, need_ID] + [parsed_need[key] for key in need_keys]
+    need_values = [observation_ID, need_statement, need_date, need_ID] + [parsed_need[key] for key in need_keys]
 
     need_dict = dict(zip(all_need_keys, need_values))
     csv_file = open(need_csv, "a")
@@ -157,8 +157,8 @@ def addToGoogleSheets(need_dict):
 def clear_need():
     if 'need_statement' in st.session_state:
         st.session_state['need_statement'] = ""
-    if 'need_summary' in st.session_state:
-        st.session_state['need_summary'] = ""
+    # if 'need_summary' in st.session_state:
+    #     st.session_state['need_summary'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
     update_need_ID()
@@ -349,8 +349,8 @@ with col3:
     #     st.session_state['result'] = extractneedFeatures(st.session_state['need_statement'])
     #     st.session_state['need_summary']  = generateneedSummary(st.session_state['need_statement'])
     
-if st.session_state['need_summary'] != "":
-    st.session_state['need_summary'] = st.text_area("need Summary (editable):", value=st.session_state['need_summary'], height=50)
+# if st.session_state['need_summary'] != "":
+#     st.session_state['need_summary'] = st.text_area("need Summary (editable):", value=st.session_state['need_summary'], height=50)
 
 # st.write(f":green[{st.session_state['result']}]")
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
@@ -376,16 +376,16 @@ if st.button("Log need", disabled=st.session_state['need_statement'] == ""):
             f"<span style='color:red;'>{st.session_state['error']}</span>", 
             unsafe_allow_html=True
         )
-    elif st.session_state['need_summary'] == "":
-        st.session_state["error"] = "Error: Please evaluate need."
-        st.markdown(
-            f"<span style='color:red;'>{st.session_state['error']}</span>", 
-            unsafe_allow_html=True
-        )
-    else:
-        status = embedneed(observation_ID, st.session_state['need_statement'],  st.session_state['need_summary'], 
-                            st.session_state['need_date'],
-                            st.session_state['need_ID'])
+    # elif st.session_state['need_summary'] == "":
+    #     st.session_state["error"] = "Error: Please evaluate need."
+    #     st.markdown(
+    #         f"<span style='color:red;'>{st.session_state['error']}</span>", 
+    #         unsafe_allow_html=True
+    #     )
+    # else:
+    #     status = embedneed(observation_ID, st.session_state['need_statement'],  st.session_state['need_summary'], 
+    #                         st.session_state['need_date'],
+    #                         st.session_state['need_ID'])
         # st.session_state['need_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['need_summary'])
         # "Generated Summary: "+st.session_state['need_summary']+"\n\n"
         if status:
