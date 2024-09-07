@@ -216,17 +216,6 @@ def update_need_ID():
         counter = int(obs_date_ids[-1][-4:])+1
     else:
         counter = 1
-    
-    # # Check if the date is already in the dictionary
-    # if obs_date_str in st.session_state['need_counters']:
-    #     # Increment the counter for this date
-    #     st.session_state['need_counters'][obs_date_str] += 1
-    # else:
-    #     # Initialize the counter to 1 for a new date
-    #     st.session_state['need_counters'][obs_date_str] = 1
-    
-    # Generate the need ID using the updated counter
-    # counter = st.session_state['need_counters'][obs_date_str]
 
     st.session_state['need_ID'] = generate_need_ID(st.session_state['need_date'], counter)
 
@@ -236,8 +225,6 @@ col1, col2, col3 = st.columns(3)
 with col1:
     # st calendar for date input with a callback to update the need_ID
     st.date_input("Need Date", date.today(), on_change=update_need_ID, key="need_date")
-    # st.location['location'] = st.text_input("Location:", "")
-    # st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
 
 with col2:
     # Ensure the need ID is set the first time the script runs
