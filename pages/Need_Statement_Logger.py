@@ -350,6 +350,7 @@ with st.form(key="my_form"):
             notes = notes_input
             st.write("Need statement recorded!")
             st.write(f'Relevant Observations: {observation_ID}')
+            st.write(f'Need ID: {need_ID}')
             st.write(f'Problem: {problem}')
             st.write(f'Population: {population}')
             st.write(f'Outcome: {outcome}')
