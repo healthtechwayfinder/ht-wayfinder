@@ -98,8 +98,8 @@ if 'population' not in st.session_state:
 if 'outcome' not in st.session_state:
     st.session_state['outcome'] = ""
 
-if 'observation_ID' not in st.session_state:
-    st.session_state['observation_ID'] = ""
+# if 'observation_ID' not in st.session_state:
+#     st.session_state['observation_ID'] = ""
 
 if 'Notes' not in st.session_state:
     st.session_state['Notes'] = ""
@@ -204,7 +204,7 @@ def update_need_ID():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    need_sheet = client.open("BioDesign Observation Record").sheet1
+    need_sheet = client.open("BioDesign Observation Record").Need_Log
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
