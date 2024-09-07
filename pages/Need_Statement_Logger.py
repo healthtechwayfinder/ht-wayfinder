@@ -158,8 +158,8 @@ def addToGoogleSheets(need_dict):
         return False
     # variables recorded: 'need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID'
 
-#     put in format to upload to google sheets    
 
+# put in correct format & call function to upload to google sheets
 def recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
     
      all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes'] # + need_keys
@@ -354,6 +354,9 @@ with st.form(key="my_form"):
             st.write(f'Population: {population}')
             st.write(f'Outcome: {outcome}')
             st.write(f'Notes: {notes}')
+            clear_need()
+            recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
+
             #TO DO: clear text boxes after
             #TO DO: update so that all variables are saved from text input and then logged
 
