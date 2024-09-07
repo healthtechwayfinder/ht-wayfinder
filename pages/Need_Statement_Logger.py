@@ -348,6 +348,7 @@ with st.form(key="my_form"):
             population = population_input
             outcome = outcome_input
             notes = notes_input
+            update_need_ID()
             st.write("Need statement recorded!")
             st.write(f'Relevant Observations: {observation_ID}')
             st.write(f'Need ID: {need_ID}')
