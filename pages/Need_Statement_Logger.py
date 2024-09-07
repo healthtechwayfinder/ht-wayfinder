@@ -354,7 +354,7 @@ with st.form(key="my_form"):
             st.write(f'Population: {population}')
             st.write(f'Outcome: {outcome}')
             st.write(f'Notes: {notes}')
-            clear_need()
+            #clear_need()
             recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes)
 
             #TO DO: clear text boxes after
@@ -415,7 +415,7 @@ st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
 if st.session_state['rerun']:
     time.sleep(3)
-    clear_need()
+    #clear_need()
     st.session_state['rerun'] = False
     st.rerun()
     
