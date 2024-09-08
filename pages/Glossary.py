@@ -132,52 +132,46 @@ st.markdown("""
 # Create a scrollable container using HTML
 st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
+# Prepare the content of the scrollable container
+html_content = ""
+
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-# Display the terms and their definitions with the Edit button
+ Display the terms and their definitions with the Edit button in HTML
 for i, (term, definition) in enumerate(filtered_terms_definitions):
-    # Create columns for term/definition and the edit button
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        st.markdown(f"**{term}:** {definition}")
-    with col2:
-        if st.button("Edit", key=f"edit_button_{i}"):
-            st.session_state['editing_term_index'] = i
-            st.session_state['edited_term'] = term
-            st.session_state['edited_definition'] = definition
+    html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+    if f"edit_button_{i}" not in st.session_state:
+        st.session_state[f"edit_button_{i}"] = False
+    
+    if st.session_state[f"edit_button_{i}"]:
+        # Display edit fields if the user clicked "Edit"
+        with st.form(key=f"edit_form_{i}"):
+            edited_term = st.text_input(f"Edit term for {term}:", value=term, key=f"edit_term_{i}")
+            edited_definition = st.text_area(f"Edit definition for {term}:", value=definition, key=f"edit_definition_{i}")
+            save_button = st.form_submit_button("Save")
+            cancel_button = st.form_submit_button("Cancel")
 
-    # Edit mode: if the current term is being edited
-    if st.session_state.get('editing_term_index') == i:
-        edited_term = st.text_input("Edit term:", value=st.session_state.get('edited_term', term), key=f"edit_term_{i}")
-        edited_definition = st.text_area("Edit definition:", value=st.session_state.get('edited_definition', definition), key=f"edit_definition_{i}")
+            if save_button:
+                # Save changes to Google Sheets
+                row_index = terms.index(term) + 1
+                observation_sheet.update(f'A{row_index}', edited_term)
+                observation_sheet.update(f'B{row_index}', edited_definition)
+                st.session_state[f"edit_button_{i}"] = False
+                st.success(f"Term '{edited_term}' has been updated.")
 
-        # Save and Cancel buttons
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("Save", key=f"save_button_{i}"):
-                if edited_term.strip() and edited_definition.strip():
-                    # Update Google Sheets with the edited term and definition
-                    row_index = terms.index(term) + 1  # Get the correct row index to update
-                    observation_sheet.update(f'A{row_index}', edited_term)
-                    observation_sheet.update(f'B{row_index}', edited_definition)
-                    st.success(f"Term '{edited_term}' updated successfully!")
-                    
-                    # Reset session state
-                    st.session_state['editing_term_index'] = None
-                    st.session_state['edited_term'] = ''
-                    st.session_state['edited_definition'] = ''
-                else:
-                    st.error("Both term and definition must be provided.")
-        with col2:
-            if st.button("Cancel", key=f"cancel_button_{i}"):
-                st.session_state['editing_term_index'] = None
-                st.session_state['edited_term'] = ''
-                st.session_state['edited_definition'] = ''
+            if cancel_button:
+                st.session_state[f"edit_button_{i}"] = False
+    else:
+        # Display "Edit" button
+        if st.button("Edit", key=f"edit_button_trigger_{i}"):
+            st.session_state[f"edit_button_{i}"] = True
+
+# Render the HTML content inside the scrollable container
+st.markdown(html_content, unsafe_allow_html=True)
 
 # Close the scrollable div
 st.markdown("</div>", unsafe_allow_html=True)
-
 
 ########################## past retrieval of glossary: 
 
