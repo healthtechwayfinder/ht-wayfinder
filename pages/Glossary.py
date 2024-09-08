@@ -32,7 +32,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 observation_sheet = client.open("Glossary").sheet1
 
-# Initialize session state variables safely
+# Initialize session state variables if not already initialized
 if "show_new_term_fields" not in st.session_state:
     st.session_state["show_new_term_fields"] = False
 if "new_term" not in st.session_state:
@@ -40,7 +40,7 @@ if "new_term" not in st.session_state:
 if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
 
-# Retrieve terms and definitions from Google Sheets
+# Print test 
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
@@ -49,6 +49,23 @@ terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
 # Sort the list alphabetically by the term
 sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
+
+
+# Add custom CSS to make the container scrollable
+st.markdown("""
+    <style>
+    .scrollable-container {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# # Search bar for filtering terms
+# search_term = st.text_input("Search Glossary")
 
 # Add custom CSS for white search bar
 st.markdown("""
@@ -62,6 +79,26 @@ st.markdown("""
 
 # Search bar for filtering terms
 search_term = st.text_input("Search Glossary")
+
+# # Create input fields for manually adding a new term and definition
+# st.markdown("## Add a New Term")
+# new_term = st.text_input("Enter a new term:")
+# new_definition = st.text_area("Enter the definition for the new term:")
+
+
+
+# # Button to add the new term and definition
+# if st.button("Add Term"):
+#     if new_term and new_definition:
+#         # Add the new term and definition to the list
+#         sorted_terms_definitions.append((new_term, new_definition))
+#         sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+        
+#         # Optionally, you could also update Google Sheets here
+#         observation_sheet.append_row([new_term, new_definition])
+#         st.success(f"Term '{new_term}' has been added successfully!")
+#     else:
+#         st.error("Please enter both a term and a definition.")
 
 # Button to toggle input fields
 if st.button("Add a New Term"):
@@ -93,6 +130,8 @@ if st.session_state["show_new_term_fields"]:
             else:
                 st.error("Please enter both a term and a definition.")
 
+
+
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
 
@@ -109,167 +148,6 @@ html_content += "</div>"
 
 # Render the HTML content inside the scrollable container
 st.markdown(html_content, unsafe_allow_html=True)
-
-# Add custom CSS to style a large button
-st.markdown("""
-    <style>
-    .big-button-container {
-        display: flex;
-        justify-content: center;
-    }
-    .big-button {
-        font-size: 20px;
-        padding: 10px 60px;
-        background-color: #365980; /* blueish color */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        text-align: center;
-    }
-    .big-button:hover {
-        background-color: #c2c2c2; /* Grey */
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Create a button to go back to the main menu
-st.markdown("""
-    <div class="big-button-container">
-        <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
-    </div>
-    """, unsafe_allow_html=True)
-
-# # Set up the Streamlit page
-# st.set_page_config(page_title="Glossary", page_icon="📊")
-# st.markdown("# Glossary")
-
-# # Authenticate and connect to Google Sheets using service account credentials
-# creds_dict = st.secrets["gcp_service_account"]
-# scope = [
-#     "https://www.googleapis.com/auth/spreadsheets",
-#     "https://www.googleapis.com/auth/drive.metadata.readonly"
-# ]
-# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-# client = gspread.authorize(creds)
-# observation_sheet = client.open("Glossary").sheet1
-
-# # Initialize session state variables if not already initialized
-# if "show_new_term_fields" not in st.session_state:
-#     st.session_state["show_new_term_fields"] = False
-# if "new_term" not in st.session_state:
-#     st.session_state["new_term"] = ""
-# if "new_definition" not in st.session_state:
-#     st.session_state["new_definition"] = ""
-
-# # Print test 
-# terms = observation_sheet.col_values(1)  # Terms are in column 1
-# definitions = observation_sheet.col_values(2)  # Definitions are in column 2
-
-# # Combine terms and definitions into a list of tuples
-# terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
-
-# # Sort the list alphabetically by the term
-# sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
-
-
-# # Add custom CSS to make the container scrollable
-# st.markdown("""
-#     <style>
-#     .scrollable-container {
-#         height: 300px;
-#         overflow-y: scroll;
-#         border: 1px solid #ccc;
-#         padding: 10px;
-#         font-size: 16px;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
-
-# # # Search bar for filtering terms
-# # search_term = st.text_input("Search Glossary")
-
-# # Add custom CSS for white search bar
-# st.markdown("""
-#     <style>
-#     input[type="text"] {
-#         background-color: white !important;
-#         color: black !important;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
-
-# # Search bar for filtering terms
-# search_term = st.text_input("Search Glossary")
-
-# # Create input fields for manually adding a new term and definition
-# st.markdown("## Add a New Term")
-# new_term = st.text_input("Enter a new term:")
-# new_definition = st.text_area("Enter the definition for the new term:")
-
-
-
-# # Button to add the new term and definition
-# if st.button("Add Term"):
-#     if new_term and new_definition:
-#         # Add the new term and definition to the list
-#         sorted_terms_definitions.append((new_term, new_definition))
-#         sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
-        
-#         # Optionally, you could also update Google Sheets here
-#         observation_sheet.append_row([new_term, new_definition])
-#         st.success(f"Term '{new_term}' has been added successfully!")
-#     else:
-#         st.error("Please enter both a term and a definition.")
-
-# # Button to toggle input fields
-# if st.button("Add a New Term"):
-#     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
-
-# # Conditionally display the input fields for adding a new term and definition
-# if st.session_state["show_new_term_fields"]:
-#     with st.form(key="new_term_form"):
-#         st.text_input("Enter a new term:", key="new_term")
-#         st.text_area("Enter the definition for the new term:", key="new_definition")
-#         submit_button = st.form_submit_button("Submit New Term")
-
-#         if submit_button:
-#             # Ensure that both new_term and new_definition are filled
-#             if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
-#                 # Add the new term and definition to the list
-#                 sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
-#                 sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
-
-#                 # Update Google Sheets with the new term and definition
-#                 observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
-#                 st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
-
-#                 # Clear input fields
-#                 st.session_state["new_term"] = ""
-#                 st.session_state["new_definition"] = ""
-#                 st.session_state["show_new_term_fields"] = False
-#                 st.experimental_rerun()  # Refresh to clear the form
-#             else:
-#                 st.error("Please enter both a term and a definition.")
-
-
-
-# # Create a scrollable container using HTML
-# html_content = "<div class='scrollable-container'>"
-
-# # Filter the glossary based on the search term (case-insensitive)
-# filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
-
-# if filtered_terms_definitions:
-#     for term, definition in filtered_terms_definitions:
-#         html_content += f"<p><strong>{term}:</strong> {definition}</p>"
-# else:
-#     html_content += "<p>No matching terms found.</p>"
-
-# html_content += "</div>"
-
-# # Render the HTML content inside the scrollable container
-# st.markdown(html_content, unsafe_allow_html=True)
 
 ########################## past retrieval of glossary: 
 
@@ -327,35 +205,35 @@ st.markdown("""
 
 # st.markdown("---")
 
-# # Add custom CSS to style a large button
-# st.markdown("""
-#     <style>
-#     .big-button-container {
-#         display: flex;
-#         justify-content: center;
-#     }
-#     .big-button {
-#         font-size: 20px;
-#         padding: 10px 60px;
-#         background-color: #365980; /* blueish color */
-#         color: white;
-#         border: none;
-#         border-radius: 8px;
-#         cursor: pointer;
-#         text-align: center;
-#     }
-#     .big-button:hover {
-#         background-color: #c2c2c2; /* Grey */
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
+# Add custom CSS to style a large button
+st.markdown("""
+    <style>
+    .big-button-container {
+        display: flex;
+        justify-content: center;
+    }
+    .big-button {
+        font-size: 20px;
+        padding: 10px 60px;
+        background-color: #365980; /* blueish color */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-align: center;
+    }
+    .big-button:hover {
+        background-color: #c2c2c2; /* Grey */
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# # Create a button to go back to the main menu
-# st.markdown("""
-#     <div class="big-button-container">
-#         <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
-#     </div>
-#     """, unsafe_allow_html=True)
+# Create a button to go back to the main menu
+st.markdown("""
+    <div class="big-button-container">
+        <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
+    </div>
+    """, unsafe_allow_html=True)
 
 
 ###################
