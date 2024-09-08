@@ -204,7 +204,7 @@ def update_need_ID():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    need_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
+    need_sheet = client.open("BioDesign Observation Record").sheet1
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
