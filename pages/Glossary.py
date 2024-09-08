@@ -136,6 +136,7 @@ if st.session_state['show_new_term_fields']:
             else:
                 st.error("Please enter both a term and a definition.")
 
+# Add custom CSS to make the container scrollable and align the edit button to the right
 st.markdown("""
     <style>
     .scrollable-container {
@@ -148,16 +149,25 @@ st.markdown("""
     .term-row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
         margin-bottom: 10px;
     }
+    .term-text {
+        flex-grow: 1;
+    }
     .edit-button {
-        margin-left: 20px;
+        background-color: lightblue;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        font-size: 14px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Create a scrollable container using HTML
-html_content = "<div class='scrollable-container'>"
+# Create a scrollable container
+st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+
 
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
@@ -209,8 +219,8 @@ for i, (term, definition) in enumerate(filtered_terms_definitions):
 
 html_content += "</div>"
 
-# Render the HTML content inside the scrollable container
-st.markdown(html_content, unsafe_allow_html=True)
+# Close the scrollable container
+st.markdown("</div>", unsafe_allow_html=True)
 
 ########################## past retrieval of glossary: 
 
