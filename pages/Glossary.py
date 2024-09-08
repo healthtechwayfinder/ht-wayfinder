@@ -108,20 +108,21 @@ if "new_definition" not in st.session_state:
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
+
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
     new_term = st.text_input("Enter a new term:", key="new_term")
     new_definition = st.text_area("Enter the definition for the new term:", key="new_definition")
 
     if st.button("Submit New Term"):
-        if new_term and new_definition:
+        if st.session_state["new_term"] and st.session_state["new_definition"]:
             # Add the new term and definition to the list
-            sorted_terms_definitions.append((new_term, new_definition))
+            sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
             sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
             
             # Optionally, you could also update Google Sheets here
-            observation_sheet.append_row([new_term, new_definition])
-            st.success(f"Term '{new_term}' has been added successfully!")
+            observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
+            st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
             
             # Hide the input fields after submission
             st.session_state["show_new_term_fields"] = False
