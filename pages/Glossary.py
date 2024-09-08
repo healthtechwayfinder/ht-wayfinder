@@ -96,39 +96,39 @@ search_term = st.text_input("Search Glossary")
 #         st.error("Please enter both a term and a definition.")
 
 
-# Ensure session state for "show_new_term_fields", "new_term", and "new_definition" exists
+# Initialize session state variables if not present
 if "show_new_term_fields" not in st.session_state:
     st.session_state["show_new_term_fields"] = False
 if "new_term" not in st.session_state:
     st.session_state["new_term"] = ""
 if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
-
+    
 # Button to toggle input fields
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
 
-# Conditionally display the input fields for adding a new term and definition
+#  Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
-    new_term = st.text_input("Enter a new term:", key="new_term")
-    new_definition = st.text_area("Enter the definition for the new term:", key="new_definition")
+    st.text_input("Enter a new term:", key="new_term")
+    st.text_area("Enter the definition for the new term:", key="new_definition")
 
+    # Submit New Term button
     if st.button("Submit New Term"):
         if st.session_state["new_term"] and st.session_state["new_definition"]:
             # Add the new term and definition to the list
             sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
             sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
             
-            # Optionally, you could also update Google Sheets here
+            # Update Google Sheets with the new term and definition
             observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
             st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
             
-            # Hide the input fields after submission
+            # Hide the input fields after submission and reset the term and definition
             st.session_state["show_new_term_fields"] = False
-            # Reset input fields
-            st.session_state["new_term"] = ""
-            st.session_state["new_definition"] = ""
+            st.session_state["new_term"] = ""  # Reset new term field
+            st.session_state["new_definition"] = ""  # Reset new definition field
         else:
             st.error("Please enter both a term and a definition.")
 
