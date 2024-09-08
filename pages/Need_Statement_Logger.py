@@ -204,11 +204,11 @@ def update_need_ID():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    need_sheet = client.open("BioDesign Observation Record").sheet1
+    need_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
-    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")] #how to make this work
+    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"NS{obs_date_str}")] #how to make this work
     obs_date_ids.sort()
 
     # get the counter from the last need id
