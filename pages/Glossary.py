@@ -100,7 +100,7 @@ search_term = st.text_input("Search Glossary")
 #     else:
 #         st.error("Please enter both a term and a definition.")
 
-# Button to toggle input fields
+# Button to toggle input fields for adding a new term
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
@@ -121,11 +121,11 @@ if st.session_state["show_new_term_fields"]:
                 observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
                 st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
 
-                # Clear input fields without triggering errors
+                # Reset the input fields
                 st.session_state["new_term"] = ""
                 st.session_state["new_definition"] = ""
                 st.session_state["show_new_term_fields"] = False
-                st.experimental_rerun()  # Refresh to clear the form
+                st.experimental_rerun()  # Refresh the app to clear the form
             else:
                 st.error("Please enter both a term and a definition.")
 
