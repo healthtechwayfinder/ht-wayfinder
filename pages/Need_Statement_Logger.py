@@ -186,10 +186,10 @@ def recordNeed(need_ID, need_date, need_statement, problem, population, outcome,
 def clear_need():
     st.session_state.need_input = ''
     #st.session_state.input1 = ''
-    st.session_state.notes_input = ''
-    st.session_state.problem_input = ''
-    st.session_state.population_input = ''
-    st.session_state.outcome_input = ''
+    # st.session_state.notes_input = ''
+    # st.session_state.problem_input = ''
+    # st.session_state.population_input = ''
+    # st.session_state.outcome_input = ''
     
     # # if 'need_summary' in st.session_state:
     # #     st.session_state['need_summary'] = ""
@@ -398,44 +398,6 @@ def submit_form():
     # Form submission logic
     if need_input:
             st.session_state["need_statement"] = st.session_state["need_input"]
-
-           # need_statement = need_input
-            problem = problem_input
-            population = population_input
-            outcome = outcome_input
-            notes = notes_input
-            # update_need_ID()
-            st.write("Need statement recorded!")
-            # st.write(f'Relevant Observations: {observation_ID}')
-            # st.write(f'Need ID: {st.session_state['need_ID']}')
-            # st.write(f'Problem: {problem}')
-            # st.write(f'Population: {population}')
-            # st.write(f'Outcome: {outcome}')
-            # st.write(f'Notes: {notes}')
-            recordNeed(st.session_state['need_ID'], st.session_state['need_date'], need_statement, problem, population, outcome, observation_ID, notes)
-    clear_need()
-
-
-
-with st.form(key="my_form"):
-    need_input = st.text_input(label="There is a need for...")
-    notes_input = st.text_input(label="Relevant Notes:")
-    #notes_input = st.text_area("Relevant Notes:", value=st.session_state["notes_input"], height=100)
-    submit_button = st.form_submit_button(label="Submit")
-    # submitted = st.form_submit_button("Submit", on_click=submit_form)
-
-    # st.button("Clear need", on_click=clear_text)
-
-    # Button to Clear the need Text Area
-    # col21, col22, col23 = st.columns(3)  # Adjust column widths as needed
-    
-    # with col23:
-    
-
-    if submit_button:
-        if need_input:
-            st.session_state["need_statement"] = st.session_state["need_input"]
-
             # need_statement = need_input
             problem = problem_input
             population = population_input
@@ -449,8 +411,45 @@ with st.form(key="my_form"):
             # st.write(f'Population: {population}')
             # st.write(f'Outcome: {outcome}')
             # st.write(f'Notes: {notes}')
-            recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], problem, population, outcome, observation_ID, notes)
+            recordNeed(st.session_state['need_ID'], st.session_state['need_date'], need_statement, problem, population, outcome, observation_ID, notes)
             clear_need()
+
+
+
+with st.form(key="my_form"):
+    need_input = st.text_input(label="There is a need for...")
+    notes_input = st.text_input(label="Relevant Notes:")
+    #notes_input = st.text_area("Relevant Notes:", value=st.session_state["notes_input"], height=100)
+    #submit_button = st.form_submit_button(label="Submit")
+    submitted = st.form_submit_button("Submit", on_click=submit_form)
+
+    # st.button("Clear need", on_click=clear_text)
+
+    # Button to Clear the need Text Area
+    # col21, col22, col23 = st.columns(3)  # Adjust column widths as needed
+    
+    # with col23:
+    
+
+    # if submit_button:
+    #     if need_input:
+    #         st.session_state["need_statement"] = st.session_state["need_input"]
+
+    #         # need_statement = need_input
+    #         problem = problem_input
+    #         population = population_input
+    #         outcome = outcome_input
+    #         notes = notes_input
+    #         # update_need_ID()
+    #         st.write("Need statement recorded!")
+    #         # st.write(f'Relevant Observations: {observation_ID}')
+    #         # st.write(f'Need ID: {st.session_state['need_ID']}')
+    #         # st.write(f'Problem: {problem}')
+    #         # st.write(f'Population: {population}')
+    #         # st.write(f'Outcome: {outcome}')
+    #         # st.write(f'Notes: {notes}')
+    #         recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], problem, population, outcome, observation_ID, notes)
+    #         clear_need()
 
             #TO DO: clear text boxes after
 
