@@ -418,7 +418,7 @@ with st.form(key="my_form"):
     notes_input = st.text_input(label="Relevant Notes:")
     #notes_input = st.text_area("Relevant Notes:", value=st.session_state["notes_input"], height=100)
     submit_button = st.form_submit_button(label="Submit")
-    submitted = st.form_submit_button("Submit", on_click=submit_form)
+    # submitted = st.form_submit_button("Submit", on_click=submit_form)
 
     # st.button("Clear need", on_click=clear_text)
 
