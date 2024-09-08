@@ -126,7 +126,6 @@ if st.session_state["show_new_term_fields"]:
             st.session_state["new_definition"] = ""
         else:
             st.error("Please enter both a term and a definition.")
-
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
 
