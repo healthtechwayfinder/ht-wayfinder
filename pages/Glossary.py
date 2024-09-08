@@ -109,69 +109,42 @@ search_term = st.text_input("Search Glossary")
 #     else:
 #         st.error("Please enter both a term and a definition.")
 
-# Add CSS for a scrollable container using Streamlit
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    .scrollable-container::-webkit-scrollbar {
-        width: 8px;
-    }
-    .scrollable-container::-webkit-scrollbar-thumb {
-        background-color: #c2c2c2;
-        border-radius: 10px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# Add a scrollable container using Streamlit's native components
+st.markdown("### Terms Glossary")
 
-# Create a scrollable container using HTML
-st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+# Create a container for scrolling
+with st.container():
+    filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-# Prepare the content of the scrollable container
-html_content = ""
-
-# Filter the glossary based on the search term (case-insensitive)
-filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
-
-# Display the terms and their definitions with the Edit button in HTML
-for i, (term, definition) in enumerate(filtered_terms_definitions):
-    html_content += f"<p><strong>{term}:</strong> {definition}</p>"
-    if f"edit_button_{i}" not in st.session_state:
-        st.session_state[f"edit_button_{i}"] = False
-    
-    if st.session_state[f"edit_button_{i}"]:
-        # Display edit fields if the user clicked "Edit"
-        with st.form(key=f"edit_form_{i}"):
-            edited_term = st.text_input(f"Edit term for {term}:", value=term, key=f"edit_term_{i}")
-            edited_definition = st.text_area(f"Edit definition for {term}:", value=definition, key=f"edit_definition_{i}")
-            save_button = st.form_submit_button("Save")
-            cancel_button = st.form_submit_button("Cancel")
-
-            if save_button:
-                # Save changes to Google Sheets
-                row_index = terms.index(term) + 1
-                observation_sheet.update(f'A{row_index}', edited_term)
-                observation_sheet.update(f'B{row_index}', edited_definition)
+    # Display the terms and their definitions with Edit buttons using Streamlit native components
+    for i, (term, definition) in enumerate(filtered_terms_definitions):
+        # Display term and definition
+        with st.expander(f"{term} - {definition}", expanded=False):
+            if f"edit_button_{i}" not in st.session_state:
                 st.session_state[f"edit_button_{i}"] = False
-                st.success(f"Term '{edited_term}' has been updated.")
 
-            if cancel_button:
-                st.session_state[f"edit_button_{i}"] = False
-    else:
-        # Display "Edit" button
-        if st.button("Edit", key=f"edit_button_trigger_{i}"):
-            st.session_state[f"edit_button_{i}"] = True
+            # If in edit mode, show the editable fields
+            if st.session_state[f"edit_button_{i}"]:
+                with st.form(key=f"edit_form_{i}"):
+                    edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{i}")
+                    edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{i}")
+                    save_button = st.form_submit_button("Save")
+                    cancel_button = st.form_submit_button("Cancel")
 
-# Render the HTML content inside the scrollable container
-st.markdown(html_content, unsafe_allow_html=True)
+                    if save_button:
+                        # Save changes to Google Sheets
+                        row_index = terms.index(term) + 1
+                        observation_sheet.update(f'A{row_index}', edited_term)
+                        observation_sheet.update(f'B{row_index}', edited_definition)
+                        st.session_state[f"edit_button_{i}"] = False
+                        st.success(f"Term '{edited_term}' has been updated.")
 
-# Close the scrollable div
-st.markdown("</div>", unsafe_allow_html=True)
+                    if cancel_button:
+                        st.session_state[f"edit_button_{i}"] = False
+            else:
+                # Display the edit button
+                if st.button(f"Edit {term}", key=f"edit_button_trigger_{i}"):
+                    st.session_state[f"edit_button_{i}"] = True
 
 ########################## past retrieval of glossary: 
 
