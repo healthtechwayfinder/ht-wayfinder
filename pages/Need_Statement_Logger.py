@@ -407,18 +407,16 @@ with st.form(key="my_form"):
             notes = notes_input
             # update_need_ID()
             st.write("Need statement recorded!")
-            st.write(f'Relevant Observations: {observation_ID}')
-            st.write(f'Need ID: {st.session_state['need_ID']}')
-            st.write(f'Problem: {problem}')
-            st.write(f'Population: {population}')
-            st.write(f'Outcome: {outcome}')
-            st.write(f'Notes: {notes}')
+            # st.write(f'Relevant Observations: {observation_ID}')
+            # st.write(f'Need ID: {st.session_state['need_ID']}')
+            # st.write(f'Problem: {problem}')
+            # st.write(f'Population: {population}')
+            # st.write(f'Outcome: {outcome}')
+            # st.write(f'Notes: {notes}')
             recordNeed(st.session_state['need_ID'], st.session_state['need_date'], need_statement, problem, population, outcome, observation_ID, notes)
             clear_need()
 
             #TO DO: clear text boxes after
-            #TO DO: update so that all variables are saved from text input and then logged
-
 
 
 # Create columns to align the buttons
