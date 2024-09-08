@@ -276,7 +276,8 @@ with col3:
     # selected_options = st.multiselect("Choose Observation IDs:", observation_ID_list)
 
    # st.write(f'obs ID: {st.session_state['observation_ID_list']}')
-    st.write(observation_ID_list)
+    # st.write(observation_ID_list)
+    st.text(observation_ID_list)
 
 
 
