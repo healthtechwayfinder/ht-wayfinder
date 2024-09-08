@@ -266,7 +266,7 @@ with col3:
     # need to create a variable that's just an array of all the obervation IDs
     # ob_ID_list = read the column of google sheets called Observation_ID and make a list
     # observation_ID = st.multiselect("Relevant Observations (multi-select)", [observation_ID_List]) 
-    st.write(f'Need ID: {st.session_state['need_ID']}')
+    st.write(f'Need ID: {st.session_state['observation_ID_List']}')
 
 
 ############
