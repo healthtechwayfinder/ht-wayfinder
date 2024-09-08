@@ -420,7 +420,6 @@ with st.form(key="my_form"):
             st.write(f'Population: {population}')
             st.write(f'Outcome: {outcome}')
             st.write(f'Notes: {notes}')
-            #clear_need()
             recordNeed(st.session_state['need_ID'], st.session_state['need_date'], need_statement, problem, population, outcome, observation_ID, notes)
             clear_need()
 
