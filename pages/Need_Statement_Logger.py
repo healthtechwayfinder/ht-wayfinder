@@ -180,8 +180,7 @@ def recordNeed(need_ID, need_date, need_statement, problem, population, outcome,
 
 # reset textboxes, except for the date
 def clear_need():
-    if 'need_statement' in st.session_state:
-        st.session_state['need_statement'] = ""
+    st.session_state['need_statement'] = ""
     # if 'need_summary' in st.session_state:
     #     st.session_state['need_summary'] = ""
     if 'result' in st.session_state:
