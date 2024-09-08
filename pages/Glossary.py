@@ -109,87 +109,74 @@ search_term = st.text_input("Search Glossary")
 #     else:
 #         st.error("Please enter both a term and a definition.")
 
-# Button to toggle input fields for adding a new term
-if st.button("Add a New Term"):
-    st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
+# Add CSS for a scrollable container using Streamlit
+st.markdown("""
+    <style>
+    .scrollable-container {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .scrollable-container::-webkit-scrollbar {
+        width: 8px;
+    }
+    .scrollable-container::-webkit-scrollbar-thumb {
+        background-color: #c2c2c2;
+        border-radius: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Conditionally display the input fields for adding a new term and definition
-if st.session_state['show_new_term_fields']:
-    with st.form(key="new_term_form"):
-        new_term = st.text_input("Enter a new term:", value=st.session_state['new_term'])
-        new_definition = st.text_area("Enter the definition for the new term:", value=st.session_state['new_definition'])
-        submit_button = st.form_submit_button("Submit New Term")
+# Create a scrollable container using HTML
+st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-        if submit_button:
-            # Check if both term and definition are provided
-            if new_term.strip() and new_definition.strip():
-                # Add the new term and definition to the list and update Google Sheets
-                sorted_terms_definitions.append((new_term, new_definition))
-                sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
-                observation_sheet.append_row([new_term, new_definition])
-                st.success(f"Term '{new_term}' has been added successfully!")
+# Filter the glossary based on the search term (case-insensitive)
+filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-                # Reset the input fields in the session state
-                st.session_state['new_term'] = ''
-                st.session_state['new_definition'] = ''
-                st.session_state['show_new_term_fields'] = False  # Hide the form after submission
-            else:
-                st.error("Please enter both a term and a definition.")
+# Display the terms and their definitions with the Edit button
+for i, (term, definition) in enumerate(filtered_terms_definitions):
+    # Create columns for term/definition and the edit button
+    col1, col2 = st.columns([4, 1])
+    with col1:
+        st.markdown(f"**{term}:** {definition}")
+    with col2:
+        if st.button("Edit", key=f"edit_button_{i}"):
+            st.session_state['editing_term_index'] = i
+            st.session_state['edited_term'] = term
+            st.session_state['edited_definition'] = definition
 
-# Set up the layout for the terms and definitions in a scrollable manner using Streamlit's expander or container system
-st.markdown("### Terms and Definitions")
+    # Edit mode: if the current term is being edited
+    if st.session_state.get('editing_term_index') == i:
+        edited_term = st.text_input("Edit term:", value=st.session_state.get('edited_term', term), key=f"edit_term_{i}")
+        edited_definition = st.text_area("Edit definition:", value=st.session_state.get('edited_definition', definition), key=f"edit_definition_{i}")
 
-# Create a scrollable container using Streamlit's `container` and limit height
-container = st.container()
-
-with container:
-    # Filter the glossary based on the search term (case-insensitive)
-    filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
-
-    # Set a limit to the displayed rows, simulating a "scrollable" area
-    max_display_rows = 10  # This controls how many rows you want to show at once
-
-    # Display the terms and their definitions with the Edit button
-    for i, (term, definition) in enumerate(filtered_terms_definitions[:max_display_rows]):
-        if st.session_state.get('editing_term_index') == i:
-            # Edit mode: show text input fields for editing the term and definition
-            edited_term = st.text_input("Edit term:", value=st.session_state.get('edited_term', term), key=f"edit_term_{i}")
-            edited_definition = st.text_area("Edit definition:", value=st.session_state.get('edited_definition', definition), key=f"edit_definition_{i}")
-            
-            # Save and Cancel buttons
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("Save", key=f"save_button_{i}"):
-                    if edited_term.strip() and edited_definition.strip():
-                        # Update Google Sheets with the edited term and definition
-                        row_index = terms.index(term) + 1  # Get the correct row index to update
-                        observation_sheet.update(f'A{row_index}', edited_term)
-                        observation_sheet.update(f'B{row_index}', edited_definition)
-                        st.success(f"Term '{edited_term}' updated successfully!")
-                        
-                        # Reset session state
-                        st.session_state['editing_term_index'] = None
-                        st.session_state['edited_term'] = ''
-                        st.session_state['edited_definition'] = ''
-                    else:
-                        st.error("Both term and definition must be provided.")
-    
-            with col2:
-                if st.button("Cancel", key=f"cancel_button_{i}"):
+        # Save and Cancel buttons
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Save", key=f"save_button_{i}"):
+                if edited_term.strip() and edited_definition.strip():
+                    # Update Google Sheets with the edited term and definition
+                    row_index = terms.index(term) + 1  # Get the correct row index to update
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
+                    st.success(f"Term '{edited_term}' updated successfully!")
+                    
+                    # Reset session state
                     st.session_state['editing_term_index'] = None
                     st.session_state['edited_term'] = ''
                     st.session_state['edited_definition'] = ''
-        else:
-            # Display the term and definition in a row with the Edit button aligned to the right
-            col1, col2 = st.columns([4, 1])
-            with col1:
-                st.markdown(f"**{term}:** {definition}")
-            with col2:
-                if st.button("Edit", key=f"edit_button_{i}"):
-                    st.session_state['editing_term_index'] = i
-                    st.session_state['edited_term'] = term
-                    st.session_state['edited_definition'] = definition
+                else:
+                    st.error("Both term and definition must be provided.")
+        with col2:
+            if st.button("Cancel", key=f"cancel_button_{i}"):
+                st.session_state['editing_term_index'] = None
+                st.session_state['edited_term'] = ''
+                st.session_state['edited_definition'] = ''
 
+# Close the scrollable div
+st.markdown("</div>", unsafe_allow_html=True)
 
 
 ########################## past retrieval of glossary: 
