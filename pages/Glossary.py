@@ -140,6 +140,21 @@ filtered_terms_definitions = [item for item in sorted_terms_definitions if searc
 if filtered_terms_definitions:
     for term, definition in filtered_terms_definitions:
         html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+
+        # Add an Edit button for each term and definition
+        if st.button(f"Edit {term}"):
+            # When Edit button is clicked, show input fields to edit term and definition
+            new_term = st.text_input("Edit term:", value=term)
+            new_definition = st.text_area("Edit definition:", value=definition)
+
+            if st.button(f"Save {term}"):
+                # Save the updated term and definition to Google Sheets
+                row_index = terms.index(term) + 1  # Find the row to update
+                observation_sheet.update(f'A{row_index}', new_term)
+                observation_sheet.update(f'B{row_index}', new_definition)
+                st.success(f"Term '{new_term}' has been updated.")
+                st.experimental_rerun()  # Refresh the app after updating
+
 else:
     html_content += "<p>No matching terms found.</p>"
 
