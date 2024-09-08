@@ -107,28 +107,27 @@ if st.button("Add a New Term"):
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
     with st.form(key="new_term_form"):
-        st.text_input("Enter a new term:", key="new_term")
-        st.text_area("Enter the definition for the new term:", key="new_definition")
+        new_term = st.text_input("Enter a new term", key="new_term")
+        new_definition = st.text_area("Enter the definition for the new term", key="new_definition")
         submit_button = st.form_submit_button("Submit New Term")
 
         if submit_button:
-            if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
+            if new_term.strip() and new_definition.strip():
                 # Add the new term and definition to the list
-                sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
+                sorted_terms_definitions.append((new_term, new_definition))
                 sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
 
                 # Update Google Sheets with the new term and definition
-                observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
-                st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
+                observation_sheet.append_row([new_term, new_definition])
+                st.success(f"Term '{new_term}' has been added successfully!")
 
                 # Reset the input fields
-                st.session_state["new_term"] = ""
-                st.session_state["new_definition"] = ""
+                st.session_state["new_term"] = ""  # Reset new term field
+                st.session_state["new_definition"] = ""  # Reset new definition field
                 st.session_state["show_new_term_fields"] = False
                 st.experimental_rerun()  # Refresh the app to clear the form
             else:
                 st.error("Please enter both a term and a definition.")
-
 
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
