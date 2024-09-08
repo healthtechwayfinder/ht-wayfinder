@@ -1,11 +1,20 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+
+import pandas as pd
 import openai
+from langchain_openai import OpenAIEmbeddings
 import pinecone
 
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
+
+from pydantic import BaseModel, Field
+from typing import Optional
+from datetime import date
+
 st.set_page_config(page_title="Glossary", page_icon="📊")
+
 st.markdown("# Glossary")
 
 # Initialize Pinecone
@@ -16,35 +25,29 @@ pinecone.init(api_key=pinecone_api_key, environment=pinecone_environment)
 # Define the name of the Pinecone index and create it if it doesn't exist
 index_name = "glossary-terms"
 if index_name not in pinecone.list_indexes():
-    pinecone.create_index(index_name, dimension=1536)  # OpenAI embeddings are 1536-dimensional
+    pinecone.create_index(index_name, dimension=1536)  # Using 1536 for OpenAI embeddings
 
 # Connect to the Pinecone index
 index = pinecone.Index(index_name)
 
-# Set up OpenAI API key
-openai.api_key = st.secrets["openai_key"]
-
-# If using st.secrets for Google Sheets
+# Set up the connection to Google Sheets
 creds_dict = st.secrets["gcp_service_account"]
-scope = [
-    "https://www.googleapis.com/auth/spreadsheets",
-    "https://www.googleapis.com/auth/drive.metadata.readonly"
-]
+scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.metadata.readonly"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 observation_sheet = client.open("BioDesign Observation Record").sheet1
 
-# Retrieve all values from column 10 (terms) and column 1 (observation IDs)
-column_values = observation_sheet.col_values(10)
-observation_ids = observation_sheet.col_values(1)
+# Retrieve all values in a specific column
+column_values = observation_sheet.col_values(10)  # Column 10 for terms
+observation_ids = observation_sheet.col_values(1)  # Column 1 for observation IDs
 
 # Initialize a dictionary to hold the terms and their counts
 term_counts = {}
 relevant_observation_ids = {}
 
-# Process terms from the sheet
-for i, value in enumerate(column_values[1:]):  # Skip the header row
-    if value:  # Check if the string is not empty
+# Skip the first row (header) and process the rest
+for i, value in enumerate(column_values[1:]):
+    if value:
         terms = [term.strip() for term in value.split(",")]
         for term in terms:
             if term in term_counts:
@@ -54,17 +57,22 @@ for i, value in enumerate(column_values[1:]):  # Skip the header row
                 term_counts[term] = 1
                 relevant_observation_ids[term] = [observation_ids[i+1]]
 
+# Set up OpenAI API key
+openai.api_key = st.secrets["openai_key"]
+
 # Function to get a definition from OpenAI
 def get_definition(term):
     try:
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant that provides concise definitions of medical terms."},
+            {"role": "user", "content": f"Define the following medical term: {term}"}
+        ]
         response = openai.ChatCompletion.create(
-            model='gpt-3.5-turbo',
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant that provides concise definitions of medical terms."},
-                {"role": "user", "content": f"Define the following medical term: {term}"}
-            ]
+            model="gpt-3.5-turbo",
+            messages=messages,
         )
-        return response['choices'][0]['message']['content'].strip()
+        definition = response['choices'][0]['message']['content'].strip()
+        return definition
     except Exception as e:
         return f"Error: {e}"
 
@@ -82,14 +90,11 @@ sorted_terms = sorted(term_counts.keys())
 for term in sorted_terms:
     capitalized_term = term.capitalize()
     definition = get_definition(term)
-    st.write(f"""
-- **{capitalized_term}** ({term_counts[term]}): {definition}  \n
-_Relevant observation IDs:_ {','.join(relevant_observation_ids[term])}
-    """)
-
+    st.write(f"- **{capitalized_term}** ({term_counts[term]}): {definition} \n_Relevant observation IDs:_ {', '.join(relevant_observation_ids[term])}")
+    
     # Prepare the entry to be inserted into Pinecone
     term_embedding = get_embedding(term + " " + definition)
-
+    
     # Insert into Pinecone
     index.upsert(vectors=[{
         'id': term,  # Use the term as the unique ID
@@ -101,37 +106,6 @@ _Relevant observation IDs:_ {','.join(relevant_observation_ids[term])}
             'observation_ids': relevant_observation_ids[term]
         }
     }])
-
-# Button to add a new term
-if "show_new_term_fields" not in st.session_state:
-    st.session_state["show_new_term_fields"] = False
-
-# Button click toggles the visibility of the input fields
-if st.button("Add a new term"):
-    st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
-
-# Show input fields only if the button is clicked
-if st.session_state["show_new_term_fields"]:
-    st.text_input("Enter new term", key="new_term")
-    st.text_area("Enter term definition", key="new_term_definition")
-    if st.button("Submit New Term"):
-        # Process the new term submission here (e.g., insert into Pinecone or Google Sheets)
-        new_term = st.session_state["new_term"]
-        new_term_definition = st.session_state["new_term_definition"]
-        new_term_embedding = get_embedding(new_term + " " + new_term_definition)
-        
-        # Insert new term into Pinecone
-        index.upsert(vectors=[{
-            'id': new_term,  # Use the new term as the unique ID
-            'values': new_term_embedding,
-            'metadata': {
-                'term': new_term,
-                'definition': new_term_definition,
-                'count': 1,  # Default count for new terms
-                'observation_ids': []  # No observation IDs for a new term
-            }
-        }])
-        st.success(f"New term '{new_term}' added successfully!")
 
 st.markdown("---")
 
@@ -145,7 +119,7 @@ st.markdown("""
     .big-button {
         font-size: 20px;
         padding: 10px 60px;
-        background-color: #365980;
+        background-color: #365980; /* blueish color */
         color: white;
         border: none;
         border-radius: 8px;
@@ -153,7 +127,7 @@ st.markdown("""
         text-align: center;
     }
     .big-button:hover {
-        background-color: #c2c2c2;
+        background-color: #c2c2c2; /* Grey */
     }
     </style>
     """, unsafe_allow_html=True)
