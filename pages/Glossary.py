@@ -122,13 +122,17 @@ if st.session_state["show_new_term_fields"]:
             observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
             st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
             
-            # Hide the input fields after submission and reset the term and definition
-            st.session_state["show_new_term_fields"] = False
-            st.session_state["new_term"] = ""  # Reset new term field
-            st.session_state["new_definition"] = ""  # Reset new definition field
+            # Use a callback to reset the term and definition after submission
+            def reset_inputs():
+                st.session_state["new_term"] = ""  # Reset new term field
+                st.session_state["new_definition"] = ""  # Reset new definition field
+                st.session_state["show_new_term_fields"] = False
+
+            # Call the reset function
+            reset_inputs()
+
         else:
             st.error("Please enter both a term and a definition.")
-
 
 
 # Create a scrollable container using HTML
