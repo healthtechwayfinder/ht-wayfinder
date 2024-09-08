@@ -214,8 +214,8 @@ def getObservationIDs():
     # Read the data from the Google Sheet into a DataFrame
     # df = observation_sheet.col_values(7)     
     # # Convert the desired column to a list
-    # observation_ID_List = df['observation_ID'].tolist()
-    observation_ID_List = observation_sheet.col_values(7)
+    # observation_ID_list = df['observation_ID'].tolist()
+    observation_ID_list = observation_sheet.col_values(7)
 
 
 
@@ -270,12 +270,14 @@ with col3:
     # Display observation_ID options 
     # need to create a variable that's just an array of all the obervation IDs
     # ob_ID_list = read the column of google sheets called Observation_ID and make a list
-    #observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_List) 
-    #selected_options = st.multiselect("Relevant Observations (multi-select):", observation_ID_List)
+    #observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list) 
+    #selected_options = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
 
-    # selected_options = st.multiselect("Choose Observation IDs:", observation_ID_List)
+    # selected_options = st.multiselect("Choose Observation IDs:", observation_ID_list)
 
-    st.write(f'obs ID: {st.session_state['observation_ID_List']}')
+   # st.write(f'obs ID: {st.session_state['observation_ID_list']}')
+    st.write(f'Relevant Observations: {observation_ID_list}')
+
 
 
 ############
@@ -561,7 +563,7 @@ def getObservationIDs():
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
-    observation_ID_List = observation_sheet.col_values(1) 
+    observation_ID_list = observation_sheet.col_values(1) 
     
     # Read the data from the Google Sheet into a DataFrame
     df = observation_sheet.col_values(1)     
