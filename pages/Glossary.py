@@ -130,14 +130,61 @@ if st.session_state['show_new_term_fields']:
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
 
+# Initialize session state variables for managing edit mode
+if 'editing_term_index' not in st.session_state:
+    st.session_state['editing_term_index'] = None
+if 'edited_term' not in st.session_state:
+    st.session_state['edited_term'] = ''
+if 'edited_definition' not in st.session_state:
+    st.session_state['edited_definition'] = ''
+
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-if filtered_terms_definitions:
-    for term, definition in filtered_terms_definitions:
-        html_content += f"<p><strong>{term}:</strong> {definition}</p>"
-else:
-    html_content += "<p>No matching terms found.</p>"
+# if filtered_terms_definitions:
+#     for term, definition in filtered_terms_definitions:
+#         html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+# else:
+#     html_content += "<p>No matching terms found.</p>"
+
+# Display each term and its definition
+for i, (term, definition) in enumerate(filtered_terms_definitions):
+    if st.session_state['editing_term_index'] == i:
+        # Edit mode: show text input fields for editing the term and definition
+        edited_term = st.text_input("Edit term:", value=st.session_state['edited_term'], key=f"edit_term_{i}")
+        edited_definition = st.text_area("Edit definition:", value=st.session_state['edited_definition'], key=f"edit_definition_{i}")
+        
+        # Save and Cancel buttons
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Save", key=f"save_button_{i}"):
+                if edited_term.strip() and edited_definition.strip():
+                    # Update Google Sheets with the edited term and definition
+                    row_index = terms.index(term) + 1  # Get the correct row index to update
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
+                    st.success(f"Term '{edited_term}' updated successfully!")
+                    
+                    # Reset session state
+                    st.session_state['editing_term_index'] = None
+                    st.session_state['edited_term'] = ''
+                    st.session_state['edited_definition'] = ''
+                else:
+                    st.error("Both term and definition must be provided.")
+
+        with col2:
+            if st.button("Cancel", key=f"cancel_button_{i}"):
+                st.session_state['editing_term_index'] = None
+                st.session_state['edited_term'] = ''
+                st.session_state['edited_definition'] = ''
+    
+    else:
+        # Display the term and definition with an Edit button
+        st.markdown(f"**{term}**: {definition}")
+        if st.button("Edit", key=f"edit_button_{i}"):
+            st.session_state['editing_term_index'] = i
+            st.session_state['edited_term'] = term
+            st.session_state['edited_definition'] = definition
 
 html_content += "</div>"
 
