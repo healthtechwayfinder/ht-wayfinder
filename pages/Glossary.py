@@ -59,9 +59,21 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# # Search bar for filtering terms
+# search_term = st.text_input("Search Glossary")
+
+# Add custom CSS for white search bar
+st.markdown("""
+    <style>
+    input[type="text"] {
+        background-color: white !important;
+        color: black !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Search bar for filtering terms
 search_term = st.text_input("Search Glossary")
-
 
 # # Create input fields for manually adding a new term and definition
 # st.markdown("## Add a New Term")
