@@ -184,6 +184,7 @@ for term, definition in filtered_terms_definitions:
                 if cancel_button:
                     st.session_state[f"edit_button_{term}"] = False
 
+html_content += "</div>"
 
 # Render the HTML content inside the scrollable container
 st.markdown(html_content, unsafe_allow_html=True)
