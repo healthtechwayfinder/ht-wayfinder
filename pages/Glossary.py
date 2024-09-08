@@ -32,6 +32,14 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
 observation_sheet = client.open("Glossary").sheet1
 
+# Initialize session state variables if not already initialized
+if "show_new_term_fields" not in st.session_state:
+    st.session_state["show_new_term_fields"] = False
+if "new_term" not in st.session_state:
+    st.session_state["new_term"] = ""
+if "new_definition" not in st.session_state:
+    st.session_state["new_definition"] = ""
+
 # Print test 
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
