@@ -40,6 +40,15 @@ if "new_term" not in st.session_state:
 if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
 
+# Initialize session state variables for managing edit mode
+if 'editing_term_index' not in st.session_state:
+    st.session_state['editing_term_index'] = None
+if 'edited_term' not in st.session_state:
+    st.session_state['edited_term'] = ''
+if 'edited_definition' not in st.session_state:
+    st.session_state['edited_definition'] = ''
+
+
 # Print test 
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
@@ -51,18 +60,18 @@ terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
 
-# Add custom CSS to make the container scrollable
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: scroll;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# # Add custom CSS to make the container scrollable
+# st.markdown("""
+#     <style>
+#     .scrollable-container {
+#         height: 300px;
+#         overflow-y: scroll;
+#         border: 1px solid #ccc;
+#         padding: 10px;
+#         font-size: 16px;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 
 # # Search bar for filtering terms
 # search_term = st.text_input("Search Glossary")
@@ -127,16 +136,28 @@ if st.session_state['show_new_term_fields']:
             else:
                 st.error("Please enter both a term and a definition.")
 
+st.markdown("""
+    <style>
+    .scrollable-container {
+        height: 400px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .term-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .edit-button {
+        margin-left: 20px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
-
-# Initialize session state variables for managing edit mode
-if 'editing_term_index' not in st.session_state:
-    st.session_state['editing_term_index'] = None
-if 'edited_term' not in st.session_state:
-    st.session_state['edited_term'] = ''
-if 'edited_definition' not in st.session_state:
-    st.session_state['edited_definition'] = ''
 
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
