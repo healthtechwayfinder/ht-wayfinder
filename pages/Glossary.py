@@ -138,7 +138,7 @@ html_content = ""
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
- Display the terms and their definitions with the Edit button in HTML
+# Display the terms and their definitions with the Edit button in HTML
 for i, (term, definition) in enumerate(filtered_terms_definitions):
     html_content += f"<p><strong>{term}:</strong> {definition}</p>"
     if f"edit_button_{i}" not in st.session_state:
