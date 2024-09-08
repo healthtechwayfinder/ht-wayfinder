@@ -213,7 +213,7 @@ def getObservationIDs():
     observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
     # observation_ID_List = observation_sheet.col_values(1) 
     # Read the data from the Google Sheet into a DataFrame
-    df = observation_sheet.col_values(1)     
+    df = observation_sheet.col_values(7)     
     #df = conn.read()
     # Convert the desired column to a list
     observation_ID_List = df['observation_ID'].tolist()
