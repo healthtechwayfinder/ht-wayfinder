@@ -213,11 +213,10 @@ def getObservationIDs():
     observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
     # observation_ID_List = observation_sheet.col_values(1) 
     # Read the data from the Google Sheet into a DataFrame
-    observation_ID_List = observation_sheet.col_values(1)     
+    df = observation_sheet.col_values(1)     
     #df = conn.read()
-
     # Convert the desired column to a list
-    column_list = df['column_name'].tolist()
+    observation_ID_List = df['observation_ID'].tolist()
 
 
 # Function to generate need ID with the format NSYYMMDDxxxx
