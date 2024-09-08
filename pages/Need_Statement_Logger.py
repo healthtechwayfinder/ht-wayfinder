@@ -211,7 +211,13 @@ def getObservationIDs():
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
     observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
-    observation_ID_List = observation_sheet.col_values(1) 
+    # observation_ID_List = observation_sheet.col_values(1) 
+    # Read the data from the Google Sheet into a DataFrame
+    observation_ID_List = observation_sheet.col_values(1)     
+    #df = conn.read()
+
+    # Convert the desired column to a list
+    column_list = df['column_name'].tolist()
 
 
 # Function to generate need ID with the format NSYYMMDDxxxx
@@ -265,8 +271,8 @@ with col3:
     # Display observation_ID options 
     # need to create a variable that's just an array of all the obervation IDs
     # ob_ID_list = read the column of google sheets called Observation_ID and make a list
-    # observation_ID = st.multiselect("Relevant Observations (multi-select)", [observation_ID_List]) 
-    st.write(f'Need ID: {st.session_state['observation_ID_List']}')
+    observation_ID = st.multiselect("Relevant Observations (multi-select)", [observation_ID_List]) 
+    # st.write(f'Need ID: {st.session_state['observation_ID_List']}')
 
 
 ############
@@ -555,9 +561,10 @@ def getObservationIDs():
     observation_ID_List = observation_sheet.col_values(1) 
     
     # Read the data from the Google Sheet into a DataFrame
+    df = observation_sheet.col_values(1)     
     # df = conn.read()
 
     # Convert the desired column to a list
-    # column_list = df['column_name'].tolist()
+    column_list = df['column_name'].tolist()
 
 
