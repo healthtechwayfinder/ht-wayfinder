@@ -106,8 +106,8 @@ if st.button("Add a New Term"):
 
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
-    new_term = st.text_input("Enter a new term:")
-    new_definition = st.text_area("Enter the definition for the new term:")
+    new_term = st.text_input("Enter a new term:", key="new_term")
+    new_definition = st.text_area("Enter the definition for the new term:", key="new_definition")
 
     if st.button("Submit New Term"):
         if new_term and new_definition:
@@ -118,9 +118,14 @@ if st.session_state["show_new_term_fields"]:
             # Optionally, you could also update Google Sheets here
             observation_sheet.append_row([new_term, new_definition])
             st.success(f"Term '{new_term}' has been added successfully!")
+            
+            # Hide the input fields after submission
+            st.session_state["show_new_term_fields"] = False
+            # Reset input fields
+            st.session_state["new_term"] = ""
+            st.session_state["new_definition"] = ""
         else:
             st.error("Please enter both a term and a definition.")
-
 
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
