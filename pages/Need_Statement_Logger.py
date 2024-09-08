@@ -358,7 +358,9 @@ if "need_statement" not in st.session_state:
 
 # Function to clear the text area
 def clear_text():
-    st.session_state["need_statement"] = ""
+  #  st.session_state["need_statement"] = ""
+    st.session_state.need_statement = ''
+
 
 #st.markdown("---")
 
