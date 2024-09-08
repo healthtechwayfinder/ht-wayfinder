@@ -86,7 +86,7 @@ creds_dict = {
 if 'need_statement' not in st.session_state:
     st.session_state['need_statement'] = ""
 
-if 'need_statement' not in st.session_state:
+if 'need_input' not in st.session_state:
     st.session_state['need_input'] = ""
 
 
