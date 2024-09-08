@@ -96,9 +96,13 @@ search_term = st.text_input("Search Glossary")
 #         st.error("Please enter both a term and a definition.")
 
 
-# Create a button that, when clicked, shows input fields for adding a new term
+# Ensure session state for "show_new_term_fields", "new_term", and "new_definition" exists
 if "show_new_term_fields" not in st.session_state:
     st.session_state["show_new_term_fields"] = False
+if "new_term" not in st.session_state:
+    st.session_state["new_term"] = ""
+if "new_definition" not in st.session_state:
+    st.session_state["new_definition"] = ""
 
 # Button to toggle input fields
 if st.button("Add a New Term"):
@@ -126,6 +130,9 @@ if st.session_state["show_new_term_fields"]:
             st.session_state["new_definition"] = ""
         else:
             st.error("Please enter both a term and a definition.")
+
+
+
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
 
