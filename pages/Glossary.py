@@ -1,144 +1,102 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-
 import pandas as pd
 import openai
-from langchain_openai import OpenAIEmbeddings
-import pinecone
-
-from oauth2client.service_account import ServiceAccountCredentials
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.chains import LLMChain
+from langchain.output_parsers import PydanticOutputParser
+from langchain.schema import StrOutputParser
+from langchain.schema.runnable import RunnableLambda
+from langchain.prompts import PromptTemplate
+from langchain_pinecone import PineconeVectorStore
 import gspread
-
+from oauth2client.service_account import ServiceAccountCredentials
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import date
+import json
+import os
+import csv
 
+# Set up the Streamlit page
 st.set_page_config(page_title="Glossary", page_icon="📊")
-
 st.markdown("# Glossary")
 
-# Initialize Pinecone
-pinecone_api_key = st.secrets["pinecone_key"]
-pinecone_environment = st.secrets["pinecone_env"]
-pinecone.init(api_key=pinecone_api_key, environment=pinecone_environment)
-
-# Define the name of the Pinecone index and create it if it doesn't exist
-index_name = "glossary-terms"
-if index_name not in pinecone.list_indexes():
-    pinecone.create_index(index_name, dimension=1536)  # Using 1536 for OpenAI embeddings
-
-# Connect to the Pinecone index
-index = pinecone.Index(index_name)
-
-# Set up the connection to Google Sheets
+# Authenticate and connect to Google Sheets using service account credentials
 creds_dict = st.secrets["gcp_service_account"]
-scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.metadata.readonly"]
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.metadata.readonly"
+]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
-observation_sheet = client.open("BioDesign Observation Record").sheet1
+observation_sheet = client.open("Glossary").sheet1
 
-# Retrieve all values in a specific column
-column_values = observation_sheet.col_values(10)  # Column 10 for terms
-observation_ids = observation_sheet.col_values(1)  # Column 1 for observation IDs
+# Print test 
 
-# Initialize a dictionary to hold the terms and their counts
-term_counts = {}
-relevant_observation_ids = {}
+terms = observation_sheet.col_values(1)  # Terms are in column 1
+definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
-# Skip the first row (header) and process the rest
-for i, value in enumerate(column_values[1:]):
-    if value:
-        terms = [term.strip() for term in value.split(",")]
-        for term in terms:
-            if term in term_counts:
-                term_counts[term] += 1
-                relevant_observation_ids[term].append(observation_ids[i+1])
-            else:
-                term_counts[term] = 1
-                relevant_observation_ids[term] = [observation_ids[i+1]]
 
-# Set up OpenAI API key
-openai.api_key = st.secrets["openai_key"]
 
-# Function to get a definition from OpenAI
-def get_definition(term):
-    try:
-        messages = [
-            {"role": "system", "content": "You are a helpful assistant that provides concise definitions of medical terms."},
-            {"role": "user", "content": f"Define the following medical term: {term}"}
-        ]
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-        )
-        definition = response['choices'][0]['message']['content'].strip()
-        return definition
-    except Exception as e:
-        return f"Error: {e}"
+# Combine terms and definitions into a list of tuples
+terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
-# Function to convert text to embeddings using OpenAI
-def get_embedding(text):
-    response = openai.Embedding.create(input=[text], model="text-embedding-ada-002")
-    return response['data'][0]['embedding']
+# Sort the list alphabetically by the term
+sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
-# Display the unique terms with their counts and definitions, and insert into Pinecone
-st.write("Unique terms, their counts, and definitions:")
 
-# Sort the terms alphabetically
-sorted_terms = sorted(term_counts.keys())
-
-for term in sorted_terms:
-    capitalized_term = term.capitalize()
-    definition = get_definition(term)
-    st.write(f"- **{capitalized_term}** ({term_counts[term]}): {definition} \n_Relevant observation IDs:_ {', '.join(relevant_observation_ids[term])}")
-    
-    # Prepare the entry to be inserted into Pinecone
-    term_embedding = get_embedding(term + " " + definition)
-    
-    # Insert into Pinecone
-    index.upsert(vectors=[{
-        'id': term,  # Use the term as the unique ID
-        'values': term_embedding,
-        'metadata': {
-            'term': term,
-            'definition': definition,
-            'count': term_counts[term],
-            'observation_ids': relevant_observation_ids[term]
-        }
-    }])
-
-st.markdown("---")
-
-# Add custom CSS for a larger button
+# Add custom CSS to make the container scrollable
 st.markdown("""
     <style>
-    .big-button-container {
-        display: flex;
-        justify-content: center;
-    }
-    .big-button {
-        font-size: 20px;
-        padding: 10px 60px;
-        background-color: #365980; /* blueish color */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        text-align: center;
-    }
-    .big-button:hover {
-        background-color: #c2c2c2; /* Grey */
+    .scrollable-container {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Create a container to hold the button with the custom class
-st.markdown("""
-    <div class="big-button-container">
-        <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
-    </div>
-    """, unsafe_allow_html=True)
+# Search bar for filtering terms
+search_term = st.text_input("Search Glossary")
 
+
+# Create input fields for manually adding a new term and definition
+st.markdown("## Add a New Term")
+new_term = st.text_input("Enter a new term:")
+new_definition = st.text_area("Enter the definition for the new term:")
+
+# Button to add the new term and definition
+if st.button("Add Term"):
+    if new_term and new_definition:
+        # Add the new term and definition to the list
+        sorted_terms_definitions.append((new_term, new_definition))
+        sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+        
+        # Optionally, you could also update Google Sheets here
+        observation_sheet.append_row([new_term, new_definition])
+        st.success(f"Term '{new_term}' has been added successfully!")
+    else:
+        st.error("Please enter both a term and a definition.")
+
+# Create a scrollable container using HTML
+html_content = "<div class='scrollable-container'>"
+
+# Filter the glossary based on the search term (case-insensitive)
+filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+
+if filtered_terms_definitions:
+    for term, definition in filtered_terms_definitions:
+        html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+else:
+    html_content += "<p>No matching terms found.</p>"
+
+html_content += "</div>"
+
+# Render the HTML content inside the scrollable container
+st.markdown(html_content, unsafe_allow_html=True)
 
 ########################## past retrieval of glossary: 
 
@@ -373,5 +331,4 @@ st.markdown("""
 #         <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
 #     </div>
 #     """, unsafe_allow_html=True)
-
 
