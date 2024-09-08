@@ -344,7 +344,7 @@ with st.form(key="my_form"):
             st.write(f'Outcome: {outcome}')
             st.write(f'Notes: {notes}')
             #clear_need()
-            recordNeed(st.session_state['need_ID'], need_date, need_statement, problem, population, outcome, observation_ID, notes)
+            recordNeed(st.session_state['need_ID'], st.session_state['need_date'], need_statement, problem, population, outcome, observation_ID, notes)
 
             #TO DO: clear text boxes after
             #TO DO: update so that all variables are saved from text input and then logged
