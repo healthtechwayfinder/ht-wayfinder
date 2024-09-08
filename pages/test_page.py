@@ -27,6 +27,6 @@ with st.form("my_form"):
         st.write("Text 1:", input1)
         clear_form()  # Clear the inputs after submission
 
-# You can also add a separate button to clear the form without submitting
-if st.button("Clear Form"):
-    clear_form()
+# # You can also add a separate button to clear the form without submitting
+# if st.button("Clear Form"):
+#     clear_form()
