@@ -86,8 +86,8 @@ creds_dict = {
 if 'need_statement' not in st.session_state:
     st.session_state['need_statement'] = ""
 
-if 'observation_ID_list' not in st.session_state:
-    st.session_state['observation_ID_list'] = ""
+# if 'observation_ID_list' not in st.session_state:
+#     st.session_state['observation_ID_list'] = ""
 
 
 # if 'need_ID' not in st.session_state:
@@ -206,21 +206,44 @@ if 'need_counters' not in st.session_state:
     st.session_state['need_counters'] = {}
 
 # get observation ID options
+# def getObservationIDs():
+#     # google sheets conection here
+#     scope = [
+#         "https://www.googleapis.com/auth/spreadsheets",
+#         "https://www.googleapis.com/auth/drive.metadata.readonly"
+#         ]
+#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+#     client = gspread.authorize(creds)
+#     observation_sheet = client.open("BioDesign Observation Record").worksheet('Sheet1')
+#     # Read the data from the Google Sheet into a DataFrame
+#     # df = observation_sheet.col_values(7)     
+#     # # Convert the desired column to a list
+#     # observation_ID_list = df['observation_ID'].tolist()
+#     observation_ID_list = observation_sheet.col_values(1)
+
+
 def getObservationIDs():
-    # google sheets conection here
+    # Define the scope for the Google Sheets API
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
+    ]
+    
+    # Authenticate with Google Sheets using the credentials dictionary
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
+    
+    # Open the Google Sheet and select the worksheet
     observation_sheet = client.open("BioDesign Observation Record").worksheet('Sheet1')
-    # Read the data from the Google Sheet into a DataFrame
-    # df = observation_sheet.col_values(7)     
-    # # Convert the desired column to a list
-    # observation_ID_list = df['observation_ID'].tolist()
-    observation_ID_list = observation_sheet.col_values(1)
-
+    
+    # Fetch all the values in the first column (col_values returns a list)
+    observation_ID_list = observation_sheet.col_values(1)  # Fetch column 1
+    
+    # Remove the header by slicing the list (if it exists)
+    if observation_ID_list:
+        observation_ID_list = observation_ID_list[1:]
+    
+    return observation_ID_list
 
 
 # Function to generate need ID with the format NSYYMMDDxxxx
@@ -253,7 +276,11 @@ def update_need_ID():
 
     st.session_state['need_ID'] = generate_need_ID(st.session_state['need_date'], counter)
 
-getObservationIDs()
+# getObservationIDs()
+# Fetch the observation IDs from the Google Sheet
+observation_ID_list = getObservationIDs()
+
+
 
 # Use columns to place need_date, need_ID, and observation_ID side by side
 col1, col2, col3 = st.columns(3)
@@ -281,7 +308,9 @@ with col3:
 
    # st.write(f'obs ID: {st.session_state['observation_ID_list']}')
     # st.write(observation_ID_list)
-    st.text(observation_ID_list)
+    #st.text(observation_ID_list)
+    # Use the list in the multiselect widget
+    observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
 
 
 
