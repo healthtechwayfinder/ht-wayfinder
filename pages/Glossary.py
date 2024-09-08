@@ -104,11 +104,11 @@ search_term = st.text_input("Search Glossary")
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
-# --- Conditionally Show Input Fields for New Term ---
+# Conditionally display the input fields for adding a new term and definition
 if st.session_state['show_new_term_fields']:
     with st.form(key="new_term_form"):
-        new_term = st.text_input("Enter a new term:", value=st.session_state['new_term'], key="new_term_input")
-        new_definition = st.text_area("Enter the definition for the new term:", value=st.session_state['new_definition'], key="new_definition_input")
+        new_term = st.text_input("Enter a new term:", value=st.session_state['new_term'])
+        new_definition = st.text_area("Enter the definition for the new term:", value=st.session_state['new_definition'])
         submit_button = st.form_submit_button("Submit New Term")
 
         if submit_button:
@@ -120,11 +120,10 @@ if st.session_state['show_new_term_fields']:
                 observation_sheet.append_row([new_term, new_definition])
                 st.success(f"Term '{new_term}' has been added successfully!")
 
-                # Reset session state values after successful submission
+                # Reset the input fields in the session state
                 st.session_state['new_term'] = ''
                 st.session_state['new_definition'] = ''
                 st.session_state['show_new_term_fields'] = False  # Hide the form after submission
-                st.experimental_rerun()  # Force a rerun to refresh the app state
             else:
                 st.error("Please enter both a term and a definition.")
 
