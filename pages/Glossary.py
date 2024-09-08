@@ -92,30 +92,20 @@ search_term = st.text_input("Search Glossary")
 #     else:
 #         st.error("Please enter both a term and a definition.")
 
-
-# Ensure session state variables are initialized with defaults
-if "show_new_term_fields" not in st.session_state:
-    st.session_state["show_new_term_fields"] = False
-if "new_term" not in st.session_state:
-    st.session_state["new_term"] = ""
-if "new_definition" not in st.session_state:
-    st.session_state["new_definition"] = ""
-
-
 # Button to toggle input fields
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
-
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
-    st.text_input("Enter a new term:", key="new_term")
-    st.text_area("Enter the definition for the new term:", key="new_definition")
+    # Display the input fields for a new term and its definition
+    new_term = st.text_input("Enter a new term:", key="new_term")
+    new_definition = st.text_area("Enter the definition for the new term:", key="new_definition")
 
     # Submit New Term button
     if st.button("Submit New Term"):
-        # Ensure the term and definition are not empty
-        if st.session_state.get("new_term") and st.session_state.get("new_definition"):
+        # Ensure that both new_term and new_definition are filled
+        if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
             # Add the new term and definition to the list
             sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
             sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
@@ -130,6 +120,7 @@ if st.session_state["show_new_term_fields"]:
             st.session_state["new_definition"] = ""  # Reset new definition field
         else:
             st.error("Please enter both a term and a definition.")
+
 
 
 # Create a scrollable container using HTML
