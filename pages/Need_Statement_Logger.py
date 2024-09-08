@@ -111,8 +111,8 @@ if 'notes' not in st.session_state:
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
     
-if 'need_date' not in st.session_state:
-    st.session_state['need_date'] = date.today()
+# if 'need_date' not in st.session_state:
+#     st.session_state['need_date'] = date.today()
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
@@ -182,23 +182,27 @@ def recordNeed(need_ID, need_date, need_statement, problem, population, outcome,
 def clear_need():
     st.session_state.need_input = ''
     #st.session_state.input1 = ''
-
-    # if 'need_summary' in st.session_state:
-    #     st.session_state['need_summary'] = ""
-    if 'result' in st.session_state:
-        st.session_state['result'] = ""
+    st.session_state.notes_input = ''
+    st.session_state.problem_input = ''
+    st.session_state.population_input = ''
+    st.session_state.outcome_input = ''
+    
+    # # if 'need_summary' in st.session_state:
+    # #     st.session_state['need_summary'] = ""
+    # if 'result' in st.session_state:
+    #     st.session_state['result'] = ""
    
-    if 'problem' in st.session_state:
-        st.session_state['problem'] = ""
+    # if 'problem' in st.session_state:
+    #     st.session_state['problem'] = ""
 
-    if 'population' in st.session_state:
-        st.session_state['population'] = ""
+    # if 'population' in st.session_state:
+    #     st.session_state['population'] = ""
 
-    if 'outcome' in st.session_state:
-        st.session_state['outcome'] = ""
+    # if 'outcome' in st.session_state:
+    #     st.session_state['outcome'] = ""
 
-    if 'Notes' in st.session_state:
-        st.session_state['Notes'] = ""
+    # if 'Notes' in st.session_state:
+    #     st.session_state['Notes'] = ""
     update_need_ID()
     
 
@@ -300,17 +304,6 @@ with col2:
 
 with col3:
     # Display observation_ID options 
-    # need to create a variable that's just an array of all the obervation IDs
-    # ob_ID_list = read the column of google sheets called Observation_ID and make a list
-    #observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list) 
-    #selected_options = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
-
-    # selected_options = st.multiselect("Choose Observation IDs:", observation_ID_list)
-
-   # st.write(f'obs ID: {st.session_state['observation_ID_list']}')
-    # st.write(observation_ID_list)
-    #st.text(observation_ID_list)
-    # Use the list in the multiselect widget
     observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
 
 
