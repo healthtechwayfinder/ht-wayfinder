@@ -106,9 +106,8 @@ if st.button("Add a New Term"):
 
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
-    # Display the input fields for a new term and its definition
-    new_term = st.text_input("Enter a new term:", key="new_term")
-    new_definition = st.text_area("Enter the definition for the new term:", key="new_definition")
+    st.text_input("Enter a new term:", key="new_term")
+    st.text_area("Enter the definition for the new term:", key="new_definition")
 
     # Submit New Term button
     if st.button("Submit New Term"):
@@ -117,19 +116,16 @@ if st.session_state["show_new_term_fields"]:
             # Add the new term and definition to the list
             sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
             sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
-            
+
             # Update Google Sheets with the new term and definition
             observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
             st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
-            
-            # Use a callback to reset the term and definition after submission
-            def reset_inputs():
-                st.session_state["new_term"] = ""  # Reset new term field
-                st.session_state["new_definition"] = ""  # Reset new definition field
-                st.session_state["show_new_term_fields"] = False
 
-            # Call the reset function
-            reset_inputs()
+            # Reset input fields and hide them by triggering a rerun
+            st.session_state["new_term"] = ""  # Reset new term field
+            st.session_state["new_definition"] = ""  # Reset new definition field
+            st.session_state["show_new_term_fields"] = False
+            st.experimental_rerun()  # Rerun the app to reflect changes
 
         else:
             st.error("Please enter both a term and a definition.")
