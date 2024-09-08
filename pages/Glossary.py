@@ -112,7 +112,6 @@ if st.session_state["show_new_term_fields"]:
         submit_button = st.form_submit_button("Submit New Term")
 
         if submit_button:
-            # Ensure that both new_term and new_definition are filled
             if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
                 # Add the new term and definition to the list
                 sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
@@ -122,14 +121,13 @@ if st.session_state["show_new_term_fields"]:
                 observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
                 st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
 
-                # Clear input fields
+                # Clear input fields without triggering errors
                 st.session_state["new_term"] = ""
                 st.session_state["new_definition"] = ""
                 st.session_state["show_new_term_fields"] = False
                 st.experimental_rerun()  # Refresh to clear the form
             else:
                 st.error("Please enter both a term and a definition.")
-
 
 
 # Create a scrollable container using HTML
