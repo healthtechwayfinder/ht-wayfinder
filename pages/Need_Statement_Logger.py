@@ -101,8 +101,8 @@ if 'outcome' not in st.session_state:
 # if 'observation_ID' not in st.session_state:
 #     st.session_state['observation_ID'] = ""
 
-if 'Notes' not in st.session_state:
-    st.session_state['Notes'] = ""
+if 'notes' not in st.session_state:
+    st.session_state['notes'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
@@ -174,6 +174,7 @@ def recordNeed(need_ID, need_date, need_statement, problem, population, outcome,
      return status
 
 
+# reset textboxes, except for the date
 def clear_need():
     if 'need_statement' in st.session_state:
         st.session_state['need_statement'] = ""
@@ -181,13 +182,37 @@ def clear_need():
     #     st.session_state['need_summary'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
+   
+    if 'problem' in st.session_state:
+        st.session_state['problem'] = ""
+
+    if 'population' in st.session_state:
+        st.session_state['population'] = ""
+
+    if 'outcome' in st.session_state:
+        st.session_state['outcome'] = ""
+
+    if 'Notes' in st.session_state:
+        st.session_state['Notes'] = ""
     update_need_ID()
-
-
+    
 
 # Initialize or retrieve the clear_need counters dictionary from session state
 if 'need_counters' not in st.session_state:
     st.session_state['need_counters'] = {}
+
+# get observation ID options
+def getObservationIDs():
+    # google sheets conection here
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
+    observation_ID_List = observation_sheet.col_values(1) 
+
 
 # Function to generate need ID with the format NSYYMMDDxxxx
 def generate_need_ID(need_date, counter):
@@ -219,6 +244,8 @@ def update_need_ID():
 
     st.session_state['need_ID'] = generate_need_ID(st.session_state['need_date'], counter)
 
+getObservationIDs()
+
 # Use columns to place need_date, need_ID, and observation_ID side by side
 col1, col2, col3 = st.columns(3)
 
@@ -238,7 +265,7 @@ with col3:
     # Display observation_ID options 
     # need to create a variable that's just an array of all the obervation IDs
     # ob_ID_list = read the column of google sheets called Observation_ID and make a list
-    observation_ID = st.multiselect("Relevant Observations (multi-select)", ["Test 1", "Test 2"]) 
+    observation_ID = st.multiselect("Relevant Observations (multi-select)", ['observation_ID_List']) 
 
 ############
 
@@ -335,7 +362,7 @@ with st.form(key="my_form"):
             population = population_input
             outcome = outcome_input
             notes = notes_input
-            update_need_ID()
+            # update_need_ID()
             st.write("Need statement recorded!")
             st.write(f'Relevant Observations: {observation_ID}')
             st.write(f'Need ID: {st.session_state['need_ID']}')
@@ -345,6 +372,7 @@ with st.form(key="my_form"):
             st.write(f'Notes: {notes}')
             #clear_need()
             recordNeed(st.session_state['need_ID'], st.session_state['need_date'], need_statement, problem, population, outcome, observation_ID, notes)
+            clear_need()
 
             #TO DO: clear text boxes after
             #TO DO: update so that all variables are saved from text input and then logged
@@ -486,7 +514,7 @@ def update_observation_id():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    observation_sheet = client.open("BioDesign Observation Record").sheet1
+    observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
     column_values = observation_sheet.col_values(1) 
 
     # find all observation ids with the same date
@@ -510,4 +538,24 @@ def update_observation_id():
     # Generate the observation ID using the updated counter
     # counter = st.session_state['observation_counters'][obs_date_str]
 
-    st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
+    # st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
+
+def getObservationIDs():
+    #put google sheets conection here
+
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
+    observation_ID_List = observation_sheet.col_values(1) 
+    
+    # Read the data from the Google Sheet into a DataFrame
+    # df = conn.read()
+
+    # Convert the desired column to a list
+    # column_list = df['column_name'].tolist()
+
+
