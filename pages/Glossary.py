@@ -89,41 +89,64 @@ st.markdown("""
 # Search bar for filtering terms
 search_term = st.text_input("Search Glossary")
 
-# # Create input fields for manually adding a new term and definition
-# st.markdown("## Add a New Term")
-# new_term = st.text_input("Enter a new term:")
-# new_definition = st.text_area("Enter the definition for the new term:")
+# Create input fields for manually adding a new term and definition
+st.markdown("## Add a New Term")
+new_term = st.text_input("Enter a new term:")
+new_definition = st.text_area("Enter the definition for the new term:")
 
 
 
-# # Button to add the new term and definition
-# if st.button("Add Term"):
-#     if new_term and new_definition:
-#         # Add the new term and definition to the list
-#         sorted_terms_definitions.append((new_term, new_definition))
-#         sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+# Button to add the new term and definition
+if st.button("Add Term"):
+    if new_term and new_definition:
+        # Add the new term and definition to the list
+        sorted_terms_definitions.append((new_term, new_definition))
+        sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
         
-#         # Optionally, you could also update Google Sheets here
-#         observation_sheet.append_row([new_term, new_definition])
-#         st.success(f"Term '{new_term}' has been added successfully!")
-#     else:
-#         st.error("Please enter both a term and a definition.")
+        # Optionally, you could also update Google Sheets here
+        observation_sheet.append_row([new_term, new_definition])
+        st.success(f"Term '{new_term}' has been added successfully!")
+    else:
+        st.error("Please enter both a term and a definition.")
 
 # Add a scrollable container using Streamlit's native components
-st.markdown("### Terms Glossary")
+# Add CSS for a scrollable container using Streamlit
+st.markdown("""
+    <style>
+    .scrollable-container {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Create a container for scrolling
+# Create the scrollable container
 with st.container():
+    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+
+    # Filter the glossary based on the search term (case-insensitive)
     filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
     # Display the terms and their definitions with Edit buttons using Streamlit native components
     for i, (term, definition) in enumerate(filtered_terms_definitions):
-        # Display term and definition
-        with st.expander(f"{term} - {definition}", expanded=False):
+        # Create columns for term/definition and the Edit button
+        col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
+
+        with col1:
+            # Display term and definition
+            st.markdown(f"**{term}**: {definition}")
+
+        with col2:
             if f"edit_button_{i}" not in st.session_state:
                 st.session_state[f"edit_button_{i}"] = False
 
-            # If in edit mode, show the editable fields
+            # Display the Edit button in the second column
+            if st.button("Edit", key=f"edit_button_trigger_{i}"):
+                st.session_state[f"edit_button_{i}"] = True
+
+            # If in edit mode, show the editable fields in the same place
             if st.session_state[f"edit_button_{i}"]:
                 with st.form(key=f"edit_form_{i}"):
                     edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{i}")
@@ -141,10 +164,9 @@ with st.container():
 
                     if cancel_button:
                         st.session_state[f"edit_button_{i}"] = False
-            else:
-                # Display the edit button
-                if st.button(f"Edit {term}", key=f"edit_button_trigger_{i}"):
-                    st.session_state[f"edit_button_{i}"] = True
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
 ########################## past retrieval of glossary: 
 
