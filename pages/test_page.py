@@ -47,15 +47,14 @@
 
 # #
 
-
 import streamlit as st
 from streamlit.components.v1 import html
 
 def show_banner():
     with st.container():
         html("""
-        <div style="background-color: #ff6347; padding: 10px; border-radius: 5px;">
-            <h1 style="color: white; text-align: center;">Need Statement Recorded!</h1>
+        <div style="background-color: #90EE90; padding: 10px; border-radius: 5px;">
+            <h1 style="color: black; text-align: center; font-family: 'sans serif';">Need Statement Recorded!</h1>
         </div>
         """, width=700, height=100)
 
