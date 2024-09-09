@@ -615,23 +615,23 @@ def update_observation_id():
 
     # st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
 
-def getObservationIDs():
-    #put google sheets conection here
+# def getObservationIDs():
+#     #put google sheets conection here
 
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
-    observation_ID_list = observation_sheet.col_values(1) 
+#     scope = [
+#         "https://www.googleapis.com/auth/spreadsheets",
+#         "https://www.googleapis.com/auth/drive.metadata.readonly"
+#         ]
+#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+#     client = gspread.authorize(creds)
+#     observation_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
+#     observation_ID_list = observation_sheet.col_values(1) 
     
-    # Read the data from the Google Sheet into a DataFrame
-    df = observation_sheet.col_values(1)     
-    # df = conn.read()
+#     # Read the data from the Google Sheet into a DataFrame
+#     df = observation_sheet.col_values(1)     
+#     # df = conn.read()
 
-    # Convert the desired column to a list
-    column_list = df['column_name'].tolist()
+#     # Convert the desired column to a list
+#     column_list = df['column_name'].tolist()
 
 
