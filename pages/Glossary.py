@@ -51,18 +51,18 @@ terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
 
-# Add custom CSS to make the container scrollable
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: scroll;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# # Add custom CSS to make the container scrollable
+# st.markdown("""
+#     <style>
+#     .scrollable-container {
+#         height: 300px;
+#         overflow-y: scroll;
+#         border: 1px solid #ccc;
+#         padding: 10px;
+#         font-size: 16px;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 
 # # Search bar for filtering terms
 # search_term = st.text_input("Search Glossary")
