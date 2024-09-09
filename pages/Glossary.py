@@ -152,7 +152,7 @@ if st.session_state["show_new_term_fields"]:
             st.session_state["new_term"] = ""
             st.session_state["new_definition"] = ""
             st.session_state["show_new_term_fields"] = False
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("Please enter both a term and a definition.")
 
