@@ -107,6 +107,14 @@ if st.session_state["show_new_term_fields"]:
         else:
             st.error("Please enter both a term and a definition.")
 
+# Search bar for filtering terms
+search_term = st.text_input("Search Glossary", key="search_term")
+
+# Filter the glossary based on the search term (case-insensitive)
+filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+
+
+
 # Add custom CSS to make the container scrollable
 st.markdown("""
     <style>
