@@ -12,7 +12,7 @@ def submit_form():
 
 
     # Clear the form after submission
-    clear_form()
+   clear_form()
 
 # Initialize the session state for the input if it doesn't exist
 if 'input1' not in st.session_state:
