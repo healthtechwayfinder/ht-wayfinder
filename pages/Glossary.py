@@ -114,20 +114,6 @@ search_term = st.text_input("Search Glossary", key="search_term")
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
 
-
-# Add custom CSS to make the container scrollable
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: scroll;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
 # Scrollable container to display terms and their definitions with Edit buttons
 with st.container():
     st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
