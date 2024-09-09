@@ -68,8 +68,6 @@ if 'notes' not in st.session_state:
 # -> code could lay foundation for detecting and sorting problem, population, and solution rather than manual entry
 # -> could the observation bot page have a widget in the right-hand sidebar for entering need satements from that page? (in need something comes up from a conversation)
 
-# I propose copying the code over form the Add Observation page, but removing the AI components -- only entering info from the user right to the log
-
 
 
 
@@ -111,14 +109,6 @@ if 'need_statement' not in st.session_state:
 if 'need_input' not in st.session_state:
     st.session_state['need_input'] = ""
 
-
-# if 'observation_ID_list' not in st.session_state:
-#     st.session_state['observation_ID_list'] = ""
-
-
-# if 'need_ID' not in st.session_state:
-#     st.session_state['need_ID'] = ""
-
 if 'problem' not in st.session_state:
     st.session_state['problem'] = ""
 
@@ -136,9 +126,6 @@ if 'result' not in st.session_state:
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
-
-if 'notes_input' not in st.session_state:
-    st.session_state['notes_input'] = ""
 
 
 def addToGoogleSheets(need_dict):
@@ -267,7 +254,7 @@ def submit_form():
     
     # send input to google sheets    
     recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], st.session_state['problem'], st.session_state['population'], st.session_state['outcome'], observation_ID, st.session_state['notes'])
-    
+    update_need_ID():
     # Clear the form after sending to sheets
     clear_form()
 
