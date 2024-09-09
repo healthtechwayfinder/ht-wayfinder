@@ -300,6 +300,7 @@ def submit_form():
 # Create the form
 with st.form("my_form"):
     # Text input tied to session state
+    submitted = st.form_submit_button("Submit", on_click=submit_form)
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -324,7 +325,7 @@ with st.form("my_form"):
     st.text_input("Notes:", key='notes')
 
     # Form submit button with a callback function
-    submitted = st.form_submit_button("Submit", on_click=submit_form)
+    #submitted = st.form_submit_button("Submit", on_click=submit_form)
 
 
 
