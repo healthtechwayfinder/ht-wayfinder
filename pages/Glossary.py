@@ -40,24 +40,18 @@ if "new_term" not in st.session_state:
 if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
 
-# Retrieve terms and definitions from Google Sheets
-terms = sheet.col_values(1)  # Get all values in column 1
-definitions = sheet.col_values(2)  # Get all values in column 2
+# Print test 
+terms = observation_sheet.col_values(1)  # Terms are in column 1
+definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
-# Check if columns have data and skip the header row
-if len(terms) > 1 and len(definitions) > 1:
-    terms = terms[1:]  # Skip header row
-    definitions = definitions[1:]  # Skip header row
-else:
-    st.error("No data found in the Glossary sheet.")
-    terms = []
-    definitions = []
+# Combine terms and definitions into a list of tuples
+terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
-# Combine terms and definitions into a list of tuples and sort alphabetically
-terms_definitions = sorted(list(zip(terms, definitions)), key=lambda x: x[0].lower())
+# Sort the list alphabetically by the term
+sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
 
-# Add custom CSS for scrollable container and search bar
+# Add custom CSS to make the container scrollable
 st.markdown("""
     <style>
     .scrollable-container {
@@ -67,6 +61,15 @@ st.markdown("""
         padding: 10px;
         font-size: 16px;
     }
+    </style>
+    """, unsafe_allow_html=True)
+
+# # Search bar for filtering terms
+# search_term = st.text_input("Search Glossary")
+
+# Add custom CSS for white search bar
+st.markdown("""
+    <style>
     input[type="text"] {
         background-color: white !important;
         color: black !important;
@@ -75,56 +78,130 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Search bar for filtering terms
-search_term = st.text_input("Search Glossary").lower()
+search_term = st.text_input("Search Glossary")
 
-# Filter terms based on the search query
-filtered_terms_definitions = [item for item in terms_definitions if search_term in item[0].lower()]
+# # Create input fields for manually adding a new term and definition
+# st.markdown("## Add a New Term")
+# new_term = st.text_input("Enter a new term:")
+# new_definition = st.text_area("Enter the definition for the new term:")
 
-# Button to toggle input fields for adding a new term
-if st.button("Add a New Term"):
-    st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
+
+
+# # Button to add the new term and definition
+# if st.button("Add Term"):
+#     if new_term and new_definition:
+#         # Add the new term and definition to the list
+#         sorted_terms_definitions.append((new_term, new_definition))
+#         sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+        
+#         # Optionally, you could also update Google Sheets here
+#         observation_sheet.append_row([new_term, new_definition])
+#         st.success(f"Term '{new_term}' has been added successfully!")
+#     else:
+#         st.error("Please enter both a term and a definition.")
 
 # Button to toggle input fields
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
-# Conditionally display the input fields for adding a new term
+# Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
     st.text_input("Enter a new term:", key="new_term")
     st.text_area("Enter the definition for the new term:", key="new_definition")
 
     # Submit New Term button
     if st.button("Submit New Term"):
+        # Ensure that both new_term and new_definition are filled
         if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
-            # Add the new term and definition to Google Sheets
-            sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
-            st.success(f"Term '{st.session_state['new_term']}' has been added.")
-            st.session_state["new_term"] = ""
-            st.session_state["new_definition"] = ""
+            # Add the new term and definition to the list
+            sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
+            sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+
+            # Update Google Sheets with the new term and definition
+            observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
+            st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
+
+            # Reset input fields and hide them by triggering a rerun
+            st.session_state["new_term"] = ""  # Reset new term field
+            st.session_state["new_definition"] = ""  # Reset new definition field
             st.session_state["show_new_term_fields"] = False
-            st.experimental_rerun()
+            st.experimental_rerun()  # Rerun the app to reflect changes
+
         else:
             st.error("Please enter both a term and a definition.")
 
-# Scrollable container to display terms and their definitions
-with st.container():
-    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-    # Display each term with its definition and edit button
-    for idx, (term, definition) in enumerate(filtered_terms_definitions):
-        col1, col2 = st.columns([8, 2])
+# Create a scrollable container using HTML
+html_content = "<div class='scrollable-container'>"
 
-        with col1:
-            st.markdown(f"**{term}**: {definition}")
+# # Filter the glossary based on the search term (case-insensitive)
+# filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-        with col2:
-            if f"edit_button_{idx}" not in st.session_state:
-                st.session_state[f"edit_button_{idx}"] = False
+# if filtered_terms_definitions:
+#     for term, definition in filtered_terms_definitions:
+#         html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+# else:
+#     html_content += "<p>No matching terms found.</p>"
 
-            if st.button("Edit", key=f"edit_button_trigger_{idx}"):
-                st.session_state[f"edit_button_{idx}"] = True
+# html_content += "</div>"
 
-        # Editable fields below the term and definition when "Edit" is clicked
+# Filter the glossary based on the search term (case-insensitive)
+filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+
+# # Display the terms and their definitions with Edit buttons
+# for term, definition in filtered_terms_definitions:
+#     # Create columns for term/definition and the Edit button
+#     col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
+
+#     with col1:
+#         # Display term and definition
+#         st.markdown(f"**{term}**: {definition}")
+
+#     with col2:
+#         if f"edit_button_{term}" not in st.session_state:
+#             st.session_state[f"edit_button_{term}"] = False
+
+#         # Display the Edit button in the second column
+#         if st.button("Edit", key=f"edit_button_trigger_{term}"):
+#             st.session_state[f"edit_button_{term}"] = True
+
+#         # If in edit mode, show the editable fields in the same place
+#         if st.session_state[f"edit_button_{term}"]:
+#             with st.form(key=f"edit_form_{term}"):
+#                 edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{term}")
+#                 edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{term}")
+#                 save_button = st.form_submit_button("Save")
+#                 cancel_button = st.form_submit_button("Cancel")
+
+#                 if save_button:
+#                     # Save changes to Google Sheets
+#                     row_index = terms.index(term) + 1
+#                     observation_sheet.update(f'A{row_index}', edited_term)
+#                     observation_sheet.update(f'B{row_index}', edited_definition)
+#                     st.session_state[f"edit_button_{term}"] = False
+#                     st.success(f"Term '{edited_term}' has been updated.")
+
+#                 if cancel_button:
+#                     st.session_state[f"edit_button_{term}"] = False
+
+# Display the terms and their definitions with Edit buttons
+for idx, (term, definition) in enumerate(filtered_terms_definitions):
+    # Create columns for term/definition and the Edit button
+    col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
+
+    with col1:
+        # Display term and definition
+        st.markdown(f"**{term}**: {definition}")
+
+    with col2:
+        if f"edit_button_{idx}" not in st.session_state:
+            st.session_state[f"edit_button_{idx}"] = False
+
+        # Display the Edit button in the second column with a unique key
+        if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+            st.session_state[f"edit_button_{idx}"] = True
+
+        # If in edit mode, show the editable fields in the same place
         if st.session_state[f"edit_button_{idx}"]:
             with st.form(key=f"edit_form_{idx}"):
                 edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
@@ -134,16 +211,74 @@ with st.container():
 
                 if save_button:
                     # Save changes to Google Sheets
-                    row_index = terms.index(term) + 2  # +2 to account for header and zero-indexing
-                    sheet.update(f'A{row_index}', edited_term)
-                    sheet.update(f'B{row_index}', edited_definition)
+                    row_index = terms.index(term) + 1
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
                     st.session_state[f"edit_button_{idx}"] = False
                     st.success(f"Term '{edited_term}' has been updated.")
 
                 if cancel_button:
                     st.session_state[f"edit_button_{idx}"] = False
 
-    st.markdown("</div>", unsafe_allow_html=True)
+
+# Render the HTML content inside the scrollable container
+st.markdown(html_content, unsafe_allow_html=True)
+
+########################## past retrieval of glossary: 
+
+# # Retrieve values from specific columns in the Google Sheet
+# column_values = observation_sheet.col_values(10)  # Terms are in column 10
+# observation_ids = observation_sheet.col_values(1)  # Observation IDs are in column 1
+
+# # Initialize dictionaries to store term counts and relevant observation IDs
+# term_counts = {}
+# relevant_observation_ids = {}
+
+# # Process the column values and count occurrences of each term
+# for i, value in enumerate(column_values[1:]):  # Skip the header row
+#     if value:  # Ensure the string is not empty
+#         terms = [term.strip() for term in value.split(",")]
+#         for term in terms:
+#             if term in term_counts:
+#                 term_counts[term] += 1
+#                 relevant_observation_ids[term].append(observation_ids[i+1])
+#             else:
+#                 term_counts[term] = 1
+#                 relevant_observation_ids[term] = [observation_ids[i+1]]
+
+# # Set up OpenAI API key for making requests
+# openai.api_key = st.secrets["openai_key"]
+
+# # Function to retrieve a medical term's definition using OpenAI
+# def get_definition(term):
+#     try:
+#         messages = [
+#             {"role": "system", "content": "You are a helpful assistant that provides concise definitions of medical terms."},
+#             {"role": "user", "content": f"Define the following medical term: {term}"}
+#         ]
+#         response = openai.ChatCompletion.create(
+#             model='gpt-4',
+#             messages=messages,
+#         )
+#         return response.choices[0].message['content']
+#     except Exception as e:
+#         return f"Error: {e}"
+
+# # Display the terms, their counts, and definitions
+# st.write("Unique terms, their counts, and definitions:")
+
+# # Sort terms alphabetically for display
+# sorted_terms = sorted(term_counts.keys())
+
+# for term in sorted_terms:
+#     capitalized_term = term.capitalize()
+#     definition = get_definition(term)
+#     st.write(f"""
+# - **{capitalized_term}** ({term_counts[term]}): {definition}  
+# _Relevant observation IDs:_ {', '.join(relevant_observation_ids[term])}
+#     """)
+
+# st.markdown("---")
 
 # Add custom CSS to style a large button
 st.markdown("""
@@ -322,4 +457,3 @@ st.markdown("""
 #         <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
 #     </div>
 #     """, unsafe_allow_html=True)
-
