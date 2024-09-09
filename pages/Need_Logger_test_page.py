@@ -1,8 +1,17 @@
-
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from datetime import date
+
+
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.chains import LLMChain
+from langchain.output_parsers import PydanticOutputParser
+# from langchain.callbacks import get_openai_callback
+from langchain.schema import StrOutputParser
+from langchain.schema.runnable import RunnableLambda
+from langchain.prompts import PromptTemplate
+from langchain_pinecone import PineconeVectorStore
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -15,6 +24,7 @@ from datetime import date, datetime
 import json
 import os
 import csv
+
 
 st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil:")
 st.markdown("# Create a New Need Statement")
@@ -61,33 +71,6 @@ if 'notes' not in st.session_state:
 # I propose copying the code over form the Add Observation page, but removing the AI components -- only entering info from the user right to the log
 
 
-
-# import time
-# import streamlit as st
-# from streamlit_extras.switch_page_button import switch_page
-# from datetime import date
-
-
-# from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-# from langchain.chains import LLMChain
-# from langchain.output_parsers import PydanticOutputParser
-# # from langchain.callbacks import get_openai_callback
-# from langchain.schema import StrOutputParser
-# from langchain.schema.runnable import RunnableLambda
-# from langchain.prompts import PromptTemplate
-# from langchain_pinecone import PineconeVectorStore
-
-# import gspread
-# from oauth2client.service_account import ServiceAccountCredentials
-
-
-# from pydantic import BaseModel, Field
-# from typing import Optional
-# from datetime import date, datetime
-
-# import json
-# import os
-# import csv
 
 
 
