@@ -117,9 +117,6 @@ if st.button("Add a New Term"):
 
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
-    st.text_input("Enter a new term:", key="new_term")
-    st.text_area("Enter the definition for the new term:", key="new_definition")
-
     # Submit New Term button
     if st.button("Submit New Term"):
         # Ensure that both new_term and new_definition are filled
