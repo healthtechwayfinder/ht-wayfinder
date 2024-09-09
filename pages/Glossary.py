@@ -163,21 +163,6 @@ search_term = st.text_input("Search Glossary", key="search_term")
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-# Add custom CSS for the scrollable container
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: scroll;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Scrollable container for terms and definitions
-st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
 # Display the terms and their definitions inside the scrollable container
 for idx, (term, definition) in enumerate(filtered_terms_definitions):
@@ -217,46 +202,6 @@ for idx, (term, definition) in enumerate(filtered_terms_definitions):
             if st.button("Cancel", key=f"cancel_button_{idx}"):
                 st.session_state[edit_mode_key] = False
 
-st.markdown("</div>", unsafe_allow_html=True)  # End of scrollable container
-
-
-# # Render the HTML content inside the scrollable container
-# st.markdown(html_content, unsafe_allow_html=True)
-# # Display the terms and their definitions with Edit buttons
-# for idx, (term, definition) in enumerate(filtered_terms_definitions):
-#     # Create columns for term/definition and the Edit button
-#     col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
-
-#     with col1:
-#         # Display term and definition
-#         st.markdown(f"**{term}**: {definition}")
-
-#     with col2:
-#         if f"edit_button_{idx}" not in st.session_state:
-#             st.session_state[f"edit_button_{idx}"] = False
-
-#         # Display the Edit button in the second column with a unique key
-#         if st.button("Edit", key=f"edit_button_trigger_{idx}"):
-#             st.session_state[f"edit_button_{idx}"] = True
-
-#         # If in edit mode, show the editable fields in the same place
-#         if st.session_state[f"edit_button_{idx}"]:
-#             with st.form(key=f"edit_form_{idx}"):
-#                 edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
-#                 edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
-#                 save_button = st.form_submit_button("Save")
-#                 cancel_button = st.form_submit_button("Cancel")
-
-#                 if save_button:
-#                     # Save changes to Google Sheets
-#                     row_index = terms.index(term) + 1
-#                     observation_sheet.update(f'A{row_index}', edited_term)
-#                     observation_sheet.update(f'B{row_index}', edited_definition)
-#                     st.session_state[f"edit_button_{idx}"] = False
-#                     st.success(f"Term '{edited_term}' has been updated.")
-
-#                 if cancel_button:
-#                     st.session_state[f"edit_button_{idx}"] = False
 
 
 # Add custom CSS to style a large button
