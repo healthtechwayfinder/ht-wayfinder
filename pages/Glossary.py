@@ -111,46 +111,39 @@ st.markdown("""
 #             st.experimental_rerun()  # Rerun the app to reflect changes
 #         else:
 #             st.error("Please enter both a term and a definition.")
+
 # Button to toggle input fields
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
-    st.session_state["new_term"] = st.text_input("Enter a new term:", value=st.session_state.get("new_term", ""))
-    st.session_state["new_definition"] = st.text_area("Enter the definition for the new term:", value=st.session_state.get("new_definition", ""))
+    st.text_input("Enter a new term:", key="new_term")
+    st.text_area("Enter the definition for the new term:", key="new_definition")
 
     # Submit New Term button
     if st.button("Submit New Term"):
-        new_term = st.session_state["new_term"].strip()
-        new_definition = st.session_state["new_definition"].strip()
+        # Ensure that both new_term and new_definition are filled
+        if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
+            # Add the new term and definition to the list
+            sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
+            sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
 
-        if new_term and new_definition:
-            # Check for duplicate term
-            if new_term.lower() in [t.lower() for t in terms]:
-                idx = next(i for i, t in enumerate(terms) if t.lower() == new_term.lower())
-                existing_def = definitions[idx]
+            # Update Google Sheets with the new term and definition
+            observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
+            st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
 
-                if st.checkbox(f"Add a new definition to the existing term '{new_term}'?"):
-                    # Append new definition to the existing one
-                    updated_definition = existing_def + "\n" + new_definition
-                    observation_sheet.update(f'B{idx+1}', updated_definition)  # Update Google Sheets
-                    st.success(f"New definition added to '{new_term}'")
-                else:
-                    st.warning(f"Term '{new_term}' already exists with definition: {existing_def}")
-            else:
-                # Add new term and definition
-                observation_sheet.append_row([new_term, new_definition])
-                st.success(f"Term '{new_term}' has been added successfully!")
-
-            # Reset input fields
-            st.session_state["new_term"] = ""
-            st.session_state["new_definition"] = ""
+            # Reset input fields and hide them by triggering a rerun
+            st.session_state["new_term"] = ""  # Reset new term field
+            st.session_state["new_definition"] = ""  # Reset new definition field
             st.session_state["show_new_term_fields"] = False
-            st.experimental_rerun()
+            st.experimental_rerun()  # Rerun the app to reflect changes
+
         else:
             st.error("Please enter both a term and a definition.")
-            
+
+
+
 # Search bar for filtering terms
 search_term = st.text_input("Search Glossary", key="search_term")
 
