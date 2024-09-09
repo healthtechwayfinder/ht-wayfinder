@@ -204,9 +204,6 @@ with st.container():
 #                     st.session_state[f"edit_button_{idx}"] = False
 
 
-# Render the HTML content inside the scrollable container
-st.markdown(html_content, unsafe_allow_html=True)
-
 # Add custom CSS to style a large button
 st.markdown("""
     <style>
