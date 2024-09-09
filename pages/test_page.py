@@ -48,15 +48,9 @@
 # #
 
 import streamlit as st
-from streamlit.components.v1 import html
 
-def show_banner():
-    with st.container():
-        html("""
-        <div style="background-color: #90EE90; padding: 10px; border-radius: 5px;">
-            <h1 style="color: black; text-align: center; font-family: 'sans serif';">Need Statement Recorded!</h1>
-        </div>
-        """, width=700, height=100)
+def show_text():
+    st.markdown("<h1 style='text-align: center; color: green;'>Need Statement Recorded!</h1>", unsafe_allow_html=True)
 
 with st.form(key='my_form'):
-    submit_button = st.form_submit_button(label='Submit', on_click=show_banner)
+    submit_button = st.form_submit_button(label='Submit', on_click=show_text)
