@@ -254,7 +254,7 @@ def submit_form():
     
     # send input to google sheets    
     recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], st.session_state['problem'], st.session_state['population'], st.session_state['outcome'], observation_ID, st.session_state['notes'])
-    update_need_ID():
+    update_need_ID()
     # Clear the form after sending to sheets
     clear_form()
 
