@@ -111,6 +111,9 @@ st.markdown("""
 #             st.experimental_rerun()  # Rerun the app to reflect changes
 #         else:
 #             st.error("Please enter both a term and a definition.")
+# Button to toggle input fields
+if st.button("Add a New Term"):
+    st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
