@@ -22,6 +22,23 @@ import csv
 st.set_page_config(page_title="Glossary", page_icon="📊")
 st.markdown("# Glossary")
 
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #365980;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+    }
+    div.stButton > button:hover {
+        background-color: #2c4a70;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # Authenticate and connect to Google Sheets using service account credentials
 creds_dict = st.secrets["gcp_service_account"]
 scope = [
@@ -77,40 +94,6 @@ st.markdown("""
 # # Search bar for filtering terms
 # search_term = st.text_input("Search Glossary")
 
-# # Button to toggle input fields
-# if st.button("Add a New Term"):
-#     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
-# # Submit New Term button
-#     if st.button("Submit New Term"):
-#         new_term = st.session_state["new_term"].strip()
-#         new_definition = st.session_state["new_definition"].strip()
-
-#         if new_term and new_definition:
-#             # Check for duplicate term
-#             if new_term.lower() in [t.lower() for t in terms]:
-#                 # Duplicate term found
-#                 idx = next(i for i, t in enumerate(terms) if t.lower() == new_term.lower())
-#                 existing_def = definitions[idx]
-
-#                 if st.checkbox(f"Add a new definition to the existing term '{new_term}'?"):
-#                     # Append new definition to the existing one
-#                     updated_definition = existing_def + "\n" + new_definition
-#                     observation_sheet.update(f'B{idx+1}', updated_definition)  # Update Google Sheets
-#                     st.success(f"New definition added to '{new_term}'")
-#                 else:
-#                     st.warning(f"Term '{new_term}' already exists with definition: {existing_def}")
-#             else:
-#                 # Add new term and definition
-#                 observation_sheet.append_row([new_term, new_definition])
-#                 st.success(f"Term '{new_term}' has been added successfully!")
-
-#             # Reset input fields
-#             st.session_state["new_term"] = ""
-#             st.session_state["new_definition"] = ""
-#             st.session_state["show_new_term_fields"] = False
-#             st.experimental_rerun()  # Rerun the app to reflect changes
-#         else:
-#             st.error("Please enter both a term and a definition.")
 
 # Button to toggle input fields for a new term
 if st.button("Add a New Term"):
@@ -202,37 +185,31 @@ for idx, (term, definition) in enumerate(filtered_terms_definitions):
             if st.button("Cancel", key=f"cancel_button_{idx}"):
                 st.session_state[edit_mode_key] = False
 
+# # Add custom CSS to style a large button
+# st.markdown("""
+#     <style>
+#     .big-button-container {
+#         display: flex;
+#         justify-content: center;
+#     }
+#     .big-button {
+#         font-size: 20px;
+#         padding: 10px 60px;
+#         background-color: #365980; /* blueish color */
+#         color: white;
+#         border: none;
+#         border-radius: 8px;
+#         cursor: pointer;
+#         text-align: center;
+#     }
+#     .big-button:hover {
+#         background-color: #c2c2c2; /* Grey */
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 
-
-# Add custom CSS to style a large button
-st.markdown("""
-    <style>
-    .big-button-container {
-        display: flex;
-        justify-content: center;
-    }
-    .big-button {
-        font-size: 20px;
-        padding: 10px 60px;
-        background-color: #365980; /* blueish color */
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        text-align: center;
-    }
-    .big-button:hover {
-        background-color: #c2c2c2; /* Grey */
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Create a button to go back to the main menu
-st.markdown("""
-    <div class="big-button-container">
-        <button class="big-button" onclick="window.location.href='/?page=main_menu'">Back to Main Menu</button>
-    </div>
-    """, unsafe_allow_html=True)
+if st.button("Back to Main Menu"):
+    switch_page("main_menu")
 
 ########################## past retrieval of glossary: 
 
