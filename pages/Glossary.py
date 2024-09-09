@@ -41,11 +41,21 @@ if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
 
 # Retrieve terms and definitions from Google Sheets
-terms = sheet.col_values(1)[1:]  # Skip header row
-definitions = sheet.col_values(2)[1:]
+terms = sheet.col_values(1)  # Get all values in column 1
+definitions = sheet.col_values(2)  # Get all values in column 2
+
+# Check if columns have data and skip the header row
+if len(terms) > 1 and len(definitions) > 1:
+    terms = terms[1:]  # Skip header row
+    definitions = definitions[1:]  # Skip header row
+else:
+    st.error("No data found in the Glossary sheet.")
+    terms = []
+    definitions = []
 
 # Combine terms and definitions into a list of tuples and sort alphabetically
 terms_definitions = sorted(list(zip(terms, definitions)), key=lambda x: x[0].lower())
+
 
 # Add custom CSS for scrollable container and search bar
 st.markdown("""
