@@ -44,14 +44,11 @@ if "new_definition" not in st.session_state:
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
-# # Combine terms and definitions into a list of tuples
-# terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
+# Combine terms and definitions into a list of tuples
+terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
-# # Sort the list alphabetically by the term
-# sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
-
-# Combine terms and definitions into a list of tuples and sort them
-terms_definitions = sorted(list(zip(terms, definitions)), key=lambda x: x[0].lower())
+# Sort the list alphabetically by the term
+sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
 # Add custom CSS to make the container scrollable --------Search bar---------
 st.markdown("""
