@@ -309,7 +309,7 @@ with st.form("my_form"):
     # need ID and population
     with col2:
         if 'need_ID' not in st.session_state:
-        update_need_ID()
+            update_need_ID()
         # Display the need ID
         st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
         st.text_input("Population:", key='population')
