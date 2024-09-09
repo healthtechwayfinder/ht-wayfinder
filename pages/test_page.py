@@ -10,18 +10,18 @@ def submit_form():
     st.write("Text 1:", st.session_state.need_statement)
     # st.text_input(label="There is a need for...", st.session_state.need_statement)
     # Form submission logic
-    if need_input:
+    if need_statement:
             #st.session_state["need_statement"] = st.session_state["need_input"]
             # need_statement = need_input
-            problem = problem_input
-            population = population_input
-            outcome = outcome_input
-            notes = notes_input
+            # problem = problem_input
+            # population = population_input
+            # outcome = outcome_input
+            # notes = notes_input
             # update_need_ID()
             st.write("Need statement recorded!")
         
             # st.write(f'Relevant Observations: {observation_ID}')
-            st.write(f'Need statement: {st.session_state['need_statement']}')
+            # st.write(f'Need statement: {st.session_state['need_statement']}')
             # st.write(f'Problem: {problem}')
             # st.write(f'Population: {population}')
             # st.write(f'Outcome: {outcome}')
