@@ -19,13 +19,14 @@ def submit_form():
             notes = notes_input
             # update_need_ID()
             st.write("Need statement recorded!")
+        
             # st.write(f'Relevant Observations: {observation_ID}')
-            # st.write(f'Need ID: {st.session_state['need_ID']}')
+            st.write(f'Need statement: {st.session_state['need_statement']}')
             # st.write(f'Problem: {problem}')
             # st.write(f'Population: {population}')
             # st.write(f'Outcome: {outcome}')
             # st.write(f'Notes: {notes}')
-            recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], problem, population, outcome, observation_ID, notes)
+            #recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], problem, population, outcome, observation_ID, notes)
             # Clear the form after submission
             clear_form()
     
