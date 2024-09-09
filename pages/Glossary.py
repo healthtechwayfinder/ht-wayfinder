@@ -107,27 +107,58 @@ if st.session_state["show_new_term_fields"]:
         else:
             st.error("Please enter both a term and a definition.")
 
-# Create a scrollable container using HTML
-html_content = "<div class='scrollable-container'>"
+# Search bar for filtering terms
+search_term = st.text_input("Search Glossary")
 
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
-# Display the terms and their definitions with Edit buttons
-for idx, (term, definition) in enumerate(filtered_terms_definitions):
-    html_content += f"<p><strong>{term}:</strong> {definition} "
-    html_content += f"<button onclick='document.getElementById(\"edit_form_{idx}\").style.display=\"block\"'>Edit</button></p>"
-    html_content += f"<div id='edit_form_{idx}' style='display: none;'>"
-    html_content += f"<form method='post'>"
-    html_content += f"Term: <input type='text' name='edit_term_{idx}' value='{term}'><br>"
-    html_content += f"Definition: <textarea name='edit_definition_{idx}'>{definition}</textarea><br>"
-    html_content += f"<input type='submit' value='Save'>"
-    html_content += f"<button onclick='document.getElementById(\"edit_form_{idx}\").style.display=\"none\"'>Cancel</button>"
-    html_content += f"</form></div>"
 
-html_content += "</div>"
+# Create a scrollable container using Streamlit's container system
+with st.container():
+    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-# Render the HTML content inside the scrollable container
-st.markdown(html_content, unsafe_allow_html=True)
+    # Display the terms and their definitions with Edit buttons
+    for idx, (term, definition) in enumerate(filtered_terms_definitions):
+        # Create columns for term/definition and the Edit button
+        col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
+
+        with col1:
+            # Display term and definition
+            st.markdown(f"**{term}**: {definition}")
+
+        with col2:
+            if f"edit_button_{idx}" not in st.session_state:
+                st.session_state[f"edit_button_{idx}"] = False
+
+            # Display the Edit button
+            if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+                st.session_state[f"edit_button_{idx}"] = True
+
+        # If in edit mode, show the editable fields below the term/definition
+        if st.session_state[f"edit_button_{idx}"]:
+            with st.form(key=f"edit_form_{idx}"):
+                # Editable fields for term and definition
+                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+                save_button = st.form_submit_button("Save")
+                cancel_button = st.form_submit_button("Cancel")
+
+                if save_button:
+                    # Save changes to Google Sheets
+                    row_index = terms.index(term) + 1  # Account for header row
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
+                    st.session_state[f"edit_button_{idx}"] = False
+                    st.success(f"Term '{edited_term}' has been updated.")
+
+                if cancel_button:
+                    st.session_state[f"edit_button_{idx}"] = False
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+# # Render the HTML content inside the scrollable container
+# st.markdown(html_content, unsafe_allow_html=True)
 # # Display the terms and their definitions with Edit buttons
 # for idx, (term, definition) in enumerate(filtered_terms_definitions):
 #     # Create columns for term/definition and the Edit button
