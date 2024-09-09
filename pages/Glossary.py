@@ -113,12 +113,23 @@ search_term = st.text_input("Search Glossary", key="search_term")
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
+# Add custom CSS to make the container scrollable
+st.markdown("""
+    <style>
+    .scrollable-container {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Scrollable container to display terms and their definitions with Edit buttons
 with st.container():
     st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-    # Display the terms and their definitions with Edit buttons
+    # Display the terms and their definitions inside the scrollable container
     for idx, (term, definition) in enumerate(filtered_terms_definitions):
         # Create unique keys for each term to avoid key conflicts
         term_key = f"term_{idx}"
@@ -126,7 +137,7 @@ with st.container():
         edit_button_key = f"edit_button_{idx}"
         edit_mode_key = f"edit_mode_{idx}"
 
-        # Check if we're in edit mode for this specific term
+        # Initialize edit mode in session state
         if edit_mode_key not in st.session_state:
             st.session_state[edit_mode_key] = False
 
@@ -138,17 +149,17 @@ with st.container():
                 # Display term and definition in normal mode
                 st.markdown(f"**{term}**: {definition}")
             else:
-                # Display editable fields when in edit mode
+                # Display editable fields in edit mode
                 st.text_input("Edit term", value=term, key=term_key)
                 st.text_area("Edit definition", value=definition, key=definition_key)
 
         with col2:
             if not st.session_state[edit_mode_key]:
-                # Display the Edit button
+                # Show the Edit button
                 if st.button("Edit", key=edit_button_key):
                     st.session_state[edit_mode_key] = True
             else:
-                # Display Save and Cancel buttons when in edit mode
+                # Show Save and Cancel buttons in edit mode
                 if st.button("Save", key=f"save_button_{idx}"):
                     # Save changes to Google Sheets
                     row_index = terms.index(term) + 2  # Adjust for zero-index and header
@@ -163,7 +174,6 @@ with st.container():
                     st.session_state[edit_mode_key] = False
 
     st.markdown("</div>", unsafe_allow_html=True)
-
 
 # # Render the HTML content inside the scrollable container
 # st.markdown(html_content, unsafe_allow_html=True)
