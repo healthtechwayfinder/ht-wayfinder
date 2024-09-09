@@ -250,7 +250,9 @@ def clear_form():
 # Function to handle form submission
 def submit_form():
     # lil confirmation message
-    st.write("Need statement recorded!")
+    # st.write("Need statement recorded!")
+    st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
+
     
     # send input to google sheets    
     recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], st.session_state['problem'], st.session_state['population'], st.session_state['outcome'], observation_ID, st.session_state['notes'])
