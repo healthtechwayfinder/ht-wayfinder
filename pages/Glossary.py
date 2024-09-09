@@ -74,8 +74,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Search bar for filtering terms
-search_term = st.text_input("Search Glossary")
+# # Search bar for filtering terms
+# search_term = st.text_input("Search Glossary")
 
 # Button to toggle input fields
 if st.button("Add a New Term"):
