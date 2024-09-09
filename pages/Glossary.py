@@ -143,45 +143,45 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Create a scrollable container using st.markdown and html
-with st.container():
-    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+# # Create a scrollable container using st.markdown and html
+# with st.container():
+#     st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-    # Display the terms and their definitions with Edit buttons inside the scrollable container
-    for idx, (term, definition) in enumerate(filtered_terms_definitions):
-        # Display term and definition in a single row
-        col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
+#     # Display the terms and their definitions with Edit buttons inside the scrollable container
+#     for idx, (term, definition) in enumerate(filtered_terms_definitions):
+#         # Display term and definition in a single row
+#         col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
 
-        with col1:
-            # Display the term and definition
-            st.markdown(f"**{term}**: {definition}")
+#         with col1:
+#             # Display the term and definition
+#             st.markdown(f"**{term}**: {definition}")
 
-        with col2:
-            if f"edit_button_{idx}" not in st.session_state:
-                st.session_state[f"edit_button_{idx}"] = False
+#         with col2:
+#             if f"edit_button_{idx}" not in st.session_state:
+#                 st.session_state[f"edit_button_{idx}"] = False
 
-            # Display the Edit button in the second column with a unique key
-            if st.button("Edit", key=f"edit_button_trigger_{idx}"):
-                st.session_state[f"edit_button_{idx}"] = True
+#             # Display the Edit button in the second column with a unique key
+#             if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+#                 st.session_state[f"edit_button_{idx}"] = True
 
-        # If in edit mode, show the editable fields below the term/definition
-        if st.session_state[f"edit_button_{idx}"]:
-            with st.form(key=f"edit_form_{idx}"):
-                # Editable fields displayed below term and definition
-                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
-                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
-                save_button = st.form_submit_button("Save")
-                cancel_button = st.form_submit_button("Cancel")
+#         # If in edit mode, show the editable fields below the term/definition
+#         if st.session_state[f"edit_button_{idx}"]:
+#             with st.form(key=f"edit_form_{idx}"):
+#                 # Editable fields displayed below term and definition
+#                 edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+#                 edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+#                 save_button = st.form_submit_button("Save")
+#                 cancel_button = st.form_submit_button("Cancel")
 
-                if save_button:
-                    # Save changes to Google Sheets
-                    row_index = terms.index(term) + 1
-                    observation_sheet.update(f'A{row_index}', edited_term)
-                    observation_sheet.u
+#                 if save_button:
+#                     # Save changes to Google Sheets
+#                     row_index = terms.index(term) + 1
+#                     observation_sheet.update(f'A{row_index}', edited_term)
+#                     observation_sheet.u
 
 
-# Create a scrollable container using HTML
-html_content = "<div class='scrollable-container'>"
+# # Create a scrollable container using HTML
+# html_content = "<div class='scrollable-container'>"
 
 # # Filter the glossary based on the search term (case-insensitive)
 # filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
@@ -233,46 +233,89 @@ filtered_terms_definitions = [item for item in sorted_terms_definitions if searc
 #                 if cancel_button:
 #                     st.session_state[f"edit_button_{term}"] = False
 
-# Display the terms and their definitions with Edit buttons
-for idx, (term, definition) in enumerate(filtered_terms_definitions):
-    # Display term and definition in a single row
-    col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
+# # Display the terms and their definitions with Edit buttons
+# for idx, (term, definition) in enumerate(filtered_terms_definitions):
+#     # Display term and definition in a single row
+#     col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
 
-    with col1:
-        # Display the term and definition
-        st.markdown(f"**{term}**: {definition}")
+#     with col1:
+#         # Display the term and definition
+#         st.markdown(f"**{term}**: {definition}")
 
-    with col2:
-        if f"edit_button_{idx}" not in st.session_state:
-            st.session_state[f"edit_button_{idx}"] = False
+#     with col2:
+#         if f"edit_button_{idx}" not in st.session_state:
+#             st.session_state[f"edit_button_{idx}"] = False
 
-        # Display the Edit button in the second column with a unique key
-        if st.button("Edit", key=f"edit_button_trigger_{idx}"):
-            st.session_state[f"edit_button_{idx}"] = True
+#         # Display the Edit button in the second column with a unique key
+#         if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+#             st.session_state[f"edit_button_{idx}"] = True
 
-    # If in edit mode, show the editable fields below the term/definition
-    if st.session_state[f"edit_button_{idx}"]:
-        with st.form(key=f"edit_form_{idx}"):
-            # Editable fields displayed below term and definition
-            edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
-            edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
-            save_button = st.form_submit_button("Save")
-            cancel_button = st.form_submit_button("Cancel")
+#     # If in edit mode, show the editable fields below the term/definition
+#     if st.session_state[f"edit_button_{idx}"]:
+#         with st.form(key=f"edit_form_{idx}"):
+#             # Editable fields displayed below term and definition
+#             edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+#             edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+#             save_button = st.form_submit_button("Save")
+#             cancel_button = st.form_submit_button("Cancel")
 
-            if save_button:
-                # Save changes to Google Sheets
-                row_index = terms.index(term) + 1
-                observation_sheet.update(f'A{row_index}', edited_term)
-                observation_sheet.update(f'B{row_index}', edited_definition)
+#             if save_button:
+#                 # Save changes to Google Sheets
+#                 row_index = terms.index(term) + 1
+#                 observation_sheet.update(f'A{row_index}', edited_term)
+#                 observation_sheet.update(f'B{row_index}', edited_definition)
+#                 st.session_state[f"edit_button_{idx}"] = False
+#                 st.success(f"Term '{edited_term}' has been updated.")
+
+#             if cancel_button:
+#                 st.session_state[f"edit_button_{idx}"] = False
+
+
+# # Render the HTML content inside the scrollable container
+# st.markdown(html_content, unsafe_allow_html=True)
+
+# Create a scrollable container using st.markdown and html
+with st.container():
+    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+
+    # Display the terms and their definitions with Edit buttons inside the scrollable container
+    for idx, (term, definition) in enumerate(filtered_terms_definitions):
+        # Display term and definition in a single row
+        col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
+
+        with col1:
+            # Display the term and definition
+            st.markdown(f"**{term}**: {definition}")
+
+        with col2:
+            if f"edit_button_{idx}" not in st.session_state:
                 st.session_state[f"edit_button_{idx}"] = False
-                st.success(f"Term '{edited_term}' has been updated.")
 
-            if cancel_button:
-                st.session_state[f"edit_button_{idx}"] = False
+            # Display the Edit button in the second column with a unique key
+            if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+                st.session_state[f"edit_button_{idx}"] = True
 
+        # If in edit mode, show the editable fields below the term/definition
+        if st.session_state[f"edit_button_{idx}"]:
+            with st.form(key=f"edit_form_{idx}"):
+                # Editable fields displayed below term and definition
+                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+                save_button = st.form_submit_button("Save")
+                cancel_button = st.form_submit_button("Cancel")
 
-# Render the HTML content inside the scrollable container
-st.markdown(html_content, unsafe_allow_html=True)
+                if save_button:
+                    # Save changes to Google Sheets
+                    row_index = terms.index(term) + 1
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
+                    st.session_state[f"edit_button_{idx}"] = False
+                    st.success(f"Term '{edited_term}' has been updated.")
+
+                if cancel_button:
+                    st.session_state[f"edit_button_{idx}"] = False
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 ########################## past retrieval of glossary: 
 
