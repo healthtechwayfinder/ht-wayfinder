@@ -17,6 +17,7 @@ from datetime import date
 import json
 import os
 import csv
+import time
 
 # Set up the Streamlit page
 st.set_page_config(page_title="Glossary", page_icon="📊")
@@ -146,6 +147,13 @@ search_term = st.text_input("Search Glossary", key="search_term")
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
+def onEditClickFunction(edit_mode_key):
+    print(f"Edit button clicked for term {edit_mode_key}" )
+    st.session_state[edit_mode_key] = True
+
+def onCancelClickFunction(edit_mode_key):
+    print(f"Cancel button clicked for term {edit_mode_key}" )
+    st.session_state[edit_mode_key] = False
 
 # Display the terms and their definitions inside the scrollable container
 for idx, (term, definition) in enumerate(filtered_terms_definitions):
@@ -170,43 +178,29 @@ for idx, (term, definition) in enumerate(filtered_terms_definitions):
 
     with col2:
         if not st.session_state[edit_mode_key]:
-            if st.button("Edit", key=f"edit_button_{idx}"):
-                st.session_state[edit_mode_key] = True
+            if st.button("Edit", key=f"edit_button_{idx}", on_click=onEditClickFunction, args=(edit_mode_key,)):
+                # st.session_state[edit_mode_key] = True
+                print(f"Edit button clicked for term {edit_mode_key}" )
+                pass
         else:
             if st.button("Save", key=f"save_button_{idx}"):
                 # Save changes to Google Sheets
                 row_index = terms.index(term) + 2  # Adjust for zero-index and header
                 updated_term = st.session_state[term_key]
                 updated_definition = st.session_state[definition_key]
-                observation_sheet.update(f'A{row_index}', updated_term)
-                observation_sheet.update(f'B{row_index}', updated_definition)
+                print("Updating for term with index: ", row_index)
+                observation_sheet.update(values=[[updated_term]], range_name=f'A{row_index}')
+                observation_sheet.update(values=[[updated_definition]], range_name=f'B{row_index}')
                 st.session_state[edit_mode_key] = False
                 st.success(f"Term '{updated_term}' has been updated.")
-            if st.button("Cancel", key=f"cancel_button_{idx}"):
-                st.session_state[edit_mode_key] = False
+                time.sleep(3)
+                st.rerun()
+            if st.button("Cancel", key=f"cancel_button_{idx}", on_click=onCancelClickFunction, args=(edit_mode_key,)):
+                # st.session_state[edit_mode_key] = False
+                pass
 
-# # Add custom CSS to style a large button
-# st.markdown("""
-#     <style>
-#     .big-button-container {
-#         display: flex;
-#         justify-content: center;
-#     }
-#     .big-button {
-#         font-size: 20px;
-#         padding: 10px 60px;
-#         background-color: #365980; /* blueish color */
-#         color: white;
-#         border: none;
-#         border-radius: 8px;
-#         cursor: pointer;
-#         text-align: center;
-#     }
-#     .big-button:hover {
-#         background-color: #c2c2c2; /* Grey */
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
+    # add a break line
+    st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("Back to Main Menu"):
     switch_page("main_menu")
