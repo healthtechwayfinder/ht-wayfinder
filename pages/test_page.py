@@ -7,7 +7,9 @@ def clear_form():
 # Function to handle form submission
 def submit_form():
     # You can add any form submission logic here
-    st.write("Text 1:", st.session_state.input1)
+   # st.write("Text 1:", st.session_state.input1)
+    st.text_input(label="There is a need for...", st.session_state.input1)
+
     # Clear the form after submission
     clear_form()
 
