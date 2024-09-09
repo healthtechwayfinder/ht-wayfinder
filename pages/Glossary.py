@@ -117,57 +117,58 @@ filtered_terms_definitions = [item for item in sorted_terms_definitions if searc
 st.markdown("""
     <style>
     .scrollable-container {
-        height: 400px;
+        height: 300px;
         overflow-y: scroll;
         border: 1px solid #ccc;
         padding: 10px;
+        font-size: 16px;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # Scrollable container for terms and definitions
-with st.container():
-    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-    # Display the terms and their definitions inside the scrollable container
-    for idx, (term, definition) in enumerate(filtered_terms_definitions):
-        term_key = f"term_{idx}"
-        definition_key = f"definition_{idx}"
-        edit_mode_key = f"edit_mode_{idx}"
+# Display the terms and their definitions inside the scrollable container
+for idx, (term, definition) in enumerate(filtered_terms_definitions):
+    term_key = f"term_{idx}"
+    definition_key = f"definition_{idx}"
+    edit_mode_key = f"edit_mode_{idx}"
 
-        # Initialize edit mode in session state
-        if edit_mode_key not in st.session_state:
-            st.session_state[edit_mode_key] = False
+    # Initialize edit mode in session state
+    if edit_mode_key not in st.session_state:
+        st.session_state[edit_mode_key] = False
 
-        col1, col2 = st.columns([8, 2])
+    col1, col2 = st.columns([8, 2])
 
-        with col1:
-            if not st.session_state[edit_mode_key]:
-                # Display term and definition in normal mode
-                st.markdown(f"**{term}**: {definition}")
-            else:
-                # Display editable fields in edit mode
-                st.text_input("Edit term", value=term, key=term_key)
-                st.text_area("Edit definition", value=definition, key=definition_key)
+    with col1:
+        if not st.session_state[edit_mode_key]:
+            # Display term and definition in normal mode
+            st.markdown(f"**{term}**: {definition}")
+        else:
+            # Display editable fields in edit mode
+            st.text_input("Edit term", value=term, key=term_key)
+            st.text_area("Edit definition", value=definition, key=definition_key)
 
-        with col2:
-            if not st.session_state[edit_mode_key]:
-                if st.button("Edit", key=f"edit_button_{idx}"):
-                    st.session_state[edit_mode_key] = True
-            else:
-                if st.button("Save", key=f"save_button_{idx}"):
-                    # Save changes to Google Sheets
-                    row_index = terms.index(term) + 2  # Adjust for zero-index and header
-                    updated_term = st.session_state[term_key]
-                    updated_definition = st.session_state[definition_key]
-                    observation_sheet.update(f'A{row_index}', updated_term)
-                    observation_sheet.update(f'B{row_index}', updated_definition)
-                    st.session_state[edit_mode_key] = False
-                    st.success(f"Term '{updated_term}' has been updated.")
-                if st.button("Cancel", key=f"cancel_button_{idx}"):
-                    st.session_state[edit_mode_key] = False
+    with col2:
+        if not st.session_state[edit_mode_key]:
+            if st.button("Edit", key=f"edit_button_{idx}"):
+                st.session_state[edit_mode_key] = True
+        else:
+            if st.button("Save", key=f"save_button_{idx}"):
+                # Save changes to Google Sheets
+                row_index = terms.index(term) + 2  # Adjust for zero-index and header
+                updated_term = st.session_state[term_key]
+                updated_definition = st.session_state[definition_key]
+                observation_sheet.update(f'A{row_index}', updated_term)
+                observation_sheet.update(f'B{row_index}', updated_definition)
+                st.session_state[edit_mode_key] = False
+                st.success(f"Term '{updated_term}' has been updated.")
+            if st.button("Cancel", key=f"cancel_button_{idx}"):
+                st.session_state[edit_mode_key] = False
 
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)  # End of scrollable container
+
 
 # # Render the HTML content inside the scrollable container
 # st.markdown(html_content, unsafe_allow_html=True)
