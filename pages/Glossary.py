@@ -40,29 +40,31 @@ if "new_term" not in st.session_state:
 if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
 
-# Print test 
+# REtrieve terms from Google sheets 
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 
-# Combine terms and definitions into a list of tuples
-terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
+# # Combine terms and definitions into a list of tuples
+# terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
 
-# Sort the list alphabetically by the term
-sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
+# # Sort the list alphabetically by the term
+# sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
 
+# Combine terms and definitions into a list of tuples and sort them
+terms_definitions = sorted(list(zip(terms, definitions)), key=lambda x: x[0].lower())
 
-# # Add custom CSS to make the container scrollable
-# st.markdown("""
-#     <style>
-#     .scrollable-container {
-#         height: 300px;
-#         overflow-y: scroll;
-#         border: 1px solid #ccc;
-#         padding: 10px;
-#         font-size: 16px;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
+# Add custom CSS to make the container scrollable --------Search bar---------
+st.markdown("""
+    <style>
+    .scrollable-container {
+        height: 300px;
+        overflow-y: scroll;
+        border: 1px solid #ccc;
+        padding: 10px;
+        font-size: 16px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # # Search bar for filtering terms
 # search_term = st.text_input("Search Glossary")
@@ -104,44 +106,85 @@ search_term = st.text_input("Search Glossary")
 if st.button("Add a New Term"):
     st.session_state["show_new_term_fields"] = not st.session_state["show_new_term_fields"]
 
-# # Conditionally display the input fields for adding a new term and definition
-# if st.session_state["show_new_term_fields"]:
-#     st.text_input("Enter a new term:", key="new_term")
-#     st.text_area("Enter the definition for the new term:", key="new_definition")
+# Conditionally display the input fields for adding a new term and definition
+if st.session_state["show_new_term_fields"]:
+    st.text_input("Enter a new term:", key="new_term")
+    st.text_area("Enter the definition for the new term:", key="new_definition")
 
-#     # Submit New Term button
-#     if st.button("Submit New Term"):
-#         # Ensure that both new_term and new_definition are filled
-#         if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
-#             # Add the new term and definition to the list
-#             sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
-#             sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
+    # Submit New Term button
+    if st.button("Submit New Term"):
+        # Ensure that both new_term and new_definition are filled
+        if st.session_state["new_term"].strip() and st.session_state["new_definition"].strip():
+            # Add the new term and definition to the list
+            sorted_terms_definitions.append((st.session_state["new_term"], st.session_state["new_definition"]))
+            sorted_terms_definitions = sorted(sorted_terms_definitions, key=lambda x: x[0].lower())
 
-#             # Update Google Sheets with the new term and definition
-#             observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
-#             st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
+            # Update Google Sheets with the new term and definition
+            observation_sheet.append_row([st.session_state["new_term"], st.session_state["new_definition"]])
+            st.success(f"Term '{st.session_state['new_term']}' has been added successfully!")
 
-#             # Reset input fields and hide them by triggering a rerun
-#             st.session_state["new_term"] = ""  # Reset new term field
-#             st.session_state["new_definition"] = ""  # Reset new definition field
-#             st.session_state["show_new_term_fields"] = False
-#             st.experimental_rerun()  # Rerun the app to reflect changes
+            # Reset input fields and hide them by triggering a rerun
+            st.session_state["new_term"] = ""  # Reset new term field
+            st.session_state["new_definition"] = ""  # Reset new definition field
+            st.session_state["show_new_term_fields"] = False
+            st.experimental_rerun()  # Rerun the app to reflect changes
 
-#         else:
-#             st.error("Please enter both a term and a definition.")
+        else:
+            st.error("Please enter both a term and a definition.")
 
-# Add custom CSS to make the container scrollable
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: auto;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+
+# # Scrollable container to display terms and their definitions
+with st.container():
+    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+
+    # Display each term with its definition and edit button
+    for idx, (term, definition) in enumerate(filtered_terms_definitions):
+        col1, col2 = st.columns([8, 2])
+
+        with col1:
+            st.markdown(f"**{term}**: {definition}")
+
+        with col2:
+            if f"edit_button_{idx}" not in st.session_state:
+                st.session_state[f"edit_button_{idx}"] = False
+
+            if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+                st.session_state[f"edit_button_{idx}"] = True
+
+        # Editable fields below the term and definition when "Edit" is clicked
+        if st.session_state[f"edit_button_{idx}"]:
+            with st.form(key=f"edit_form_{idx}"):
+                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+                save_button = st.form_submit_button("Save")
+                cancel_button = st.form_submit_button("Cancel")
+
+                if save_button:
+                    # Save changes to Google Sheets
+                    row_index = terms.index(term) + 2  # +2 to account for header and zero-indexing
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
+                    st.session_state[f"edit_button_{idx}"] = False
+                    st.success(f"Term '{edited_term}' has been updated.")
+
+                if cancel_button:
+                    st.session_state[f"edit_button_{idx}"] = False
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
+# # Add custom CSS to make the container scrollable
+# st.markdown("""
+#     <style>
+#     .scrollable-container {
+#         height: 300px;
+#         overflow-y: auto;
+#         border: 1px solid #ccc;
+#         padding: 10px;
+#         font-size: 16px;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 
 # # Create a scrollable container using st.markdown and html
 # with st.container():
@@ -274,48 +317,48 @@ filtered_terms_definitions = [item for item in sorted_terms_definitions if searc
 # # Render the HTML content inside the scrollable container
 # st.markdown(html_content, unsafe_allow_html=True)
 
-# Create a scrollable container using st.markdown and html
-with st.container():
-    st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
+# # Create a scrollable container using st.markdown and html
+# with st.container():
+#     st.markdown("<div class='scrollable-container'>", unsafe_allow_html=True)
 
-    # Display the terms and their definitions with Edit buttons inside the scrollable container
-    for idx, (term, definition) in enumerate(filtered_terms_definitions):
-        # Display term and definition in a single row
-        col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
+#     # Display the terms and their definitions with Edit buttons inside the scrollable container
+#     for idx, (term, definition) in enumerate(filtered_terms_definitions):
+#         # Display term and definition in a single row
+#         col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
 
-        with col1:
-            # Display the term and definition
-            st.markdown(f"**{term}**: {definition}")
+#         with col1:
+#             # Display the term and definition
+#             st.markdown(f"**{term}**: {definition}")
 
-        with col2:
-            if f"edit_button_{idx}" not in st.session_state:
-                st.session_state[f"edit_button_{idx}"] = False
+#         with col2:
+#             if f"edit_button_{idx}" not in st.session_state:
+#                 st.session_state[f"edit_button_{idx}"] = False
 
-            # Display the Edit button in the second column with a unique key
-            if st.button("Edit", key=f"edit_button_trigger_{idx}"):
-                st.session_state[f"edit_button_{idx}"] = True
+#             # Display the Edit button in the second column with a unique key
+#             if st.button("Edit", key=f"edit_button_trigger_{idx}"):
+#                 st.session_state[f"edit_button_{idx}"] = True
 
-        # If in edit mode, show the editable fields below the term/definition
-        if st.session_state[f"edit_button_{idx}"]:
-            with st.form(key=f"edit_form_{idx}"):
-                # Editable fields displayed below term and definition
-                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
-                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
-                save_button = st.form_submit_button("Save")
-                cancel_button = st.form_submit_button("Cancel")
+#         # If in edit mode, show the editable fields below the term/definition
+#         if st.session_state[f"edit_button_{idx}"]:
+#             with st.form(key=f"edit_form_{idx}"):
+#                 # Editable fields displayed below term and definition
+#                 edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+#                 edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+#                 save_button = st.form_submit_button("Save")
+#                 cancel_button = st.form_submit_button("Cancel")
 
-                if save_button:
-                    # Save changes to Google Sheets
-                    row_index = terms.index(term) + 1
-                    observation_sheet.update(f'A{row_index}', edited_term)
-                    observation_sheet.update(f'B{row_index}', edited_definition)
-                    st.session_state[f"edit_button_{idx}"] = False
-                    st.success(f"Term '{edited_term}' has been updated.")
+#                 if save_button:
+#                     # Save changes to Google Sheets
+#                     row_index = terms.index(term) + 1
+#                     observation_sheet.update(f'A{row_index}', edited_term)
+#                     observation_sheet.update(f'B{row_index}', edited_definition)
+#                     st.session_state[f"edit_button_{idx}"] = False
+#                     st.success(f"Term '{edited_term}' has been updated.")
 
-                if cancel_button:
-                    st.session_state[f"edit_button_{idx}"] = False
+#                 if cancel_button:
+#                     st.session_state[f"edit_button_{idx}"] = False
 
-    st.markdown("</div>", unsafe_allow_html=True)
+#     st.markdown("</div>", unsafe_allow_html=True)
 
 ########################## past retrieval of glossary: 
 
