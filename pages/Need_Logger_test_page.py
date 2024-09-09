@@ -25,11 +25,19 @@ if 'need_statement' not in st.session_state:
 # Function to clear form inputs
 def clear_form():
     st.session_state.need_statement = ''
+    st.session_state.problem = ''
+    st.session_state.population = ''
+    st.session_state.outcome = ''
+
 
 # Function to handle form submission
 def submit_form():
     # You can add any form submission logic here
     st.write("Text 1:", st.session_state.need_statement)
+    st.write("Text 1:", st.session_state.problem)
+    st.write("Text 1:", st.session_state.population)
+    st.write("Text 1:", st.session_state.outcome)
+    
     # st.text_input(label="There is a need for...", st.session_state.need_statement)
     # Form submission logic
     # if need_statement:
@@ -57,10 +65,36 @@ def submit_form():
 if 'need_statement' not in st.session_state:
     st.session_state.need_statement = ''
 
+if 'problem' not in st.session_state:
+    st.session_state['problem'] = ""
+
+if 'population' not in st.session_state:
+    st.session_state['population'] = ""
+
+if 'outcome' not in st.session_state:
+    st.session_state['outcome'] = ""
+
+if 'notes' not in st.session_state:
+    st.session_state['notes'] = ""
+
+
 # Create the form
 with st.form("my_form"):
     # Text input tied to session state
     st.text_input("Enter text 1", key='need_statement')
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.text_input("Enter text 1", key='problem')
+
+    
+    with col2:
+        st.text_input("Enter text 1", key='population')
+    
+    with col3:
+        st.text_input("Enter text 1", key='outcome')
+
+st.markdown("<h4 style='font-size:20px;'>Need Statement:</h4>", unsafe_allow_html=True)
         #st.text_input("There is a need for...", value=st.session_state.need_statement)
 
 
