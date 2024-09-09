@@ -186,11 +186,11 @@ filtered_terms_definitions = [item for item in sorted_terms_definitions if searc
 
 # Display the terms and their definitions with Edit buttons
 for idx, (term, definition) in enumerate(filtered_terms_definitions):
-    # Create columns for term/definition and the Edit button
-    col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
+    # Display term and definition in a single row
+    col1, col2 = st.columns([8, 2])  # Term/Definition on left, Edit button on right
 
     with col1:
-        # Display term and definition
+        # Display the term and definition
         st.markdown(f"**{term}**: {definition}")
 
     with col2:
@@ -201,24 +201,25 @@ for idx, (term, definition) in enumerate(filtered_terms_definitions):
         if st.button("Edit", key=f"edit_button_trigger_{idx}"):
             st.session_state[f"edit_button_{idx}"] = True
 
-        # If in edit mode, show the editable fields in the same place
-        if st.session_state[f"edit_button_{idx}"]:
-            with st.form(key=f"edit_form_{idx}"):
-                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
-                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
-                save_button = st.form_submit_button("Save")
-                cancel_button = st.form_submit_button("Cancel")
+    # If in edit mode, show the editable fields below the term/definition
+    if st.session_state[f"edit_button_{idx}"]:
+        with st.form(key=f"edit_form_{idx}"):
+            # Editable fields displayed below term and definition
+            edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{idx}")
+            edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{idx}")
+            save_button = st.form_submit_button("Save")
+            cancel_button = st.form_submit_button("Cancel")
 
-                if save_button:
-                    # Save changes to Google Sheets
-                    row_index = terms.index(term) + 1
-                    observation_sheet.update(f'A{row_index}', edited_term)
-                    observation_sheet.update(f'B{row_index}', edited_definition)
-                    st.session_state[f"edit_button_{idx}"] = False
-                    st.success(f"Term '{edited_term}' has been updated.")
+            if save_button:
+                # Save changes to Google Sheets
+                row_index = terms.index(term) + 1
+                observation_sheet.update(f'A{row_index}', edited_term)
+                observation_sheet.update(f'B{row_index}', edited_definition)
+                st.session_state[f"edit_button_{idx}"] = False
+                st.success(f"Term '{edited_term}' has been updated.")
 
-                if cancel_button:
-                    st.session_state[f"edit_button_{idx}"] = False
+            if cancel_button:
+                st.session_state[f"edit_button_{idx}"] = False
 
 
 # Render the HTML content inside the scrollable container
