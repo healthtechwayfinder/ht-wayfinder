@@ -134,31 +134,56 @@ if st.session_state["show_new_term_fields"]:
 # Create a scrollable container using HTML
 html_content = "<div class='scrollable-container'>"
 
+# # Filter the glossary based on the search term (case-insensitive)
+# filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+
+# if filtered_terms_definitions:
+#     for term, definition in filtered_terms_definitions:
+#         html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+# else:
+#     html_content += "<p>No matching terms found.</p>"
+
+# html_content += "</div>"
+
 # Filter the glossary based on the search term (case-insensitive)
 filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
 
-if filtered_terms_definitions:
-    for term, definition in filtered_terms_definitions:
-        html_content += f"<p><strong>{term}:</strong> {definition}</p>"
+# Display the terms and their definitions with Edit buttons
+for term, definition in filtered_terms_definitions:
+    # Create columns for term/definition and the Edit button
+    col1, col2 = st.columns([8, 2])  # Adjust the column widths to fit your layout
 
-        # Add an Edit button for each term and definition
-        if st.button(f"Edit {term}"):
-            # When Edit button is clicked, show input fields to edit term and definition
-            new_term = st.text_input("Edit term:", value=term)
-            new_definition = st.text_area("Edit definition:", value=definition)
+    with col1:
+        # Display term and definition
+        st.markdown(f"**{term}**: {definition}")
 
-            if st.button(f"Save {term}"):
-                # Save the updated term and definition to Google Sheets
-                row_index = terms.index(term) + 1  # Find the row to update
-                observation_sheet.update(f'A{row_index}', new_term)
-                observation_sheet.update(f'B{row_index}', new_definition)
-                st.success(f"Term '{new_term}' has been updated.")
-                st.experimental_rerun()  # Refresh the app after updating
+    with col2:
+        if f"edit_button_{term}" not in st.session_state:
+            st.session_state[f"edit_button_{term}"] = False
 
-else:
-    html_content += "<p>No matching terms found.</p>"
+        # Display the Edit button in the second column
+        if st.button("Edit", key=f"edit_button_trigger_{term}"):
+            st.session_state[f"edit_button_{term}"] = True
 
-html_content += "</div>"
+        # If in edit mode, show the editable fields in the same place
+        if st.session_state[f"edit_button_{term}"]:
+            with st.form(key=f"edit_form_{term}"):
+                edited_term = st.text_input("Edit term:", value=term, key=f"edit_term_{term}")
+                edited_definition = st.text_area("Edit definition:", value=definition, key=f"edit_definition_{term}")
+                save_button = st.form_submit_button("Save")
+                cancel_button = st.form_submit_button("Cancel")
+
+                if save_button:
+                    # Save changes to Google Sheets
+                    row_index = terms.index(term) + 1
+                    observation_sheet.update(f'A{row_index}', edited_term)
+                    observation_sheet.update(f'B{row_index}', edited_definition)
+                    st.session_state[f"edit_button_{term}"] = False
+                    st.success(f"Term '{edited_term}' has been updated.")
+
+                if cancel_button:
+                    st.session_state[f"edit_button_{term}"] = False
+
 
 # Render the HTML content inside the scrollable container
 st.markdown(html_content, unsafe_allow_html=True)
