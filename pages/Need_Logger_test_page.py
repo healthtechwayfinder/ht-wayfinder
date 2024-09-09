@@ -128,17 +128,11 @@ if 'population' not in st.session_state:
 if 'outcome' not in st.session_state:
     st.session_state['outcome'] = ""
 
-# if 'observation_ID' not in st.session_state:
-#     st.session_state['observation_ID'] = ""
-
 if 'notes' not in st.session_state:
     st.session_state['notes'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
-    
-# if 'need_date' not in st.session_state:
-#     st.session_state['need_date'] = date.today()
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
@@ -276,6 +270,24 @@ def submit_form():
     
     # Clear the form after sending to sheets
     clear_form()
+
+
+col1, col2, col3 = st.columns(3)
+
+# date
+with col1:
+    st.date_input("Need Date", date.today(), on_change=update_need_ID, key="need_date")
+    
+# need ID
+with col2:
+    if 'need_ID' not in st.session_state:
+        update_need_ID()
+    # Display the need ID
+    st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
+    
+    # enter relevant observation IDs
+with col3:
+    observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
     
 
 
@@ -283,24 +295,24 @@ def submit_form():
 # Create the form
 with st.form("my_form"):
     # Text input tied to session state
-    submitted = st.form_submit_button("Submit", on_click=submit_form)
+    
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.date_input("Need Date", date.today(), on_change=update_need_ID, key="need_date")
-        st.text_input("Enter text 1", key='problem')
+        # st.date_input("Need Date", date.today(), on_change=update_need_ID, key="need_date")
+        st.text_input("Problem:", key='problem')
 
     # need ID and population
     with col2:
         if 'need_ID' not in st.session_state:
             update_need_ID()
         # Display the need ID
-        st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
+        # st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
         st.text_input("Population:", key='population')
     
     # enter relevant observation IDs & outcome text
     with col3:
-        observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
+        # observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
         st.text_input("Outcome:", key='outcome')
 
     # enter need statement
@@ -308,7 +320,7 @@ with st.form("my_form"):
     st.text_input("Notes:", key='notes')
 
     # Form submit button with a callback function
-    #submitted = st.form_submit_button("Submit", on_click=submit_form)
+    submitted = st.form_submit_button("Submit", on_click=submit_form)
 
 
 
