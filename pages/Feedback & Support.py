@@ -10,9 +10,9 @@ def feedback_support_page():
     # Use markdown to make the question text larger
     st.markdown("## **What would you like to do today?**")
 
-    # Create a radio button toggle for choosing between Report an Issue or Send Feedback
-    feedback_type = st.radio(
-        "",
+    # Create a dropdown for choosing between Report an Issue or Send Feedback
+    feedback_type = st.selectbox(
+        "Select an option",  # Title of the dropdown
         ("Report an Issue", "Send Feedback or Ask a Question")
     )
 
