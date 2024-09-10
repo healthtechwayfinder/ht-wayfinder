@@ -44,8 +44,6 @@ st.write(st.session_state.inputs)
 
 
 
-import streamlit as st
-
 # Reserve a place for the button
 button_place = st.empty()
 
