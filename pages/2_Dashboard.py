@@ -33,6 +33,7 @@ st.markdown("# Welcome!")
 col1, col2 = st.columns(2)
 
 with col1:
+    with st.container(border=True):
     st.header("Observation Tools")
     if st.button("🏥 Record a New Case"):
         switch_page("3_Case_Logger")
@@ -54,6 +55,7 @@ with col1:
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
 with col2:
+    with st.container(border=True):
     st.header("Need Statement Tools")
     if st.button(":pencil: Create a Need Statement"):
         switch_page("Need_Statement_Logger")
