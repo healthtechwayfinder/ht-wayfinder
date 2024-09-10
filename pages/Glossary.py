@@ -114,10 +114,12 @@ if st.button("Add a New Term"):
 # Conditionally display the input fields for adding a new term and definition
 if st.session_state["show_new_term_fields"]:
     new_term_input = st.text_input("Enter a new term:", value=st.session_state["new_term"])
+    new_variant_input = st.text_input("Enter a variant (if applicable):", value=st.session_state.get("new_variant", ""))
     new_definition_input = st.text_area("Enter the definition for the new term:", value=st.session_state["new_definition"])
 
     # Update the session state values based on user input
     st.session_state["new_term"] = new_term_input
+    st.session_state["new_variant"] = new_variant_input
     st.session_state["new_definition"] = new_definition_input
 
     # Submit New Term button
@@ -140,7 +142,10 @@ if st.session_state["show_new_term_fields"]:
                     st.warning(f"Term '{new_term}' already exists with definition: {existing_def}")
             else:
                 # Add new term and definition
-                observation_sheet.append_row([new_term, new_definition])
+                new_term = new_term.capitalize()
+                new_definition = new_definition.capitalize()
+                new_variant = new_variant_input.capitalize() if new_variant_input else None
+                observation_sheet.append_row([new_term, new_definition, new_variant])
                 st.success(f"Term '{new_term}' has been added successfully!")
 
             # Clear the session state for inputs
