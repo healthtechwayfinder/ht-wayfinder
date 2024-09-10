@@ -55,7 +55,7 @@ def create_new_chat_sheet():
 
 OPENAI_API_KEY = st.secrets["openai_key"]
 
-st.set_page_config(page_title="Ask Observations", page_icon="❓")
+st.set_page_config(page_title="Observation Investigator", page_icon="❓")
 
 st.markdown("""
     <style>
@@ -74,9 +74,8 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown("# Ask the Team's Observations")
-
-# st.write("This is the Ask the Team's Observations page.")
+st.markdown("# Observation Investigator")
+st.write("Use this tool to find relationships between observations you've recorded, summarize the obrsevations that have been made so far, and plan future observations.")
 # Subtitle for the chat section
 
 if "messages" not in st.session_state:
