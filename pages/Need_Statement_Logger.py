@@ -173,7 +173,7 @@ def getObservationIDs():
     client = gspread.authorize(creds)
     
     # Open the Google Sheet and select the worksheet
-    observation_sheet = client.open("2024 Healthtech Identify Log").worksheet('Need Statement Log')
+    observation_sheet = client.open("2024 Healthtech Identify Log").worksheet('Observation Log')
     
     # Fetch all the values in the first column (col_values returns a list)
     observation_ID_list = observation_sheet.col_values(1)  # Fetch column 1
