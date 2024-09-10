@@ -459,7 +459,14 @@ if action == "Add New Case":
         #     """, unsafe_allow_html=True)
     
         # Button to Clear the case Text Area
-        st.button("Clear Case", on_click=clear_case)
+        # st.button("Clear Case", on_click=clear_case)
+
+        if 'clear_case_trigger' in st.session_state and st.session_state['clear_case_trigger']:
+            st.session_state['clear_case_trigger'] = False
+            st.experimental_rerun()
+
+        # Button to Clear the Case Text Area and set the rerun trigger
+        st.button("Clear Case", on_click=lambda: st.session_state.update(clear_case_trigger=True))
         
         # Container for result display
         result_container = st.empty()
