@@ -69,11 +69,11 @@ if 'parsed_case' not in st.session_state:
     st.session_state['parsed_case'] = ""
 
 class caseRecord(BaseModel):
-    location: Optional[str] = Field(default=None, description="physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
+    location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names) like a Patient, Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, ...")
     people_present: Optional[str] = Field(default=None, description="Names cited in the description")
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-    tags: Optional[str] = Field(default=None, description="Tags or keywords that describe the observation. e.g. surgery, procedure, ...")
+    tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags that are very relevant to the medical observation. The tags can be used to identify the type of procedure: (invasive procedure, minimally invasive, open procedure, non invasive, in the clinic, in the OR, in the emergency room..) the medical specialty (e.g.: rhynology, oncology, ophtalmology,..)  area of medicine, or type of technology being used for example Do not use numbers and separate them by commas. Give only the list of tags without any quotes or special characters.")
 
 
 def parseCase(case_description: str):
@@ -116,11 +116,23 @@ def extractCaseFeatures(case_description):
 
     output = ""
 
+    # for field in input_fields:
+    #     if field not in missing_fields:
+    #         key_output = field.replace("_", " ").capitalize()
+    #         output += f"**{key_output}**: {parsed_case[field]}\n"
+    #         output += "\n"
+
     for field in input_fields:
+        key_output = field.replace("_", " ").capitalize()
+        
+        # Display editable text input for non-missing fields
         if field not in missing_fields:
-            key_output = field.replace("_", " ").capitalize()
-            output += f"**{key_output}**: {parsed_case[field]}\n"
-            output += "\n"
+            # Use st.text_input or st.text_area depending on the expected length of the content
+            st.session_state[field] = st.text_input(f"{key_output}:", value=parsed_case[field] or "", key=field)
+        
+        # Display empty editable text input for missing fields
+        else:
+            st.session_state[field] = st.text_input(f"{key_output} (Missing):", value="", key=field)
 
     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
