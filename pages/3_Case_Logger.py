@@ -187,9 +187,11 @@ def addToGlossary(insider_language_term, case_id):
                 term_exists = True
                 # Append the case_id to the "Related cases" column if it's not already there
                 related_cases = row['Related cases']
-                if case_id not in related_cases:
+                if case_id not in related_cases.split(', '):
                     updated_related_cases = f"{related_cases}, {case_id}".strip(', ')
                     glossary_sheet.update_cell(i, related_cases_col_idx, updated_related_cases)
+                else:
+                    print(f"Case ID {case_id} already exists for term {insider_language_term}")
                 break
 
         # If the term doesn't exist, add a new entry with a generated definition
@@ -208,12 +210,10 @@ def addToGlossary(insider_language_term, case_id):
             # Append a new row to the glossary
             glossary_sheet.append_row([insider_language_term, definition, case_id])
 
-        print(f"Added/Updated glossary term: {insider_language_term}")
+        print(f"Added/Updated glossary term: {insider_language_term} with case ID: {case_id}")
 
     except Exception as e:
         print(f"Error adding to the Glossary: {e}")
-
-
 
 def addToGoogleSheets(case_dict):
     try:
