@@ -529,7 +529,7 @@ if action == "Add New Case":
 
 # If the user chooses "Edit Existing Case"
 elif action == "Edit Existing Case":
-    st.set_page_config(page_title="Edit a Case", page_icon="🏥")
+   
     st.markdown("### Edit an Existing Case")
 
     # Step 1: Fetch and display case IDs in a dropdown
@@ -538,45 +538,45 @@ elif action == "Edit Existing Case":
     # Ensure case_ids are not empty
     if not case_ids:
         st.error("No cases found.")
-else:
-    case_to_edit = st.selectbox("Select a case to edit", case_ids)
-
-    # Step 2: Fetch and display case details for the selected case
-    if case_to_edit:
-        case_details = fetch_case_details(case_to_edit)
-        
-        if case_details:
-            # Debug: Print the case details (optional)
-            st.write(f"Editing case: {case_details}")
-
-            # Editable fields for the selected case
-            case_title = st.text_input("Title", case_details.get("Title", ""))
-            case_date = st.date_input("Date", date.fromisoformat(case_details.get("Date", str(date.today()))))
-            case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
-            location = st.text_input("Location", case_details.get("Location", ""))
-            stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
-            people_present = st.text_input("People Present", case_details.get("People Present", ""))
-            insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
-            tags = st.text_input("Tags", case_details.get("Tags", ""))
-            observations = st.text_area("Observations", case_details.get("Observations", ""))
-
-            # Step 3: Save changes
-            if st.button("Save Changes"):
-                updated_data = {
-                    "Title": case_title,
-                    "Date": case_date.isoformat(),
-                    "Case Description": case_description,
-                    "Location": location,
-                    "Stakeholders": stakeholders,
-                    "People Present": people_present,
-                    "Insider Language": insider_language,
-                    "Tags": tags,
-                    "Observations": observations,
-                }
-                if update_case(case_to_edit, updated_data):
-                    st.success(f"Changes to '{case_to_edit}' saved successfully!")
-                else:
-                    st.error(f"Failed to save changes to '{case_to_edit}'.")
+    else:
+        case_to_edit = st.selectbox("Select a case to edit", case_ids)
+    
+        # Step 2: Fetch and display case details for the selected case
+        if case_to_edit:
+            case_details = fetch_case_details(case_to_edit)
+            
+            if case_details:
+                # Debug: Print the case details (optional)
+                st.write(f"Editing case: {case_details}")
+    
+                # Editable fields for the selected case
+                case_title = st.text_input("Title", case_details.get("Title", ""))
+                case_date = st.date_input("Date", date.fromisoformat(case_details.get("Date", str(date.today()))))
+                case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
+                location = st.text_input("Location", case_details.get("Location", ""))
+                stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
+                people_present = st.text_input("People Present", case_details.get("People Present", ""))
+                insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
+                tags = st.text_input("Tags", case_details.get("Tags", ""))
+                observations = st.text_area("Observations", case_details.get("Observations", ""))
+    
+                # Step 3: Save changes
+                if st.button("Save Changes"):
+                    updated_data = {
+                        "Title": case_title,
+                        "Date": case_date.isoformat(),
+                        "Case Description": case_description,
+                        "Location": location,
+                        "Stakeholders": stakeholders,
+                        "People Present": people_present,
+                        "Insider Language": insider_language,
+                        "Tags": tags,
+                        "Observations": observations,
+                    }
+                    if update_case(case_to_edit, updated_data):
+                        st.success(f"Changes to '{case_to_edit}' saved successfully!")
+                    else:
+                        st.error(f"Failed to save changes to '{case_to_edit}'.")
 
 
 # add a break line
