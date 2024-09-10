@@ -356,7 +356,7 @@ if action == "Add New Case":
     
     with col3:
         #Display attendees options 
-        st.session_state['attendees'] = st.multiselect("Attendees", ["Ana", "Bridget"])
+        st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
     
     ############
     
