@@ -61,12 +61,23 @@ if "new_definition" not in st.session_state:
 # Print test 
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
+variants = observation_sheet.col_values(3)  # Variants are in column 3
 
 # Combine terms and definitions into a list of tuples
-terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
+# terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
+glossary_db = {}
+
+for idx in range(1, len(terms)):
+
+    glossary_db[terms[idx]] = {
+        'definition': definitions[idx],
+    }
+
+    if idx < len(variants):
+        glossary_db[terms[idx]]['variant'] = variants[idx]
 
 # Sort the list alphabetically by the term
-sorted_terms_definitions = sorted(terms_definitions, key=lambda x: x[0].lower())
+sorted_glossary_terms = sorted(glossary_db.keys())
 
 
 # Add custom CSS to make the container scrollable
@@ -145,7 +156,8 @@ if st.session_state["show_new_term_fields"]:
 search_term = st.text_input("Search Glossary", key="search_term")
 
 # Filter the glossary based on the search term (case-insensitive)
-filtered_terms_definitions = [item for item in sorted_terms_definitions if search_term.lower() in item[0].lower()]
+filtered_terms = [item for item in sorted_glossary_terms if search_term.lower() in item.lower()]
+
 
 def onEditClickFunction(edit_mode_key):
     print(f"Edit button clicked for term {edit_mode_key}" )
@@ -156,10 +168,14 @@ def onCancelClickFunction(edit_mode_key):
     st.session_state[edit_mode_key] = False
 
 # Display the terms and their definitions inside the scrollable container
-for idx, (term, definition) in enumerate(filtered_terms_definitions):
+for idx, term in enumerate(filtered_terms):
+    definition = glossary_db[term]['definition']
+    variant = glossary_db[term].get('variant', None)
+
     term_key = f"term_{idx}"
     definition_key = f"definition_{idx}"
     edit_mode_key = f"edit_mode_{idx}"
+    variant_key = f"variant_{idx}"
 
     # Initialize edit mode in session state
     if edit_mode_key not in st.session_state:
@@ -170,11 +186,21 @@ for idx, (term, definition) in enumerate(filtered_terms_definitions):
     with col1:
         if not st.session_state[edit_mode_key]:
             # Display term and definition in normal mode
-            st.markdown(f"**{term}**: {definition}")
+            if variant:
+                st.markdown(f"**{term}** ({variant}): {definition}")
+            else:
+                st.markdown(f"**{term}**: {definition}")
         else:
             # Display editable fields in edit mode
             st.text_input("Edit term", value=term, key=term_key)
+
+            if variant:
+                st.text_input("Edit variant", value=variant, key=variant_key)
+            else:
+                st.session_state[variant_key] = None
+
             st.text_area("Edit definition", value=definition, key=definition_key)
+
 
     with col2:
         if not st.session_state[edit_mode_key]:
@@ -185,15 +211,18 @@ for idx, (term, definition) in enumerate(filtered_terms_definitions):
         else:
             if st.button("Save", key=f"save_button_{idx}"):
                 # Save changes to Google Sheets
-                row_index = terms.index(term) + 2  # Adjust for zero-index and header
+                row_index = terms.index(term) + 1 
                 updated_term = st.session_state[term_key]
                 updated_definition = st.session_state[definition_key]
+                updated_variant = st.session_state[variant_key]
                 print("Updating for term with index: ", row_index)
                 observation_sheet.update(values=[[updated_term]], range_name=f'A{row_index}')
                 observation_sheet.update(values=[[updated_definition]], range_name=f'B{row_index}')
-                st.session_state[edit_mode_key] = False
+                if updated_variant:
+                    observation_sheet.update(values=[[updated_variant]], range_name=f'C{row_index}') 
                 st.success(f"Term '{updated_term}' has been updated.")
                 time.sleep(3)
+                st.session_state[edit_mode_key] = False
                 st.rerun()
             if st.button("Cancel", key=f"cancel_button_{idx}", on_click=onCancelClickFunction, args=(edit_mode_key,)):
                 # st.session_state[edit_mode_key] = False
