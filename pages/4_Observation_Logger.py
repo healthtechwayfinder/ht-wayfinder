@@ -458,7 +458,7 @@ with col2:
 
 with col3:
     #Display Observer options 
-    observer = st.selectbox("Observer", ["Ana", "Bridget"])
+    observer = st.selectbox("Observer", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
 
 ############
 
