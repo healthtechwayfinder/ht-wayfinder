@@ -146,8 +146,10 @@ st.markdown("""
 
 
 # Create a button using Streamlit's native functionality
-if st.button("Back to Main Menu"):
-    switch_page("main_menu")
+st.markdown("<br>", unsafe_allow_html=True)
+
+if st.button("Back to Dashboard"):
+    switch_page("Dashboard")
 
 
 
