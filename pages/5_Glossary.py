@@ -68,6 +68,7 @@ if "new_variant" not in st.session_state:
 terms = observation_sheet.col_values(1)  # Terms are in column 1
 definitions = observation_sheet.col_values(2)  # Definitions are in column 2
 variants = observation_sheet.col_values(3)  # Variants are in column 3
+related_cases = observation_sheet.col_values(4)  # Related Cases are in column 4
 
 # Combine terms and definitions into a list of tuples
 # terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
@@ -86,6 +87,10 @@ for idx in range(1, len(terms)):
         term_and_variant += ' (' + variants[idx] + ')'
     else:
         term_and_variant += ' ()'
+
+    # Add the related cases field
+    if idx < len(related_cases):
+        item['related_cases'] = related_cases[idx]
 
     glossary_db.append(item)
     terms.append(terms[idx])
@@ -266,6 +271,9 @@ for idx, item in enumerate(filtered_items):
                 st.markdown(f"**{term}** ({variant}): {definition}")
             else:
                 st.markdown(f"**{term}**: {definition}")
+            # Display related cases if available
+            if 'related_cases' in item and item['related_cases']:
+                st.markdown(f"_Related Cases:_ {item['related_cases']}")
         else:
             # Display editable fields in edit mode
             st.text_input("Edit term", value=term, key=term_key)
