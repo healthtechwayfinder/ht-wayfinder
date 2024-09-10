@@ -245,9 +245,6 @@ def clear_case():
     if 'result' in st.session_state:
         st.session_state['result'] = ""
     update_case_ID()
-
-    # Set the trigger to rerun the script
-    st.session_state['rerun_trigger'] = True  # Set a flag for rerun
     # Refresh the page back to the initial state
 
 # Fetch case IDs from Google Sheets
@@ -460,15 +457,9 @@ if action == "Add New Case":
         #     </style>
         #     """, unsafe_allow_html=True)
     
-        # Button to Clear the case Text Area
-        # st.button("Clear Case", on_click=clear_case)
+        #Button to Clear the case Text Area
+        st.button("Clear Case", on_click=clear_case)
 
-        if 'clear_case_trigger' in st.session_state and st.session_state['clear_case_trigger']:
-            st.session_state['clear_case_trigger'] = False
-            st.experimental_rerun()
-
-        # Button to Clear the Case Text Area and set the rerun trigger
-        st.button("Clear Case", on_click=lambda: st.session_state.update(clear_case_trigger=True))
         
         # Container for result display
         result_container = st.empty()
