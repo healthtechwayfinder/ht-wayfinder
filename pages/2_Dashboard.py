@@ -45,12 +45,12 @@ with col1:
             switch_page("Observation_Logger")
     
         if st.button("❓ Chat with Observations"):
-            switch_page("Observations_Chat")
+            switch_page("Observation_Investigator")
     
-        if st.button("📒 Observation, Case, & Need Logs"):
+        if st.button("📒 View Observation, Case, & Need Logs"):
             switch_page("Cases_&_Observations_Dataset")
             
-        if st.button("📊 Glossary"):
+        if st.button("📊 View Glossary"):
             switch_page("Glossary")
 
         if st.button(":busts_in_silhouette: Weekly Review (coming soon)"):
