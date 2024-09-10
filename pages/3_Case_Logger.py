@@ -158,7 +158,7 @@ def extractCaseFeatures(case_description):
     # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
-def addToGlossary(insider_language_term, case_id):
+def addToGlossary(insider_language_terms, case_id):
     try:
         # Set the scope and authenticate
         scope = [
@@ -174,9 +174,6 @@ def addToGlossary(insider_language_term, case_id):
         # Get all the existing glossary terms
         glossary_data = glossary_sheet.get_all_records()
 
-        # Debug: Print out all existing data to make sure we're fetching correctly
-        print("Existing glossary data:", glossary_data)
-
         # Find the column indices for "Term" and "Related cases"
         headers = glossary_sheet.row_values(1)
         print("Headers found:", headers)  # Debugging
@@ -185,28 +182,32 @@ def addToGlossary(insider_language_term, case_id):
         related_cases_col_idx = headers.index("Related cases") + 1
         definition_col_idx = headers.index("Definition") + 1
 
-        # Check if the term already exists in the glossary
-        term_exists = False
-        for i, row in enumerate(glossary_data, start=2):  # Start at 2 to skip the header row
-            print(f"Checking term in row {i}: {row['Term']}")
-            if row['Term'].strip().lower() == insider_language_term.strip().lower():
-                term_exists = True
-                # Append the case_id to the "Related cases" column if it's not already there
-                related_cases = row['Related cases']
-                if case_id not in related_cases.split(', '):
-                    updated_related_cases = f"{related_cases}, {case_id}".strip(', ')
-                    glossary_sheet.update_cell(i, related_cases_col_idx, updated_related_cases)
-                    print(f"Updated related cases for term {insider_language_term} with {case_id}")
-                else:
-                    print(f"Case ID {case_id} already exists for term {insider_language_term}")
-                break
+        # Split the insider language terms if they are in a single string
+        terms_list = [term.strip() for term in insider_language_terms.split(",")]
 
-        # If the term doesn't exist, add a new entry with a generated definition
-        if not term_exists:
-            print(f"Term {insider_language_term} does not exist, adding a new one.")
-            definition = generateDefinition(insider_language_term)
-            glossary_sheet.append_row([insider_language_term, definition, case_id])
-            print(f"Added new term: {insider_language_term} with definition and case ID: {case_id}")
+        for term in terms_list:
+            term_exists = False
+
+            # Check if the term already exists in the glossary
+            for i, row in enumerate(glossary_data, start=2):  # Start at 2 to skip the header row
+                if row['Term'].strip().lower() == term.strip().lower():
+                    term_exists = True
+                    # Append the case_id to the "Related cases" column if it's not already there
+                    related_cases = row['Related cases']
+                    if case_id not in related_cases.split(', '):
+                        updated_related_cases = f"{related_cases}, {case_id}".strip(', ')
+                        glossary_sheet.update_cell(i, related_cases_col_idx, updated_related_cases)
+                        print(f"Updated related cases for term {term} with {case_id}")
+                    else:
+                        print(f"Case ID {case_id} already exists for term {term}")
+                    break
+
+            # If the term doesn't exist, add a new entry with a generated definition
+            if not term_exists:
+                print(f"Term {term} does not exist, adding a new one.")
+                definition = generateDefinition(term)
+                glossary_sheet.append_row([term, definition, case_id])
+                print(f"Added new term: {term} with definition and case ID: {case_id}")
 
     except Exception as e:
         print(f"Error adding to the Glossary: {e}")
