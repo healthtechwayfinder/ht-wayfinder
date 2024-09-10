@@ -13,8 +13,6 @@ def main():
     st.markdown("<h3 style='text-align: center;'>View Observations</h3>", unsafe_allow_html=True)
     # add in a description of this feature
 
-    st.markdown("<h3 style='text-align: center;'>TEST TEST TEST TEST</h3>", unsafe_allow_html=True)
-
     
     st.markdown("<h3 style='text-align: center;'>Glossary</h3>", unsafe_allow_html=True)
     # add in a description of this feature
