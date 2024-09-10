@@ -75,7 +75,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.markdown("# Observation Investigator")
-st.write("Use this tool to find relationships between observations you've recorded, summarize the obrsevations that have been made so far, and plan future observations.")
+st.write("Use this tool to find relationships between cases you've recorded, summarize observations that have been made so far, and plan future observations.")
 # Subtitle for the chat section
 
 if "messages" not in st.session_state:
