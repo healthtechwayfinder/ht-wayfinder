@@ -58,6 +58,9 @@ if 'result' not in st.session_state:
 if 'observation_summary' not in st.session_state:
     st.session_state['observation_summary'] = ""
 
+if 'observation_tags' not in st.session_state:
+    st.session_state['observation_tags'] = ""
+
 if 'observation_date' not in st.session_state:
     st.session_state['observation_date'] = date.today()
 
@@ -181,7 +184,7 @@ def extractObservationFeatures(observation):
 
     # Display the output
     # st.markdown(output, unsafe_allow_html=True)
-    return parsed_observation
+    return f"{output}"
 
 # def addToGoogleSheets(observation_dict):
 #     try:
@@ -349,6 +352,8 @@ def clear_observation():
         st.session_state['observation_summary'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
+    if 'observation_tags' in st.session_state:
+        st.session_state['observation_tags'] = ""
     update_observation_id()
 
 import streamlit as st
@@ -532,10 +537,11 @@ if st.session_state['observation_summary'] != "":
     st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
 
 # st.write(f":green[{st.session_state['result']}]")
-st.markdown(st.session_state['result'], unsafe_allow_html=True)
 # Display the generated tags in a text area (editable by the user if needed)
-if st.session_state.get('observation_tags'):
+if st.session_state['observation_tags'] != "":
     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
+
+st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
 if st.session_state['rerun']:
     time.sleep(3)
@@ -563,6 +569,7 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
         )
     else:
         status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
+                            st.session_state['observation_tags'],
                             st.session_state['observation_date'],
                             st.session_state['observation_id'])
         # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
