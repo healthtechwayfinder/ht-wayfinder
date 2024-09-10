@@ -39,13 +39,13 @@ with col1:
 
     with st.container(border=True):
         if st.button("🏥 Record a New Case"):
-            switch_page("3_Case_Logger")
+            switch_page("Case_Logger")
         
         if st.button("🔍 Record a New Observation"):
-            switch_page("4_Observation_Logger")
+            switch_page("Observation_Logger")
     
         if st.button("❓ Chat with Observations"):
-            switch_page("4_Observations_Chat")
+            switch_page("Observations_Chat")
     
         if st.button("📒 View All Observations"):
             switch_page("View_All_Observations")
