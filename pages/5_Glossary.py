@@ -44,7 +44,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Authenticate and connect to Google Sheets using service account credentials
-creds_dict = st.secrets["gcp_service_account"]
+creds_dict = st.secrets["gwf_service_account"]
 scope = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.metadata.readonly"
