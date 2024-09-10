@@ -271,16 +271,13 @@ def fetch_case_ids():
 def fetch_case_details(case_id):
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
     data = sheet.get_all_records()
-    
+
     for row in data:
-        # Check if 'Case ID' exists in the row and matches the case_id
-        if "Case ID" in row and row["Case ID"] == case_id:
+        if "Case ID" in row and row["Case ID"].strip() == case_id.strip():
             return row
     
-    # If no case found, return None
     st.error(f"Case ID {case_id} not found.")
     return None
-
 
 # Update case details in Google Sheets
 def update_case(case_id, updated_data):
