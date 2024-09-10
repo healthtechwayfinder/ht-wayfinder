@@ -56,14 +56,17 @@ if 'case_description' not in st.session_state:
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
 
-if 'case_summary' not in st.session_state:
-    st.session_state['case_summary'] = ""
+if 'case_title' not in st.session_state:
+    st.session_state['case_title'] = ""
 
 if 'case_date' not in st.session_state:
     st.session_state['case_date'] = date.today()
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
+
+if 'parsed_case' not in st.session_state:
+    st.session_state['parsed_case'] = ""
 
 class caseRecord(BaseModel):
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the observation. e.g. patient, surgeon, scrub tech, circulating nurse, ...")
@@ -102,6 +105,7 @@ def extractCaseFeatures(case_description):
 
     # Parse the case
     parsed_case = parseCase(case_description)
+    st.session_state['parsed_case'] = parsed_case
 
     input_fields = list(caseRecord.__fields__.keys())
 
@@ -117,19 +121,11 @@ def extractCaseFeatures(case_description):
 
     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
-    output += "\n\n **Missing fields**:"
-    # for field in missing_fields:
-    #     output += f" {field},"
+    if len(missing_fields)>0:
+        output += "\n\n **Missing fields**:"
 
-    # # output += "\n\n"
-    # # output += "="*75
-    # output += "\nPlease add the missing fields to the observation if needed, then proceed with adding observation to your team record."
-
-    # return f"{output}"
-
-     # Add each missing field in red
-    for field in missing_fields:
-        output += f" <span style='color:red;'>{field}</span>,"
+        for field in missing_fields:
+            output += f" <span style='color:red;'>{field}</span>,"
 
     # Display the output
     # st.markdown(output, unsafe_allow_html=True)
@@ -173,7 +169,7 @@ def addToGoogleSheets(case_dict):
         print("Error adding to Google Sheets: ", e)
         return False
 
-def embedCase(attendees, case_description, case_summary, case_date, case_ID):
+def embedCase(attendees, case_description, case_title, case_date, case_ID):
     db = PineconeVectorStore(
             index_name=st.secrets["pinecone-keys"]["index_to_connect"],
             namespace="cases",
@@ -184,14 +180,19 @@ def embedCase(attendees, case_description, case_summary, case_date, case_ID):
     db.add_texts([case_description], metadatas=[{'attendees': attendees, 'case_date': case_date, 'case_ID': case_ID}])
     print("Case added to Pinecone")
 
-    parsed_case = parseCase(case_description)
+    if 'parsed_case' in st.session_state and len(st.session_state['parsed_case'])>0:
+        parsed_case = st.session_state['parsed_case']
+    else:
+        parsed_case = parseCase(case_description)
+        st.session_state['parsed_case'] = parsed_case
+    
 
     # write attendees, observatoin and parsed case to csv
     case_keys = list(caseRecord.__fields__.keys())
     case_keys_formatted = [i.replace("_", " ").title() for i in case_keys]
 
-    all_case_keys = ['Title', 'People Present', 'Case Description', 'case_date'] + case_keys_formatted
-    case_values = [case_summary, attendees, case_description, case_date] + [parsed_case[key] for key in case_keys]
+    all_case_keys = ['Title', 'People Present', 'Case Description', 'Date', 'Case ID'] + case_keys_formatted
+    case_values = [case_title, attendees, case_description, case_date, case_ID] + [parsed_case[key] for key in case_keys]
 
     case_dict = dict(zip(all_case_keys, case_values))
     # csv_file = open(case_csv, "a")
@@ -235,8 +236,8 @@ Output title:"""
 def clear_case():
     if 'case_description' in st.session_state:
         st.session_state['case_description'] = ""
-    if 'case_summary' in st.session_state:
-        st.session_state['case_summary'] = ""
+    if 'case_title' in st.session_state:
+        st.session_state['case_title'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
     update_case_ID()
@@ -302,17 +303,6 @@ from datetime import date
 if action == "Add New Case":
     st.markdown("### Add a New Case")
     
-    # Inputs for adding a new case
-    case_title = st.text_input("Case Title", placeholder="Enter case title")
-    case_description = st.text_area("Case Description", placeholder="Enter case description")
-    case_date = st.date_input("Case Date")
-    
-    # Submit button
-    if st.button("Submit New Case"):
-        # Logic to save the new case (e.g., save to a database or a file)
-        st.success(f"New case '{case_title}' added successfully!")
-
-    
     # Initialize or retrieve the clear_case counters dictionary from session state
     if 'case_counters' not in st.session_state:
         st.session_state['case_counters'] = {}
@@ -345,17 +335,7 @@ if action == "Add New Case":
         else:
             counter = 1
         
-        # # Check if the date is already in the dictionary
-        # if case_date_str in st.session_state['case_counters']:
-        #     # Increment the counter for this date
-        #     st.session_state['case_counters'][case_date_str] += 1
-        # else:
-        #     # Initialize the counter to 1 for a new date
-        #     st.session_state['case_counters'][case_date_str] = 1
-        
-        # Generate the case ID using the updated counter
-        # counter = st.session_state['case_counters'][case_date_str]
-    
+       
         st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
     
     # Use columns to place case_date, case_ID, and attendees side by side
@@ -364,11 +344,7 @@ if action == "Add New Case":
     with col1:
         # st calendar for date input with a callback to update the case_ID
         st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
-        #st.location['location'] = st.text_input("Location:", "")
-        # st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
-    
-    
-    
+
     
     with col2:
         # Ensure the case ID is set the first time the script runs
@@ -479,19 +455,19 @@ if action == "Add New Case":
     
     
     #     if st.button("Generate Observation Summary"):
-    #         st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
+    #         st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
     
-    #     if st.session_state['case_summary'] != "":
-    #         st.session_state['case_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_summary'], height=50)
+    #     if st.session_state['case_title'] != "":
+    #         st.session_state['case_title'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_title'], height=50)
         
     
     with col1:
-        if st.button("Generate Case Summary"):
+        if st.button("Submit Case"):
             st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-            st.session_state['case_summary']  = generateCaseSummary(st.session_state['case_description'])
+            st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
         
-    if st.session_state['case_summary'] != "":
-        st.session_state['case_summary'] = st.text_area("Case Summary (editable):", value=st.session_state['case_summary'], height=50)
+    if st.session_state['case_title'] != "":
+        st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
     
     # st.write(f":green[{st.session_state['result']}]")
     st.markdown(st.session_state['result'], unsafe_allow_html=True)
@@ -504,8 +480,8 @@ if action == "Add New Case":
         
         ##########
     
-    if st.button("Log Case", disabled=st.session_state['case_summary'] == ""):
-        # st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
+    if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
+        # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
         st.session_state["error"] = ""
     
         if st.session_state['case_description'] == "":
@@ -514,18 +490,18 @@ if action == "Add New Case":
                 f"<span style='color:red;'>{st.session_state['error']}</span>", 
                 unsafe_allow_html=True
             )
-        elif st.session_state['case_summary'] == "":
+        elif st.session_state['case_title'] == "":
             st.session_state["error"] = "Error: Please evaluate case."
             st.markdown(
                 f"<span style='color:red;'>{st.session_state['error']}</span>", 
                 unsafe_allow_html=True
             )
         else:
-            status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_summary'], 
+            status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
                                 st.session_state['case_date'],
                                 st.session_state['case_ID'])
-            # st.session_state['case_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_summary'])
-            # "Generated Summary: "+st.session_state['case_summary']+"\n\n"
+            # st.session_state['case_title'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_title'])
+            # "Generated Summary: "+st.session_state['case_title']+"\n\n"
             if status:
                 st.session_state['result'] = "Case added to your team's database."
                 st.session_state['rerun'] = True
