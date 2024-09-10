@@ -35,17 +35,17 @@ OPENAI_API_KEY = st.secrets["openai_key"]
 # Access the credentials from Streamlit secrets
 #test
 creds_dict = {
-    "type" : st.secrets["gcp_service_account"]["type"],
-    "project_id" : st.secrets["gcp_service_account"]["project_id"],
-    "private_key_id" : st.secrets["gcp_service_account"]["private_key_id"],
-    "private_key" : st.secrets["gcp_service_account"]["private_key"],
-    "client_email" : st.secrets["gcp_service_account"]["client_email"],
-    "client_id" : st.secrets["gcp_service_account"]["client_id"],
-    "auth_uri" : st.secrets["gcp_service_account"]["auth_uri"],
-    "token_uri" : st.secrets["gcp_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url" : st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url" : st.secrets["gcp_service_account"]["client_x509_cert_url"],
-    "universe_domain": st.secrets["gcp_service_account"]["universe_domain"],
+    "type" : st.secrets["gwf_service_account"]["type"],
+    "project_id" : st.secrets["gwf_service_account"]["project_id"],
+    "private_key_id" : st.secrets["gwf_service_account"]["private_key_id"],
+    "private_key" : st.secrets["gwf_service_account"]["private_key"],
+    "client_email" : st.secrets["gwf_service_account"]["client_email"],
+    "client_id" : st.secrets["gwf_service_account"]["client_id"],
+    "auth_uri" : st.secrets["gwf_service_account"]["auth_uri"],
+    "token_uri" : st.secrets["gwf_service_account"]["token_uri"],
+    "auth_provider_x509_cert_url" : st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url" : st.secrets["gwf_service_account"]["client_x509_cert_url"],
+    "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
 
@@ -65,21 +65,24 @@ if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
 class ObservationRecord(BaseModel):
-    location: Optional[str] = Field(default=None, description="Location or setting where this observation made. e.g. operating room (OR), hospital, exam room,....")
-    people_present: Optional[str] = Field(default=None, description="People present during the observation. e.g. patient, clinician, scrub tech, family member, ...")
+    # location: Optional[str] = Field(default=None, description="Location or setting where this observation made. e.g. operating room (OR), hospital, exam room,....")
+    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the observation. e.g. patient, surgeon, scrub tech, circulating nurse, ...")
     sensory_observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
-    specific_facts: Optional[str] = Field(default=None, description="The facts noted in the observation. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
-    insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
+    product_interactions: Optional[str] = Field(default=None, description="Interactions with products or tools. e.g. how tools are used, how products are handled, ...")
     process_actions: Optional[str] = Field(default=None, description="Which actions occurred during the observation, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
+    # people_present: Optional[str] = Field(default=None, description="People present during the observation. e.g. patient, clinician, scrub tech, family member, ...")
+    # specific_facts: Optional[str] = Field(default=None, description="The facts noted in the observation. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
+    insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-    questions: Optional[str] = Field(default=None, description="Recorded open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
+    # questions: Optional[str] = Field(default=None, description="Recorded open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
 
-if not os.path.exists(observations_csv):
-    observation_keys = list(ObservationRecord.__fields__.keys())
-    observation_keys = ['observation_summary', 'observer', 'observation', 'observation_date', 'observation_id'] + observation_keys        
-    csv_file = open(observations_csv, "w")
-    csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(observation_keys)
+# if not os.path.exists(observations_csv):
+    # observation_keys = list(ObservationRecord.__fields__.keys())
+    # observation_keys = ['observation_summary', 'observer', 'observation', 'observation_date', 'observation_id'] + observation_keys        
+    # csv_file = open(observations_csv, "w")
+    # csv_writer = csv.writer(csv_file, delimiter=";")
+    # csv_writer.writerow(observation_keys)
+
 
 def parseObservation(observation: str):
     llm = ChatOpenAI(
@@ -154,9 +157,10 @@ def addToGoogleSheets(observation_dict):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        observation_sheet = client.open("BioDesign Observation Record").sheet1
+        observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
 
         headers = observation_sheet.row_values(1)
+        headers = [i.strip() for i in headers]
 
         # Prepare the row data matching the headers
         row_to_append = []
@@ -187,19 +191,23 @@ def embedObservation(observer, observation, observation_summary, observation_dat
     
     db.add_texts([observation], metadatas=[{'observer': observer, 'observation_date': observation_date, 'observation_id': observation_id}])
 
+    print("Added to Pinecone: ", observation_id)
+
     parsed_observation = parseObservation(observation)
 
     # write observer, observatoin and parsed observation to csv
     observation_keys = list(ObservationRecord.__fields__.keys())
-    all_observation_keys = ['observation_summary', 'observer', 'observation', 'observation_date', 'observation_id'] + observation_keys
+    observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
+    all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Date', 'Observation ID'] + observation_keys_formatted
     observation_values = [observation_summary, observer, observation, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
 
     observation_dict = dict(zip(all_observation_keys, observation_values))
-    csv_file = open(observations_csv, "a")
-    csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(observation_values)
+    # csv_file = open(observations_csv, "a")
+    # csv_writer = csv.writer(csv_file, delimiter=";")
+    # csv_writer.writerow(observation_values)
 
     status = addToGoogleSheets(observation_dict)
+    print("Added to Google Sheets: ", status)
 
     return status
 
@@ -216,10 +224,10 @@ def generateObservationSummary(observation):
 
     observation_prompt = PromptTemplate.from_template(
 """
-You help me by giving me the a one line summary of the following medical observation.
+You help me by giving me the a 3-8 word title of the following medical observation, without quotes.
 
 Observation: {observation}
-Output Summary:"""
+Output Title:"""
 )
 
     observation_chain = (
@@ -263,7 +271,7 @@ def update_observation_id():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    observation_sheet = client.open("BioDesign Observation Record").sheet1
+    observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
     column_values = observation_sheet.col_values(1) 
 
     # find all observation ids with the same date

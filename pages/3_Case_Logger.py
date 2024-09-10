@@ -157,7 +157,13 @@ def addToGoogleSheets(case_dict):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        case_sheet = client.open("BioDesign Observation Record").Case_Log
+        # # print all the sheets in the workbook
+        # print("All sheets in the workbook:")
+        # sheet_list = client.open("BioDesign Observation Record").worksheets()
+        # for sheet in sheet_list:
+        #     print(sheet.title)
+
+        case_sheet = client.open("BioDesign Observation Record").worksheet("Case_Log")
 
         headers = case_sheet.row_values(1)
 
@@ -188,7 +194,8 @@ def embedCase(attendees, case_description, case_summary, case_date, case_ID):
             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
         )
     
-    db.add_texts([case_description], metadatas=[{'attendees': Attendees, 'case_date': Case_Date, 'case_ID': Case_ID}])
+    db.add_texts([case_description], metadatas=[{'attendees': attendees, 'case_date': case_date, 'case_ID': case_ID}])
+    print("Case added to Pinecone")
 
     parsed_case = parseCase(case_description)
 
@@ -203,6 +210,7 @@ def embedCase(attendees, case_description, case_summary, case_date, case_ID):
     csv_writer.writerow(case_values)
 
     status = addToGoogleSheets(case_dict)
+    print("Case added to Google Sheets")
 
     return status
 
@@ -314,7 +322,7 @@ with col2:
 
 with col3:
     #Display attendees options 
-    attendees = st.multiselect("Attendees", ["Ana", "Bridget"])
+    st.session_state['attendees'] = st.multiselect("Attendees", ["Ana", "Bridget"])
 
 ############
 
@@ -455,7 +463,7 @@ if st.button("Log Case", disabled=st.session_state['case_summary'] == ""):
             unsafe_allow_html=True
         )
     else:
-        status = embedCase(attendees, st.session_state['case_description'],  st.session_state['case_summary'], 
+        status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_summary'], 
                             st.session_state['case_date'],
                             st.session_state['case_ID'])
         # st.session_state['case_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_summary'])
