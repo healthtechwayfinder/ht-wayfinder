@@ -34,7 +34,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     # st.header("Observation Tools")
-    st.markdown('<h1 style="font-size:30px;">This is a header</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size:30px;">Observation Tools</h1>', unsafe_allow_html=True)
 
 
     with st.container(border=True):
@@ -58,7 +58,9 @@ with col1:
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
 with col2:
-    st.header("Need Statement Tools")
+    # st.header("Need Statement Tools")
+    st.markdown('<h1 style="font-size:30px;">Need Statement Tools</h1>', unsafe_allow_html=True)
+
     
     with st.container(border=True):
         if st.button(":pencil: Create a Need Statement"):
