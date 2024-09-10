@@ -4,27 +4,34 @@ def feedback_support_page():
     st.title("Feedback & Support")
 
     st.write("""
-    We value your feedback and are here to help! You can use the forms below to report any issues or send us questions and feedback.
+    We value your feedback and are here to help! Please select the type of feedback you want to provide, and the appropriate form will be shown.
     """)
 
-    st.subheader("Report an Issue")
-    st.write("If you're experiencing a problem, please let us know using the form below:")
+    # Create a radio button toggle for choosing between Report an Issue or Send Feedback
+    feedback_type = st.radio(
+        "What would you like to do today?",
+        ("Select an option", "Report an Issue", "Send Feedback or Ask a Question")
+    )
 
-    # Embed the Google Form for reporting an issue (Replace with your form URL)
-    report_issue_form_url = "https://docs.google.com/forms/d/e/1FAIpQLScQTy8j_HBSIM1Ukh6jdIfxCW2K1XJXr4ChVSqxJxtyLoP2hA/viewform?embedded=true"
-    st.markdown(f'<iframe src="{report_issue_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
+    if feedback_type == "Report an Issue":
+        st.subheader("Report an Issue")
+        st.write("If you're experiencing a problem, please let us know using the form below:")
+        
+        # Embed the Google Form for reporting an issue (Replace with your form URL)
+        report_issue_form_url = "https://docs.google.com/forms/d/e/1FAIpQLScQTy8j_HBSIM1Ukh6jdIfxCW2K1XJXr4ChVSqxJxtyLoP2hA/viewform?embedded=true"
+        st.markdown(f'<iframe src="{report_issue_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
 
-    st.subheader("Send Feedback or Ask a Question")
-    st.write("Have feedback or questions? Please use the form below to reach out to us:")
-
-    # Embed the Google Form for feedback or questions (Replace with your form URL)
-    feedback_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdS6I9Oa5mDxLT-UR8MagUCw0mWiBXnqGfjX0LKOMm3LqlrIw/viewform?embedded=true"
-    st.markdown(f'<iframe src="{feedback_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
+    elif feedback_type == "Send Feedback or Ask a Question":
+        st.subheader("Send Feedback or Ask a Question")
+        st.write("Have feedback or questions? Please use the form below to reach out to us:")
+        
+        # Embed the Google Form for feedback or questions (Replace with your form URL)
+        feedback_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdS6I9Oa5mDxLT-UR8MagUCw0mWiBXnqGfjX0LKOMm3LqlrIw/viewform?embedded=true"
+        st.markdown(f'<iframe src="{feedback_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
 
 # Run the feedback & support page
 if __name__ == '__main__':
     feedback_support_page()
-
 
 
 
