@@ -24,6 +24,10 @@ def feedback_support_page():
         report_issue_form_url = "https://docs.google.com/forms/d/e/1FAIpQLScQTy8j_HBSIM1Ukh6jdIfxCW2K1XJXr4ChVSqxJxtyLoP2hA/viewform?embedded=true"
         st.markdown(f'<iframe src="{report_issue_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
 
+         # Add hyperlink to the form
+        st.write(f"[Click here to open the form in a new tab]({report_issue_form_url.replace('?embedded=true', '')})")
+
+    
     elif feedback_type == "Send Feedback or Ask a Question":
         st.subheader("Send Feedback or Ask a Question")
         st.write("Have feedback or questions? Please use the form below to reach out to us:")
@@ -31,6 +35,10 @@ def feedback_support_page():
         # Embed the Google Form for feedback or questions (Replace with your form URL)
         feedback_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdS6I9Oa5mDxLT-UR8MagUCw0mWiBXnqGfjX0LKOMm3LqlrIw/viewform?embedded=true"
         st.markdown(f'<iframe src="{feedback_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
+
+        # Add hyperlink to the form
+        st.write(f"[Click here to open the form in a new tab]({feedback_form_url.replace('?embedded=true', '')})")
+
 
 # Run the feedback & support page
 if __name__ == '__main__':
