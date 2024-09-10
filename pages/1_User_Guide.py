@@ -4,7 +4,7 @@ from streamlit_extras.switch_page_button import switch_page
 
 
 def main():
-    st.markdown("<h1 style='text-align: center;'>Wayfiender User Guide:</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center;'>Wayfinder User Guide:</h1>", unsafe_allow_html=True)
     # Create a button using Streamlit's native functionality
     st.markdown("<br>", unsafe_allow_html=True)
     st.write("Follow this link for documentationa and examples for each of Wayfinder's features.")
