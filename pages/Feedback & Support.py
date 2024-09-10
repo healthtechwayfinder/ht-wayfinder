@@ -47,11 +47,11 @@ if __name__ == '__main__':
 
 # Add a spacer to push the button to the bottom of the page
 st.write(" " * 50)
-# Apply custom CSS to make the button blue
+
 st.markdown("""
     <style>
     div.stButton > button {
-        background-color: #a51c30;
+        background-color: #A51C30;
         color: white;
         font-size: 16px;
         padding: 10px 20px;
@@ -59,7 +59,7 @@ st.markdown("""
         border-radius: 5px;
     }
     div.stButton > button:hover {
-        background-color: #2c4a70;
+        background-color: #E7485F;
         color: white;
     }
     </style>
