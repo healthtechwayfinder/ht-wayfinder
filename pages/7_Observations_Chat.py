@@ -40,7 +40,6 @@ CREDS = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, SCOPE)
 CLIENT = gspread.authorize(CREDS)
 SPREADSHEET = CLIENT.open("2024 Healthtech Identify Log")  # Open the main spreadsheet
 
-button_place = st.empty()
 
 
 def create_new_chat_sheet():
@@ -158,6 +157,9 @@ def get_case_descriptions_from_case_ids(case_ids):
 
 # if 'case_google_sheet' not in st.session_state:
 #     st.session_state['case_google_sheet'] = get_case_sheet_as_dict()
+
+button_place = st.empty()
+
 
 # Handle new input
 if prompt := st.chat_input("What would you like to ask?"):
