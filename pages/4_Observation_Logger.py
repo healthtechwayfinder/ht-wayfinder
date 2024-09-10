@@ -80,7 +80,8 @@ def generateObservationTags(observation):
     # Define the prompt for generating tags from the observation text
     observation_tags_prompt = PromptTemplate.from_template(
         """
-        Generate a list of 3-5 tags that are relevant to the following medical observation.
+        Generate a list of 3-5 tags that are relevant to the following medical observation. Do not use numbers and separate them by commas.
+        Give only the list of tags without any quotes or special characters.
 
         Observation: {observation}
         Tags:
@@ -152,6 +153,7 @@ def extractObservationFeatures(observation):
 
     # Parse the observation
     parsed_observation = parseObservation(observation)
+    st.session_state['parsed_observation'] = parsed_observation
 
     input_fields = list(ObservationRecord.__fields__.keys())
 
@@ -307,7 +309,10 @@ def embedObservation(observer, observation, observation_summary, observation_tag
 
     print("Added to Pinecone: ", observation_id)
 
-    parsed_observation = parseObservation(observation)
+    if 'parsed_observation' not in st.session_state:
+        st.session_state['parsed_observation'] = parseObservation(observation)
+    else:
+        parsed_observation = st.session_state['parsed_observation']
 
 
     # Prepare the observation record with the tags
@@ -336,7 +341,7 @@ def generateObservationSummary(observation):
 
     observation_prompt = PromptTemplate.from_template(
 """
-You help me by giving me the a 3-8 word title of the following medical observation, without quotes.
+You help me by giving me the a 3-8 word title of the following medical observation. Do not use quotes or special characters.
 
 Observation: {observation}
 Output Title:"""
