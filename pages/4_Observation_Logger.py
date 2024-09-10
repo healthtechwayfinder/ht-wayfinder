@@ -578,15 +578,6 @@ if st.session_state['observation_summary'] != "":
 if st.session_state['observation_tags'] != "":
     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
 
-# Display the fields after evaluation in editable form
-if 'parsed_observation' in st.session_state:
-    st.markdown("### Edit Parsed Observation Details")
-
-    # Loop through the fields and render them as editable text inputs
-    for field in list(ObservationRecord.__fields__.keys()):
-        st.session_state[field] = st.text_input(f"{field.replace('_', ' ').capitalize()} (editable)", value=st.session_state.get(field, ""))
-
-
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
 if st.session_state['rerun']:
