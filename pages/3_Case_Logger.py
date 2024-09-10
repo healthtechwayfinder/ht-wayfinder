@@ -460,7 +460,7 @@ if action == "Add New Case":
         #     """, unsafe_allow_html=True)
     
         # Button to Clear the case Text Area
-        st.button("Clear Case", on_click=clear_text)
+        st.button("Clear Case", on_click=clear_case)
         
         # Container for result display
         result_container = st.empty()
