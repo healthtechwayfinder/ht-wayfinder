@@ -472,7 +472,7 @@ st.markdown("---")
 st.markdown("""
     <style>
     div.stButton > button {
-        background-color: #365980;
+        background-color: #a51c30;
         color: white;
         font-size: 16px;
         padding: 10px 20px;
