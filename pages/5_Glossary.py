@@ -310,8 +310,8 @@ for idx, item in enumerate(filtered_items):
     # add a break line
     st.markdown("<br>", unsafe_allow_html=True)
 
-if st.button("Back to Main Menu"):
-    switch_page("main_menu")
+if st.button("Back to Dashboard"):
+    switch_page("Dashboard")
 
 ########################## past retrieval of glossary: 
 
