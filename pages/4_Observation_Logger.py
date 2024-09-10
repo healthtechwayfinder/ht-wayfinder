@@ -284,11 +284,86 @@ def addToGoogleSheets(observation_dict):
         print("Error adding to Google Sheets: ", e)
         return False
 
+# Function to update the observation column for a specific case ID in Google Sheets
+def update_case_observations(case_id, observation_id):
+    try:
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+
+        # Find the row that corresponds to the given case_id
+        data = case_log.get_all_records()
+        for i, row in enumerate(data, start=2):  # Start from 2 to skip headers
+            if row["Case ID"] == case_id:
+                # Get the current observations in the "observations" column (if any)
+                current_observations = row.get("observations", "")
+                
+                # Append the new observation ID to the existing observations
+                if current_observations:
+                    updated_observations = f"{current_observations}, {observation_id}"
+                else:
+                    updated_observations = observation_id
+
+                # Update the "observations" column with the new value
+                case_log.update_cell(i, list(row.keys()).index("observations") + 1, updated_observations)
+                return True
+        return False
+    except Exception as e:
+        print(f"Error updating case observations: {e}")
+        return False
+
+
+# # Modified function to embed the observation and tags
+# def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
+#     related_case_id = related_case_id_with_title.split(" - ")[0]
+    
+    
+#     db = PineconeVectorStore(
+#         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+#         namespace="observations",
+#         embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+#         pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+#     )
+
+
+#     # Add observation with metadata, including tags
+#     db.add_texts([observation], metadatas=[{
+#         'observer': observer,
+#         'observation_date': observation_date,
+#         'observation_id': observation_id,
+#         'tags': observation_tags,  # Add tags to the metadata
+#         'case_id': related_case_id
+#     }])
+
+#     print("Added to Pinecone: ", observation_id)
+
+#     if 'parsed_observation' not in st.session_state:
+#         st.session_state['parsed_observation'] = parseObservation(observation)
+#     else:
+#         parsed_observation = st.session_state['parsed_observation']
+
+
+#     # Prepare the observation record with the tags
+#     observation_keys = list(ObservationRecord.__fields__.keys())
+#     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
+#     all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Tags', 'Date', 'Observation ID', 'Related Case ID'] + observation_keys_formatted
+#     observation_values = [observation_summary, observer, observation, observation_tags, observation_date, observation_id, related_case_id] + [parsed_observation[key] for key in observation_keys]
+
+#     observation_dict = dict(zip(all_observation_keys, observation_values))
+
+#     # Add the observation record (including tags) to Google Sheets
+#     status = addToGoogleSheets(observation_dict)
+#     print("Added to Google Sheets: ", status)
+
+#     return status
 
 # Modified function to embed the observation and tags
 def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
     related_case_id = related_case_id_with_title.split(" - ")[0]
-    
     
     db = PineconeVectorStore(
         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
@@ -296,7 +371,6 @@ def embedObservation(observer, observation, observation_summary, observation_tag
         embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
         pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
     )
-
 
     # Add observation with metadata, including tags
     db.add_texts([observation], metadatas=[{
@@ -314,7 +388,6 @@ def embedObservation(observer, observation, observation_summary, observation_tag
     else:
         parsed_observation = st.session_state['parsed_observation']
 
-
     # Prepare the observation record with the tags
     observation_keys = list(ObservationRecord.__fields__.keys())
     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
@@ -326,6 +399,10 @@ def embedObservation(observer, observation, observation_summary, observation_tag
     # Add the observation record (including tags) to Google Sheets
     status = addToGoogleSheets(observation_dict)
     print("Added to Google Sheets: ", status)
+
+    # Update the case sheet with the observation ID
+    if status:
+        update_case_observations(related_case_id, observation_id)
 
     return status
 
