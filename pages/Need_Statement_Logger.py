@@ -32,22 +32,6 @@ st.write("Use this tool to record needs as you draft them. Select the date that 
 st.write("For each need statement that you create, be sure to distinctly identify the problem, population, and outcome, and then enter the whole statement in the corresponding text box. In the last box, add any relevant notes -- including things like how you might want to workshop the statement, specific insights, assumptions in the statement that need validation, or opportunities for improvement or more research.")
 
 
-# Initialize the session state for the input if it doesn't exist
-if 'need_statement' not in st.session_state:
-    st.session_state.need_statement = ''
-
-if 'problem' not in st.session_state:
-    st.session_state['problem'] = ""
-
-if 'population' not in st.session_state:
-    st.session_state['population'] = ""
-
-if 'outcome' not in st.session_state:
-    st.session_state['outcome'] = ""
-
-if 'notes' not in st.session_state:
-    st.session_state['notes'] = ""
-
 
 
 #/////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -104,13 +88,9 @@ creds_dict = {
 # population
 # outcome
 
-# variables recorded: need_ID, need_date, need_statement, problem, population, outcome, observation_ID,
-
+# Initialize the session state for the input if it doesn't exist
 if 'need_statement' not in st.session_state:
-    st.session_state['need_statement'] = ""
-
-if 'need_input' not in st.session_state:
-    st.session_state['need_input'] = ""
+    st.session_state.need_statement = ''
 
 if 'problem' not in st.session_state:
     st.session_state['problem'] = ""
