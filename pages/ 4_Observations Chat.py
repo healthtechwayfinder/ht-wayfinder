@@ -17,17 +17,17 @@ from datetime import datetime
 
 # Access the credentials from Streamlit secrets
 creds_dict = {
-    "type" : st.secrets["gcp_service_account"]["type"],
-    "project_id" : st.secrets["gcp_service_account"]["project_id"],
-    "private_key_id" : st.secrets["gcp_service_account"]["private_key_id"],
-    "private_key" : st.secrets["gcp_service_account"]["private_key"],
-    "client_email" : st.secrets["gcp_service_account"]["client_email"],
-    "client_id" : st.secrets["gcp_service_account"]["client_id"],
-    "auth_uri" : st.secrets["gcp_service_account"]["auth_uri"],
-    "token_uri" : st.secrets["gcp_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url" : st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url" : st.secrets["gcp_service_account"]["client_x509_cert_url"],
-    "universe_domain": st.secrets["gcp_service_account"]["universe_domain"],
+    "type" : st.secrets["gwf_service_account"]["type"],
+    "project_id" : st.secrets["gwf_service_account"]["project_id"],
+    "private_key_id" : st.secrets["gwf_service_account"]["private_key_id"],
+    "private_key" : st.secrets["gwf_service_account"]["private_key"],
+    "client_email" : st.secrets["gwf_service_account"]["client_email"],
+    "client_id" : st.secrets["gwf_service_account"]["client_id"],
+    "auth_uri" : st.secrets["gwf_service_account"]["auth_uri"],
+    "token_uri" : st.secrets["gwf_service_account"]["token_uri"],
+    "auth_provider_x509_cert_url" : st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url" : st.secrets["gwf_service_account"]["client_x509_cert_url"],
+    "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
 # Google Sheets setup
@@ -49,13 +49,13 @@ def create_new_chat_sheet():
 # Create a new sheet for the chat thread if not already created
 if "chat_sheet" not in st.session_state:
     st.session_state.chat_sheet = create_new_chat_sheet()
-    
-observations_csv = "observations.csv"
+
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 st.set_page_config(page_title="Ask Observations", page_icon="❓")
 
 st.markdown("# Ask the Team's Observations")
+
 # st.write("This is the Ask the Team's Observations page.")
 # Subtitle for the chat section
 
@@ -91,7 +91,7 @@ def get_sheet_as_dict():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    observation_sheet = client.open("BioDesign Observation Record").sheet1
+    observation_sheet = client.open("2024 Healthtech Identify Log").sheet1
     data = observation_sheet.get_all_records()
     return data
 
@@ -155,8 +155,6 @@ st.write(" " * 50)
 st.markdown("""
     <style>
     div.stButton > button {
-        background-color: #365980;
-        color: white;
         font-size: 16px;
         padding: 10px 20px;
         border: none;
