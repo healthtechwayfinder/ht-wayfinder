@@ -567,10 +567,13 @@ elif action == "Edit Existing Case":
                         st.error(f"Failed to save changes to '{case_to_edit}'.")
 
 
+# add a break line
+st.markdown("<br>", unsafe_allow_html=True)
+
 st.markdown("""
     <style>
     div.stButton > button {
-        background-color: #a51c30;
+        background-color: #A51C30;
         color: white;
         font-size: 16px;
         padding: 10px 20px;
@@ -578,7 +581,7 @@ st.markdown("""
         border-radius: 5px;
     }
     div.stButton > button:hover {
-        background-color: #2c4a70;
+        background-color: #E7485F;
         color: white;
     }
     </style>
@@ -587,5 +590,8 @@ st.markdown("""
 
 
 # Create a button using Streamlit's native functionality
-if st.button("Back to Main Menu"):
-    switch_page("main_menu")
+st.markdown("<br>", unsafe_allow_html=True)
+
+if st.button("Back to Dashboard"):
+    switch_page("Dashboard")
+
