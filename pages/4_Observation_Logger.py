@@ -284,7 +284,7 @@ def addToGoogleSheets(observation_dict):
         print("Error adding to Google Sheets: ", e)
         return False
 
-# Function to update the observation column for a specific case ID in Google Sheets
+# Function to update the "observations" column for a specific case ID in Google Sheets
 def update_case_observations(case_id, observation_id):
     try:
         scope = [
@@ -295,9 +295,17 @@ def update_case_observations(case_id, observation_id):
         client = gspread.authorize(creds)
         case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
 
-        # Find the row that corresponds to the given case_id
+        # Get all data from the sheet
         data = case_log.get_all_records()
-        for i, row in enumerate(data, start=2):  # Start from 2 to skip headers
+        
+        # Get the header row to find the "observations" column
+        headers = case_log.row_values(1)
+        
+        # Find the index of the "observations" column
+        obs_col_index = headers.index("observations") + 1  # gspread uses 1-based indexing
+
+        # Find the row that corresponds to the given case_id
+        for i, row in enumerate(data, start=2):  # Start from 2 to skip the header row
             if row["Case ID"] == case_id:
                 # Get the current observations in the "observations" column (if any)
                 current_observations = row.get("observations", "")
@@ -309,12 +317,13 @@ def update_case_observations(case_id, observation_id):
                     updated_observations = observation_id
 
                 # Update the "observations" column with the new value
-                case_log.update_cell(i, list(row.keys()).index("observations") + 1, updated_observations)
+                case_log.update_cell(i, obs_col_index, updated_observations)
                 return True
         return False
     except Exception as e:
         print(f"Error updating case observations: {e}")
         return False
+
 
 
 # # Modified function to embed the observation and tags
