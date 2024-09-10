@@ -129,7 +129,7 @@ df = pd.read_csv("observations.csv", delimiter=';')
 st.markdown("""
     <style>
     div.stButton > button {
-        background-color: #a51c30;
+        background-color: #A51C30;
         color: white;
         font-size: 16px;
         padding: 10px 20px;
@@ -137,7 +137,7 @@ st.markdown("""
         border-radius: 5px;
     }
     div.stButton > button:hover {
-        background-color: #2c4a70;
+        background-color: #E7485F;
         color: white;
     }
     </style>
