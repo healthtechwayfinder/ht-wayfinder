@@ -727,7 +727,7 @@ def embed_case(attendees, case_description, case_summary, case_date, case_id):
 # Add New Case
 if action == "Add New Case":
     st.markdown("### Add a New Case")
-    case_title = st.text_input("Case Title")
+    # case_title = st.text_input("Case Title")
     case_description = st.text_area("Case Description")
     case_date = st.date_input("Case Date")
 
