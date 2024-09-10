@@ -50,8 +50,8 @@ creds_dict = {
 if 'case_description' not in st.session_state:
     st.session_state['case_description'] = ""
 
-if 'location' not in st.session_state:
-    st.session_state['location'] = ""
+# if 'location' not in st.session_state:
+#     st.session_state['location'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
@@ -365,7 +365,7 @@ if action == "Add New Case":
         # st calendar for date input with a callback to update the case_ID
         st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
         #st.location['location'] = st.text_input("Location:", "")
-        st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
+        # st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
     
     
     
