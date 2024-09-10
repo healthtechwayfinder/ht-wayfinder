@@ -173,7 +173,7 @@ def getObservationIDs():
     client = gspread.authorize(creds)
     
     # Open the Google Sheet and select the worksheet
-    observation_sheet = client.open("BioDesign Observation Record").worksheet('Sheet1')
+    observation_sheet = client.open("2024 Healthtech Identify Log"").worksheet('Need Statement Log')
     
     # Fetch all the values in the first column (col_values returns a list)
     observation_ID_list = observation_sheet.col_values(1)  # Fetch column 1
@@ -200,7 +200,7 @@ def update_need_ID():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    need_sheet = client.open("BioDesign Observation Record").worksheet('Need_Log')
+    need_sheet = client.open("2024 Healthtech Identify Log").worksheet('Need Statement Log')
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
