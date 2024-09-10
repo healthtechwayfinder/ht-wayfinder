@@ -40,6 +40,9 @@ CREDS = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, SCOPE)
 CLIENT = gspread.authorize(CREDS)
 SPREADSHEET = CLIENT.open("2024 Healthtech Identify Log")  # Open the main spreadsheet
 
+button_place = st.empty()
+
+
 def create_new_chat_sheet():
     """Create a new sheet for the current chat thread."""
     chat_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Unique name based on timestamp
@@ -247,7 +250,6 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
-button_place = st.empty()
 
 # Your other code here...
 
