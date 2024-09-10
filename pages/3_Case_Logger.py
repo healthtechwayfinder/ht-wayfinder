@@ -276,7 +276,7 @@ def embedCase(attendees, case_description, case_title, case_date, case_ID):
     
     # Add insider language to Glossary sheet
     if parsed_case['insider_language']:
-        addToGlossary(parsed_case['insider_language'])
+        addToGlossary(parsed_case['insider_language'], case_ID)
 
     # write attendees, observatoin and parsed case to csv
     case_keys = list(caseRecord.__fields__.keys())
