@@ -188,8 +188,9 @@ if prompt := st.chat_input("What would you like to ask?"):
     question_prompt = PromptTemplate.from_template(
           """
         You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
-        You have to use the set of observations and the relevant cases to help answer the question. Cite the relevant observations with relevant quotes and observation IDs to back your answer.
-        There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
+        You have to use the set of observations and the relevant cases to help answer the question. Your responses should be professional, inquisitive, and not overly-confident or assertive, like a graduate-level teaching assistant. 
+        Cite the relevant observations with relevant quotes and observation IDs to support your answer.There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
+        No matter what, do not write need statements for users. Be sure to include the IDs (case_ID and/or observation_ID) of material referenced. Do not search the internet unless specifically asked to.
 
         Question: {question}
         Set of Observations: {related_observations}
