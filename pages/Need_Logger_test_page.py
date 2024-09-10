@@ -29,7 +29,7 @@ import csv
 with st.container(border=True):
     st.write("This is some text.")
 
-    st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil:")
+    # st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil:")
     st.markdown("# Create a New Need Statement")
 
 
