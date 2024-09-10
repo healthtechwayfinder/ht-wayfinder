@@ -33,7 +33,9 @@ st.markdown("# Welcome!")
 col1, col2 = st.columns(2)
 
 with col1:
-    st.header("Observation Tools")
+    # st.header("Observation Tools")
+    st.markdown('<h1 style="font-size:30px;">This is a header</h1>', unsafe_allow_html=True)
+
 
     with st.container(border=True):
         if st.button("🏥 Record a New Case"):
