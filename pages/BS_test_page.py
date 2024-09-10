@@ -26,15 +26,21 @@ import os
 import csv
 
 
+import streamlit as st
+
 if "num_boxes" not in st.session_state:
     st.session_state.num_boxes = 0
+
+if "inputs" not in st.session_state:
+    st.session_state.inputs = {}
 
 if st.button("Add text box"):
     st.session_state.num_boxes += 1
 
 for i in range(st.session_state.num_boxes):
-    st.text_input(f"Text box {i + 1}")
+    st.session_state.inputs[i] = st.text_input(f"Text box {i + 1}", key=str(i))
 
+st.write(st.session_state.inputs)
 
 
 
