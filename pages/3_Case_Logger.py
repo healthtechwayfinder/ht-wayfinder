@@ -135,7 +135,7 @@ def extractCaseFeatures(case_description):
     # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
-ef addToGlossary(insider_language):
+def addToGlossary(insider_language):
     try:
         # Authenticate with Google Sheets API
         scope = [
