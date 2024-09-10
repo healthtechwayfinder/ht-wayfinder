@@ -24,12 +24,12 @@ import json
 import os
 import csv
 
-st.set_page_config(page_title="Add a New Case", page_icon="🏥")
+st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
+# Dropdown menu for selecting action
+action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
 
 st.markdown("# Add a New Case")
 
-
-case_csv = "case.csv"
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 # Access the credentials from Streamlit secrets
@@ -246,236 +246,271 @@ def clear_case():
 import streamlit as st
 from datetime import date
 
-# Initialize or retrieve the clear_case counters dictionary from session state
-if 'case_counters' not in st.session_state:
-    st.session_state['case_counters'] = {}
 
-# Function to generate case ID with the format CAYYMMDDxxxx
-def generate_case_ID(case_date, counter):
-    return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
-
-# Function to update case ID when the date changes
-def update_case_ID():
-    case_date_str = st.session_state['case_date'].strftime('%y%m%d')
-
-    # get all case ids from the sheets and update the counter
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-    column_values = case_sheet.col_values(1) 
-
-    # find all case ids with the same date
-    case_date_ids = [case_id for case_id in column_values if case_id.startswith(f"CA{case_date_str}")]
-    case_date_ids.sort()
-
-    # get the counter from the last case id
-    if len(case_date_ids) > 0:
-        counter = int(case_date_ids[-1][-4:])+1
-    else:
-        counter = 1
+# If the user chooses "Add New Case"
+if action == "Add New Case":
+    st.markdown("### Add a New Case")
     
-    # # Check if the date is already in the dictionary
-    # if case_date_str in st.session_state['case_counters']:
-    #     # Increment the counter for this date
-    #     st.session_state['case_counters'][case_date_str] += 1
-    # else:
-    #     # Initialize the counter to 1 for a new date
-    #     st.session_state['case_counters'][case_date_str] = 1
+    # Inputs for adding a new case
+    case_title = st.text_input("Case Title", placeholder="Enter case title")
+    case_description = st.text_area("Case Description", placeholder="Enter case description")
+    case_date = st.date_input("Case Date")
     
-    # Generate the case ID using the updated counter
-    # counter = st.session_state['case_counters'][case_date_str]
+    # Submit button
+    if st.button("Submit New Case"):
+        # Logic to save the new case (e.g., save to a database or a file)
+        st.success(f"New case '{case_title}' added successfully!")
 
-    st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
-
-# Use columns to place case_date, case_ID, and attendees side by side
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    # st calendar for date input with a callback to update the case_ID
-    st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
-    #st.location['location'] = st.text_input("Location:", "")
-    st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
-
-
-
-
-with col2:
-    # Ensure the case ID is set the first time the script runs
-    if 'case_ID' not in st.session_state:
-        update_case_ID()
-
-    # Display the case ID
-    st.text_input("Case ID:", value=st.session_state['case_ID'], disabled=True)
-
-with col3:
-    #Display attendees options 
-    st.session_state['attendees'] = st.multiselect("Attendees", ["Ana", "Bridget"])
-
-############
-
-# # Function to generate case ID with the format CAYYYYMMDDxxxx
-# def generate_case_ID(case_date, counter):
-#     return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
-
-# # Initialize or retrieve case ID counter from session state
-# if 'case_ID_counter' not in st.session_state:
-#     st.session_state['case_ID_counter'] = 1
-
-# # Function to update case ID when the date changes
-# def update_case_ID():
-#     st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], st.session_state['case_ID_counter'])
-
-# # st calendar for date input with a callback to update the case_ID
-# st.session_state['case_date'] = st.date_input("Observation Date", date.today(), on_change=update_case_ID)
-
-# # Initialize case_ID based on the observation date and counter
-# st.session_state['case_ID'] = st.text_input("Observation ID:", value=st.session_state['case_ID'], disabled=True)
-
-##########
-
-#new_case_ID = st.case_date().strftime("%Y%m%d")+"%03d"%case_ID_counter
-#st.session_state['case_ID'] = st.text_input("Observation ID:", value=new_case_ID)
-
-#########
-
-# Textbox for name input
-#attendees = st.selectbox("attendees", ["Ana", "Bridget"])
-
-# ######
-
-# # Text area for observation input
-# st.session_state['observation'] = st.text_area("Add Your Observation", value=st.session_state['observation'], placeholder="Enter your observation...", height=200)
-
-# ######
-
-
-# Initialize the observation text in session state if it doesn't exist
-
-if "case_description" not in st.session_state:
-    st.session_state["case_description"] = ""
-
-# Function to clear the text area
-def clear_text():
-    st.session_state["case_description"] = ""
-
-#st.markdown("---")
-
-# Observation Text Area
-##
-
-#observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
-
-# Add Your case Text with larger font size
-st.markdown("<h4 style='font-size:20px;'>Add Your Case:</h4>", unsafe_allow_html=True)
-
-# Button for voice input (currently as a placeholder)
-#if st.button("🎤 Record Case (Coming Soon)"):
- #   st.info("Voice recording feature coming soon!")
-
-# case Text Area
-st.session_state['case_description'] = st.text_area("Case:", value=st.session_state["case_description"], height=200)
-
-
-# Create columns to align the buttons
-col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
-
-with col3:
-    # Use custom CSS for the red button
-    # st.markdown("""
-    #     <style>
-    #     .stButton > button {
-    #         background-color: #942124;
-    #         color: white;
-    #         font-size: 16px;
-    #         padding: 10px 20px;
-    #         border-radius: 8px;
-    #         border: none;
-    #     }
-    #     .stButton > button:hover {
-    #         background-color: darkred;
-    #     }
-    #     </style>
-    #     """, unsafe_allow_html=True)
-
-    # Button to Clear the case Text Area
-    st.button("Clear Case", on_click=clear_text)
     
-    # Container for result display
-    result_container = st.empty()
-
-# #Use columns to place buttons side by side
-# col11, col21 = st.columns(2)
-
-
-#     if st.button("Generate Observation Summary"):
-#         st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
-
-#     if st.session_state['case_summary'] != "":
-#         st.session_state['case_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_summary'], height=50)
+    # Initialize or retrieve the clear_case counters dictionary from session state
+    if 'case_counters' not in st.session_state:
+        st.session_state['case_counters'] = {}
     
-
-with col1:
-    if st.button("Generate Case Summary"):
-        st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-        st.session_state['case_summary']  = generateCaseSummary(st.session_state['case_description'])
+    # Function to generate case ID with the format CAYYMMDDxxxx
+    def generate_case_ID(case_date, counter):
+        return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
     
-if st.session_state['case_summary'] != "":
-    st.session_state['case_summary'] = st.text_area("Case Summary (editable):", value=st.session_state['case_summary'], height=50)
-
-# st.write(f":green[{st.session_state['result']}]")
-st.markdown(st.session_state['result'], unsafe_allow_html=True)
-
-if st.session_state['rerun']:
-    time.sleep(3)
-    clear_case()
-    st.session_state['rerun'] = False
-    st.rerun()
+    # Function to update case ID when the date changes
+    def update_case_ID():
+        case_date_str = st.session_state['case_date'].strftime('%y%m%d')
+    
+        # get all case ids from the sheets and update the counter
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.metadata.readonly"
+            ]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+        column_values = case_sheet.col_values(1) 
+    
+        # find all case ids with the same date
+        case_date_ids = [case_id for case_id in column_values if case_id.startswith(f"CA{case_date_str}")]
+        case_date_ids.sort()
+    
+        # get the counter from the last case id
+        if len(case_date_ids) > 0:
+            counter = int(case_date_ids[-1][-4:])+1
+        else:
+            counter = 1
+        
+        # # Check if the date is already in the dictionary
+        # if case_date_str in st.session_state['case_counters']:
+        #     # Increment the counter for this date
+        #     st.session_state['case_counters'][case_date_str] += 1
+        # else:
+        #     # Initialize the counter to 1 for a new date
+        #     st.session_state['case_counters'][case_date_str] = 1
+        
+        # Generate the case ID using the updated counter
+        # counter = st.session_state['case_counters'][case_date_str]
+    
+        st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
+    
+    # Use columns to place case_date, case_ID, and attendees side by side
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        # st calendar for date input with a callback to update the case_ID
+        st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
+        #st.location['location'] = st.text_input("Location:", "")
+        st.session_state['location'] = st.text_input("Location:", value=st.session_state["location"])
+    
+    
+    
+    
+    with col2:
+        # Ensure the case ID is set the first time the script runs
+        if 'case_ID' not in st.session_state:
+            update_case_ID()
+    
+        # Display the case ID
+        st.text_input("Case ID:", value=st.session_state['case_ID'], disabled=True)
+    
+    with col3:
+        #Display attendees options 
+        st.session_state['attendees'] = st.multiselect("Attendees", ["Ana", "Bridget"])
+    
+    ############
+    
+    # # Function to generate case ID with the format CAYYYYMMDDxxxx
+    # def generate_case_ID(case_date, counter):
+    #     return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
+    
+    # # Initialize or retrieve case ID counter from session state
+    # if 'case_ID_counter' not in st.session_state:
+    #     st.session_state['case_ID_counter'] = 1
+    
+    # # Function to update case ID when the date changes
+    # def update_case_ID():
+    #     st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], st.session_state['case_ID_counter'])
+    
+    # # st calendar for date input with a callback to update the case_ID
+    # st.session_state['case_date'] = st.date_input("Observation Date", date.today(), on_change=update_case_ID)
+    
+    # # Initialize case_ID based on the observation date and counter
+    # st.session_state['case_ID'] = st.text_input("Observation ID:", value=st.session_state['case_ID'], disabled=True)
     
     ##########
-
-if st.button("Log Case", disabled=st.session_state['case_summary'] == ""):
-    # st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
-    st.session_state["error"] = ""
-
-    if st.session_state['case_description'] == "":
-        st.session_state["error"] = "Error: Please enter case."
-        st.markdown(
-            f"<span style='color:red;'>{st.session_state['error']}</span>", 
-            unsafe_allow_html=True
-        )
-    elif st.session_state['case_summary'] == "":
-        st.session_state["error"] = "Error: Please evaluate case."
-        st.markdown(
-            f"<span style='color:red;'>{st.session_state['error']}</span>", 
-            unsafe_allow_html=True
-        )
-    else:
-        status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_summary'], 
-                            st.session_state['case_date'],
-                            st.session_state['case_ID'])
-        # st.session_state['case_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_summary'])
-        # "Generated Summary: "+st.session_state['case_summary']+"\n\n"
-        if status:
-            st.session_state['result'] = "Case added to your team's database."
-            st.session_state['rerun'] = True
-            st.rerun()
+    
+    #new_case_ID = st.case_date().strftime("%Y%m%d")+"%03d"%case_ID_counter
+    #st.session_state['case_ID'] = st.text_input("Observation ID:", value=new_case_ID)
+    
+    #########
+    
+    # Textbox for name input
+    #attendees = st.selectbox("attendees", ["Ana", "Bridget"])
+    
+    # ######
+    
+    # # Text area for observation input
+    # st.session_state['observation'] = st.text_area("Add Your Observation", value=st.session_state['observation'], placeholder="Enter your observation...", height=200)
+    
+    # ######
+    
+    
+    # Initialize the observation text in session state if it doesn't exist
+    
+    if "case_description" not in st.session_state:
+        st.session_state["case_description"] = ""
+    
+    # Function to clear the text area
+    def clear_text():
+        st.session_state["case_description"] = ""
+    
+    #st.markdown("---")
+    
+    # Observation Text Area
+    ##
+    
+    #observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
+    
+    # Add Your case Text with larger font size
+    st.markdown("<h4 style='font-size:20px;'>Add Your Case:</h4>", unsafe_allow_html=True)
+    
+    # Button for voice input (currently as a placeholder)
+    #if st.button("🎤 Record Case (Coming Soon)"):
+     #   st.info("Voice recording feature coming soon!")
+    
+    # case Text Area
+    st.session_state['case_description'] = st.text_area("Case:", value=st.session_state["case_description"], height=200)
+    
+    
+    # Create columns to align the buttons
+    col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
+    
+    with col3:
+        # Use custom CSS for the red button
+        # st.markdown("""
+        #     <style>
+        #     .stButton > button {
+        #         background-color: #942124;
+        #         color: white;
+        #         font-size: 16px;
+        #         padding: 10px 20px;
+        #         border-radius: 8px;
+        #         border: none;
+        #     }
+        #     .stButton > button:hover {
+        #         background-color: darkred;
+        #     }
+        #     </style>
+        #     """, unsafe_allow_html=True)
+    
+        # Button to Clear the case Text Area
+        st.button("Clear Case", on_click=clear_text)
+        
+        # Container for result display
+        result_container = st.empty()
+    
+    # #Use columns to place buttons side by side
+    # col11, col21 = st.columns(2)
+    
+    
+    #     if st.button("Generate Observation Summary"):
+    #         st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
+    
+    #     if st.session_state['case_summary'] != "":
+    #         st.session_state['case_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_summary'], height=50)
+        
+    
+    with col1:
+        if st.button("Generate Case Summary"):
+            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+            st.session_state['case_summary']  = generateCaseSummary(st.session_state['case_description'])
+        
+    if st.session_state['case_summary'] != "":
+        st.session_state['case_summary'] = st.text_area("Case Summary (editable):", value=st.session_state['case_summary'], height=50)
+    
+    # st.write(f":green[{st.session_state['result']}]")
+    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    
+    if st.session_state['rerun']:
+        time.sleep(3)
+        clear_case()
+        st.session_state['rerun'] = False
+        st.rerun()
+        
+        ##########
+    
+    if st.button("Log Case", disabled=st.session_state['case_summary'] == ""):
+        # st.session_state['case_summary']  = generateCaseSummary(st.session_state['observation'])
+        st.session_state["error"] = ""
+    
+        if st.session_state['case_description'] == "":
+            st.session_state["error"] = "Error: Please enter case."
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
+        elif st.session_state['case_summary'] == "":
+            st.session_state["error"] = "Error: Please evaluate case."
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
         else:
-            st.session_state['result'] = "Error adding case to your team's database. Please try again!"
-        # clear_case()
+            status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_summary'], 
+                                st.session_state['case_date'],
+                                st.session_state['case_ID'])
+            # st.session_state['case_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_summary'])
+            # "Generated Summary: "+st.session_state['case_summary']+"\n\n"
+            if status:
+                st.session_state['result'] = "Case added to your team's database."
+                st.session_state['rerun'] = True
+                st.rerun()
+            else:
+                st.session_state['result'] = "Error adding case to your team's database. Please try again!"
+            # clear_case()
+    
+    st.markdown("---")
+    
+    # if st.button("Back to Main Menu"):
+    #     clear_case()
+    #     switch_page("main_menu")
+    
+    
+    # st.markdown("---")
+    # Apply custom CSS to make the button blue
 
-st.markdown("---")
+# If the user chooses "Edit Existing Case"
+elif action == "Edit Existing Case":
+    st.markdown("### Edit an Existing Case")
+    
+    # Dropdown for selecting which case to edit
+    # This could be dynamically populated from a database or data file
+    case_to_edit = st.selectbox("Select a case to edit", ["Case 1", "Case 2", "Case 3"])
+    
+    # Editable fields for the selected case
+    case_title_edit = st.text_input("Edit Case Title", case_to_edit)
+    case_description_edit = st.text_area("Edit Case Description", "Current description for the selected case")
+    case_date_edit = st.date_input("Edit Case Date")
+    
+    # Submit button
+    if st.button(f"Save Changes to {case_to_edit}"):
+        # Logic to update the existing case (e.g., update in a database or file)
+        st.success(f"Changes to '{case_to_edit}' saved successfully!")
 
-# if st.button("Back to Main Menu"):
-#     clear_case()
-#     switch_page("main_menu")
-
-
-# st.markdown("---")
-# Apply custom CSS to make the button blue
 st.markdown("""
     <style>
     div.stButton > button {
