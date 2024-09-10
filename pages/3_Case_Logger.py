@@ -158,62 +158,61 @@ def extractCaseFeatures(case_description):
     # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
-def addToGlossary(insider_language, case_id):
+def addToGlossary(insider_language_term, case_id):
     try:
-        # Authenticate with Google Sheets API
+        # Set the scope and authenticate
         scope = [
             "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive.metadata.readonly"
+            "https://www.googleapis.com/auth/drive.metadata.readonly",
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
 
-        # Open the "Glossary" worksheet
+        # Open the glossary worksheet
         glossary_sheet = client.open("2024 Healthtech Identify Log").worksheet("Glossary")
 
-        # Fetch all values from the Glossary sheet
+        # Get all the existing glossary terms
         glossary_data = glossary_sheet.get_all_records()
 
-        # Split insider_language terms into a list (if there are multiple terms)
-        new_terms = insider_language.split(", ")
-
+        # Find the column indices for "Term" and "Related cases"
         headers = glossary_sheet.row_values(1)
-        term_col_index = headers.index("Term") + 1  # Find the column index for "Term"
-        related_cases_col_index = headers.index("Related cases") + 1  # Find the column index for "Related cases"
+        term_col_idx = headers.index("Term") + 1
+        related_cases_col_idx = headers.index("Related cases") + 1
+        definition_col_idx = headers.index("Definition") + 1
 
-        # Iterate over terms
-        for term in new_terms:
-            term_found = False
+        # Check if the term already exists in the glossary
+        term_exists = False
+        for i, row in enumerate(glossary_data, start=2):  # Start at 2 to skip the header row
+            if row['Term'].strip().lower() == insider_language_term.strip().lower():
+                term_exists = True
+                # Append the case_id to the "Related cases" column if it's not already there
+                related_cases = row['Related cases']
+                if case_id not in related_cases:
+                    updated_related_cases = f"{related_cases}, {case_id}".strip(', ')
+                    glossary_sheet.update_cell(i, related_cases_col_idx, updated_related_cases)
+                break
 
-            # Loop through glossary data to check if the term already exists
-            for i, row in enumerate(glossary_data):
-                if row["Term"] == term:
-                    term_found = True
+        # If the term doesn't exist, add a new entry with a generated definition
+        if not term_exists:
+            # Generate a definition for the term using GPT (or any other logic you have)
+            llm = ChatOpenAI(
+                model_name="gpt-4o",
+                temperature=0.7,
+                openai_api_key=OPENAI_API_KEY,
+                max_tokens=100,
+            )
 
-                    # Get the existing related cases and append the new case ID if not already present
-                    existing_related_cases = row["Related cases"]
-                    if case_id not in existing_related_cases:
-                        updated_related_cases = f"{existing_related_cases}, {case_id}" if existing_related_cases else case_id
-                        glossary_sheet.update_cell(i + 2, related_cases_col_index, updated_related_cases)  # Update the related cases column
-                        print(f"Updated {term} with case ID {case_id} in Related cases.")
-                    else:
-                        print(f"Case ID {case_id} already linked to {term}.")
-                    break
+            definition_prompt = f"Provide a brief definition for the term: {insider_language_term}"
+            definition = llm.call(definition_prompt)
 
-            if not term_found:
-                # Generate a definition for the term
-                definition = generateDefinition(term)
+            # Append a new row to the glossary
+            glossary_sheet.append_row([insider_language_term, definition, case_id])
 
-                # Append the new term, definition, and related case ID as a new row to the "Glossary" sheet
-                glossary_sheet.append_row([term, definition, case_id])
-                print(f"Added {term} with definition: {definition} and case ID {case_id}.")
-
-        print("Glossary successfully updated.")
-        return True
+        print(f"Added/Updated glossary term: {insider_language_term}")
 
     except Exception as e:
-        print(f"Error adding to Glossary: {e}")
-        return False
+        print(f"Error adding to the Glossary: {e}")
+
 
 
 def addToGoogleSheets(case_dict):
