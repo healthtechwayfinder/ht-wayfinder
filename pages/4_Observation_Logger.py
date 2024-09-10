@@ -67,6 +67,7 @@ if 'observation_date' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
+
 def generateObservationTags(observation):
     # Create the LLM model
     llm = ChatOpenAI(
@@ -283,7 +284,10 @@ def addToGoogleSheets(observation_dict):
 
 
 # Modified function to embed the observation and tags
-def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id):
+def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
+    related_case_id = related_case_id_with_title.split(" - ")[0]
+    
+    
     db = PineconeVectorStore(
         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
         namespace="observations",
@@ -291,23 +295,26 @@ def embedObservation(observer, observation, observation_summary, observation_tag
         pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
     )
 
+
     # Add observation with metadata, including tags
     db.add_texts([observation], metadatas=[{
         'observer': observer,
         'observation_date': observation_date,
         'observation_id': observation_id,
-        'tags': observation_tags  # Add tags to the metadata
+        'tags': observation_tags,  # Add tags to the metadata
+        'case_id': related_case_id
     }])
 
     print("Added to Pinecone: ", observation_id)
 
     parsed_observation = parseObservation(observation)
 
+
     # Prepare the observation record with the tags
     observation_keys = list(ObservationRecord.__fields__.keys())
     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
-    all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Tags', 'Date', 'Observation ID'] + observation_keys_formatted
-    observation_values = [observation_summary, observer, observation, observation_tags, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
+    all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Tags', 'Date', 'Observation ID', 'Related Case ID'] + observation_keys_formatted
+    observation_values = [observation_summary, observer, observation, observation_tags, observation_date, observation_id, related_case_id] + [parsed_observation[key] for key in observation_keys]
 
     observation_dict = dict(zip(all_observation_keys, observation_values))
 
@@ -404,12 +411,37 @@ def update_observation_id():
 
     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
 
+def getExistingCaseIDS():
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+    case_ids = case_log.col_values(1)[1:]
+    case_titles = case_log.col_values(2)[1:]
+
+    # find all observation ids with the same date
+    existing_case_ids_with_title = dict(zip(case_ids, case_titles))
+
+    # make strings with case id - title
+    existing_case_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_case_ids_with_title.items()]
+
+    print("Existing Case IDS: ")
+    print(existing_case_ids_with_title)
+    return existing_case_ids_with_title
+
+
 # Use columns to place observation_date, observation_id, and observer side by side
 col1, col2, col3 = st.columns(3)
 
 with col1:
     # st calendar for date input with a callback to update the observation_id
     st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+
+    existing_case_ids_with_title = getExistingCaseIDS()
+    case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
 
 with col2:
     # Ensure the observation ID is set the first time the script runs
@@ -571,7 +603,8 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
         status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                             st.session_state['observation_tags'],
                             st.session_state['observation_date'],
-                            st.session_state['observation_id'])
+                            st.session_state['observation_id'],
+                            case_id_with_title)
         # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
         # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
         if status:
