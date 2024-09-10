@@ -247,6 +247,25 @@ def fetch_case_ids():
     case_ids = sheet.col_values(1)  # Assuming "Case ID" is in the first column
     return case_ids[1:]  # Exclude header
 
+# Function to connect to Google Sheets
+def get_google_sheet(sheet_name, worksheet_name):
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    return sheet
+# Fetch case IDs from Google Sheets
+def fetch_case_ids():
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")  # Ensure this is correct
+        case_ids = sheet.col_values(1)  # Assuming "Case ID" is in the first column
+        return case_ids[1:]  # Exclude header row
+    except Exception as e:
+        print(f"Error fetching case IDs: {e}")
+        return []
 # Fetch case details based on selected case ID
 def fetch_case_details(case_id):
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
@@ -255,6 +274,23 @@ def fetch_case_details(case_id):
         if row["Case ID"] == case_id:
             return row
     return None
+# Update case details in Google Sheets
+def update_case(case_id, updated_data):
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
+        data = sheet.get_all_records()
+
+        # Find the row corresponding to the case_id and update it
+        for i, row in enumerate(data, start=2):  # Skip header row
+            if row["Case ID"] == case_id:
+                # Update the necessary fields (Assuming the updated_data has the same keys as Google Sheets columns)
+                for key, value in updated_data.items():
+                    sheet.update_cell(i, list(row.keys()).index(key) + 1, value)
+                return True
+        return False
+    except Exception as e:
+        print(f"Error updating case: {e}")
+        return False
 
 
 
@@ -511,30 +547,48 @@ if action == "Add New Case":
 # If the user chooses "Edit Existing Case"
 elif action == "Edit Existing Case":
     st.markdown("### Edit an Existing Case")
-    # Fetch and display case IDs in a dropdown
+
+    # Step 1: Fetch and display case IDs in a dropdown
     case_ids = fetch_case_ids()
-    case_to_edit = st.selectbox("Select a case to edit", case_ids)
 
-    if case_to_edit:
-        case_details = fetch_case_details(case_to_edit)
+    # Ensure case_ids are not empty
+    if not case_ids:
+        st.error("No cases found.")
+    else:
+        case_to_edit = st.selectbox("Select a case to edit", case_ids)
 
-        if case_details:
-            # Display editable fields for the selected case
-            case_title_edit = st.text_input("Edit Case Title", case_details["Case Title"])
-            case_description_edit = st.text_area("Edit Case Description", case_details["Case Description"])
-            case_date_edit = st.date_input("Edit Case Date", case_details["Case Date"])
+        # Step 2: Fetch and display case details for the selected case
+        if case_to_edit:
+            case_details = fetch_case_details(case_to_edit)
+            
+            # Ensure case details are fetched correctly
+            if case_details:
+                # Debug: Print the case details (optional)
+                print(f"Editing case: {case_details}")
 
-            # Save changes button
-            if st.button("Save Changes"):
-                updated_data = {
-                    "Case Title": case_title_edit,
-                    "Case Description": case_description_edit,
-                    "Date": case_date_edit,
-                }
-                if update_case(case_to_edit, updated_data):
-                    st.success(f"Changes to '{case_to_edit}' saved successfully!")
-                else:
-                    st.error(f"Failed to save changes to '{case_to_edit}'.")
+                # Display editable fields for the selected case
+                case_title_edit = st.text_input("Edit Case Title", case_details.get("Case Title", ""))
+                case_description_edit = st.text_area("Edit Case Description", case_details.get("Case Description", ""))
+                
+                # Handle the case date properly (convert to a `datetime.date` object if needed)
+                case_date_str = case_details.get("Case Date", "")
+                try:
+                    case_date_edit = st.date_input("Edit Case Date", date.fromisoformat(case_date_str))
+                except ValueError:
+                    st.error(f"Invalid date format for case: {case_date_str}")
+                    case_date_edit = st.date_input("Edit Case Date", date.today())
+
+                # Step 3: Save changes
+                if st.button("Save Changes"):
+                    updated_data = {
+                        "Case Title": case_title_edit,
+                        "Case Description": case_description_edit,
+                        "Case Date": case_date_edit.isoformat(),
+                    }
+                    if update_case(case_to_edit, updated_data):
+                        st.success(f"Changes to '{case_to_edit}' saved successfully!")
+                    else:
+                        st.error(f"Failed to save changes to '{case_to_edit}'.")
 
 
 st.markdown("""
