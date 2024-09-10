@@ -34,21 +34,21 @@ col1, col2 = st.columns(2)
 
 with col1:
     with st.container(border=True):
-    st.header("Observation Tools")
-    if st.button("🏥 Record a New Case"):
-        switch_page("3_Case_Logger")
-    
-    if st.button("🔍 Record a New Observation"):
-        switch_page("4_Observation_Logger")
-
-    if st.button("❓ Chat with Observations"):
-        switch_page("4_Observations_Chat")
-
-    if st.button("📒 View All Observations"):
-        switch_page("View_All_Observations")
+        st.header("Observation Tools")
+        if st.button("🏥 Record a New Case"):
+            switch_page("3_Case_Logger")
         
-    if st.button("📊 Glossary"):
-        switch_page("Glossary")
+        if st.button("🔍 Record a New Observation"):
+            switch_page("4_Observation_Logger")
+    
+        if st.button("❓ Chat with Observations"):
+            switch_page("4_Observations_Chat")
+    
+        if st.button("📒 View All Observations"):
+            switch_page("View_All_Observations")
+            
+        if st.button("📊 Glossary"):
+            switch_page("Glossary")
 
     # if st.button("✅ Weekly Review (coming soon)"):
     #     switch_page("Tips_for_Observations")
@@ -56,9 +56,9 @@ with col1:
 
 with col2:
     with st.container(border=True):
-    st.header("Need Statement Tools")
-    if st.button(":pencil: Create a Need Statement"):
-        switch_page("Need_Statement_Logger")
+        st.header("Need Statement Tools")
+        if st.button(":pencil: Create a Need Statement"):
+            switch_page("Need_Statement_Logger")
 
     # if st.button("✅ Scope Need Statements (coming soon)"):
     #     switch_page("Tips_for_Observations")
