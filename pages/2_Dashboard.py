@@ -35,13 +35,13 @@ col1, col2 = st.columns(2)
 with col1:
     st.header("Observation Tools")
     if st.button("🏥 Record a New Case"):
-        switch_page("Record_New_Observation")
+        switch_page("3_Case_Logger")
     
     if st.button("🔍 Record a New Observation"):
-        switch_page("Record_New_Observation")
+        switch_page("4_Observation_Logger")
 
     if st.button("❓ Chat with Observations"):
-        switch_page("Ask_the_Observations")
+        switch_page("4_Observations_Chat")
 
     if st.button("📒 View All Observations"):
         switch_page("View_All_Observations")
