@@ -75,9 +75,6 @@ with col2:
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
 
-if st.button(":paperclip: Feedback & Support"):
-            switch_page("Feedback_&_Support")
-
 
 # Your logo URL (replace if necessary)
 # logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
@@ -119,6 +116,11 @@ st.markdown("---")
 
 # Log Out Button with rerun or meta refresh
 col1, col2, col3 = st.columns([3, 1, 1])
+with col1
+    if st.button(":paperclip: Feedback & Support"):
+        switch_page("Feedback_&_Support")
+
+
 with col3:
     if st.button("Log Out"):
         # Option 1: Use experimental rerun
