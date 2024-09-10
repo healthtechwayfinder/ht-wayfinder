@@ -246,8 +246,8 @@ def clear_case():
         st.session_state['result'] = ""
     update_case_ID()
 
-    # Refresh the page back to the initial state
-    st.experimental_rerun()
+    # # Refresh the page back to the initial state
+    # st.experimental_rerun()
 
 # Fetch case IDs from Google Sheets
 def fetch_case_ids():
