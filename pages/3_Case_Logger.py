@@ -529,6 +529,7 @@ if action == "Add New Case":
 
 # If the user chooses "Edit Existing Case"
 elif action == "Edit Existing Case":
+    st.set_page_config(page_title="Edit a Case", page_icon="🏥")
     st.markdown("### Edit an Existing Case")
 
     # Step 1: Fetch and display case IDs in a dropdown
