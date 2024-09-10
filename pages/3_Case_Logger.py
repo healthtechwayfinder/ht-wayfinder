@@ -35,17 +35,17 @@ OPENAI_API_KEY = st.secrets["openai_key"]
 # Access the credentials from Streamlit secrets
 #test
 creds_dict = {
-    "type" : st.secrets["gcp_service_account"]["type"],
-    "project_id" : st.secrets["gcp_service_account"]["project_id"],
-    "private_key_id" : st.secrets["gcp_service_account"]["private_key_id"],
-    "private_key" : st.secrets["gcp_service_account"]["private_key"],
-    "client_email" : st.secrets["gcp_service_account"]["client_email"],
-    "client_id" : st.secrets["gcp_service_account"]["client_id"],
-    "auth_uri" : st.secrets["gcp_service_account"]["auth_uri"],
-    "token_uri" : st.secrets["gcp_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url" : st.secrets["gcp_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url" : st.secrets["gcp_service_account"]["client_x509_cert_url"],
-    "universe_domain": st.secrets["gcp_service_account"]["universe_domain"],
+    "type" : st.secrets["gwf_service_account"]["type"],
+    "project_id" : st.secrets["gwf_service_account"]["project_id"],
+    "private_key_id" : st.secrets["gwf_service_account"]["private_key_id"],
+    "private_key" : st.secrets["gwf_service_account"]["private_key"],
+    "client_email" : st.secrets["gwf_service_account"]["client_email"],
+    "client_id" : st.secrets["gwf_service_account"]["client_id"],
+    "auth_uri" : st.secrets["gwf_service_account"]["auth_uri"],
+    "token_uri" : st.secrets["gwf_service_account"]["token_uri"],
+    "auth_provider_x509_cert_url" : st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url" : st.secrets["gwf_service_account"]["client_x509_cert_url"],
+    "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
 
@@ -68,21 +68,9 @@ if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
 class caseRecord(BaseModel):
-   # location: Optional[str] = Field(default=None, description="Location or setting where this case made. e.g. operating room (OR), hospital, exam room,....")
-    People_Present: Optional[str] = Field(default=None, description="People present during the case. e.g. patient, clinician, scrub tech, family member, ...")
-    Sensory_Observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
-    Specific_Facts: Optional[str] = Field(default=None, description="The facts noted in the case. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
-    Insider_Language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-    Process_Actions: Optional[str] = Field(default=None, description="Which actions occurred during the case, and when they occurred. e.g. timing of various steps of a process, including actions performed by doctors, staff, or patients, could include the steps needed to open or close a wound, ...")
-    # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-    Notes_and_Impressions: Optional[str] = Field(default=None, description="Recorded thoughts, perceptions, insights, or open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
-
-if not os.path.exists(case_csv):
-    case_keys = list(caseRecord.__fields__.keys())
-    case_keys = ['case_ID', 'case_date', 'case_summary', 'attendees', 'location', 'case_description'] + case_keys        
-    csv_file = open(case_csv, "w")
-    csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(case_keys)
+    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the observation. e.g. patient, surgeon, scrub tech, circulating nurse, ...")
+    insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
+    tags: Optional[str] = Field(default=None, description="Tags or keywords that describe the observation. e.g. surgery, procedure, ...")
 
 def parseCase(case_description: str):
     llm = ChatOpenAI(
@@ -163,9 +151,10 @@ def addToGoogleSheets(case_dict):
         # for sheet in sheet_list:
         #     print(sheet.title)
 
-        case_sheet = client.open("BioDesign Observation Record").worksheet("Case_Log")
+        case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
 
         headers = case_sheet.row_values(1)
+        headers = [header.strip() for header in headers]
 
         # Prepare the row data matching the headers
         row_to_append = []
@@ -201,13 +190,15 @@ def embedCase(attendees, case_description, case_summary, case_date, case_ID):
 
     # write attendees, observatoin and parsed case to csv
     case_keys = list(caseRecord.__fields__.keys())
-    all_case_keys = ['case_summary', 'attendees', 'case_description', 'case_date', 'case_ID'] + case_keys
-    case_values = [case_summary, attendees, case_description, case_date, case_ID] + [parsed_case[key] for key in case_keys]
+    case_keys_formatted = [i.replace("_", " ").title() for i in case_keys]
+
+    all_case_keys = ['Title', 'People Present', 'Case Description', 'case_date'] + case_keys_formatted
+    case_values = [case_summary, attendees, case_description, case_date] + [parsed_case[key] for key in case_keys]
 
     case_dict = dict(zip(all_case_keys, case_values))
-    csv_file = open(case_csv, "a")
-    csv_writer = csv.writer(csv_file, delimiter=";")
-    csv_writer.writerow(case_values)
+    # csv_file = open(case_csv, "a")
+    # csv_writer = csv.writer(csv_file, delimiter=";")
+    # csv_writer.writerow(case_values)
 
     status = addToGoogleSheets(case_dict)
     print("Case added to Google Sheets")
@@ -227,10 +218,10 @@ def generateCaseSummary(case_description):
 
     case_prompt = PromptTemplate.from_template(
 """
-You help me by creating a brief, one-sentence summary of the following medical case description.
+You help me by creating a brief 4-10 word title of the following medical case description. Do not use quotes or special characters in the title.
 
 case_description: {case_description}
-Output Summary:"""
+Output title:"""
 )
 
     case_chain = (
@@ -259,13 +250,13 @@ from datetime import date
 if 'case_counters' not in st.session_state:
     st.session_state['case_counters'] = {}
 
-# Function to generate case ID with the format OBYYMMDDxxxx
+# Function to generate case ID with the format CAYYMMDDxxxx
 def generate_case_ID(case_date, counter):
-    return f"OB{case_date.strftime('%y%m%d')}{counter:04d}"
+    return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
 
 # Function to update case ID when the date changes
 def update_case_ID():
-    obs_date_str = st.session_state['case_date'].strftime('%y%m%d')
+    case_date_str = st.session_state['case_date'].strftime('%y%m%d')
 
     # get all case ids from the sheets and update the counter
     scope = [
@@ -274,29 +265,29 @@ def update_case_ID():
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    case_sheet = client.open("BioDesign Observation Record").sheet1
+    case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
     column_values = case_sheet.col_values(1) 
 
     # find all case ids with the same date
-    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")]
-    obs_date_ids.sort()
+    case_date_ids = [case_id for case_id in column_values if case_id.startswith(f"CA{case_date_str}")]
+    case_date_ids.sort()
 
     # get the counter from the last case id
-    if len(obs_date_ids) > 0:
-        counter = int(obs_date_ids[-1][-4:])+1
+    if len(case_date_ids) > 0:
+        counter = int(case_date_ids[-1][-4:])+1
     else:
         counter = 1
     
     # # Check if the date is already in the dictionary
-    # if obs_date_str in st.session_state['case_counters']:
+    # if case_date_str in st.session_state['case_counters']:
     #     # Increment the counter for this date
-    #     st.session_state['case_counters'][obs_date_str] += 1
+    #     st.session_state['case_counters'][case_date_str] += 1
     # else:
     #     # Initialize the counter to 1 for a new date
-    #     st.session_state['case_counters'][obs_date_str] = 1
+    #     st.session_state['case_counters'][case_date_str] = 1
     
     # Generate the case ID using the updated counter
-    # counter = st.session_state['case_counters'][obs_date_str]
+    # counter = st.session_state['case_counters'][case_date_str]
 
     st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
 
@@ -326,9 +317,9 @@ with col3:
 
 ############
 
-# # Function to generate case ID with the format OBYYYYMMDDxxxx
+# # Function to generate case ID with the format CAYYYYMMDDxxxx
 # def generate_case_ID(case_date, counter):
-#     return f"OB{case_date.strftime('%y%m%d')}{counter:04d}"
+#     return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
 
 # # Initialize or retrieve case ID counter from session state
 # if 'case_ID_counter' not in st.session_state:
