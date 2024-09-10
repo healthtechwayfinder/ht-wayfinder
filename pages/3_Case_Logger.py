@@ -198,14 +198,16 @@ def embedCase(attendees, case_description, case_title, case_date, case_ID):
     case_keys = list(caseRecord.__fields__.keys())
     case_keys_formatted = [i.replace("_", " ").title() for i in case_keys]
 
-    all_case_keys = ['Title', 'People Present', 'Case Description', 'Date', 'Case ID'] + case_keys_formatted
+    all_case_keys = ['Title', 'People Present', 'Case Description', 'Date', 'Case ID', 'Attendees'] + case_keys_formatted
     case_values = [case_title, attendees, case_description, case_date, case_ID] + [parsed_case[key] for key in case_keys]
 
     case_dict = dict(zip(all_case_keys, case_values))
     # csv_file = open(case_csv, "a")
     # csv_writer = csv.writer(csv_file, delimiter=";")
     # csv_writer.writerow(case_values)
-
+    # Debug: Print the case_dict before saving
+    print("Case Dictionary: ", case_dict)
+    
     status = addToGoogleSheets(case_dict)
     print("Case added to Google Sheets")
 
