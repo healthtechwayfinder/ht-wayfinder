@@ -547,8 +547,8 @@ elif action == "Edit Existing Case":
             case_details = fetch_case_details(case_to_edit)
             
             if case_details:
-                # Debug: Print the case details (optional)
-                st.write(f"Editing case: {case_details}")
+                # # Debug: Print the case details (optional)
+                # st.write(f"Editing case: {case_details}")
     
                 # Editable fields for the selected case
                 case_title = st.text_input("Title", case_details.get("Title", ""))
