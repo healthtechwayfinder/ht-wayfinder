@@ -135,6 +135,38 @@ def extractCaseFeatures(case_description):
     # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
+ef addToGlossary(insider_language):
+    try:
+        # Authenticate with Google Sheets API
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+
+        # Open the "Glossary" worksheet
+        glossary_sheet = client.open("Glossary").worksheet("Sheet1")
+
+        # Fetch all values from the Glossary sheet
+        glossary_data = glossary_sheet.col_values(1)  # Assuming "Glossary" terms are in the first column
+
+        # Split insider_language terms into a list (if there are multiple terms)
+        new_terms = insider_language.split(", ")
+
+        # Loop through each new term and add it to the sheet if it doesn't already exist
+        for term in new_terms:
+            if term not in glossary_data:
+                glossary_sheet.append_row([term])  # Append term as a new row
+                print(f"Added {term} to the Glossary.")
+            else:
+                print(f"{term} already exists in the Glossary.")
+
+        return True
+    except Exception as e:
+        print(f"Error adding to Glossary: {e}")
+        return False
+
 def addToGoogleSheets(case_dict):
     try:
         scope = [
@@ -193,6 +225,9 @@ def embedCase(attendees, case_description, case_title, case_date, case_ID):
         parsed_case = parseCase(case_description)
         st.session_state['parsed_case'] = parsed_case
     
+    # Add insider language to Glossary sheet
+    if parsed_case['insider_language']:
+        addToGlossary(parsed_case['insider_language'])
 
     # write attendees, observatoin and parsed case to csv
     case_keys = list(caseRecord.__fields__.keys())
