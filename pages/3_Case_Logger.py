@@ -75,6 +75,29 @@ class caseRecord(BaseModel):
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags (only noun) that are very relevant to the medical observation. The tags can be used to identify the type of procedure: (invasive procedure, minimally invasive, open procedure, non invasive, in the clinic, in the OR, in the emergency room..) the medical specialty (e.g.: rhynology, oncology, ophtalmology,..)  area of medicine, or type of technology being used for example Do not use numbers and separate them by commas. Give only the list of tags without any quotes or special characters.")
 
+def generateDefinition(term):
+    llm = ChatOpenAI(
+        model_name="gpt-4o",
+        temperature=0.7,
+        openai_api_key=OPENAI_API_KEY,
+        max_tokens=100,
+    )
+
+    prompt = PromptTemplate.from_template(
+        """
+        Provide a brief, simple definition for the following medical term.
+
+        Term: {term}
+        Definition:
+        """
+    )
+
+    definition_chain = (
+        prompt | llm | StrOutputParser()
+    )
+
+    output = definition_chain.invoke({"term": term})
+    return output
 
 def parseCase(case_description: str):
     llm = ChatOpenAI(
@@ -146,10 +169,10 @@ def addToGlossary(insider_language):
         client = gspread.authorize(creds)
 
         # Open the "Glossary" worksheet
-        glossary_sheet = client.open("Glossary").worksheet("Sheet1")
+        glossary_sheet = client.open("2024 Healthtech Identify Log").worksheet("Glossary")
 
-        # Fetch all values from the Glossary sheet
-        glossary_data = glossary_sheet.col_values(1)  # Assuming "Glossary" terms are in the first column
+        # Fetch all values from the Glossary sheet (assuming terms are in column 1)
+        glossary_data = glossary_sheet.col_values(1)
 
         # Split insider_language terms into a list (if there are multiple terms)
         new_terms = insider_language.split(", ")
@@ -157,8 +180,12 @@ def addToGlossary(insider_language):
         # Loop through each new term and add it to the sheet if it doesn't already exist
         for term in new_terms:
             if term not in glossary_data:
-                glossary_sheet.append_row([term])  # Append term as a new row
-                print(f"Added {term} to the Glossary.")
+                # Generate a definition for the term
+                definition = generateDefinition(term)
+
+                # Append term and definition as a new row to the "Glossary" sheet
+                glossary_sheet.append_row([term, definition])
+                print(f"Added {term} with definition: {definition}")
             else:
                 print(f"{term} already exists in the Glossary.")
 
@@ -166,6 +193,7 @@ def addToGlossary(insider_language):
     except Exception as e:
         print(f"Error adding to Glossary: {e}")
         return False
+
 
 def addToGoogleSheets(case_dict):
     try:
