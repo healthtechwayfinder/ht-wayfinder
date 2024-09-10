@@ -19,6 +19,9 @@ import os
 import csv
 import time
 
+OPENAI_API_KEY = st.secrets["openai_key"]
+
+
 # Set up the Streamlit page
 st.set_page_config(page_title="Glossary", page_icon="📊")
 st.markdown("# Glossary")
@@ -57,6 +60,9 @@ if "new_term" not in st.session_state:
     st.session_state["new_term"] = ""
 if "new_definition" not in st.session_state:
     st.session_state["new_definition"] = ""
+if "new_variant" not in st.session_state:
+    st.session_state["new_variant"] = ""
+
 
 # Print test 
 terms = observation_sheet.col_values(1)  # Terms are in column 1
@@ -65,20 +71,59 @@ variants = observation_sheet.col_values(3)  # Variants are in column 3
 
 # Combine terms and definitions into a list of tuples
 # terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
-glossary_db = {}
-
+glossary_db = []
+term_and_variants = []
 for idx in range(1, len(terms)):
 
-    glossary_db[terms[idx]] = {
+    item = {
+        'term': terms[idx],
         'definition': definitions[idx],
     }
+    term_and_variant = terms[idx]
 
     if idx < len(variants):
-        glossary_db[terms[idx]]['variant'] = variants[idx]
+        item['variant'] = variants[idx]
+        term_and_variant += ' (' + variants[idx] + ')'
+    else:
+        term_and_variant += ' ()'
+
+    glossary_db.append(item)
+    terms.append(terms[idx])
+    term_and_variants.append(term_and_variant)
 
 # Sort the list alphabetically by the term
-sorted_glossary_terms = sorted(glossary_db.keys())
+sorted_glossary_db = sorted(glossary_db, key=lambda x: x['term']+x.get('variant', ''))
 
+def generateVariantName(term, definition, existing_definitions=[], existing_variants=[]):
+    llm = ChatOpenAI(
+        model_name="gpt-4o",
+        temperature=0.7,
+        openai_api_key=OPENAI_API_KEY,
+        max_tokens=500,
+    )
+
+
+    variantNamePrompt = PromptTemplate.from_template(
+"""
+You help giving a one word unique variant name for a term and its target definition. This is because a term can have multiple definitions and it is useful to have a variant name to distinguish between them.
+Give only one word as the variant name for target term.
+
+term: {term}
+target definition for this term: {definition}
+other definitions for the same term: {existing_definitions}
+other variants for the same term: {existing_variants}
+Output Variant Name for target definition:
+"""
+)
+    variant_chain = (
+        variantNamePrompt | llm | StrOutputParser()
+    )
+
+    # with get_openai_callback() as cb:
+    output = variant_chain.invoke({"term": term, "definition": definition, 
+                                   "existing_definitions": existing_definitions, "existing_variants": existing_variants})
+
+    return output
 
 # Add custom CSS to make the container scrollable
 st.markdown("""
@@ -125,28 +170,53 @@ if st.session_state["show_new_term_fields"]:
     # Submit New Term button
     if st.button("Submit New Term"):
         new_term = st.session_state["new_term"].strip()
+        new_variant = st.session_state["new_variant"].strip()
         new_definition = st.session_state["new_definition"].strip()
 
-        if new_term and new_definition:
-            # Check for duplicate term
-            if new_term.lower() in [t.lower() for t in terms]:
-                idx = next(i for i, t in enumerate(terms) if t.lower() == new_term.lower())
-                existing_def = definitions[idx]
+        if len(new_variant) > 0:
+            new_term_and_variant = new_term + ' (' + new_variant + ')'
+        else:
+            new_term_and_variant = new_term + ' ()'
 
-                if st.checkbox(f"Add a new definition to the existing term '{new_term}'?"):
-                    # Append new definition to the existing one
-                    updated_definition = existing_def + "\n" + new_definition
-                    observation_sheet.update(f'B{idx+1}', updated_definition)  # Update Google Sheets
-                    st.success(f"New definition added to '{new_term}'")
-                else:
-                    st.warning(f"Term '{new_term}' already exists with definition: {existing_def}")
-            else:
-                # Add new term and definition
-                new_term = new_term.capitalize()
-                new_definition = new_definition.capitalize()
-                new_variant = new_variant_input.capitalize() if new_variant_input else None
-                observation_sheet.append_row([new_term, new_definition, new_variant])
-                st.success(f"Term '{new_term}' has been added successfully!")
+        print("New term and variant: ", new_term_and_variant)
+
+        if new_term_and_variant and new_definition:
+            # Check for duplicate term
+            if new_term in terms:
+                print("Duplicate term found for ", new_term)
+
+                # get all variants and definitions for the term
+                existing_variants = []
+                existing_definitions = []
+
+                for item in glossary_db:
+                    if item['term'] == new_term:
+                        existing_variant = item.get('variant', '')
+                        existing_def = item['definition']
+
+                        if existing_variant == '':
+                            old_variant = generateVariantName(new_term, existing_def, existing_definitions = [new_definition])
+                            print("Generated variant name for old definition: ", old_variant)
+                            if old_variant:
+                                update_idx = term_and_variants.index(new_term_and_variant)+2
+                                observation_sheet.update(values=[[old_variant]], range_name=f'C{update_idx}')
+                                existing_variant = old_variant
+
+                        existing_variants.append(existing_variant)
+                        existing_definitions.append(existing_def)
+
+                new_variant_input = generateVariantName(new_term, new_definition, 
+                                                        existing_definitions=existing_definitions, 
+                                                        existing_variants=existing_variants)
+                print("Generated variant name: ", new_variant_input)
+                st.warning(f"Term '{new_term}' already exists with definition: {existing_def}. Creating new variant {new_variant_input} for this definition.")
+
+            # Add new term and definition
+            new_term = new_term.capitalize()
+            new_definition = new_definition.capitalize()
+            new_variant = new_variant_input.capitalize() if new_variant_input else None
+            observation_sheet.append_row([new_term, new_definition, new_variant])
+            st.success(f"Term '{new_term}' has been added successfully!")
 
             # Clear the session state for inputs
             st.session_state["new_term"] = ""
@@ -161,8 +231,8 @@ if st.session_state["show_new_term_fields"]:
 search_term = st.text_input("Search Glossary", key="search_term")
 
 # Filter the glossary based on the search term (case-insensitive)
-filtered_terms = [item for item in sorted_glossary_terms if search_term.lower() in item.lower()]
-
+# filtered_terms = [item for item in sorted_glossary_terms if search_term.lower() in item.lower()]
+filtered_items = [item for item in sorted_glossary_db if search_term.lower() in item['term'].lower()]
 
 def onEditClickFunction(edit_mode_key):
     print(f"Edit button clicked for term {edit_mode_key}" )
@@ -173,9 +243,10 @@ def onCancelClickFunction(edit_mode_key):
     st.session_state[edit_mode_key] = False
 
 # Display the terms and their definitions inside the scrollable container
-for idx, term in enumerate(filtered_terms):
-    definition = glossary_db[term]['definition']
-    variant = glossary_db[term].get('variant', None)
+for idx, item in enumerate(filtered_items):
+    term = item['term']
+    definition = item['definition']
+    variant = item.get('variant', None)
 
     term_key = f"term_{idx}"
     definition_key = f"definition_{idx}"
@@ -216,7 +287,10 @@ for idx, term in enumerate(filtered_terms):
         else:
             if st.button("Save", key=f"save_button_{idx}"):
                 # Save changes to Google Sheets
-                row_index = terms.index(term) + 1 
+                term_variant = term + ' (' + variant + ')' if variant else term
+                row_index = term_and_variants.index(term_variant)+2
+                print("Updating for term with index: ", row_index)
+                
                 updated_term = st.session_state[term_key]
                 updated_definition = st.session_state[definition_key]
                 updated_variant = st.session_state[variant_key]
