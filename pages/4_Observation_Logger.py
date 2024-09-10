@@ -2,6 +2,8 @@ import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
+import logging
+logging.basicConfig(level=logging.INFO)
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
@@ -285,6 +287,9 @@ def addToGoogleSheets(observation_dict):
         return False
 
 # Function to update the "observations" column for a specific case ID in Google Sheets
+import logging
+
+# Function to update the "observations" column for a specific case ID in Google Sheets
 def update_case_observations(case_id, observation_id):
     try:
         scope = [
@@ -297,16 +302,28 @@ def update_case_observations(case_id, observation_id):
 
         # Get all data from the sheet
         data = case_log.get_all_records()
-        
+
         # Get the header row to find the "observations" column
         headers = case_log.row_values(1)
         
+        # Check if 'observations' column exists in the sheet headers
+        if "observations" not in headers:
+            logging.error("'observations' column not found in the sheet headers")
+            return False
+        
         # Find the index of the "observations" column
         obs_col_index = headers.index("observations") + 1  # gspread uses 1-based indexing
+        
+        # Log headers and column index
+        logging.info(f"Headers: {headers}")
+        logging.info(f"'observations' column index: {obs_col_index}")
 
         # Find the row that corresponds to the given case_id
         for i, row in enumerate(data, start=2):  # Start from 2 to skip the header row
+            logging.info(f"Checking row {i}: {row}")
             if row["Case ID"] == case_id:
+                logging.info(f"Found matching case ID: {case_id} at row {i}")
+                
                 # Get the current observations in the "observations" column (if any)
                 current_observations = row.get("observations", "")
                 
@@ -316,12 +333,17 @@ def update_case_observations(case_id, observation_id):
                 else:
                     updated_observations = observation_id
 
+                # Log the update before writing
+                logging.info(f"Updating row {i}, column {obs_col_index} with: {updated_observations}")
+
                 # Update the "observations" column with the new value
                 case_log.update_cell(i, obs_col_index, updated_observations)
                 return True
+
+        logging.warning(f"Case ID {case_id} not found in the case log")
         return False
     except Exception as e:
-        print(f"Error updating case observations: {e}")
+        logging.error(f"Error updating case observations: {e}")
         return False
 
 
