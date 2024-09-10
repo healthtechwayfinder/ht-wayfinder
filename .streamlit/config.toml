@@ -1,8 +1,5 @@
 [theme]
 base = "light"
-
 # secondaryBackgroundColor = "#bfbfbf"  # Background color for sidebar and widgets
-
-base="light"
-primaryColor="#a51c30"
-secondaryBackgroundColor="#f0f0f1"
+primaryColor ="#a51c30"
+secondaryBackgroundColor ="#f0f0f1"
