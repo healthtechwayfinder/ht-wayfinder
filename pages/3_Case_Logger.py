@@ -169,7 +169,7 @@ def addToGlossary(insider_language_term, case_id):
         client = gspread.authorize(creds)
 
         # Open the glossary worksheet
-        glossary_sheet = client.open("2024 Healthtech Identify Log").worksheet("Glossary")
+        glossary_sheet = client.open("Glossary").worksheet("Sheet1")
 
         # Get all the existing glossary terms
         glossary_data = glossary_sheet.get_all_records()
