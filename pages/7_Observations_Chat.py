@@ -231,7 +231,14 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 
+button_place = st.empty()
 
-# Create a button using Streamlit's native functionality
-if st.button("Back to Main Menu"):
-    switch_page("main_menu")
+# Your other code here...
+
+# Populate the reserved place with the button
+if button_place.button("Back to Dashboard"):
+    switch_page("Dashboard")
+
+# # Create a button using Streamlit's native functionality
+# if st.button("Back to Main Menu"):
+#     switch_page("main_menu")
