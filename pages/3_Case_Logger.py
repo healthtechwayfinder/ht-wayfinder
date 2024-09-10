@@ -536,7 +536,7 @@ elif action == "Edit Existing Case":
 
     # Ensure case_ids are not empty
     if not case_ids:
-    st.error("No cases found.")
+        st.error("No cases found.")
 else:
     case_to_edit = st.selectbox("Select a case to edit", case_ids)
 
