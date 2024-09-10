@@ -292,7 +292,7 @@ if __name__ == "__main__":
         # Show sidebar and other content after login
         st.sidebar.write("You are logged in!")
         st.sidebar.write("You can access the menu.")
-        switch_page("2_Dashboard")  # Redirect to main menu
+        switch_page("Dashboard")  # Redirect to main menu
     else:
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
