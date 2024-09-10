@@ -44,7 +44,31 @@ def feedback_support_page():
 if __name__ == '__main__':
     feedback_support_page()
 
+# Add a spacer to push the button to the bottom of the page
+st.write(" " * 50)
+# Apply custom CSS to make the button blue
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #365980;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+    }
+    div.stButton > button:hover {
+        background-color: #2c4a70;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
+
+
+# Create a button using Streamlit's native functionality
+if st.button("Back to Main Menu"):
+    switch_page("main_menu")
 
 #________________________OLD TIPS FOR OBSERVATIONS_______________________
 
