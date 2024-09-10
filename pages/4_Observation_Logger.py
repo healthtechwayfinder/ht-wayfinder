@@ -391,6 +391,27 @@ def embedObservation(observer, observation, observation_summary, observation_tag
     }])
 
     print("Added to Pinecone: ", observation_id)
+# Modified function to embed the observation and tags
+def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
+    related_case_id = related_case_id_with_title.split(" - ")[0]
+    
+    db = PineconeVectorStore(
+        index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+        namespace="observations",
+        embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+        pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+    )
+
+    # Add observation with metadata, including tags
+    db.add_texts([observation], metadatas=[{
+        'observer': observer,
+        'observation_date': observation_date,
+        'observation_id': observation_id,
+        'tags': observation_tags,  # Add tags to the metadata
+        'case_id': related_case_id
+    }])
+
+    print("Added to Pinecone: ", observation_id)
 
     if 'parsed_observation' not in st.session_state:
         st.session_state['parsed_observation'] = parseObservation(observation)
@@ -414,6 +435,7 @@ def embedObservation(observer, observation, observation_summary, observation_tag
         update_case_observations(related_case_id, observation_id)
 
     return status
+
 
 def generateObservationSummary(observation):
 
