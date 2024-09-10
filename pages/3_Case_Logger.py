@@ -24,7 +24,6 @@ import json
 import os
 import csv
 
-st.markdown("# Add or Edit a Case")
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 # Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
