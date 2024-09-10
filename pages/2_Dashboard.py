@@ -66,9 +66,8 @@ with col2:
         if st.button(":pencil: Create a Need Statement"):
             switch_page("Need_Statement_Logger")
 
-    # if st.button("✅ Scope Need Statements (coming soon)"):
-    #     switch_page("Tips_for_Observations")
-
+        if st.button("✅ Scope Need Statements (coming soon)"):
+            ""
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
 
