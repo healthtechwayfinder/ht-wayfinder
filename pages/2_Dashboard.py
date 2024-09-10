@@ -47,14 +47,15 @@ with col1:
         if st.button("❓ Chat with Observations"):
             switch_page("Observations_Chat")
     
-        if st.button("📒 View All Observations"):
-            switch_page("View_All_Observations")
+        if st.button("📒 Observation, Case, & Need Logs"):
+            switch_page("Cases_&_Observations_Dataset")
             
         if st.button("📊 Glossary"):
             switch_page("Glossary")
 
-    # if st.button("✅ Weekly Review (coming soon)"):
-    #     switch_page("Tips_for_Observations")
+        if st.button(":busts_in_silhouette: Weekly Review (coming soon)"):
+            ""
+            # switch_page("Tips_for_Observations")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
 with col2:
@@ -66,10 +67,10 @@ with col2:
         if st.button(":pencil: Create a Need Statement"):
             switch_page("Need_Statement_Logger")
 
-        if st.button("✅ Scope Need Statements (coming soon)"):
+        if st.button(":hourglass: Scope Need Statements (coming soon)"):
             ""
 
-        if st.button("✅ Need Statement Lens (coming soon)"):
+        if st.button(":hourglass: Need Statement Lens (coming soon)"):
             ""
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
