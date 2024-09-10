@@ -102,6 +102,15 @@ def refresh_observations_db():
     )
     return db
 
+def refresh_cases_db():
+    db = PineconeVectorStore(
+        index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+        namespace="cases",
+        embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+        pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+    )
+    return db
+
 def get_observation_sheet_as_dict():
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -169,15 +178,21 @@ if prompt := st.chat_input("What would you like to ask?"):
     related_cases = get_case_descriptions_from_case_ids(case_ids)
     print(related_cases)
 
+    updated_cases_db = refresh_cases_db()
+    related_cases_similarity = updated_cases_db.similarity_search(prompt, k=4)
+
+
     question_prompt = PromptTemplate.from_template(
           """
         You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
         You have to use the set of observations and the relevant cases to help answer the question. Cite the relevant observations with relevant quotes and observation IDs to back your answer.
-        
+        There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
+
         Question: {question}
         Set of Observations: {related_observations}
-        Relevant Cases:{related_cases}
-        Answer:
+        Relevant Cases linked to Observations:{related_cases}
+        Semantailcally Relevant cases: {related_cases_similarity}
+        Final Answer:
          """
     )
     
@@ -188,7 +203,8 @@ if prompt := st.chat_input("What would you like to ask?"):
     with get_openai_callback() as cb:
         output = observation_chat_chain.invoke({"question": prompt, 
                                                 "related_observations": related_observations,
-                                                "related_cases": related_cases})
+                                                "related_cases": related_cases,
+                                                "related_cases_similarity": related_cases_similarity},)
 
     # Update the conversation history
     st.session_state.messages.append({"role": "assistant", "content": output})
