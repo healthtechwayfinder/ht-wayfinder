@@ -79,6 +79,7 @@ for idx in range(1, len(terms)):
     item = {
         'term': terms[idx],
         'definition': definitions[idx],
+        'related_cases': related_cases[idx] if idx < len(related_cases) else ''
     }
     term_and_variant = terms[idx]
 
@@ -252,6 +253,7 @@ for idx, item in enumerate(filtered_items):
     term = item['term']
     definition = item['definition']
     variant = item.get('variant', None)
+    related_cases = item.get('related_cases', '')
 
     term_key = f"term_{idx}"
     definition_key = f"definition_{idx}"
@@ -272,8 +274,8 @@ for idx, item in enumerate(filtered_items):
             else:
                 st.markdown(f"**{term}**: {definition}")
             # Display related cases if available
-            if 'related_cases' in item and item['related_cases']:
-                st.markdown(f"_Related Cases:_ {item['related_cases']}")
+            if related_cases:
+                st.markdown(f"_Related Cases:_ {related_cases}")
         else:
             # Display editable fields in edit mode
             st.text_input("Edit term", value=term, key=term_key)
