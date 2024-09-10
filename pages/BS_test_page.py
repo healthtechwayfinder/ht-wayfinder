@@ -44,6 +44,17 @@ st.write(st.session_state.inputs)
 
 
 
+import streamlit as st
+
+# Reserve a place for the button
+button_place = st.empty()
+
+# Your other code here...
+
+# Populate the reserved place with the button
+if button_place.button("Back to Dashboard"):
+    switch_page("Dashboard")
+
 
 # with st.container(border=True):
 #     st.write("This is some text.")
