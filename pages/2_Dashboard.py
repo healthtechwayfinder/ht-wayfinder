@@ -34,6 +34,9 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.header("Observation Tools")
+    if st.button("🏥 Record a New Case"):
+        switch_page("Record_New_Observation")
+    
     if st.button("🔍 Record a New Observation"):
         switch_page("Record_New_Observation")
 
@@ -46,17 +49,17 @@ with col1:
     if st.button("📊 Glossary"):
         switch_page("Glossary")
 
-    if st.button("✅ Weekly Review (coming soon)"):
-        switch_page("Tips_for_Observations")
+    # if st.button("✅ Weekly Review (coming soon)"):
+    #     switch_page("Tips_for_Observations")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
 with col2:
     st.header("Need Statement Tools")
-    if st.button("🔍 Create a Need Statement"):
+    if st.button(":pencil: Create a Need Statement"):
         switch_page("Need_Statement_Logger")
 
-    if st.button("✅ Scope Need Statements (coming soon)"):
-        switch_page("Tips_for_Observations")
+    # if st.button("✅ Scope Need Statements (coming soon)"):
+    #     switch_page("Tips_for_Observations")
 
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
