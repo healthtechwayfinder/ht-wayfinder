@@ -98,7 +98,8 @@ for idx in range(1, len(terms)):
     term_and_variants.append(term_and_variant)
 
 # Sort the list alphabetically by the term
-sorted_glossary_db = sorted(glossary_db, key=lambda x: x['term']+x.get('variant', ''))
+# Sort the list alphabetically by the term, then by variant (if any)
+sorted_glossary_db = sorted(glossary_db, key=lambda x: (x['term'].lower(), x.get('variant', '').lower()))
 
 def generateVariantName(term, definition, existing_definitions=[], existing_variants=[]):
     llm = ChatOpenAI(
