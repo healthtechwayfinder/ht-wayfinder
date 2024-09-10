@@ -116,23 +116,12 @@ def extractCaseFeatures(case_description):
 
     output = ""
 
-    # for field in input_fields:
-    #     if field not in missing_fields:
-    #         key_output = field.replace("_", " ").capitalize()
-    #         output += f"**{key_output}**: {parsed_case[field]}\n"
-    #         output += "\n"
-
     for field in input_fields:
-        key_output = field.replace("_", " ").capitalize()
-        
-        # Display editable text input for non-missing fields
         if field not in missing_fields:
-            # Use st.text_input or st.text_area depending on the expected length of the content
-            st.session_state[field] = st.text_input(f"{key_output}:", value=parsed_case[field] or "", key=field)
-        
-        # Display empty editable text input for missing fields
-        else:
-            st.session_state[field] = st.text_input(f"{key_output} (Missing):", value="", key=field)
+            key_output = field.replace("_", " ").capitalize()
+            output += f"**{key_output}**: {parsed_case[field]}\n"
+            output += "\n"
+
 
     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
