@@ -246,6 +246,8 @@ def clear_case():
         st.session_state['result'] = ""
     update_case_ID()
 
+    # Set the trigger to rerun the script
+    st.session_state['rerun_trigger'] = True  # Set a flag for rerun
     # Refresh the page back to the initial state
 
 # Fetch case IDs from Google Sheets
