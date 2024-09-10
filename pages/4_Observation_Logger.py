@@ -64,6 +64,38 @@ if 'observation_date' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
+def generateObservationTags(observation):
+    # Create the LLM model
+    llm = ChatOpenAI(
+        model_name="gpt-4o",
+        temperature=0.7,
+        openai_api_key=OPENAI_API_KEY,
+        max_tokens=100,
+    )
+
+    # Define the prompt for generating tags from the observation text
+    observation_tags_prompt = PromptTemplate.from_template(
+        """
+        Generate a list of 3-5 tags that are relevant to the following medical observation.
+
+        Observation: {observation}
+        Tags:
+        """
+    )
+
+    # Chain together the prompt and the LLM for generating tags
+    observation_chain = (
+        observation_tags_prompt | llm | StrOutputParser()
+    )
+
+    # Generate the tags using the LLM
+    output = observation_chain.invoke({"observation": observation})
+
+    # Return the generated tags
+    return output
+
+
+
 class ObservationRecord(BaseModel):
     # location: Optional[str] = Field(default=None, description="Location or setting where this observation made. e.g. operating room (OR), hospital, exam room,....")
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event like a Patient, Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, ...")
@@ -423,12 +455,17 @@ with col1:
     if st.button("Evaluate Observation"):
         st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
         st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+        # Generate tags for the observation
+        st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
     
 if st.session_state['observation_summary'] != "":
     st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
 
 # st.write(f":green[{st.session_state['result']}]")
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
+# Display the generated tags in a text area (editable by the user if needed)
+if st.session_state.get('observation_tags'):
+    st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
 
 if st.session_state['rerun']:
     time.sleep(3)
