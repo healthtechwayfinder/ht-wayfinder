@@ -181,11 +181,74 @@ def extractObservationFeatures(observation):
     # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
+# def addToGoogleSheets(observation_dict):
+#     try:
+#         scope = [
+#         "https://www.googleapis.com/auth/spreadsheets",
+#         "https://www.googleapis.com/auth/drive.metadata.readonly"
+#         ]
+#         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+#         client = gspread.authorize(creds)
+#         observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+
+#         headers = observation_sheet.row_values(1)
+#         headers = [i.strip() for i in headers]
+
+#         # Prepare the row data matching the headers
+#         row_to_append = []
+#         for header in headers:
+#             if header in observation_dict:
+#                 value = observation_dict[header]
+#                 if value is None:
+#                     row_to_append.append("")
+#                 else:
+#                     row_to_append.append(str(observation_dict[header]))
+#             else:
+#                 row_to_append.append("")  # Leave cell blank if header not in dictionary
+
+#         # Append the row to the sheet
+#         observation_sheet.append_row(row_to_append)
+#         return True
+#     except Exception as e:
+#         print("Error adding to Google Sheets: ", e)
+#         return False
+
+# def embedObservation(observer, observation, observation_summary, observation_date, observation_id):
+#     db = PineconeVectorStore(
+#             index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+#             namespace="observations",
+#             embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+#             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+#         )
+    
+#     db.add_texts([observation], metadatas=[{'observer': observer, 'observation_date': observation_date, 'observation_id': observation_id}])
+
+#     print("Added to Pinecone: ", observation_id)
+
+#     parsed_observation = parseObservation(observation)
+
+#     # write observer, observatoin and parsed observation to csv
+#     observation_keys = list(ObservationRecord.__fields__.keys())
+#     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
+#     all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Date', 'Observation ID'] + observation_keys_formatted
+#     observation_values = [observation_summary, observer, observation, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
+
+#     observation_dict = dict(zip(all_observation_keys, observation_values))
+#     # csv_file = open(observations_csv, "a")
+#     # csv_writer = csv.writer(csv_file, delimiter=";")
+#     # csv_writer.writerow(observation_values)
+
+#     status = addToGoogleSheets(observation_dict)
+#     print("Added to Google Sheets: ", status)
+
+#     return status
+
+# Function to add the observation (including tags) to Google Sheets
 def addToGoogleSheets(observation_dict):
     try:
         scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.metadata.readonly"
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
@@ -213,36 +276,41 @@ def addToGoogleSheets(observation_dict):
         print("Error adding to Google Sheets: ", e)
         return False
 
-def embedObservation(observer, observation, observation_summary, observation_date, observation_id):
+
+# Modified function to embed the observation and tags
+def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id):
     db = PineconeVectorStore(
-            index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-            namespace="observations",
-            embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-            pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-        )
-    
-    db.add_texts([observation], metadatas=[{'observer': observer, 'observation_date': observation_date, 'observation_id': observation_id}])
+        index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+        namespace="observations",
+        embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+        pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+    )
+
+    # Add observation with metadata, including tags
+    db.add_texts([observation], metadatas=[{
+        'observer': observer,
+        'observation_date': observation_date,
+        'observation_id': observation_id,
+        'tags': observation_tags  # Add tags to the metadata
+    }])
 
     print("Added to Pinecone: ", observation_id)
 
     parsed_observation = parseObservation(observation)
 
-    # write observer, observatoin and parsed observation to csv
+    # Prepare the observation record with the tags
     observation_keys = list(ObservationRecord.__fields__.keys())
     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
-    all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Date', 'Observation ID'] + observation_keys_formatted
-    observation_values = [observation_summary, observer, observation, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
+    all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Tags', 'Date', 'Observation ID'] + observation_keys_formatted
+    observation_values = [observation_summary, observer, observation, observation_tags, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
 
     observation_dict = dict(zip(all_observation_keys, observation_values))
-    # csv_file = open(observations_csv, "a")
-    # csv_writer = csv.writer(csv_file, delimiter=";")
-    # csv_writer.writerow(observation_values)
 
+    # Add the observation record (including tags) to Google Sheets
     status = addToGoogleSheets(observation_dict)
     print("Added to Google Sheets: ", status)
 
     return status
-
 
 def generateObservationSummary(observation):
 
