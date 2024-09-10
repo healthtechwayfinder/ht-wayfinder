@@ -745,7 +745,7 @@ elif action == "Edit Existing Case":
             case_details = fetch_case_details(case_to_edit)
 
             if case_details:
-                case_title_edit = st.text_input("Edit Case Title", case_details.get("Case Title", ""))
+                # case_title_edit = st.text_input("Edit Case Title", case_details.get("Case Title", ""))
                 case_description_edit = st.text_area("Edit Case Description", case_details.get("Case Description", ""))
                 case_date_str = case_details.get("Case Date", "")
                 try:
