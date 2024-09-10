@@ -158,7 +158,6 @@ def get_case_descriptions_from_case_ids(case_ids):
 # if 'case_google_sheet' not in st.session_state:
 #     st.session_state['case_google_sheet'] = get_case_sheet_as_dict()
 
-button_place = st.empty()
 
 
 # Handle new input
@@ -255,9 +254,9 @@ st.markdown("""
 
 # Your other code here...
 
-# Populate the reserved place with the button
-if button_place.button("Back to Dashboard"):
-    switch_page("Dashboard")
+# # Populate the reserved place with the button
+# if button_place.button("Back to Dashboard"):
+#     switch_page("Dashboard")
 
 # # Create a button using Streamlit's native functionality
 # if st.button("Back to Main Menu"):
