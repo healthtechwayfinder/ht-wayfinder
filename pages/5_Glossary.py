@@ -310,6 +310,28 @@ for idx, item in enumerate(filtered_items):
     # add a break line
     st.markdown("<br>", unsafe_allow_html=True)
 
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #A51C30;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+    }
+    div.stButton > button:hover {
+        background-color: #E7485F;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+
+# Create a button using Streamlit's native functionality
+st.markdown("<br>", unsafe_allow_html=True)
+
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
 
