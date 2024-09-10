@@ -27,7 +27,7 @@ import os
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 
 st.markdown("# Welcome!")
-
+#
 
 
 col1, col2 = st.columns(2)
@@ -68,7 +68,14 @@ with col2:
 
         if st.button("✅ Scope Need Statements (coming soon)"):
             ""
+
+        if st.button("✅ Need Statement Lens (coming soon)"):
+            ""
     #st.image("https://static.streamlit.io/examples/dog.jpg")
+
+
+if st.button(":paperclip: Feedback & Support"):
+            switch_page("Feedback_&_Support")
 
 
 # Your logo URL (replace if necessary)
