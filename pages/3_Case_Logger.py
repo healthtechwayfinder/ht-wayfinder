@@ -536,42 +536,46 @@ elif action == "Edit Existing Case":
 
     # Ensure case_ids are not empty
     if not case_ids:
-        st.error("No cases found.")
-    else:
-        case_to_edit = st.selectbox("Select a case to edit", case_ids)
+    st.error("No cases found.")
+else:
+    case_to_edit = st.selectbox("Select a case to edit", case_ids)
 
-        # Step 2: Fetch and display case details for the selected case
-        if case_to_edit:
-            case_details = fetch_case_details(case_to_edit)
-            
-            # Ensure case details are fetched correctly
-            if case_details:
-                # Debug: Print the case details (optional)
-                print(f"Editing case: {case_details}")
+    # Step 2: Fetch and display case details for the selected case
+    if case_to_edit:
+        case_details = fetch_case_details(case_to_edit)
+        
+        if case_details:
+            # Debug: Print the case details (optional)
+            st.write(f"Editing case: {case_details}")
 
-                # Display editable fields for the selected case
-                case_title_edit = st.text_input("Edit Case Title", case_details.get("Case Title", ""))
-                case_description_edit = st.text_area("Edit Case Description", case_details.get("Case Description", ""))
-                
-                # Handle the case date properly (convert to a `datetime.date` object if needed)
-                case_date_str = case_details.get("Case Date", "")
-                try:
-                    case_date_edit = st.date_input("Edit Case Date", date.fromisoformat(case_date_str))
-                except ValueError:
-                    st.error(f"Invalid date format for case: {case_date_str}")
-                    case_date_edit = st.date_input("Edit Case Date", date.today())
+            # Editable fields for the selected case
+            case_title = st.text_input("Title", case_details.get("Title", ""))
+            case_date = st.date_input("Date", date.fromisoformat(case_details.get("Date", str(date.today()))))
+            case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
+            location = st.text_input("Location", case_details.get("Location", ""))
+            stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
+            people_present = st.text_input("People Present", case_details.get("People Present", ""))
+            insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
+            tags = st.text_input("Tags", case_details.get("Tags", ""))
+            observations = st.text_area("Observations", case_details.get("Observations", ""))
 
-                # Step 3: Save changes
-                if st.button("Save Changes"):
-                    updated_data = {
-                        "Case Title": case_title_edit,
-                        "Case Description": case_description_edit,
-                        "Case Date": case_date_edit.isoformat(),
-                    }
-                    if update_case(case_to_edit, updated_data):
-                        st.success(f"Changes to '{case_to_edit}' saved successfully!")
-                    else:
-                        st.error(f"Failed to save changes to '{case_to_edit}'.")
+            # Step 3: Save changes
+            if st.button("Save Changes"):
+                updated_data = {
+                    "Title": case_title,
+                    "Date": case_date.isoformat(),
+                    "Case Description": case_description,
+                    "Location": location,
+                    "Stakeholders": stakeholders,
+                    "People Present": people_present,
+                    "Insider Language": insider_language,
+                    "Tags": tags,
+                    "Observations": observations,
+                }
+                if update_case(case_to_edit, updated_data):
+                    st.success(f"Changes to '{case_to_edit}' saved successfully!")
+                else:
+                    st.error(f"Failed to save changes to '{case_to_edit}'.")
 
 
 # add a break line
