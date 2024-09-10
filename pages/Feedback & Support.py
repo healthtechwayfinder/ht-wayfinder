@@ -1,8 +1,11 @@
 import streamlit as st
 
 def feedback_support_page():
-    st.title("Feedback & Support")
+    
+    st.set_page_config(page_title="Feedback & Support", page_icon=":paperclip:")
 
+    st.title("Feedback & Support")
+    
     st.write("""
     We value your feedback and are here to help! Please select the type of feedback you want to provide, and the appropriate form will be shown.
     """)
