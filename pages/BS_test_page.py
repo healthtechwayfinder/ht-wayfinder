@@ -4,14 +4,14 @@ from streamlit_extras.switch_page_button import switch_page
 from datetime import date
 
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.chains import LLMChain
-from langchain.output_parsers import PydanticOutputParser
-# from langchain.callbacks import get_openai_callback
-from langchain.schema import StrOutputParser
-from langchain.schema.runnable import RunnableLambda
-from langchain.prompts import PromptTemplate
-from langchain_pinecone import PineconeVectorStore
+# from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+# from langchain.chains import LLMChain
+# from langchain.output_parsers import PydanticOutputParser
+# # from langchain.callbacks import get_openai_callback
+# from langchain.schema import StrOutputParser
+# from langchain.schema.runnable import RunnableLambda
+# from langchain.prompts import PromptTemplate
+# from langchain_pinecone import PineconeVectorStore
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -26,11 +26,24 @@ import os
 import csv
 
 
-with st.container(border=True):
-    st.write("This is some text.")
+if "num_boxes" not in st.session_state:
+    st.session_state.num_boxes = 0
 
-    # st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil:")
-    st.markdown("# Create a New Need Statement")
+if st.button("Add text box"):
+    st.session_state.num_boxes += 1
+
+for i in range(st.session_state.num_boxes):
+    st.text_input(f"Text box {i + 1}")
+
+
+
+
+
+# with st.container(border=True):
+#     st.write("This is some text.")
+
+#     # st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil:")
+#     st.markdown("# Create a New Need Statement")
 
 
 
