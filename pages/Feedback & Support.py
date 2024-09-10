@@ -7,10 +7,13 @@ def feedback_support_page():
     We value your feedback and are here to help! Please select the type of feedback you want to provide, and the appropriate form will be shown.
     """)
 
+    # Use markdown to make the question text larger
+    st.markdown("## **What would you like to do today?**")
+
     # Create a radio button toggle for choosing between Report an Issue or Send Feedback
     feedback_type = st.radio(
-        "What would you like to do today?",
-        ("Select an option", "Report an Issue", "Send Feedback or Ask a Question")
+        "",
+        ("Report an Issue", "Send Feedback or Ask a Question")
     )
 
     if feedback_type == "Report an Issue":
@@ -32,7 +35,6 @@ def feedback_support_page():
 # Run the feedback & support page
 if __name__ == '__main__':
     feedback_support_page()
-
 
 
 
