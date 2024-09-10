@@ -30,6 +30,7 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
+
 # Google Sheets setup
 SCOPE = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -37,7 +38,7 @@ SCOPE = [
         ]
 CREDS = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, SCOPE)
 CLIENT = gspread.authorize(CREDS)
-SPREADSHEET = CLIENT.open("BioDesign Observation Record")  # Open the main spreadsheet
+SPREADSHEET = CLIENT.open("2024 Healthtech Identify Log")  # Open the main spreadsheet
 
 def create_new_chat_sheet():
     """Create a new sheet for the current chat thread."""
@@ -46,13 +47,30 @@ def create_new_chat_sheet():
     sheet.append_row(["User Input", "Assistant Response"])  # Optional: Add headers
     return sheet
 
-# Create a new sheet for the chat thread if not already created
-if "chat_sheet" not in st.session_state:
-    st.session_state.chat_sheet = create_new_chat_sheet()
+# # Create a new sheet for the chat thread if not already created
+# if "chat_sheet" not in st.session_state:
+#     st.session_state.chat_sheet = create_new_chat_sheet()
 
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 st.set_page_config(page_title="Ask Observations", page_icon="❓")
+
+st.markdown("""
+    <style>
+    div.stButton > button {
+        background-color: #a51c30;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+    }
+    div.stButton > button:hover {
+        background-color: #2c4a70;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 st.markdown("# Ask the Team's Observations")
 
@@ -75,7 +93,7 @@ llm = ChatOpenAI(
 )
 
 
-def refresh_db():
+def refresh_observations_db():
     db = PineconeVectorStore(
         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
         namespace="observations",
@@ -84,19 +102,50 @@ def refresh_db():
     )
     return db
 
-def get_sheet_as_dict():
+def get_observation_sheet_as_dict():
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive.metadata.readonly"
         ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    observation_sheet = client.open("2024 Healthtech Identify Log").sheet1
+    observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
     data = observation_sheet.get_all_records()
     return data
 
-if 'observation_google_sheet' not in st.session_state:
-    st.session_state['observation_google_sheet'] = get_sheet_as_dict()
+def get_case_sheet_as_dict():
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+    data = case_sheet.get_all_records()
+    return data
+
+def get_case_descriptions_from_case_ids(case_ids):
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+    data = case_sheet.get_all_records()
+
+    cases = {}
+    for case in data:
+        if case['Case ID'] in case_ids:
+            cases[case['Case ID']] = case['Case Description']
+
+    return cases
+
+# if 'observation_google_sheet' not in st.session_state:
+#     st.session_state['observation_google_sheet'] = get_observation_sheet_as_dict()
+
+# if 'case_google_sheet' not in st.session_state:
+#     st.session_state['case_google_sheet'] = get_case_sheet_as_dict()
 
 # Handle new input
 if prompt := st.chat_input("What would you like to ask?"):
@@ -105,17 +154,29 @@ if prompt := st.chat_input("What would you like to ask?"):
         st.markdown(prompt)
 
     # Perform similarity search using Pinecone
-    # updated_db = refresh_db()
-    # related_observations = updated_db.similarity_search(prompt, k=10)
-    related_observations = st.session_state['observation_google_sheet'] # Placeholder for now
+    updated_observations_db = refresh_observations_db()
+    related_observations = updated_observations_db.similarity_search(prompt, k=10)
+    # related_observations = st.session_state['observation_google_sheet'] # Placeholder for now
+    print(related_observations)
+
+    # get case ids from metadata of related observations
+    case_ids = []
+    for observation in related_observations:
+        if 'case_id' in observation.metadata:
+            case_ids.append(observation.metadata['case_id'])
+
+    print("Fetching case descriptions for case ids: ", case_ids)
+    related_cases = get_case_descriptions_from_case_ids(case_ids)
+    print(related_cases)
 
     question_prompt = PromptTemplate.from_template(
           """
         You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
-        You have to use the related observations from the set of observations to help answer the question. Cite the relevant observations with relevant quotes and observation IDs to back your answer.
+        You have to use the set of observations and the relevant cases to help answer the question. Cite the relevant observations with relevant quotes and observation IDs to back your answer.
         
         Question: {question}
         Set of Observations: {related_observations}
+        Relevant Cases:{related_cases}
         Answer:
          """
     )
@@ -125,7 +186,9 @@ if prompt := st.chat_input("What would you like to ask?"):
     )
 
     with get_openai_callback() as cb:
-        output = observation_chat_chain.invoke({"question": prompt, "related_observations": related_observations})
+        output = observation_chat_chain.invoke({"question": prompt, 
+                                                "related_observations": related_observations,
+                                                "related_cases": related_cases})
 
     # Update the conversation history
     st.session_state.messages.append({"role": "assistant", "content": output})
@@ -139,7 +202,7 @@ if prompt := st.chat_input("What would you like to ask?"):
         #     st.write(f"{i+1}. {observation}")
 
     # Store chat in the current sheet
-    st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
+    # st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
 
 # st.markdown("---")
 # if st.button("Back to Main Menu"):
