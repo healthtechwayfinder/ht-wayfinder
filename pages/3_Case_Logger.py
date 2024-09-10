@@ -69,9 +69,12 @@ if 'parsed_case' not in st.session_state:
     st.session_state['parsed_case'] = ""
 
 class caseRecord(BaseModel):
-    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the observation. e.g. patient, surgeon, scrub tech, circulating nurse, ...")
+    location: Optional[str] = Field(default=None, description="physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
+    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names) like a Patient, Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, ...")
+    people_present: Optional[str] = Field(default=None, description="Names cited in the description")
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     tags: Optional[str] = Field(default=None, description="Tags or keywords that describe the observation. e.g. surgery, procedure, ...")
+
 
 def parseCase(case_description: str):
     llm = ChatOpenAI(
