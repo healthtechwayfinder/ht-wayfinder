@@ -80,7 +80,7 @@ def generateObservationTags(observation):
     # Define the prompt for generating tags from the observation text
     observation_tags_prompt = PromptTemplate.from_template(
         """
-        Generate a list of 3-5 tags that are relevant to the following medical observation. Do not use numbers and separate them by commas.
+        Generate a list of 3-5 tags that are relevant to the medical observation. The tags can be used to identify the type of procedure, area of medicine, or type of technology being used for example Do not use numbers and separate them by commas.
         Give only the list of tags without any quotes or special characters.
 
         Observation: {observation}
