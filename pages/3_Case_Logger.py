@@ -154,6 +154,9 @@ def addToGoogleSheets(case_dict):
         headers = case_sheet.row_values(1)
         headers = [header.strip() for header in headers]
 
+        # Debug: Print case_dict to verify if attendees are being included
+        print("Case Dictionary to Save: ", case_dict)
+
         # Prepare the row data matching the headers
         row_to_append = []
         for header in headers:
