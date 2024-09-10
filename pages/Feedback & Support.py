@@ -18,7 +18,7 @@ def feedback_support_page():
     st.write("Have feedback or questions? Please use the form below to reach out to us:")
 
     # Embed the Google Form for feedback or questions (Replace with your form URL)
-    feedback_form_url = "https://docs.google.com/forms/d/e/your-google-form-id/viewform?embedded=true"
+    feedback_form_url = "https://docs.google.com/forms/d/e/1FAIpQLSdS6I9Oa5mDxLT-UR8MagUCw0mWiBXnqGfjX0LKOMm3LqlrIw/viewform?embedded=true"
     st.markdown(f'<iframe src="{feedback_form_url}" width="100%" height="800px" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>', unsafe_allow_html=True)
 
 # Run the feedback & support page
