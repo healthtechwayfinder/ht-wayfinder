@@ -526,15 +526,15 @@ elif action == "Edit Existing Case":
 
             # Save changes button
             if st.button("Save Changes"):
-                updated_data = {
-                    "Case Title": case_title_edit,
-                    "Case Description": case_description_edit,
-                    "Date": case_date_edit,
-                }
-                if update_case(case_to_edit, updated_data):
-                    st.success(f"Changes to '{case_to_edit}' saved successfully!")
-                else:
-                    st.error(f"Failed to save changes to '{case_to_edit}'.")
+                # updated_data = {
+                #     "Case Title": case_title_edit,
+                #     "Case Description": case_description_edit,
+                #     "Date": case_date_edit,
+                # }
+                # if update_case(case_to_edit, updated_data):
+                #     st.success(f"Changes to '{case_to_edit}' saved successfully!")
+                # else:
+                #     st.error(f"Failed to save changes to '{case_to_edit}'.")
 
 
 st.markdown("""
