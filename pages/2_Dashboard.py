@@ -1,26 +1,12 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-from streamlit_cookies_manager import CookieManager
 
-# Initialize cookies manager
-cookies = CookieManager()
+from pydantic import BaseModel, Field
+from typing import Optional
+import csv
+import os
 
-# Function to handle logout
-def log_out():
-    # Clear session state to log out
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    
-    # Ensure cookies are loaded
-    cookies.load()
 
-    # Clear cookies if used for login
-    if "logged_in" in cookies:
-        cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
-        cookies.save()  # Save changes to the browser
-
-    # Redirect to the main app URL
-    st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
 #import streamlit as st
 
@@ -67,7 +53,7 @@ with col1:
         if st.button("📊 View Glossary"):
             switch_page("Glossary")
 
-        if st.button(":hourglass: Weekly Review (coming soon)"):
+        if st.button(":busts_in_silhouette: Weekly Review (coming soon)"):
             ""
             # switch_page("Tips_for_Observations")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
@@ -88,6 +74,9 @@ with col2:
             ""
     #st.image("https://static.streamlit.io/examples/dog.jpg")
 
+
+if st.button(":paperclip: Feedback & Support"):
+            switch_page("Feedback_&_Support")
 
 
 # Your logo URL (replace if necessary)
@@ -130,16 +119,10 @@ st.markdown("---")
 
 # Log Out Button with rerun or meta refresh
 col1, col2, col3 = st.columns([3, 1, 1])
-
-with col1:
-    if st.button(":paperclip: Feedback & Support"):
-        switch_page("Feedback_&_Support")
-
-
 with col3:
     if st.button("Log Out"):
         # Option 1: Use experimental rerun
-        log_out()  # Call the logout function
+        st.experimental_rerun()
 
         # Option 2: Use meta refresh (only if necessary)
         # st.markdown('<meta http-equiv="refresh" content="0; url=/streamlit_app" />', unsafe_allow_html=True)
