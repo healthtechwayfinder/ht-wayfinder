@@ -8,3 +8,7 @@ oauth2client
 langchain_pinecone
 streamlit-extras
 streamlit-cookies-manager
+streamlit-oauth
+google-auth
+google-auth-oauthlib
+google-auth-httplib2
