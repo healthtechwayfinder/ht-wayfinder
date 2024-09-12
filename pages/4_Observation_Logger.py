@@ -805,29 +805,29 @@ if st.button("Back to Dashboard"):
 
 # ///////////////////////////////////////////////////////////////////////////////// BRIDGET WORKSPACE /////////////////////////////////////////////////////////////////////////////////
 
-def fetch_case_details(case_id):
-  #   sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
-  #   data = sheet.get_all_records() 
-  #   for row in data:
-  #       if "Case ID" in row and row["Case ID"].strip() == case_id.strip():
-		# return row
+# def fetch_case_details(case_id):
+#   #   sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
+#   #   data = sheet.get_all_records() 
+#   #   for row in data:
+#   #       if "Case ID" in row and row["Case ID"].strip() == case_id.strip():
+# 		# return row
     
-  #   st.error(f"Case ID {case_id} not found.")
-    return None
+#   #   st.error(f"Case ID {case_id} not found.")
+#     return None
 
 
 
 
 
 
-def getObsDatefmCase(): 
-    fetch_case_details(case_ID)
+# def getObsDatefmCase(): 
+#     fetch_case_details(case_ID)
 
-    # Fetch details:
-    case_details = fetch_case_details(case_ID)
-    # Get and validate the date field
-    case_date_str = case_details.get("Date", "")
-	    try:
-		    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
+#     # Fetch details:
+#     case_details = fetch_case_details(case_ID)
+#     # Get and validate the date field
+#     case_date_str = case_details.get("Date", "")
+# 	    try:
+# 		    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
 
 
