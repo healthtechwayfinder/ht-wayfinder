@@ -1,10 +1,5 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-
-from pydantic import BaseModel, Field
-from typing import Optional
-import os
-
 from streamlit_cookies_manager import CookieManager
 
 # Initialize cookies manager
@@ -16,6 +11,9 @@ def log_out():
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     
+    # Ensure cookies are loaded
+    cookies.load()
+
     # Clear cookies if used for login
     if "logged_in" in cookies:
         cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
