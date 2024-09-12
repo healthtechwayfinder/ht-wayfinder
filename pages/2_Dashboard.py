@@ -42,8 +42,8 @@ def log_out():
         cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
         cookies.save()  # Save changes to the browser
 
-    # Redirect to the main menu page
-    switch_page("Main_Menu")  # Redirect to the main menu page of your app
+    # Redirect to the main URL of your app
+    st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
 
 col1, col2 = st.columns(2)
