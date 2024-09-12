@@ -110,7 +110,7 @@ def main():
     st.write("Or use Google to log in:")
     if st.button("Login with Google"):
         auth_url = initiate_google_flow()
-        st.markdown(f"<a href='{auth_url}' target='_self'>Click here to log in with Google</a>", unsafe_allow_html=True)
+        st.markdown(f"<a href='{auth_url}' target='_blank'>Click here to log in with Google</a>", unsafe_allow_html=True)
 
     # Process Google authentication callback
     query_params = st.experimental_get_query_params()
