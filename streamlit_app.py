@@ -22,18 +22,19 @@ def get_google_oauth_flow():
         }
     }
 
+    # Initialize the flow with redirect URI from secrets
     flow = Flow.from_client_config(
         client_config,
-        scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
-        redirect_uri=st.secrets["google_oauth"]["redirect_uris"][0]  # Use the first redirect URI from secrets
+        scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
     )
-    
+    flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]  # Ensure it points to the first URI
     return flow
 
 # Get Google Authorization URL
 def initiate_google_flow():
     flow = get_google_oauth_flow()
-    auth_url, _ = flow.authorization_url(prompt='consent')
+    auth_url, state = flow.authorization_url(prompt='consent')
+    st.session_state['oauth_state'] = state  # Save state for verification later
     return auth_url
 
 # Exchange the authorization code for credentials
@@ -113,22 +114,24 @@ def main():
 
     # Process Google authentication callback
     query_params = st.experimental_get_query_params()
-    if 'code' in query_params:
+    if 'code' in query_params and 'oauth_state' in st.session_state:
         flow = get_google_oauth_flow()
-        credentials = exchange_code_for_credentials(flow, query_params['code'][0])
-        if credentials:
-            st.session_state["login_status"] = "success"
-            st.session_state["google_user"] = credentials.id_token
-            st.success("Google login successful!")
-            st.experimental_rerun()
 
+        # Verify state matches
+        if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
+            credentials = exchange_code_for_credentials(flow, query_params['code'][0])
+            if credentials:
+                st.session_state["login_status"] = "success"
+                st.session_state["google_user"] = credentials.id_token  # Store the ID token
+                st.success("Google login successful!")
+                st.experimental_rerun()
 
 # Main app logic
 if __name__ == "__main__":
     # Check if the user chose to stay logged in
     check_stay_logged_in()
 
-    if st.session_state["login_status"] == "success":
+    if st.session_state.get("login_status") == "success":
         # Show sidebar and other content after login
         st.sidebar.write("You are logged in!")
         st.sidebar.write("You can access the menu.")
