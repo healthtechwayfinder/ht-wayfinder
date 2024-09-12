@@ -9,12 +9,13 @@ import os
 # Function to handle logout
 def log_out():
     # Clear session state to log out
-    for key in st.session_state.keys():
+    for key in list(st.session_state.keys()):
         del st.session_state[key]
     
     # Clear cookies if used for login
-    cookies.delete("logged_in")
-    cookies.save()
+    if "logged_in" in cookies:
+        cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
+        cookies.save()  # Save changes to the browser
 
     # Refresh the app
     st.experimental_rerun()
