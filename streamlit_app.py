@@ -1,224 +1,46 @@
-# import streamlit as st
-# from streamlit_extras.switch_page_button import switch_page
-
-
-# def main():
-#     st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
-#         # Your logo URL
-#     logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"  # Replace with the actual URL of your logo
-    
-#     # Display the title with the logo below it
-#     st.markdown(
-#         f"""
-#         <div style="text-align: center;">
-#             <h1>HealthTech Wayfinder</h1>
-#              <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-#         </div>
-#         """,
-#         unsafe_allow_html=True,
-#     )
-    
-#     # st.markdown("<h1 style='text-align: center;'>HealthTech Wayfinder</h1>", unsafe_allow_html=True)
-#     # st.markdown("<h3 style='text-align: center;'>Need Statement Assistant (Coming Soon) </h3>", unsafe_allow_html=True)
-#     # st.markdown("<h3 style='text-align: center;'>Observation Assistant</h3>", unsafe_allow_html=True)
-
-#     # Make the "Choose an Assistant" text bigger and remove space below it
-#     st.markdown("""
-#         <style>
-#         .assistant-label {
-#             font-size: 20px;
-#             margin-bottom: -30px;
-#         }
-#         .stSelectbox {
-#             margin-top: -20px;
-#         }
-#         </style>
-#         <h3 class='assistant-label'>Choose an Assistant:</h3>
-#         """, unsafe_allow_html=True)
-
-
-#     assistant = st.selectbox(
-#         '',
-#         ('Observation Assistant', 'Need Statement Assistant (Coming Soon)'),
-#         index=0  # 0 is the index for the default option 'Observation Assistant'
-#     )
-
-    
-#    # st.write("")
-#    # if st.button("Sign In"):
-#    #     st.info("New licenses coming soon!")
-    
-#     # # Login Form
-
-#     # st.write("")
-#     # st.write("Login:")
-#     # username = st.text_input("Username:", key="username")
-#     # password = st.text_input("Password:", type="password", key="password")
-#     # stay_logged_in = st.checkbox("Stay logged in")
-
-#     # user_list = st.secrets["login-credentials"]
-
-#     # if st.button("Submit"):
-#     #     for user_dict in user_list:
-#     #         if username == user_dict["username"] and password == user_dict["password"]:
-#     #             st.success("Login successful")
-#     #             st.session_state["login_status"] = "success"
-#     #             st.rerun()
-#     #     st.error("Try again please")
-
-#     with st.form(key="login_form"):
-#         st.write("Login:")
-#         username = st.text_input("Username:", key="username")
-#         password = st.text_input("Password:", type="password", key="password")
-#         stay_logged_in = st.checkbox("Stay logged in")
-    
-#         submit_button = st.form_submit_button("Submit")
-    
-#     if submit_button:
-#         user_list = st.secrets["login-credentials"]
-#         for user_dict in user_list:
-#             if username == user_dict["username"] and password == user_dict["password"]:
-#                 st.success("Login successful")
-#                 st.session_state["login_status"] = "success"
-#                 st.rerun()
-#         st.error("Try again please")
-
-# # if __name__ == "__main__":
-# #     st.set_page_config(initial_sidebar_state="collapsed")
-
-# #     if "login_status" not in st.session_state:
-# #         st.session_state["login_status"] = "not_logged_in"
-
-# #     if st.session_state["login_status"] == "success":
-# #         # st.query_params(page="main_menu")
-# #         # st.query_params[''] = "main_menu"
-# #         # # st.page_link("pages/main_menu.py")
-# #         # st.rerun()
-# #         switch_page("main_menu")
-# #     else:
-# #         main()
-
-# # col1, col2 = st.columns([1, 1])
-
-# # with col1:
-# #     if st.button("Submit"):
-# #         for user_dict in user_list:
-# #             if username == user_dict["username"] and password == user_dict["password"]:
-# #                 st.success("Login successful")
-# #                 st.session_state["login_status"] = "success"
-# #                 st.rerun()
-# #         st.error("Try again please")
-
-# # with col2:
-# #     if st.button("New Licenses"):
-# #         st.info("New licenses coming soon!")
-# ############3
-
-# if __name__ == "__main__":
-#     st.set_page_config(initial_sidebar_state="collapsed")
-
-#     if "login_status" not in st.session_state:
-#         st.session_state["login_status"] = "not_logged_in"
-
-#     if st.session_state["login_status"] == "success":
-#         # st.query_params(page="main_menu")
-#         # st.query_params[''] = "main_menu"
-#         # # st.page_link("pages/main_menu.py")
-#         # st.rerun()
-#         switch_page("main_menu")
-#     else:
-#         main()
-
-# # if __name__ == "__main__":
-# #     st.set_page_config(initial_sidebar_state="collapsed")
-
-# #     if "login_status" not in st.session_state:
-# #         st.session_state["login_status"] = "not_logged_in"
-
-# #     if st.session_state["login_status"] == "success":
-# #         switch_page("Menu")
-# #     else:
-# #         main()
-
-#####
-
-# import streamlit as st
-# from streamlit_extras.switch_page_button import switch_page
-
-# # Initialize session state for login status
-# if "login_status" not in st.session_state:
-#     st.session_state["login_status"] = "not_logged_in"
-
-# # Function to hide the entire sidebar (including the toggle button)
-# def hide_sidebar():
-#     hide_sidebar_style = """
-#     <style>
-#     [data-testid="stSidebar"] {
-#         display: none;
-#     }
-#     </style>
-#     """
-#     st.markdown(hide_sidebar_style, unsafe_allow_html=True)
-
-# # Main login function
-# def main():
-#     st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
-    
-#     logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
-#     st.markdown(
-#         f"""
-#         <div style="text-align: center;">
-#             <h1>HealthTech Wayfinder</h1>
-#             <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-#         </div>
-#         """,
-#         unsafe_allow_html=True,
-#     )
-
-#     # Login form
-#     with st.form(key="login_form"):
-#         st.write("Login:")
-#         username = st.text_input("Username", key="username")
-#         password = st.text_input("Password", type="password", key="password")
-#         stay_logged_in = st.checkbox("Stay logged in")
-#         submit_button = st.form_submit_button("Submit")
-    
-#     if submit_button:
-#         user_list = st.secrets["login-credentials"]
-#         for user_dict in user_list:
-#             if username == user_dict["username"] and password == user_dict["password"]:
-#                 st.success("Login successful")
-#                 st.session_state["login_status"] = "success"
-#                 st.experimental_rerun()  # Rerun the app to show the sidebar
-#                 return  # Exit the function after rerun is triggered
-#         else:
-#             st.error("Invalid username or password")
-
-# # Main app logic
-# if __name__ == "__main__":
-#     if st.session_state["login_status"] == "success":
-#         # After successful login, display the sidebar and content
-#         st.sidebar.write("You are logged in!")
-#         st.sidebar.write("You can access the menu.")
-#         switch_page("main_menu")  # Redirect to main menu
-#     else:
-#         # Hide the sidebar and show the login form
-#         hide_sidebar()  # Completely hide the sidebar
-#         main()
-
-#     # Only rerun after login is successful
-#     if st.session_state["login_status"] == "success":
-#         st.experimental_rerun()
-
-
-
-#####
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_cookies_manager
+from google_auth_oauthlib.flow import Flow
+import os
+import google.auth.transport.requests
 
 # Initialize cookies manager
 cookies = streamlit_cookies_manager.CookieManager()
+
+# OAuth setup: Using Streamlit secrets instead of client_secret.json
+def get_google_oauth_flow():
+    client_config = {
+        "web": {
+            "client_id": st.secrets["google_oauth"]["client_id"],
+            "project_id": st.secrets["google_oauth"]["project_id"],
+            "auth_uri": st.secrets["google_oauth"]["auth_uri"],
+            "token_uri": st.secrets["google_oauth"]["token_uri"],
+            "auth_provider_x509_cert_url": st.secrets["google_oauth"]["auth_provider_x509_cert_url"],
+            "client_secret": st.secrets["google_oauth"]["client_secret"],
+            "redirect_uris": st.secrets["google_oauth"]["redirect_uris"]
+        }
+    }
+
+    flow = Flow.from_client_config(
+        client_config,
+        scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"],
+        redirect_uri=st.secrets["google_oauth"]["redirect_uris"][0]  # Use the first redirect URI from secrets
+    )
+    
+    return flow
+
+# Get Google Authorization URL
+def initiate_google_flow():
+    flow = get_google_oauth_flow()
+    auth_url, _ = flow.authorization_url(prompt='consent')
+    return auth_url
+
+# Exchange the authorization code for credentials
+def exchange_code_for_credentials(flow, code):
+    flow.fetch_token(code=code)
+    credentials = flow.credentials
+    return credentials
 
 # Function to hide the entire sidebar (including the toggle button)
 def hide_sidebar():
@@ -282,6 +104,24 @@ def main():
                 return  # Exit after successful login
         else:
             st.error("Invalid username or password")
+
+    # Google Login
+    st.write("Or use Google to log in:")
+    if st.button("Login with Google"):
+        auth_url = initiate_google_flow()
+        st.markdown(f"<a href='{auth_url}' target='_self'>Click here to log in with Google</a>", unsafe_allow_html=True)
+
+    # Process Google authentication callback
+    query_params = st.experimental_get_query_params()
+    if 'code' in query_params:
+        flow = get_google_oauth_flow()
+        credentials = exchange_code_for_credentials(flow, query_params['code'][0])
+        if credentials:
+            st.session_state["login_status"] = "success"
+            st.session_state["google_user"] = credentials.id_token
+            st.success("Google login successful!")
+            st.experimental_rerun()
+
 
 # Main app logic
 if __name__ == "__main__":
