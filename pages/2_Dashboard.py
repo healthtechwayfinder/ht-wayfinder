@@ -6,7 +6,18 @@ from typing import Optional
 import csv
 import os
 
+# Function to handle logout
+def log_out():
+    # Clear session state to log out
+    for key in st.session_state.keys():
+        del st.session_state[key]
+    
+    # Clear cookies if used for login
+    cookies.delete("logged_in")
+    cookies.save()
 
+    # Refresh the app
+    st.experimental_rerun()
 
 #import streamlit as st
 
@@ -125,7 +136,7 @@ with col1:
 with col3:
     if st.button("Log Out"):
         # Option 1: Use experimental rerun
-        st.experimental_rerun()
+        log_out()  # Call the logout function
 
         # Option 2: Use meta refresh (only if necessary)
         # st.markdown('<meta http-equiv="refresh" content="0; url=/streamlit_app" />', unsafe_allow_html=True)
