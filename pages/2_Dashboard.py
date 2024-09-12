@@ -7,6 +7,7 @@ import csv
 import os
 
 from streamlit_cookies_manager import CookieManager
+st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 
 # Initialize cookies manager
 cookies = CookieManager()
@@ -26,9 +27,6 @@ cookies = CookieManager()
 #     """,
 #     unsafe_allow_html=True,
 # )
-
-
-st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 
 st.markdown("# Welcome!")
 #
