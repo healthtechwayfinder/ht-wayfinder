@@ -6,6 +6,10 @@ from typing import Optional
 import csv
 import os
 
+from streamlit_cookies_manager import CookieManager
+
+# Initialize cookies manager
+cookies = CookieManager()
 
 
 #import streamlit as st
