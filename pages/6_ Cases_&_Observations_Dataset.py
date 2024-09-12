@@ -15,8 +15,7 @@ st.markdown("# All Observations")
 
 st.markdown("""
 Click the link to open your team's observation record in Google Sheets:
-<a href="https://docs.google.com/spreadsheets/d/1wid5imrlhkXOvmpWCbZzhAUrVSTS5iNOX3JASOxtJM4/edit?usp=sharing" target="_blank">Team's Observation Record</a>
-""", unsafe_allow_html=True)
+https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969""", unsafe_allow_html=True)
 
 
 
@@ -24,8 +23,7 @@ st.markdown("---")
 
 # Embedding Google Sheets using an iframe
 st.markdown("""
-    <iframe src="https://docs.google.com/spreadsheets/d/1wid5imrlhkXOvmpWCbZzhAUrVSTS5iNOX3JASOxtJM4/edit?usp=sharing"
-    width="125%" height="1500px"></iframe>
+    https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969
     """, unsafe_allow_html=True)
 
 df = pd.read_csv("observations.csv", delimiter=';')
