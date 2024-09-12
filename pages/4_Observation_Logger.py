@@ -63,8 +63,8 @@ if 'observation_summary' not in st.session_state:
 if 'observation_tags' not in st.session_state:
     st.session_state['observation_tags'] = ""
 
-if 'observation_date' not in st.session_state:
-    st.session_state['observation_date'] = date.today()
+# if 'observation_date' not in st.session_state:
+#     st.session_state['observation_date'] = date.today()
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
@@ -115,12 +115,6 @@ class ObservationRecord(BaseModel):
     # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
     # questions: Optional[str] = Field(default=None, description="Recorded open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
 
-# if not os.path.exists(observations_csv):
-    # observation_keys = list(ObservationRecord.__fields__.keys())
-    # observation_keys = ['observation_summary', 'observer', 'observation', 'observation_date', 'observation_id'] + observation_keys        
-    # csv_file = open(observations_csv, "w")
-    # csv_writer = csv.writer(csv_file, delimiter=";")
-    # csv_writer.writerow(observation_keys)
 
 
 def parseObservation(observation: str):
@@ -505,6 +499,12 @@ from datetime import date
 if 'observation_counters' not in st.session_state:
     st.session_state['observation_counters'] = {}
 
+
+
+
+
+    
+
 # Function to generate observation ID with the format OBYYMMDDxxxx
 def generate_observation_id(observation_date, counter):
     return f"OB{observation_date.strftime('%y%m%d')}{counter:04d}"
@@ -555,6 +555,7 @@ def getExistingCaseIDS():
     client = gspread.authorize(creds)
     case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
     case_ids = case_log.col_values(1)[1:]
+    case_dates_list = case_log.col_values(3)[1:]
     case_titles = case_log.col_values(2)[1:]
 
     # find all observation ids with the same date
@@ -573,10 +574,18 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     # st calendar for date input with a callback to update the observation_id
-    st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+    #edit this to be the same as the case date
 
     existing_case_ids_with_title = getExistingCaseIDS()
     case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
+    # put case ID dateinformation here
+    st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+    # call function to get the observation date from the selected case ID
+    # use case_dates_list for the right row number for the corresponding case ID to get the date 
+    # st.text_input("Observation Date:", value=st.session_state['observation_date'], disabled=True)
+
+
+
 
 with col2:
     # Ensure the observation ID is set the first time the script runs
@@ -718,6 +727,9 @@ if st.session_state['rerun']:
     
     ##########
 
+
+
+
 if st.button("Add Observation to Team Record", disabled=st.session_state['observation_summary'] == ""):
     # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
     st.session_state["error"] = ""
@@ -786,3 +798,36 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
+
+
+
+
+
+# ///////////////////////////////////////////////////////////////////////////////// BRIDGET WORKSPACE /////////////////////////////////////////////////////////////////////////////////
+
+def fetch_case_details(case_id):
+    sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
+    data = sheet.get_all_records() 
+    for row in data:
+        if "Case ID" in row and row["Case ID"].strip() == case_id.strip():
+		    return row
+    
+    st.error(f"Case ID {case_id} not found.")
+    return None
+
+
+
+
+
+
+def getObsDatefmCase: 
+    fetch_case_details(case_ID)
+
+    # Fetch details:
+    case_details = fetch_case_details(case_ID)
+    # Get and validate the date field
+    case_date_str = case_details.get("Date", "")
+	    try:
+		    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
+
+
