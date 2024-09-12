@@ -820,7 +820,7 @@ def fetch_case_details(case_id):
 
 
 
-def getObsDatefmCase: 
+def getObsDatefmCase(): 
     fetch_case_details(case_ID)
 
     # Fetch details:
