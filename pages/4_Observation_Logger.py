@@ -810,7 +810,7 @@ def fetch_case_details(case_id):
     data = sheet.get_all_records() 
     for row in data:
         if "Case ID" in row and row["Case ID"].strip() == case_id.strip():
-		    return row
+		return row
     
     st.error(f"Case ID {case_id} not found.")
     return None
