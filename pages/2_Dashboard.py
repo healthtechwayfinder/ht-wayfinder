@@ -3,8 +3,12 @@ from streamlit_extras.switch_page_button import switch_page
 
 from pydantic import BaseModel, Field
 from typing import Optional
-import csv
 import os
+
+from streamlit_cookies_manager import CookieManager
+
+# Initialize cookies manager
+cookies = CookieManager()
 
 # Function to handle logout
 def log_out():
@@ -17,8 +21,8 @@ def log_out():
         cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
         cookies.save()  # Save changes to the browser
 
-    # Refresh the app
-    st.experimental_rerun()
+    # Redirect to the main app URL
+    st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
 #import streamlit as st
 
