@@ -128,28 +128,20 @@ def main():
         auth_url = initiate_google_flow()
         st.markdown(f"<a href='{auth_url}' target='_blank'>Click here to log in with Google</a>", unsafe_allow_html=True)
 
-    # # Process Google authentication callback
-    # query_params = st.experimental_get_query_params()
-    # if 'code' in query_params and 'oauth_state' in st.session_state:
-    #     flow = get_google_oauth_flow()
-
-    #     # Verify state matches
-    #     if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
-    #         credentials = exchange_code_for_credentials(flow, query_params['code'][0])
-    #         if credentials:
-    #             st.session_state["login_status"] = "success"
-    #             st.session_state["google_user"] = credentials.id_token  # Store the ID token
-    #             st.success("Google login successful!")
-    #             st.experimental_rerun()
-
     # Process Google authentication callback
-        query_params = st.experimental_get_query_params()
-        if 'code' in query_params and 'oauth_state' in st.session_state:
-            flow = get_google_oauth_flow()
-            user_info = get_user_info(flow, query_params['code'][0])
+    query_params = st.experimental_get_query_params()
+    if 'code' in query_params and 'oauth_state' in st.session_state:
+        flow = get_google_oauth_flow()
+        user_info = get_user_info(flow, query_params['code'][0])
+        if is_user_allowed(user_info["email"]):
             st.session_state["user"] = user_info
-            st.session_state["login_status"] = "logged_in"
-            st.experimental_rerun()
+            st.session_state["login_status"] = "success"
+            cookies["logged_in"] = "true"
+            cookies.save()
+            st.success("Google login successful!")
+        else:
+            st.error("User not allowed")
+        st.experimental_rerun()
 
 # Main app logic
 if __name__ == "__main__":
