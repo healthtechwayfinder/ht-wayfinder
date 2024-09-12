@@ -33,6 +33,20 @@ st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 st.markdown("# Welcome!")
 #
 
+# Function to handle logout
+def log_out():
+    # Clear session state to log out
+    for key in list(st.session_state.keys()):
+        del st.session_state[key]
+    
+    # Clear cookies if used for login
+    if "logged_in" in cookies:
+        cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
+        cookies.save()  # Save changes to the browser
+
+    # Redirect to the main menu page
+    switch_page("Main_Menu")  # Redirect to the main menu page of your app
+
 
 col1, col2 = st.columns(2)
 
@@ -126,7 +140,7 @@ col1, col2, col3 = st.columns([3, 1, 1])
 with col3:
     if st.button("Log Out"):
         # Option 1: Use experimental rerun
-        st.experimental_rerun()
+        log_out() 
 
         # Option 2: Use meta refresh (only if necessary)
         # st.markdown('<meta http-equiv="refresh" content="0; url=/streamlit_app" />', unsafe_allow_html=True)
