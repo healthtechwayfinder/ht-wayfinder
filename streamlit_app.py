@@ -135,8 +135,15 @@ def main():
             id_info = exchange_code_for_credentials(flow, query_params['code'][0])
             user_email = id_info.get('email')
 
+            # Debugging step: check if user_email is properly extracted
+            st.write(f"User email: {user_email}")
+
             if user_email:
-                allowed_emails = st.secrets["allowed_emails"]
+                allowed_emails = st.secrets["allowed_emails"]["emails"]
+                
+                # Debugging: Print the list of allowed emails
+                st.write(f"Allowed emails: {allowed_emails}")
+
                 if user_email in allowed_emails:
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
@@ -144,6 +151,7 @@ def main():
                     st.experimental_rerun()
                 else:
                     st.error("Unauthorized email. Access denied.")
+
 
 
 
@@ -160,4 +168,6 @@ if __name__ == "__main__":
     else:
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
+        main()
+
         main()
