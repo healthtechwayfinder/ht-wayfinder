@@ -53,7 +53,7 @@ def exchange_code_for_credentials(flow, code):
         return None
 
     # Debug: Print the entire id_info to confirm the email extraction
-    st.write("ID Info:", id_info)  # For debugging purposes
+    st.write("ID Info Debug:", id_info)  # For debugging purposes
 
     # Extract email from the id_info
     user_email = id_info.get('email', None)
@@ -140,13 +140,13 @@ def main():
             user_email = exchange_code_for_credentials(flow, query_params['code'][0])
             
             # Debugging: Print the extracted email
-            st.write(f"User email: {user_email}")
+            st.write(f"User email Debug: {user_email}")
 
             if user_email:
                 allowed_emails = st.secrets["allowed_emails"]["emails"]
                 
                 # Debugging: Print the list of allowed emails
-                st.write(f"Allowed emails: {allowed_emails}")
+                st.write(f"Allowed emails Debug: {allowed_emails}")
 
                 if user_email in allowed_emails:
                     st.session_state["login_status"] = "success"
@@ -170,3 +170,4 @@ if __name__ == "__main__":
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
         main()
+
