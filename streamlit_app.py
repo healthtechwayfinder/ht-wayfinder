@@ -79,20 +79,9 @@ def check_stay_logged_in():
     if "login_status" not in st.session_state:
         st.session_state["login_status"] = "not_logged_in"
 
-    # Ensure the cookie manager is ready before loading
-    if not cookies.ready():
-        st.error("Cookies are not ready to be used.")
-        return
-
-    # Load cookies and handle errors gracefully
-    try:
-        cookies.load()
-    except Exception as e:
-        st.error(f"Error loading cookies: {e}")
-        return
-
-    # Check if the 'logged_in' cookie exists
-    if "logged_in" in cookies and cookies["logged_in"] == "true":
+    # Since cookies are automatically loaded when the CookieManager is initialized,
+    # you can directly check for the 'logged_in' cookie
+    if cookies.get("logged_in") == "true":
         st.session_state["login_status"] = "success"
 
 
