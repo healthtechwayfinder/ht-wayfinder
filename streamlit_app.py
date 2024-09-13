@@ -132,31 +132,19 @@ def main():
 
         # Verify state matches
         if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
-            credentials = exchange_code_for_credentials(flow, query_params['code'][0])
-            if credentials:
-                st.session_state["login_status"] = "success"
-                st.session_state["google_user"] = credentials.id_token  # Store the ID token
-                st.success("Google login successful!")
-                st.experimental_rerun()
-        if 'code' in query_params and 'oauth_state' in st.session_state:
-    flow = get_google_oauth_flow()
+            id_info = exchange_code_for_credentials(flow, query_params['code'][0])
+            user_email = id_info.get('email')
 
-    # Verify state matches
-    if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
-        id_info = exchange_code_for_credentials(flow, query_params['code'][0])
+            if user_email:
+                allowed_emails = st.secrets["allowed_emails"]
+                if user_email in allowed_emails:
+                    st.session_state["login_status"] = "success"
+                    st.session_state["google_user"] = user_email  # Store the email for later use
+                    st.success(f"Google login successful for {user_email}!")
+                    st.experimental_rerun()
+                else:
+                    st.error("Unauthorized email. Access denied.")
 
-        # Extract the email from the ID token
-        user_email = id_info['email']
-
-        # Check if the email is allowed
-        allowed_emails = st.secrets["allowed_emails"]
-        if user_email in allowed_emails:
-            st.session_state["login_status"] = "success"
-            st.session_state["google_user"] = user_email  # Store the email for use
-            st.success(f"Google login successful for {user_email}!")
-            st.experimental_rerun()
-        else:
-            st.error("Unauthorized email. Access denied.")
 
 
 # Main app logic
