@@ -12,7 +12,7 @@ if 'need_ID' not in st.session_state:
 if 'df' not in st.session_state:
     st.session_state.df = pd.DataFrame({
         'Need ID': st.session_state.need_ID,
-        'A': range(1, 6),
+        'A': range(1, 8),
         # 'B': range(10, 15)
     })
 
