@@ -4,6 +4,8 @@ import streamlit_cookies_manager
 from google_auth_oauthlib.flow import Flow
 import os
 import google.auth.transport.requests
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
 # Initialize cookies manager
 cookies = streamlit_cookies_manager.CookieManager()
@@ -29,6 +31,17 @@ def get_google_oauth_flow():
     )
     flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]  # Ensure it points to the first URI
     return flow
+
+def exchange_code_for_credentials(flow, code):
+    flow.fetch_token(code=code)
+    credentials = flow.credentials
+
+    # Verify the token and get user info
+    id_info = id_token.verify_oauth2_token(
+        credentials.id_token, requests.Request(), st.secrets["google_oauth"]["client_id"]
+    )
+
+    return id_info  # Return the decoded ID token, which includes the email
 
 # Get Google Authorization URL
 def initiate_google_flow():
@@ -125,6 +138,26 @@ def main():
                 st.session_state["google_user"] = credentials.id_token  # Store the ID token
                 st.success("Google login successful!")
                 st.experimental_rerun()
+        if 'code' in query_params and 'oauth_state' in st.session_state:
+    flow = get_google_oauth_flow()
+
+    # Verify state matches
+    if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
+        id_info = exchange_code_for_credentials(flow, query_params['code'][0])
+
+        # Extract the email from the ID token
+        user_email = id_info['email']
+
+        # Check if the email is allowed
+        allowed_emails = st.secrets["allowed_emails"]
+        if user_email in allowed_emails:
+            st.session_state["login_status"] = "success"
+            st.session_state["google_user"] = user_email  # Store the email for use
+            st.success(f"Google login successful for {user_email}!")
+            st.experimental_rerun()
+        else:
+            st.error("Unauthorized email. Access denied.")
+
 
 # Main app logic
 if __name__ == "__main__":
