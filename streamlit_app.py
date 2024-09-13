@@ -2,8 +2,6 @@ import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import streamlit_cookies_manager
 from google_auth_oauthlib.flow import Flow
-import os
-import google.auth.transport.requests
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
@@ -29,19 +27,8 @@ def get_google_oauth_flow():
         client_config,
         scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
     )
-    flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]  # Ensure it points to the first URI
+    flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]
     return flow
-
-def exchange_code_for_credentials(flow, code):
-    flow.fetch_token(code=code)
-    credentials = flow.credentials
-
-    # Verify the token and get user info
-    id_info = id_token.verify_oauth2_token(
-        credentials.id_token, requests.Request(), st.secrets["google_oauth"]["client_id"]
-    )
-
-    return id_info  # Return the decoded ID token, which includes the email
 
 # Get Google Authorization URL
 def initiate_google_flow():
@@ -50,11 +37,31 @@ def initiate_google_flow():
     st.session_state['oauth_state'] = state  # Save state for verification later
     return auth_url
 
-# Exchange the authorization code for credentials
+# Exchange the authorization code for credentials and verify email
 def exchange_code_for_credentials(flow, code):
     flow.fetch_token(code=code)
     credentials = flow.credentials
-    return credentials
+
+    # Verify the token and get user info (email)
+    try:
+        id_info = id_token.verify_oauth2_token(
+            credentials.id_token, requests.Request(), st.secrets["google_oauth"]["client_id"]
+        )
+    except ValueError:
+        # Invalid token
+        st.error("Invalid Google OAuth token. Please try again.")
+        return None
+
+    # Debug: Print the entire id_info to confirm the email extraction
+    st.write("ID Info:", id_info)  # For debugging purposes
+
+    # Extract email from the id_info
+    user_email = id_info.get('email', None)
+    if not user_email:
+        st.error("Could not retrieve email from Google account.")
+        return None
+
+    return user_email
 
 # Function to hide the entire sidebar (including the toggle button)
 def hide_sidebar():
@@ -71,6 +78,8 @@ def hide_sidebar():
 def check_stay_logged_in():
     if "login_status" not in st.session_state:
         st.session_state["login_status"] = "not_logged_in"
+
+    cookies.load()  # Ensure cookies are loaded before using them
 
     # Check if the 'logged_in' cookie exists
     if "logged_in" in cookies and cookies["logged_in"] == "true":
@@ -107,12 +116,8 @@ def main():
                 st.session_state["login_status"] = "success"
                 
                 # Set the "stay logged in" cookie if checked
-                if stay_logged_in:
-                    cookies["logged_in"] = "true"
-                    cookies.save()  # Save cookies to the browser
-                else:
-                    cookies["logged_in"] = "false"
-                    cookies.save()
+                cookies["logged_in"] = "true" if stay_logged_in else "false"
+                cookies.save()  # Save cookies to the browser
 
                 # Since session state is updated, Streamlit will automatically rerun the app
                 return  # Exit after successful login
@@ -132,10 +137,9 @@ def main():
 
         # Verify state matches
         if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
-            id_info = exchange_code_for_credentials(flow, query_params['code'][0])
-            user_email = id_info.get('email')
-
-            # Debugging step: check if user_email is properly extracted
+            user_email = exchange_code_for_credentials(flow, query_params['code'][0])
+            
+            # Debugging: Print the extracted email
             st.write(f"User email: {user_email}")
 
             if user_email:
@@ -152,9 +156,6 @@ def main():
                 else:
                     st.error("Unauthorized email. Access denied.")
 
-
-
-
 # Main app logic
 if __name__ == "__main__":
     # Check if the user chose to stay logged in
@@ -168,6 +169,4 @@ if __name__ == "__main__":
     else:
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
-        main()
-
         main()
