@@ -13,7 +13,7 @@ if 'df' not in st.session_state:
     st.session_state.df = pd.DataFrame({
         'Need ID': "{st.session_state.need_ID}",
         'A': range(1, 6),
-        'B': range(10, 15)
+        # 'B': range(10, 15)
     })
 
 # Add 'need_ID' to the DataFrame
