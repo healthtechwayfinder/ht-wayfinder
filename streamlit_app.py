@@ -146,9 +146,11 @@ def main():
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
                     st.success(f"Google login successful for {user_email}!")
-                    switch_page("Dashboard")  # Redirect to the Dashboard only for allowed users
-                    st.experimental_rerun()
+                    # Only redirect if authorized
+                    switch_page("Dashboard")
+                    return
                 else:
+                    # Do not redirect unauthorized users, show error instead
                     st.error("Unauthorized email. Access denied.")
                     return
 
@@ -157,11 +159,12 @@ if __name__ == "__main__":
     # Check if the user chose to stay logged in
     check_stay_logged_in()
 
+    # Prevent access to the dashboard without login success
     if st.session_state.get("login_status") == "success":
         # Show sidebar and other content after login
         st.sidebar.write("You are logged in!")
         st.sidebar.write("You can access the menu.")
-        switch_page("Dashboard")  # Redirect to main menu only for logged-in users
+        switch_page("Dashboard")  # Redirect to main menu
     else:
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
