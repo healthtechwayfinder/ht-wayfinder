@@ -52,9 +52,6 @@ def exchange_code_for_credentials(flow, code):
         st.error("Invalid Google OAuth token. Please try again.")
         return None
 
-    # Debug: Print the entire id_info to confirm the email extraction
-    st.write("ID Info Debug:", id_info)  # For debugging purposes
-
     # Extract email from the id_info
     user_email = id_info.get('email', None)
     if not user_email:
@@ -83,7 +80,6 @@ def check_stay_logged_in():
     # you can directly check for the 'logged_in' cookie
     if cookies.get("logged_in") == "true":
         st.session_state["login_status"] = "success"
-
 
 # Main login function
 def main():
@@ -116,10 +112,12 @@ def main():
                 st.session_state["login_status"] = "success"
                 
                 # Set the "stay logged in" cookie if checked
-                cookies["logged_in"] = "true" if stay_logged_in else "false"
-                cookies.save()  # Save cookies to the browser
+                if stay_logged_in:
+                    cookies["logged_in"] = "true"
+                else:
+                    cookies["logged_in"] = "false"
 
-                # Since session state is updated, Streamlit will automatically rerun the app
+                cookies.save()  # Save cookies to the browser
                 return  # Exit after successful login
         else:
             st.error("Invalid username or password")
@@ -138,16 +136,12 @@ def main():
         # Verify state matches
         if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
             user_email = exchange_code_for_credentials(flow, query_params['code'][0])
-            
-            # Debugging: Print the extracted email
-            st.write(f"User email Debug: {user_email}")
 
             if user_email:
+                # Load allowed emails from st.secrets
                 allowed_emails = st.secrets["allowed_emails"]["emails"]
-                
-                # Debugging: Print the list of allowed emails
-                st.write(f"Allowed emails Debug: {allowed_emails}")
 
+                # Compare user_email to allowed_emails list
                 if user_email in allowed_emails:
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
@@ -155,6 +149,7 @@ def main():
                     st.experimental_rerun()
                 else:
                     st.error("Unauthorized email. Access denied.")
+                    return
 
 # Main app logic
 if __name__ == "__main__":
