@@ -146,6 +146,7 @@ def main():
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
                     st.success(f"Google login successful for {user_email}!")
+                    switch_page("Dashboard")  # Redirect to the Dashboard only for allowed users
                     st.experimental_rerun()
                 else:
                     st.error("Unauthorized email. Access denied.")
@@ -160,9 +161,8 @@ if __name__ == "__main__":
         # Show sidebar and other content after login
         st.sidebar.write("You are logged in!")
         st.sidebar.write("You can access the menu.")
-        switch_page("Dashboard")  # Redirect to main menu
+        switch_page("Dashboard")  # Redirect to main menu only for logged-in users
     else:
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
         main()
-
