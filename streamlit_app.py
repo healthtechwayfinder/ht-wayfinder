@@ -48,6 +48,7 @@ def exchange_code_for_credentials(flow, code):
             credentials.id_token, requests.Request(), st.secrets["google_oauth"]["client_id"]
         )
     except ValueError:
+        # Invalid token
         st.error("Invalid Google OAuth token. Please try again.")
         return None
 
@@ -59,6 +60,17 @@ def exchange_code_for_credentials(flow, code):
 
     return user_email
 
+# Function to hide the entire sidebar (including the toggle button)
+def hide_sidebar():
+    hide_sidebar_style = """
+    <style>
+    [data-testid="stSidebar"] {
+        display: none;
+    }
+    </style>
+    """
+    st.markdown(hide_sidebar_style, unsafe_allow_html=True)
+
 # Check if the user selected "Stay logged in" and is already logged in via cookies
 def check_stay_logged_in():
     if "login_status" not in st.session_state:
@@ -69,8 +81,54 @@ def check_stay_logged_in():
     if cookies.get("logged_in") == "true":
         st.session_state["login_status"] = "success"
 
-# Function to handle Google login and email verification
-def handle_google_login():
+# Main login function
+def main():
+    st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
+    
+    logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
+    st.markdown(
+        f"""
+        <div style="text-align: center;">
+            <h1>HealthTech Wayfinder</h1>
+            <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Login form
+    with st.form(key="login_form"):
+        st.write("Login:")
+        username = st.text_input("Username", key="username")
+        password = st.text_input("Password", type="password", key="password")
+        stay_logged_in = st.checkbox("Stay logged in")
+        submit_button = st.form_submit_button("Submit")
+    
+    if submit_button:
+        user_list = st.secrets["login-credentials"]
+        for user_dict in user_list:
+            if username == user_dict["username"] and password == user_dict["password"]:
+                st.success("Login successful")
+                st.session_state["login_status"] = "success"
+                
+                # Set the "stay logged in" cookie if checked
+                if stay_logged_in:
+                    cookies["logged_in"] = "true"
+                else:
+                    cookies["logged_in"] = "false"
+
+                cookies.save()  # Save cookies to the browser
+                return  # Exit after successful login
+        else:
+            st.error("Invalid username or password")
+
+    # Google Login
+    st.write("Or use Google to log in:")
+    if st.button("Login with Google"):
+        auth_url = initiate_google_flow()
+        st.markdown(f"<a href='{auth_url}' target='_blank'>Click here to log in with Google</a>", unsafe_allow_html=True)
+
+    # Process Google authentication callback
     query_params = st.experimental_get_query_params()
     if 'code' in query_params and 'oauth_state' in st.session_state:
         flow = get_google_oauth_flow()
@@ -88,51 +146,26 @@ def handle_google_login():
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
                     st.success(f"Google login successful for {user_email}!")
-                    return True  # Indicate successful login
+                    # Only redirect if authorized
+                    switch_page("Dashboard")
+                    return
                 else:
                     # Do not redirect unauthorized users, show error instead
                     st.error("Unauthorized email. Access denied.")
-                    return False  # Indicate unauthorized login
-
-    return False
-
-# Main login function
-def main():
-    st.markdown("<h2 style='text-align: center;'>Welcome back! </h2>", unsafe_allow_html=True)
-
-    logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
-    st.markdown(
-        f"""
-        <div style="text-align: center;">
-            <h1>HealthTech Wayfinder</h1>
-            <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # Google Login
-    st.write("Or use Google to log in:")
-    if st.button("Login with Google"):
-        auth_url = initiate_google_flow()
-        st.markdown(f"<a href='{auth_url}' target='_blank'>Click here to log in with Google</a>", unsafe_allow_html=True)
-
-    # Handle Google login and only proceed if authorized
-    if handle_google_login():
-        # Redirect only after a successful login
-        switch_page("Dashboard")
+                    return
 
 # Main app logic
 if __name__ == "__main__":
     # Check if the user chose to stay logged in
     check_stay_logged_in()
 
-    # Ensure user is logged in before allowing access to the Dashboard
+    # Prevent access to the dashboard without login success
     if st.session_state.get("login_status") == "success":
-        # User is logged in, show sidebar and redirect to the Dashboard
+        # Show sidebar and other content after login
         st.sidebar.write("You are logged in!")
-        switch_page("Dashboard")
+        st.sidebar.write("You can access the menu.")
+        switch_page("Dashboard")  # Redirect to main menu
     else:
-        # Show the login form
+        # Hide the sidebar and show the login form
+        hide_sidebar()  # Completely hide the sidebar
         main()
-
