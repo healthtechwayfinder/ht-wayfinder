@@ -126,7 +126,12 @@ def main():
     st.write("Or use Google to log in:")
     if st.button("Login with Google"):
         auth_url = initiate_google_flow()
-        st.experimental_set_query_params(auth_url=auth_url)  # Trigger the redirect in the same window
+        # Inject JavaScript to redirect the browser
+        st.markdown(f"""
+            <script type="text/javascript">
+                window.location.href = "{auth_url}";
+            </script>
+        """, unsafe_allow_html=True)
 
     # Process Google authentication callback
     query_params = st.experimental_get_query_params()
