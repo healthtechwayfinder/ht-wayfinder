@@ -38,7 +38,7 @@ SCOPE = [
         ]
 CREDS = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, SCOPE)
 CLIENT = gspread.authorize(CREDS)
-SPREADSHEET = CLIENT.open("Chat Log")  # Open the main spreadsheet
+SPREADSHEET = CLIENT.open("Observation Investigator - Chat Log")  # Open the main spreadsheet
 
 
 
