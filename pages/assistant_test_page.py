@@ -76,12 +76,28 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.markdown("# Observation Investigator")
-st.write("Use this tool to find relationships between cases, summarize elements in observations, and plan for future observations.")
-# Subtitle for the chat section
+# st.markdown("# Observation Investigator")
+# st.write("Use this tool to find relationships between cases, summarize elements in observations, and plan for future observations.")
+# # Subtitle for the chat section
 
-agent = OpenAIAssistantRunnable(assistant_id="<asst_Qatnn7dh8SW5FeFCzbtuXmxt>", as_agent=True)
+# agent = OpenAIAssistantRunnable(assistant_id="<asst_Qatnn7dh8SW5FeFCzbtuXmxt>", as_agent=True)
 
+# llm = ChatOpenAI(
+#     # assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt',
+#     model_name="gpt-4o",
+#     temperature=0.7,
+#     openai_api_key=OPENAI_API_KEY,
+#     max_tokens=500,
+# )
+
+interpreter_assistant = OpenAIAssistantRunnable.create_assistant(
+    name="langchain assistant",
+    instructions="You are a personal math tutor. Write and run code to answer math questions.",
+    tools=[{"type": "code_interpreter"}],
+    model="gpt-4-1106-preview",
+)
+output = interpreter_assistant.invoke({"content": "What's 10 - 4 raised to the 2.7"})
+output
 
 
 
