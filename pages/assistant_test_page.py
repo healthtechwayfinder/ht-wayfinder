@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
-
+from openai import OpenAI
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.agents.openai_assistant import OpenAIAssistantRunnable #added
 from langchain.chains import LLMChain
