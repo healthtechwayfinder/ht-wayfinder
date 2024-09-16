@@ -50,8 +50,8 @@ def create_new_chat_sheet():
     return sheet
 
 # # Create a new sheet for the chat thread if not already created
-# if "chat_sheet" not in st.session_state:
-#     st.session_state.chat_sheet = create_new_chat_sheet()
+if "chat_sheet" not in st.session_state:
+    st.session_state.chat_sheet = create_new_chat_sheet()
 
 OPENAI_API_KEY = st.secrets["openai_key"]
 
