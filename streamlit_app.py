@@ -74,18 +74,13 @@ def hide_sidebar():
 def check_stay_logged_in():
     # Attempt to load cookies and handle any errors
     if cookies.ready():
-        try:
-            cookies.load()  # Load the cookies into memory
-            
-            if "login_status" not in st.session_state:
-                st.session_state["login_status"] = "not_logged_in"
+        if "login_status" not in st.session_state:
+            st.session_state["login_status"] = "not_logged_in"
 
-            # Check the cookies to see if the user is logged in
-            if cookies.get("logged_in") == "true":
-                st.session_state["login_status"] = "success"
-                st.session_state["google_user"] = cookies.get("google_user")
-        except Exception as e:
-            st.error(f"Error loading cookies: {str(e)}")
+        # Check the cookies to see if the user is logged in
+        if cookies.get("logged_in") == "true":
+            st.session_state["login_status"] = "success"
+            st.session_state["google_user"] = cookies.get("google_user")
     else:
         st.warning("Cookies are not ready, unable to check login state.")
 
