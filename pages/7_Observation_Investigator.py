@@ -38,7 +38,7 @@ SCOPE = [
         ]
 CREDS = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, SCOPE)
 CLIENT = gspread.authorize(CREDS)
-SPREADSHEET = CLIENT.open("2024 Healthtech Identify Log")  # Open the main spreadsheet
+SPREADSHEET = CLIENT.open("Chat Log")  # Open the main spreadsheet
 
 
 
@@ -227,7 +227,7 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
         #     st.write(f"{i+1}. {observation}")
 
     # Store chat in the current sheet
-    # st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
+    st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
 
 # st.markdown("---")
 # if st.button("Back to Main Menu"):
