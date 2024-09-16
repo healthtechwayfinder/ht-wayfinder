@@ -5,6 +5,7 @@ from openai import OpenAI
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.agents.openai_assistant import OpenAIAssistantRunnable #added
 from langchain.chains import LLMChain
+from langchain_community.callbacks.manager import get_openai_callback
 from langchain.output_parsers import PydanticOutputParser
 from langchain.callbacks import get_openai_callback
 from langchain.schema import StrOutputParser
