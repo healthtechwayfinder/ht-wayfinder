@@ -18,7 +18,7 @@ def get_google_oauth_flow():
             "token_uri": st.secrets["google_oauth"]["token_uri"],
             "auth_provider_x509_cert_url": st.secrets["google_oauth"]["auth_provider_x509_cert_url"],
             "client_secret": st.secrets["google_oauth"]["client_secret"],
-            "redirect_uris": st.secrets["google_oauth"]["redirect_uris"]
+            "redirect_uris": st.secrets["google_oauth"]["redirect_uris"]  # Make sure this matches exactly with Google Console
         }
     }
 
@@ -27,14 +27,19 @@ def get_google_oauth_flow():
         client_config,
         scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
     )
+    
+    # The redirect_uri must exactly match what is configured in the Google Cloud Console
     flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]
+    
     return flow
 
 # Get Google Authorization URL
 def initiate_google_flow():
     flow = get_google_oauth_flow()
     auth_url, state = flow.authorization_url(prompt='consent')
-    st.session_state['oauth_state'] = state  # Save state for verification later
+    
+    # Save state for later validation
+    st.session_state['oauth_state'] = state
     return auth_url
 
 # Exchange the authorization code for credentials and verify email
