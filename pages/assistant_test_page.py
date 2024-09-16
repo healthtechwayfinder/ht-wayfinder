@@ -96,8 +96,8 @@ llm = ChatOpenAI(
 #     tools=[{"type": "code_interpreter"}],
 #     model="gpt-4-1106-preview",
 # )
-# output = interpreter_assistant.invoke({"content": "What's 10 - 4 raised to the 2.7"})
-# output
+output = llm.invoke({"content": "What's 10 - 4 raised to the 2.7"})
+output
 
 
 
