@@ -87,6 +87,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 llm = ChatOpenAI(
+    assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt'
     model_name="gpt-4o",
     temperature=0.7,
     openai_api_key=OPENAI_API_KEY,
@@ -184,11 +185,7 @@ if prompt := st.chat_input("What would you like to ask?"):
     updated_cases_db = refresh_cases_db()
     related_cases_similarity = updated_cases_db.similarity_search(prompt, k=4)
 
-        # You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
-        # You have to use the set of observations and the relevant cases to help answer the question. Your responses should be professional, inquisitive, and not overly-confident or assertive, like a graduate-level teaching assistant. 
-        # Cite the relevant observations with relevant quotes and observation IDs to support your answer.There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
-        # No matter what, do not write need statements for users. Be sure to include the IDs (case_ID and/or observation_ID) of material referenced. Do not search the internet unless specifically asked to.
-
+       
     question_prompt = PromptTemplate.from_template(
           """
        
@@ -266,3 +263,11 @@ st.markdown("""
 # # Create a button using Streamlit's native functionality
 # if st.button("Back to Main Menu"):
 #     switch_page("main_menu")
+
+
+#  old prompt
+ # You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
+        # You have to use the set of observations and the relevant cases to help answer the question. Your responses should be professional, inquisitive, and not overly-confident or assertive, like a graduate-level teaching assistant. 
+        # Cite the relevant observations with relevant quotes and observation IDs to support your answer.There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
+        # No matter what, do not write need statements for users. Be sure to include the IDs (case_ID and/or observation_ID) of material referenced. Do not search the internet unless specifically asked to.
+
