@@ -127,7 +127,6 @@ def main():
     if st.button("Login with Google"):
         auth_url = initiate_google_flow()
         st.experimental_set_query_params(auth_url=auth_url)  # Trigger the redirect in the same window
-        st.experimental_rerun()  # Rerun the script to handle the redirect URL
 
     # Process Google authentication callback
     query_params = st.experimental_get_query_params()
