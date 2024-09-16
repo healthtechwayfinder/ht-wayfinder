@@ -82,22 +82,22 @@ st.markdown("""
 
 # agent = OpenAIAssistantRunnable(assistant_id="<asst_Qatnn7dh8SW5FeFCzbtuXmxt>", as_agent=True)
 
-# llm = ChatOpenAI(
-#     # assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt',
-#     model_name="gpt-4o",
-#     temperature=0.7,
-#     openai_api_key=OPENAI_API_KEY,
-#     max_tokens=500,
-# )
-
-interpreter_assistant = OpenAIAssistantRunnable.create_assistant(
-    name="langchain assistant",
-    instructions="You are a personal math tutor. Write and run code to answer math questions.",
-    tools=[{"type": "code_interpreter"}],
-    model="gpt-4-1106-preview",
+llm = ChatOpenAI(
+    # model_name="gpt-4o",
+    temperature=0.7,
+    openai_api_key=OPENAI_API_KEY,
+    max_tokens=500,
+    assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt',
 )
-output = interpreter_assistant.invoke({"content": "What's 10 - 4 raised to the 2.7"})
-output
+
+# interpreter_assistant = OpenAIAssistantRunnable.create_assistant(
+#     name="langchain assistant",
+#     instructions="You are a personal math tutor. Write and run code to answer math questions.",
+#     tools=[{"type": "code_interpreter"}],
+#     model="gpt-4-1106-preview",
+# )
+# output = interpreter_assistant.invoke({"content": "What's 10 - 4 raised to the 2.7"})
+# output
 
 
 
