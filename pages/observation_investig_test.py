@@ -1,9 +1,9 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
-
+from langchain_community.callbacks.manager import get_openai_callback
+from langchain.agents.openai_assistant import OpenAIAssistantRunnable
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.agents.openai_assistant import OpenAIAssistantRunnable #added this 09/16
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
 from langchain.callbacks import get_openai_callback
@@ -102,7 +102,7 @@ ASSISTANT_ID = "asst_Qatnn7dh8SW5FeFCzbtuXmxt"
 # Initialize the OpenAI Assistant Runnable with the specific ID
 assistant_runnable = OpenAIAssistantRunnable(
     assistant_id=ASSISTANT_ID,
-    openai_api_key=OPENAI_API_KEY
+    openai_api_key=OPENAI_API_KEY,
 )
 
 # # Integrate this assistant into your chain or pipeline
