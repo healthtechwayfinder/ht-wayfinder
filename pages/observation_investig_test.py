@@ -87,6 +87,68 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+
+
+
+
+
+# /////////////////////////////////////////////////////////////////////////////////// Bridget Added:
+
+# from langchain.agents.openai_assistant import OpenAIAssistantRunnable
+
+# specify the assistant ID
+ASSISTANT_ID = "asst_Qatnn7dh8SW5FeFCzbtuXmxt" 
+
+# Initialize the OpenAI Assistant Runnable with the specific ID
+assistant_runnable = OpenAIAssistantRunnable(
+    assistant_id=ASSISTANT_ID,
+    openai_api_key=OPENAI_API_KEY
+)
+
+# # Integrate this assistant into your chain or pipeline
+# def observation_chat_chain_with_assistant(prompt, related_observations, related_cases, related_cases_similarity):
+#     question_prompt = PromptTemplate.from_template(
+#         """
+#         You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
+#         You have to use the set of observations and the relevant cases to help answer the question. Your responses should be professional, inquisitive, and not overly-confident or assertive, like a graduate-level teaching assistant. 
+#         Cite the relevant observations with relevant quotes and observation IDs to support your answer. There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
+#         No matter what, do not write need statements for users. Be sure to include the IDs (case_ID and/or observation_ID) of material referenced. Do not search the internet unless specifically asked to.
+
+#         Question: {question}
+#         Set of Observations: {related_observations}
+#         Relevant Cases linked to Observations: {related_cases}
+#         Semantically Relevant cases: {related_cases_similarity}
+#         Final Answer:
+#         """
+#     )
+
+#     # Chain setup using assistant runnable
+#     observation_chat_chain = (
+#         question_prompt | assistant_runnable | StrOutputParser()
+#     )
+
+#     # Use the OpenAI callback for tracking
+#     with get_openai_callback() as cb:
+#         output = observation_chat_chain.invoke({
+#             "question": prompt, 
+#             "related_observations": related_observations,
+#             "related_cases": related_cases,
+#             "related_cases_similarity": related_cases_similarity,
+#         })
+
+#     return output
+
+
+
+
+# /////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
 llm = ChatOpenAI(
     model_name="gpt-4o",
     temperature=0.7,
@@ -195,7 +257,7 @@ if prompt := st.chat_input("What would you like to ask?"):
     )
     
     observation_chat_chain = (
-        question_prompt | llm | StrOutputParser()
+        question_prompt | assistant_runnable | StrOutputParser()
     )
 
     with get_openai_callback() as cb:
