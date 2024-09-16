@@ -8,6 +8,13 @@ from google.auth.transport import requests
 # Initialize cookies manager
 cookies = streamlit_cookies_manager.CookieManager()
 
+if stay_logged_in:
+    cookies["logged_in"] = "true"
+else:
+    cookies["logged_in"] = "false"
+cookies.save()
+
+
 # OAuth setup: Using Streamlit secrets instead of client_secret.json
 def get_google_oauth_flow():
     client_config = {
