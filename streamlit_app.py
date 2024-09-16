@@ -8,13 +8,6 @@ from google.auth.transport import requests
 # Initialize cookies manager
 cookies = streamlit_cookies_manager.CookieManager()
 
-if stay_logged_in:
-    cookies["logged_in"] = "true"
-else:
-    cookies["logged_in"] = "false"
-cookies.save()
-
-
 # OAuth setup: Using Streamlit secrets instead of client_secret.json
 def get_google_oauth_flow():
     client_config = {
@@ -38,7 +31,6 @@ def get_google_oauth_flow():
     flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]
     
     return flow
-
 
 # Get Google Authorization URL
 def initiate_google_flow():
@@ -85,13 +77,16 @@ def hide_sidebar():
 
 # Check if the user selected "Stay logged in" and is already logged in via cookies
 def check_stay_logged_in():
+    # Load cookies before checking
+    cookies.load()
+
     if "login_status" not in st.session_state:
         st.session_state["login_status"] = "not_logged_in"
 
-    # Since cookies are automatically loaded when the CookieManager is initialized,
-    # you can directly check for the 'logged_in' cookie
+    # Check if the user is logged in via the stored cookie
     if cookies.get("logged_in") == "true":
         st.session_state["login_status"] = "success"
+        st.session_state["google_user"] = cookies.get("google_user")
 
 # Main login function
 def main():
@@ -126,8 +121,10 @@ def main():
                 # Set the "stay logged in" cookie if checked
                 if stay_logged_in:
                     cookies["logged_in"] = "true"
+                    cookies["google_user"] = username  # Save user info
                 else:
                     cookies["logged_in"] = "false"
+                    cookies["google_user"] = ""
 
                 cookies.save()  # Save cookies to the browser
                 return  # Exit after successful login
@@ -160,6 +157,12 @@ def main():
                 if user_email in allowed_emails:
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
+                    
+                    # Set cookies to keep the user logged in
+                    cookies["logged_in"] = "true"
+                    cookies["google_user"] = user_email
+                    cookies.save()
+
                     st.success(f"Google login successful for {user_email}!")
                     # Only redirect if authorized
                     switch_page("Dashboard")
@@ -177,10 +180,11 @@ if __name__ == "__main__":
     # Prevent access to the dashboard without login success
     if st.session_state.get("login_status") == "success":
         # Show sidebar and other content after login
-        st.sidebar.write("You are logged in!")
+        st.sidebar.write(f"You are logged in as {st.session_state['google_user']}!")
         st.sidebar.write("You can access the menu.")
         switch_page("Dashboard")  # Redirect to main menu
     else:
         # Hide the sidebar and show the login form
         hide_sidebar()  # Completely hide the sidebar
         main()
+
