@@ -18,7 +18,7 @@ def get_google_oauth_flow():
             "token_uri": st.secrets["google_oauth"]["token_uri"],
             "auth_provider_x509_cert_url": st.secrets["google_oauth"]["auth_provider_x509_cert_url"],
             "client_secret": st.secrets["google_oauth"]["client_secret"],
-            "redirect_uris": st.secrets["google_oauth"]["redirect_uris"]  # Make sure this matches exactly with Google Console
+            "redirect_uris": ["https://healthtech-wayfinder-playground.streamlit.app"]  # Use base URL
         }
     }
 
@@ -28,10 +28,10 @@ def get_google_oauth_flow():
         scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
     )
     
-    # The redirect_uri must exactly match what is configured in the Google Cloud Console
     flow.redirect_uri = st.secrets["google_oauth"]["redirect_uris"][0]
     
     return flow
+
 
 # Get Google Authorization URL
 def initiate_google_flow():
