@@ -1,12 +1,12 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-import streamlit_cookies_manager
+from streamlit_cookies_manager import CookieManager  # Correct import
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 from google.auth.transport import requests
 
 # Initialize cookies manager
-cookies = streamlit_cookies_manager.CookieManager()
+cookies = CookieManager()
 
 # OAuth setup: Using Streamlit secrets instead of client_secret.json
 def get_google_oauth_flow():
@@ -22,7 +22,6 @@ def get_google_oauth_flow():
         }
     }
 
-    # Initialize the flow with redirect URI from secrets
     flow = Flow.from_client_config(
         client_config,
         scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email"]
@@ -37,8 +36,7 @@ def initiate_google_flow():
     flow = get_google_oauth_flow()
     auth_url, state = flow.authorization_url(prompt='consent')
     
-    # Save state for later validation
-    st.session_state['oauth_state'] = state
+    st.session_state['oauth_state'] = state  # Save state for validation later
     return auth_url
 
 # Exchange the authorization code for credentials and verify email
@@ -46,17 +44,14 @@ def exchange_code_for_credentials(flow, code):
     flow.fetch_token(code=code)
     credentials = flow.credentials
 
-    # Verify the token and get user info (email)
     try:
         id_info = id_token.verify_oauth2_token(
             credentials.id_token, requests.Request(), st.secrets["google_oauth"]["client_id"]
         )
     except ValueError:
-        # Invalid token
         st.error("Invalid Google OAuth token. Please try again.")
         return None
 
-    # Extract email from the id_info
     user_email = id_info.get('email', None)
     if not user_email:
         st.error("Could not retrieve email from Google account.")
@@ -64,7 +59,7 @@ def exchange_code_for_credentials(flow, code):
 
     return user_email
 
-# Function to hide the entire sidebar (including the toggle button)
+# Function to hide the sidebar (if needed)
 def hide_sidebar():
     hide_sidebar_style = """
     <style>
@@ -77,16 +72,19 @@ def hide_sidebar():
 
 # Check if the user selected "Stay logged in" and is already logged in via cookies
 def check_stay_logged_in():
-    # Load cookies before checking
-    cookies.load()
+    # Attempt to load cookies and handle any errors
+    if cookies.ready():
+        cookies.load()  # Load the cookies into memory
+        
+        if "login_status" not in st.session_state:
+            st.session_state["login_status"] = "not_logged_in"
 
-    if "login_status" not in st.session_state:
-        st.session_state["login_status"] = "not_logged_in"
-
-    # Check if the user is logged in via the stored cookie
-    if cookies.get("logged_in") == "true":
-        st.session_state["login_status"] = "success"
-        st.session_state["google_user"] = cookies.get("google_user")
+        # Check the cookies to see if the user is logged in
+        if cookies.get("logged_in") == "true":
+            st.session_state["login_status"] = "success"
+            st.session_state["google_user"] = cookies.get("google_user")
+    else:
+        st.warning("Cookies are not ready, unable to check login state.")
 
 # Main login function
 def main():
@@ -127,7 +125,7 @@ def main():
                     cookies["google_user"] = ""
 
                 cookies.save()  # Save cookies to the browser
-                return  # Exit after successful login
+                return
         else:
             st.error("Invalid username or password")
 
@@ -137,7 +135,6 @@ def main():
     # Generate the OAuth URL
     auth_url = initiate_google_flow()
     
-    # Use an actual link for redirection
     st.markdown(f'<a href="{auth_url}" target="_self">Click here to log in with Google</a>', unsafe_allow_html=True)
 
     # Process Google authentication callback
@@ -145,46 +142,35 @@ def main():
     if 'code' in query_params and 'oauth_state' in st.session_state:
         flow = get_google_oauth_flow()
 
-        # Verify state matches
         if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
             user_email = exchange_code_for_credentials(flow, query_params['code'][0])
 
             if user_email:
-                # Load allowed emails from st.secrets
                 allowed_emails = st.secrets["allowed_emails"]["emails"]
 
-                # Compare user_email to allowed_emails list
                 if user_email in allowed_emails:
                     st.session_state["login_status"] = "success"
                     st.session_state["google_user"] = user_email  # Store the email for later use
                     
-                    # Set cookies to keep the user logged in
                     cookies["logged_in"] = "true"
                     cookies["google_user"] = user_email
                     cookies.save()
 
                     st.success(f"Google login successful for {user_email}!")
-                    # Only redirect if authorized
                     switch_page("Dashboard")
                     return
                 else:
-                    # Do not redirect unauthorized users, show error instead
                     st.error("Unauthorized email. Access denied.")
-                    return
 
 # Main app logic
 if __name__ == "__main__":
     # Check if the user chose to stay logged in
     check_stay_logged_in()
 
-    # Prevent access to the dashboard without login success
     if st.session_state.get("login_status") == "success":
-        # Show sidebar and other content after login
         st.sidebar.write(f"You are logged in as {st.session_state['google_user']}!")
         st.sidebar.write("You can access the menu.")
-        switch_page("Dashboard")  # Redirect to main menu
+        switch_page("Dashboard")
     else:
-        # Hide the sidebar and show the login form
-        hide_sidebar()  # Completely hide the sidebar
+        hide_sidebar()
         main()
-
