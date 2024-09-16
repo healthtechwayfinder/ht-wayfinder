@@ -87,7 +87,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 llm = ChatOpenAI(
-    assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt'
+    assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt',
     model_name="gpt-4o",
     temperature=0.7,
     openai_api_key=OPENAI_API_KEY,
