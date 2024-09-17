@@ -35,13 +35,7 @@ creds_dict = {
 sheet_name = 'Team Scratchpad'
 users = ["Deb", "Kyle", "Lois", "Ryan"]
 
-# Initialize session state if it doesn't exist
-if "note" not in st.session_state:
-    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-
-if "worksheet_name" not in st.session_state:
-    st.session_state["worksheet_name"] = "Sheet1"
-        
+ 
 
 
 # Function to get Google Sheets connection
@@ -63,6 +57,9 @@ def read_note_from_gsheet(sheet_name, worksheet_name):
     except:
         note = ""
     return note
+
+
+       
 
 # Function to save the note to Google Sheets
 def save_note_to_gsheet(note, sheet_name, worksheet_name):
@@ -112,6 +109,11 @@ def log_out():
     # Redirect to the main URL of your app
     st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
+#initialize session states below functions
+if "note" not in st.session_state:
+    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+if "worksheet_name" not in st.session_state:
+    st.session_state["worksheet_name"] = "Sheet1"
 
 # col1, col2 = st.columns(2)
 col1, col2, col3 = st.columns([2, 2, 1])
