@@ -49,8 +49,13 @@ worksheets = {
     "Need Statement Log": "Need Statement Log"
 }
 
-# Create a dropdown for selecting which sheet to view
-selected_sheet = st.selectbox("Select a sheet to view:", list(worksheets.keys()))
+
+col1, col2, col3 = st.columns([2, 2, 1])
+
+    with col1:
+
+    # Create a dropdown for selecting which sheet to view
+    selected_sheet = st.selectbox("Select a sheet to view:", list(worksheets.keys()))
 
 # Fetch data from Google Sheets based on the selected worksheet
 def load_data(worksheet_name):
@@ -62,10 +67,12 @@ if "df" not in st.session_state or st.session_state["selected_sheet"] != selecte
     st.session_state["df"] = load_data(worksheets[selected_sheet])
     st.session_state["selected_sheet"] = selected_sheet
 
-# Add a button to refresh the data from Google Sheets
-if st.button("Refresh Data"):
-    st.session_state["df"] = load_data(worksheets[selected_sheet])
-    st.success(f"Data refreshed from {selected_sheet}!")
+with col3:
+
+    # Add a button to refresh the data from Google Sheets
+    if st.button("Refresh Data"):
+        st.session_state["df"] = load_data(worksheets[selected_sheet])
+        st.success(f"Data refreshed from {selected_sheet}!")
 
 # Display the Google Sheet content as a DataFrame in Streamlit
 st.markdown(f"## {selected_sheet}")
