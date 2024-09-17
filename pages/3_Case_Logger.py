@@ -672,7 +672,7 @@ if action == "Add New Case":
                     maxtags=10)
             
         
-            if st.session_state['rerun']:
+    if st.session_state['rerun']:
                 time.sleep(3)
                 clear_case()
                 st.session_state['rerun'] = False
