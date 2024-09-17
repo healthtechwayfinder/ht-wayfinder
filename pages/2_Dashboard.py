@@ -61,7 +61,7 @@ def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet = get_google_sheet(sheet_name, worksheet_name)
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
-def refreshSheet:
+def refreshSheet():
     read_note_from_gsheet(sheet_name, worksheet_name)
 
 
