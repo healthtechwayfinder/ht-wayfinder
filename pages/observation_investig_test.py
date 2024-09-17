@@ -72,7 +72,7 @@ if "df" not in st.session_state or st.session_state["selected_sheet"] != selecte
     
 with col3:
     # Add a button to refresh the data from Google Sheets
-    if st.button("Refresh Data"):
+    if st.button("🔁 Refresh Data"):
         st.session_state["df"] = load_data(worksheets[selected_sheet])
         st.success(f"Data refreshed from {selected_sheet}!")
     #link to their actual sheet
