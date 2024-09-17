@@ -1,5 +1,6 @@
 import streamlit as st
-from streamlit_extras.switch_page_button import switch_page
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 
 # Set page configuration
@@ -7,25 +8,101 @@ st.set_page_config(page_title="View All Observations", page_icon="📒")
 
 st.markdown("# All Observations")
 
-# Link to the Google Sheet (direct link)
-st.markdown("""
-Click the link to open your team's observation record in Google Sheets:
-[Open Google Sheets](https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969)
-""", unsafe_allow_html=True)
+# Define the Google Sheets credentials and scope
+creds_dict = {
+    "type": st.secrets["gwf_service_account"]["type"],
+    "project_id": st.secrets["gwf_service_account"]["project_id"],
+    "private_key_id": st.secrets["gwf_service_account"]["private_key_id"],
+    "private_key": st.secrets["gwf_service_account"]["private_key"].replace('\\n', '\n'),  # Fix formatting
+    "client_email": st.secrets["gwf_service_account"]["client_email"],
+    "client_id": st.secrets["gwf_service_account"]["client_id"],
+    "auth_uri": st.secrets["gwf_service_account"]["auth_uri"],
+    "token_uri": st.secrets["gwf_service_account"]["token_uri"],
+    "auth_provider_x509_cert_url": st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
+}
+
+# Function to get Google Sheets connection
+def get_google_sheet(sheet_name, worksheet_name):
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    return sheet
+
+# Function to convert Google Sheets data to a Pandas DataFrame
+def get_google_sheet_as_dataframe(sheet):
+    # Get all data from the worksheet
+    data = sheet.get_all_values()
+    # Convert to a Pandas DataFrame
+    df = pd.DataFrame(data[1:], columns=data[0])  # Use the first row as headers
+    return df
+
+# Google Sheets settings
+sheet_name = 'Team Scratchpad'
+worksheet_name = 'Sheet1'  # Example worksheet name
+
+# Fetch data from Google Sheets (wrapped in a function so it can be called again on refresh)
+def load_data():
+    sheet = get_google_sheet(sheet_name, worksheet_name)
+    return get_google_sheet_as_dataframe(sheet)
+
+# Initialize session state for the data
+if "df" not in st.session_state:
+    st.session_state["df"] = load_data()
+
+# Add a button to refresh the data from Google Sheets
+if st.button("Refresh Data"):
+    st.session_state["df"] = load_data()
+    st.success("Data refreshed from Google Sheets!")
+
+# Display the Google Sheet content as a DataFrame in Streamlit
+st.markdown("## Observation Records")
+st.dataframe(st.session_state["df"])
 
 st.markdown("---")
 
-# Embedding Google Sheets using an iframe
-st.markdown("""
-    <iframe src="https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/htmlview?gid=2115125969&widget=true&headers=false" width="100%" height="600"></iframe>
-    """, unsafe_allow_html=True)
 
-# Load CSV and display data
-df = pd.read_csv("observations.csv", delimiter=';')
 
-# Optional: Display the CSV file content (if needed)
-st.markdown("---")
-st.dataframe(df)
+
+
+
+
+
+
+
+
+# import streamlit as st
+# from streamlit_extras.switch_page_button import switch_page
+# import pandas as pd
+
+# # Set page configuration
+# st.set_page_config(page_title="View All Observations", page_icon="📒")
+
+# st.markdown("# All Observations")
+
+# # Link to the Google Sheet (direct link)
+# st.markdown("""
+# Click the link to open your team's observation record in Google Sheets:
+# [Open Google Sheets](https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969)
+# """, unsafe_allow_html=True)
+
+# st.markdown("---")
+
+# # Embedding Google Sheets using an iframe
+# st.markdown("""
+#     <iframe src="https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/htmlview?gid=2115125969&widget=true&headers=false" width="100%" height="600"></iframe>
+#     """, unsafe_allow_html=True)
+
+# # Load CSV and display data
+# df = pd.read_csv("observations.csv", delimiter=';')
+
+# # Optional: Display the CSV file content (if needed)
+# st.markdown("---")
+# st.dataframe(df)
 
 
 
