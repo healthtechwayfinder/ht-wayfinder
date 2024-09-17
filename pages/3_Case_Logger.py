@@ -621,6 +621,49 @@ if action == "Add New Case":
             st.text_input("Tags", value=tags)
             if not tags:
                 st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Observations field or show 'Missing'
+            observations = parsed_result.get('Observations', "")
+            st.text_area("Observations", value=observations, height=150)
+            if not observations:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+
+
+    # Check if 'result' exists in session state and contains valid data
+    if 'result' in st.session_state and st.session_state['result'] != "":
+        parsed_result = st.session_state['result']
+    
+        # Check if 'result' contains the fields we expect (as a dictionary)
+        if isinstance(parsed_result, dict):
+            # Editable Location field or show 'Missing'
+            location = parsed_result.get('Location', "")
+            st.text_input("Location", value=location)
+            if not location:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Stakeholders field or show 'Missing'
+            stakeholders = parsed_result.get('Stakeholders', "")
+            st.text_input("Stakeholders", value=stakeholders)
+            if not stakeholders:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable People Present field or show 'Missing'
+            people_present = parsed_result.get('People Present', "")
+            st.text_input("People Present", value=people_present)
+            if not people_present:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Insider Language field or show 'Missing'
+            insider_language = parsed_result.get('Insider Language', "")
+            st.text_input("Insider Language", value=insider_language)
+            if not insider_language:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Tags field or show 'Missing'
+            tags = parsed_result.get('Tags', "")
+            st.text_input("Tags", value=tags)
+            if not tags:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
 
         # Editable Observations field or show 'Missing'
         observations = parsed_result.get('Observations', "")
