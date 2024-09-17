@@ -630,16 +630,16 @@ if action == "Add New Case":
             if key.lower() == 'tags':
                 st.write("Tags line found. Raw value:", value)  # Debugging: ensure the tags line is identified
 
-                    # Debugging: Print raw value and character details
-                st.write(f"Before splitting, raw value length: {len(value)}")
-                st.write(f"Raw value character codes: {[ord(char) for char in value]}")
+                #     # Debugging: Print raw value and character details
+                # st.write(f"Before splitting, raw value length: {len(value)}")
+                # st.write(f"Raw value character codes: {[ord(char) for char in value]}")
     
-                # Split the value by commas and strip extra spaces or special characters
-                tags_values = [tag.strip() for tag in value.split(",")]
+                # # Split the value by commas and strip extra spaces or special characters
+                # tags_values = [tag.strip() for tag in value.split(",")]
     
-                # Debugging: Check if tags_values was populated correctly
-                st.write(f"Tags after splitting and stripping: {tags_values}")
-                st.write(f"Length of tags_values: {len(tags_values)}")
+                # # Debugging: Check if tags_values was populated correctly
+                # st.write(f"Tags after splitting and stripping: {tags_values}")
+                # st.write(f"Length of tags_values: {len(tags_values)}")
 
             # Print each tag separately to check for issues
             for idx, tag in enumerate(tags_values):
