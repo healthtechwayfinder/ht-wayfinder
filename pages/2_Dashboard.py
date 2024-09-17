@@ -179,7 +179,7 @@ with col3:
         st.session_state["selected_user"] = users[0]  # Default to the first user
     
     st.selectbox(
-        "Select user", 
+        "Select User", 
         users, 
         key="selected_user", 
         on_change=update_note
@@ -190,7 +190,7 @@ with col3:
         update_note()
     
     # Display a text area for the user to write their note, leveraging session state
-    user_note = st.text_area("Your Note", value=st.session_state["note"], height=300)
+    user_note = st.text_area("Add Notes", value=st.session_state["note"], height=300)
     
     # Save the note when the button is pressed
     if st.button("Save Note"):
