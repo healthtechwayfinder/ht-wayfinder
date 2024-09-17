@@ -4,7 +4,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 
 # Set page configuration
-st.set_page_config(page_title="View All Observations", page_icon="📒")
+st.set_page_config(page_title="View All Observations", page_icon="📒", layout="wide")
 
 st.markdown("# All Observations")
 
