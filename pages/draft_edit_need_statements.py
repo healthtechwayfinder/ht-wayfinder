@@ -133,7 +133,7 @@ def fetch_need_details(selected_need_ID):
 
 
 # Update case details in Google Sheets
-def update_need(selected_need_ID, updated_need_data):
+def update_need(updt_need_ID, updated_need_data):
     i = 1
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Log")
@@ -142,7 +142,7 @@ def update_need(selected_need_ID, updated_need_data):
        
         # Find the row corresponding to the selected_need_ID and update it
         for i, row in enumerate(data, start=2):  # Skip header row
-            if row["need_ID"] == st.session_state['selected_need_ID']:
+            if row["need_ID"] == updt_need_ID:
                 # Update the necessary fields (Assuming the updated_need_data has the same keys as Google Sheets columns)
                 for key, value in updated_need_data.items():
                     sheet.update_cell(i, list(row.keys()).index(key) + 1, value)
@@ -211,7 +211,7 @@ else:
                     # Step 3: Save changes
             if st.button("Save Changes"):
                 updated_need_data = {
-                    "date": case_date_input.isoformat(),
+                    "need_date": case_date_input.isoformat(),
                     "need_statement": need_statement,
                     # "Case Description": case_description,
                     # "Location": location,
@@ -220,9 +220,10 @@ else:
                     "outcome": outcome_var,
                     # "Tags": tags,
                     "notes": notes,
+                    updt_need_ID = st.session_state['selected_need_ID'],
                 }
                 
-                if update_need(st.session_state['selected_need_ID'], updated_need_data):
+                if update_need(updt_need_ID, updated_need_data):
                     st.success(f"Changes to '{st.session_state['selected_need_ID']}' saved successfully!")
                 else:
                     st.error(f"Failed to save changes to '{st.session_state['selected_need_ID']}'.")
