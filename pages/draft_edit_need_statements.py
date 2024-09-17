@@ -50,17 +50,20 @@ creds_dict = {
 if 'need_ID_with_preview' not in st.session_state:
     st.session_state.need_ID_with_preview = ''
 
+# if 'need_ID' not in st.session_state:
+#     st.session_state.need_ID = ''
+
 if 'need_statement' not in st.session_state:
     st.session_state.need_statement = ''
 
-if 'problem' not in st.session_state:
-    st.session_state['problem'] = ""
+if 'problem_var' not in st.session_state:
+    st.session_state['problem_var'] = ""
 
-if 'population' not in st.session_state:
-    st.session_state['population'] = ""
+if 'population_var' not in st.session_state:
+    st.session_state['population_var'] = ""
 
-if 'outcome' not in st.session_state:
-    st.session_state['outcome'] = ""
+if 'outcome_var' not in st.session_state:
+    st.session_state['outcome_var'] = ""
 
 if 'notes' not in st.session_state:
     st.session_state['notes'] = ""
@@ -93,14 +96,14 @@ def getExistingNeedIDS():
     need_previews = need_log.col_values(3)[1:]
 
     # find all observation ids with the same date
-    existing_need_ids_with_title = dict(zip(need_ids, need_previews))
+    existing_need_ids_with_preview = dict(zip(need_ids, need_previews))
 
-    # make strings with case id - title
-    existing_need_ids_with_title = [f"{need_ids} - {need_previews}" for need_ids, need_previews in existing_need_ids_with_title.items()]
+    # make strings with case id - preview
+    existing_need_ids_with_preview = [f"{need_ids} - {need_previews}" for need_ids, need_previews in existing_need_ids_with_preview.items()]
 
     print("Existing Observation IDS: ")
-    print(existing_need_ids_with_title)
-    return existing_need_ids_with_title
+    print(existing_need_ids_with_preview)
+    return existing_need_ids_with_preview
 
 
 # Fetch case details based on selected case ID
@@ -150,59 +153,68 @@ st.markdown("### Edit a Need Statement")
 
 
 # select from a list of needs
-existing_need_ids_with_title = getExistingNeedIDS()
-st.session_state['need_ID_with_preview'] = st.selectbox("Select Need Statement", existing_need_ids_with_title)
-
-# get ID from the dropdown value
-st.session_state['selected_need_ID'] = st.session_state.need_ID_with_preview.split(" - ")[0]
-
-if selected_need_ID: #may need to make this session state whatever
-    need_details = fetch_need_details(need_to_edit)
+existing_need_ids_with_preview = getExistingNeedIDS()
 
 
-    # need_details = fetch_need_details(need_to_edit)
-    if need_details:
-        # # Debug: Print the case details (optional)
-        # st.write(f"Editing case: {need_details}")
-        # Editable fields for the selected case
-        case_title = st.text_input("Title", need_details.get("Title", ""))
-        #case_date = st.date_input("Date", date.fromisoformat(need_details.get("Date", str(date.today()))))
-        case_description = st.text_area("Case Description", need_details.get("Case Description", ""))
-        location = st.text_input("Location", need_details.get("Location", ""))
-        stakeholders = st.text_input("Stakeholders", need_details.get("Stakeholders", ""))
-        people_present = st.text_input("People Present", need_details.get("People Present", ""))
-        insider_language = st.text_input("Insider Language", need_details.get("Insider Language", ""))
-        tags = st.text_input("Tags", need_details.get("Tags", ""))
-        observations = st.text_area("Observations", need_details.get("Observations", ""))
 
-         # Get and validate the date field
-        case_date_str = need_details.get("Date", "")
-        try:
-                    # Try to parse the date from ISO format, or default to today's date
-            case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
-        except ValueError:
-            case_date = date.today()
+# if selected_need_ID: #may need to make this session state whatever
 
-        case_date_input = st.date_input("Date", case_date)
-            
-                # Step 3: Save changes
-        if st.button("Save Changes"):
-            updated_need_data = {
-                "Title": case_title,
-                "Date": case_date_input.isoformat(),
-                "Case Description": case_description,
-                "Location": location,
-                "Stakeholders": stakeholders,
-                "People Present": people_present,
-                "Insider Language": insider_language,
-                "Tags": tags,
-                "Observations": observations,
-            }
-            
-            if update_need(need_to_edit, updated_need_data):
-                st.success(f"Changes to '{need_to_edit}' saved successfully!")
-            else:
-                st.error(f"Failed to save changes to '{need_to_edit}'.")
+# Step 1: Fetch and display need IDs in a dropdown
+if not existing_need_ids_with_preview:
+    st.error("No cases found.")
+else:
+    # get ID from the dropdown value
+    st.session_state['need_ID_with_preview'] = st.selectbox("Select Need Statement", existing_need_ids_with_preview)
+    st.session_state['selected_need_ID'] = st.session_state.need_ID_with_preview.split(" - ")[0]
+
+# Step 2: Fetch and display need details for the selected need
+    if 'need_ID_with_preview':
+        need_details = fetch_need_details(need_to_edit)
+
+
+        # need_details = fetch_need_details(need_to_edit)
+        if need_details:
+            # # Debug: Print the case details (optional)
+            # st.write(f"Editing case: {need_details}")
+            # Editable fields for the selected case
+            need_statement = st.text_input("need_statement", need_details.get("need_statement", ""))
+            #case_date = st.date_input("Date", date.fromisoformat(need_details.get("Date", str(date.today()))))
+            # case_description = st.text_area("Case Description", need_details.get("Case Description", ""))
+            # location = st.text_input("Location", need_details.get("Location", ""))
+            problem_var = st.text_input("problem", need_details.get("problem", ""))
+            population_var = st.text_input("population", need_details.get("population", ""))
+            outcome_var = st.text_input("outcome", need_details.get("outcome", ""))
+            # tags = st.text_input("Tags", need_details.get("Tags", ""))
+            notes = st.text_area("Observations", need_details.get("Observations", ""))
+    
+             # Get and validate the date field
+            case_date_str = need_details.get("Date", "")
+            try:
+                        # Try to parse the date from ISO format, or default to today's date
+                case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
+            except ValueError:
+                case_date = date.today()
+    
+            case_date_input = st.date_input("Date", case_date)
+                
+                    # Step 3: Save changes
+            if st.button("Save Changes"):
+                updated_need_data = {
+                    "need_statement": need_statement,
+                    "Date": case_date_input.isoformat(),
+                    # "Case Description": case_description,
+                    # "Location": location,
+                    "problem": problem_var,
+                    "population": population_var,
+                    "outcome": outcome_var,
+                    # "Tags": tags,
+                    "notes": notes,
+                }
+                
+                if update_need(need_to_edit, updated_need_data):
+                    st.success(f"Changes to '{need_to_edit}' saved successfully!")
+                else:
+                    st.error(f"Failed to save changes to '{need_to_edit}'.")
 
 
 
