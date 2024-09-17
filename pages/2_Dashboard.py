@@ -16,6 +16,9 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+if "worksheet_name" not in st.session_state:
+    st.session_state["worksheet_name"] = "Sheet1"
+
 # Define the Google Sheets credentials and scope
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
@@ -111,8 +114,7 @@ def log_out():
 
 #initialize session states below functions
 
-if "worksheet_name" not in st.session_state:
-    st.session_state["worksheet_name"] = "Sheet1"
+
 if "note" not in st.session_state:
     st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
 
