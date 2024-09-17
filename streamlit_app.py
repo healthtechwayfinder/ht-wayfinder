@@ -160,7 +160,7 @@ def main():
                     cookies.save()
 
                     st.success(f"Google login successful for {user_email}!")
-                    switch_page("Dashboard")
+                    # switch_page("Dashboard")
                     return
                 else:
                     st.error("Unauthorized email. Access denied.")
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     if st.session_state.get("login_status") == "success":
         st.sidebar.write(f"You are logged in as {st.session_state['google_user']}!")
         st.sidebar.write("You can access the menu.")
-        switch_page("Dashboard")
+        # switch_page("Dashboard")
     else:
         hide_sidebar()
         main()
