@@ -169,7 +169,7 @@ def recordNeed(need_ID, need_date, need_statement, problem, population, outcome,
 if 'need_counters' not in st.session_state:
     st.session_state['need_counters'] = {}
 
-# make a list of potential observation IDs
+# OLD OLD OLD OLD OLD OLD OLD OLD ////////// make a list of potential observation IDs
 def getObservationIDs():
     # Define the scope for the Google Sheets API
     scope = [
@@ -192,6 +192,31 @@ def getObservationIDs():
         observation_ID_list = observation_ID_list[1:]
     
     return observation_ID_list
+
+# New function for getting observation IDs
+def getExistingObsIDS():
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+    obs_ids = obs_log.col_values(1)[1:]
+    # case_dates_list = obs_log.col_values(3)[1:]
+    obs_titles = obs_log.col_values(2)[1:]
+
+    # find all observation ids with the same date
+    existing_obs_ids_with_title = dict(zip(obs_ids, obs_titles))
+
+    # make strings with case id - title
+    existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
+
+    print("Existing Observation IDS: ")
+    print(existing_obs_ids_with_title)
+    return existing_obs_ids_with_title
+
+
 
 
 # Function to generate need ID with the format NSYYMMDDxxxx
@@ -383,28 +408,6 @@ if st.button("Back to Dashboard"):
 
 
 # ///////////////////////////////////////////////////////// Bridget Working
-
-def getExistingObsIDS():
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
-    obs_ids = obs_log.col_values(1)[1:]
-    # case_dates_list = obs_log.col_values(3)[1:]
-    obs_titles = obs_log.col_values(2)[1:]
-
-    # find all observation ids with the same date
-    existing_obs_ids_with_title = dict(zip(obs_ids, obs_titles))
-
-    # make strings with case id - title
-    existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
-
-    print("Existing Observation IDS: ")
-    print(existing_obs_ids_with_title)
-    return existing_obs_ids_with_title
 
 
 # Use columns to place observation_date, observation_id, and observer side by side
