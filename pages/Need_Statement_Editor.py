@@ -156,8 +156,9 @@ def update_need(selected_need_ID, updated_need_data):
 
 st.set_page_config(page_title="Need Statement Editor", page_icon=":pencil:")
 
+st.markdown("# Edit a Need Statement")
+st.write("Use this tool to edit your need statements. Be sure to include notes about your revisions.")
 
-st.markdown("### Edit a Need Statement")
 
 
 
