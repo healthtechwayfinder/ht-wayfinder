@@ -408,9 +408,9 @@ def getExistingObsIDS():
 
 
 # Use columns to place observation_date, observation_id, and observer side by side
-col1, col2, col3 = st.columns(3)
+# col1, col2, col3 = st.columns(3)
 
-with col1:
+# with col1:
     # st calendar for date input with a callback to update the observation_id
     #edit this to be the same as the case date
 
