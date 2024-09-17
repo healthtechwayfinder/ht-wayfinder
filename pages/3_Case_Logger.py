@@ -222,5 +222,30 @@ if action == "Add New Case":
             else:
                 st.session_state['editable_result'] = st.text_input(f"{field} (missing)", value="")
 
-    if st.session_state.get('rerun')
+    if st.session_state.get('rerun', False):
+        time.sleep(3)
+        clear_case()
+        st.session_state['rerun'] = False
+        st.rerun()
+
+    if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
+        if st.session_state['case_description'] == "":
+            st.markdown("<span style='color:red;'>Error: Please enter case.</span>", unsafe_allow_html=True)
+        elif st.session_state['case_title'] == "":
+            st.markdown("<span style='color:red;'>Error: Please evaluate case.</span>", unsafe_allow_html=True)
+        else:
+            status = embedCase(
+                st.session_state['attendees'], 
+                st.session_state['case_description'],  
+                st.session_state['case_title'], 
+                st.session_state['case_date'],
+                st.session_state['case_ID']
+            )
+            if status:
+                st.session_state['result'] = "Case added to your team's database."
+                st.session_state['rerun'] = True
+                st.rerun()
+            else:
+                st.session_state['result'] = "Error adding case to your team's database. Please try again!"
+
 
