@@ -129,9 +129,12 @@ def update_need(selected_need_ID, updated_need_data):
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Log")
         data = sheet.get_all_records()
 
+# st.session_state['need_ID']
+
+        
         # Find the row corresponding to the selected_need_ID and update it
         for i, row in enumerate(data, start=2):  # Skip header row
-            if row["need_ID"] == selected_need_ID:
+            if row["need_ID"] == st.session_state['selected_need_ID']:
                 # Update the necessary fields (Assuming the updated_need_data has the same keys as Google Sheets columns)
                 for key, value in updated_need_data.items():
                     sheet.update_cell(i, list(row.keys()).index(key) + 1, value)
@@ -155,7 +158,7 @@ st.markdown("### Edit a Need Statement")
 # select from a list of needs
 existing_need_ids_with_preview = getExistingNeedIDS()
 
-
+# st.session_state['need_ID']
 
 # if selected_need_ID: #may need to make this session state whatever
 
@@ -168,7 +171,7 @@ else:
     st.session_state['selected_need_ID'] = st.session_state.need_ID_with_preview.split(" - ")[0]
 
 # Step 2: Fetch and display need details for the selected need
-    if 'need_ID_with_preview':
+    if  st.session_state['need_ID_with_preview']:
         need_details = fetch_need_details(need_to_edit)
 
 
