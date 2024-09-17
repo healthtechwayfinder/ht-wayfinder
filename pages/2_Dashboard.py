@@ -11,7 +11,7 @@ from streamlit_cookies_manager import CookieManager
 import time
 from datetime import date
 import logging
-# logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
