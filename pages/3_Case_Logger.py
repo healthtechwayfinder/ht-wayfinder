@@ -598,50 +598,9 @@ if action == "Add New Case":
     if st.session_state['case_title'] != "":
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
     
-    # # st.write(f":green[{st.session_state['result']}]")
-    # st.markdown(st.session_state['result'], unsafe_allow_html=True)
-    
-    # Check if 'result' exists in session state and is not empty
-    if 'result' in st.session_state and st.session_state['result'] != "":
-        result_str = st.session_state['result']
-    
-        # If the result is a string, try to parse it into a dictionary
-        if isinstance(result_str, str):
-            # Parse the string into a dictionary
-            parsed_result = parse_result_string(result_str)
-    
-            # Now display the parsed fields as editable inputs
-            location = parsed_result.get('Location', "")
-            st.text_input("Location", value=location)
-            if not location:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-    
-            stakeholders = parsed_result.get('Stakeholders', "")
-            st.text_input("Stakeholders", value=stakeholders)
-            if not stakeholders:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-    
-            people_present = parsed_result.get('People present', "")
-            st.text_input("People Present", value=people_present)
-            if not people_present:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-    
-            insider_language = parsed_result.get('Insider language', "")
-            st.text_input("Insider Language", value=insider_language)
-            if not insider_language:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-    
-            tags = parsed_result.get('Tags', "")
-            st.text_input("Tags", value=tags)
-            if not tags:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-    
-            observations = parsed_result.get('Observations', "")
-            st.text_area("Observations", value=observations, height=150)
-            if not observations:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-        else:
-            st.error("Error: The result is not in the expected format.")
+    # st.write(f":green[{st.session_state['result']}]")
+    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+
 
     
 
