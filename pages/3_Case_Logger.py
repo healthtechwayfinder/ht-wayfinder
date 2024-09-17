@@ -623,11 +623,15 @@ if action == "Add New Case":
             # Make each key-value pair editable by using st.text_input or st.text_area
             editable_fields[key] = st.text_input(f"{key}", value=value)
 
-            # Check if this line contains the tags
-            if key.lower() == 'tags':
+            # Debugging: print out each key and value to check
+            st.write(f"Processing line: key='{key}', value='{value}'")
+    
+            # Check if this line contains the tags (with flexible matching)
+            if key.lower().replace(" ", "") == 'tags':
                 st.write("Tags line found. Raw value:", value)  # Debugging print
                 tags_values = [tag.strip() for tag in value.split(",")]  # Split and clean the tags
-
+    
+        
                 
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
