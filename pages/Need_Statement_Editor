@@ -154,6 +154,8 @@ def update_need(selected_need_ID, updated_need_data):
     
 # ////////////////////// CODE ON PAGE ////////////////////// CODE ON PAGE ////////////////////// CODE ON PAGE //////////////////////
 
+st.set_page_config(page_title="Need Statement Editor", page_icon=":pencil:")
+
 
 st.markdown("### Edit a Need Statement")
 
