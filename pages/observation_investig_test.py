@@ -5,6 +5,8 @@ import pandas as pd
 
 # Set page configuration
 st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
+st.write("See your logs below. Swtich between them using the dropdown.")
+
 
 st.markdown("# View Logs")
 
