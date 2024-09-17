@@ -626,13 +626,17 @@ if action == "Add New Case":
             key = key.strip()
             value = value.strip()
 
+            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+            key_clean = key.replace('**', '').strip()
+
+
             # Make key-value pairs editable
             editable_fields[key] = st.text_input(f"{key}", value=value)
 
-            if key.lower() == 'stakeholders':
+            if key_clean.lower() == 'stakeholders':
                 st.write("Hola")
             # Process tags when the key is 'Tags'
-            if key.lower() == 'tags':
+            if key_clean.lower() == 'tags':
                 st.write(f"Processing line: key='{key}', value='{value}'")
                 tags_values = [tag.strip() for tag in value.split(",")]
                 st.write(f"Tags after splitting and stripping: {tags_values}")
