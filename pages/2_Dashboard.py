@@ -35,6 +35,14 @@ creds_dict = {
 sheet_name = 'Team Scratchpad'
 users = ["Deb", "Kyle", "Lois", "Ryan"]
 
+# Initialize session state if it doesn't exist
+    if "note" not in st.session_state:
+        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+
+    if "worksheet_name" not in st.session_state:
+        st.session_state["worksheet_name"] = "Sheet1"
+        
+
 
 # Function to get Google Sheets connection
 def get_google_sheet(sheet_name, worksheet_name):
@@ -62,10 +70,7 @@ def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
 def refreshSheet():
-   
-    
     worksheet_name = worksheet_mapping[selected_user]
-    
     read_note_from_gsheet(sheet_name, worksheet_name)
 
 
@@ -194,10 +199,7 @@ with col3:
     refreshSheet()
 
         
-    # Initialize session state if it doesn't exist
-    if "note" not in st.session_state:
-        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-        
+    
         
     # Check if the refresh button is pressed
     if st.button("Refresh"):
