@@ -52,7 +52,7 @@ worksheets = {
 
 col1, col2, col3 = st.columns([2, 2, 1])
 
-    with col1:
+with col1:
 
     # Create a dropdown for selecting which sheet to view
     selected_sheet = st.selectbox("Select a sheet to view:", list(worksheets.keys()))
