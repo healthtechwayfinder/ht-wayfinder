@@ -196,7 +196,7 @@ else:
             outcome_var = st.text_input("Outcome", need_details.get("outcome", ""))
             need_statement = st.text_input("Need Statement", need_details.get("need_statement", ""))
             # tags = st.text_input("Tags", need_details.get("Tags", ""))
-            notes = st.text_area("Observations", need_details.get("Observations", ""))
+            notes = st.text_area("Notes", need_details.get("notes", ""))
     
              # Get and validate the date field
             case_date_str = need_details.get("Date", "")
@@ -208,19 +208,15 @@ else:
     
             case_date_input = st.date_input("Date (YYYY/MM/DD)", case_date)
                 
-                    # Step 3: Save changes
+# Step 3: Save changes
             if st.button("Save Changes"):
                 updated_need_data = {
                     "need_date": case_date_input.isoformat(),
                     "need_statement": need_statement,
-                    # "Case Description": case_description,
-                    # "Location": location,
                     "problem": problem_var,
                     "population": population_var,
                     "outcome": outcome_var,
-                    # "Tags": tags,
                     "notes": notes,
-                    # updt_need_ID = st.session_state['selected_need_ID'],
                 }
                 
                 if update_need(st.session_state['selected_need_ID'], updated_need_data):
