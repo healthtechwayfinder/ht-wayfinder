@@ -36,11 +36,11 @@ sheet_name = 'Team Scratchpad'
 users = ["Deb", "Kyle", "Lois", "Ryan"]
 
 # Initialize session state if it doesn't exist
-    if "note" not in st.session_state:
-        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+if "note" not in st.session_state:
+    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
 
-    if "worksheet_name" not in st.session_state:
-        st.session_state["worksheet_name"] = "Sheet1"
+if "worksheet_name" not in st.session_state:
+    st.session_state["worksheet_name"] = "Sheet1"
         
 
 
