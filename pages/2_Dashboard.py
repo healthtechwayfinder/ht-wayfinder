@@ -172,7 +172,7 @@ with col2:
 with col3:
 
 # Streamlit app layout
-    st.title("Scratchpad 📝")
+    st.title("###Scratchpad")
         
         
     # Dropdown for selecting a user
@@ -193,7 +193,7 @@ with col3:
         
         
     # Check if the refresh button is pressed
-    if st.button("Refresh Note"):
+    if st.button("Refresh"):
         # Reload the note from Google Sheets
         st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
         # st.success("Refreshed!")
