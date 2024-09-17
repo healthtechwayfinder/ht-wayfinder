@@ -49,12 +49,12 @@ def get_google_sheet(sheet_name, worksheet_name):
     ]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    sheet = client.open(sheet_name).worksheet(st.session_state['worksheet_name'])
     return sheet
 
 # Function to read the note from Google Sheets
 def read_note_from_gsheet(sheet_name, worksheet_name):
-    sheet = get_google_sheet(sheet_name, worksheet_name)
+    sheet = get_google_sheet(sheet_name, st.session_state['worksheet_name'])
     try:
         note = sheet.cell(1, 1).value  # Read the content of cell A1
     except:
@@ -66,12 +66,12 @@ def read_note_from_gsheet(sheet_name, worksheet_name):
 
 # Function to save the note to Google Sheets
 def save_note_to_gsheet(note, sheet_name, worksheet_name):
-    sheet = get_google_sheet(sheet_name, worksheet_name)
+    sheet = get_google_sheet(sheet_name, st.session_state['worksheet_name'])
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
 def refreshSheet():
     worksheet_name = worksheet_mapping[selected_user]
-    read_note_from_gsheet(sheet_name, worksheet_name)
+    read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
 
 
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
@@ -79,21 +79,6 @@ st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 # Initialize cookies manager
 cookies = CookieManager()
 
-
-#import streamlit as st
-
-# Apply custom CSS to use Helvetica font
-# st.markdown(
-#     """
-#     <style>
-#     @import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
-#     html, body, [class*="css"]  {
-#         font-family: 'Helvetica', sans-serif;
-#     }
-#     </style>
-#     """,
-#     unsafe_allow_html=True,
-# )
 
 st.markdown("# Welcome!")
 #
@@ -116,7 +101,7 @@ def log_out():
 
 
 if "note" not in st.session_state:
-    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+    st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
 
 
 # col1, col2 = st.columns(2)
@@ -166,25 +151,7 @@ with col2:
 
         if st.button(":hourglass: Need Statement Lens (coming soon)"):
             ""
-    #st.image("https://static.streamlit.io/examples/dog.jpg")
 
-    
-       
-
-
-# Your logo URL (replace if necessary)
-# logo_url = "https://raw.githubusercontent.com/Aks-Dmv/bio-design-hms/main/Logo-HealthTech.png"
-
-# Display the title with the logo below it
-# st.markdown(
-#     f"""
-#     <div style="text-align: center;">
-#         <h1>Dashboard</h1>
-#         <img src="{logo_url}" alt="Logo" style="width:350px; height:auto;">
-#     </div>
-#     """,
-#     unsafe_allow_html=True,
-# )
 
 with col3:
 
@@ -210,7 +177,7 @@ with col3:
     # Check if the refresh button is pressed
     if st.button("Refresh"):
         # Reload the note from Google Sheets
-        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+        st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
         # st.success("Refreshed!")
         
     # Display a text area for the user to write their note, leveraging session state
@@ -219,33 +186,12 @@ with col3:
     # Save the note when the button is pressed
     if st.button("Save"):
         st.session_state["note"] = user_note  # Update session state
-        save_note_to_gsheet(user_note, sheet_name, worksheet_name)
+        save_note_to_gsheet(user_note, sheet_name, st.session_state['worksheet_name'])
         st.success(f"{selected_user}'s note has been saved successfully!")
     
 
 st.markdown("---")
 
-# st.markdown("<h3 style='text-align: center;'>What would you like to do?</h3>", unsafe_allow_html=True)
-
-# Button functionality
-# col1, col2 = st.columns([1, 3])
-# with col2:
-#     if st.button("🔍 Record a New Observation"):
-#         switch_page("Record_New_Observation")
-
-#     if st.button("✅ Tips for your Observations"):
-#         switch_page("Tips_for_Observations")
-
-#     if st.button("❓ Chat with Observations"):
-#         switch_page("Ask_the_Observations")
-
-#     if st.button("📊 Glossary"):
-#         switch_page("Glossary")
-
-#     if st.button("📒 View All Observations"):
-#         switch_page("View_All_Observations")
-
-# st.markdown("---")
 
 # Log Out Button with rerun or meta refresh
 col1, col2, col3 = st.columns([3, 1, 1])
