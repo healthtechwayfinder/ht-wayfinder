@@ -42,18 +42,29 @@ def get_google_sheet_as_dataframe(sheet):
     return df
 
 # Google Sheets settings
-sheet_name = 'Team Scratchpad'
-worksheet_name = 'Sheet1'  # Example worksheet name
+sheet_name = '2024 Healthtech Identify Log'
+worksheet_name = 'Observation Log'  # Example worksheet name
 
-# Fetch data from Google Sheets
-sheet = get_google_sheet(sheet_name, worksheet_name)
-df = get_google_sheet_as_dataframe(sheet)
+# Fetch data from Google Sheets (wrapped in a function so it can be called again on refresh)
+def load_data():
+    sheet = get_google_sheet(sheet_name, worksheet_name)
+    return get_google_sheet_as_dataframe(sheet)
+
+# Initialize session state for the data
+if "df" not in st.session_state:
+    st.session_state["df"] = load_data()
+
+# Add a button to refresh the data from Google Sheets
+if st.button("Refresh Data"):
+    st.session_state["df"] = load_data()
+    st.success("Data refreshed from Google Sheets!")
 
 # Display the Google Sheet content as a DataFrame in Streamlit
 st.markdown("## Observation Records")
-st.dataframe(df)
+st.dataframe(st.session_state["df"])
 
 st.markdown("---")
+
 
 
 
