@@ -645,6 +645,10 @@ if action == "Add New Case":
             for idx, tag in enumerate(tags_values):
                 st.write(f"Tag {idx + 1}: '{tag}' (Length: {len(tag)})")
 
+
+    test_value = "urology, neurogenic bladder, chronic condition, patient care"
+    test_tags = [tag.strip() for tag in test_value.split(",")]
+    st.write(f"Test tags after splitting: {test_tags}")
     
                 # Additional debugging: Check if the list was populated correctly
     st.write("Length of tags_values:", len(tags_values))
