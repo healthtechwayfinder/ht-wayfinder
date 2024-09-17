@@ -62,6 +62,16 @@ def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
 def refreshSheet():
+    # Map selected user to worksheet
+    worksheet_mapping = {
+        "Deb": "Sheet1",
+        "Kyle": "Sheet2",
+        "Lois": "Sheet3",
+        "Ryan": "Sheet4"
+    }
+    
+    worksheet_name = worksheet_mapping[selected_user]
+    
     read_note_from_gsheet(sheet_name, worksheet_name)
 
 
@@ -183,15 +193,7 @@ with col3:
     # Dropdown for selecting a user
     selected_user = st.selectbox("Select user", users, on_change=refreshSheet)
         
-    # Map selected user to worksheet
-    worksheet_mapping = {
-        "Deb": "Sheet1",
-        "Kyle": "Sheet2",
-        "Lois": "Sheet3",
-        "Ryan": "Sheet4"
-    }
-    
-    worksheet_name = worksheet_mapping[selected_user]
+
         
     # Initialize session state if it doesn't exist
     if "note" not in st.session_state:
