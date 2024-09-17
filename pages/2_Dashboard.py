@@ -1,6 +1,4 @@
 import streamlit as st
-# st.set_page_config(layout="wide")
-
 from streamlit_extras.switch_page_button import switch_page
 
 from pydantic import BaseModel, Field
@@ -201,15 +199,8 @@ with col3:
         worksheet_name = worksheet_mapping[st.session_state["selected_user"]]
         st.session_state["note"] = user_note  # Update session state
         save_note_to_gsheet(user_note, sheet_name, worksheet_name)
-        st.success(f"{st.session_state['selected_user']}'s note has been saved successfully!")
-    
-    # # Check if the refresh button is pressed
-    # if st.button("Refresh Note"):
-    #     worksheet_name = worksheet_mapping[st.session_state["selected_user"]]
-    #     st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-    #     st.success(f"{st.session_state['selected_user']}'s note has been refreshed!")
+        st.success(f"Note updated!")
 
-    
 
 st.markdown("---")
 
