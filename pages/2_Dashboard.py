@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
+# st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
 
 
 if "worksheet_name" not in st.session_state:
