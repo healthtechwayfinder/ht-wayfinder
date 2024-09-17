@@ -586,44 +586,51 @@ if action == "Add New Case":
     # # st.write(f":green[{st.session_state['result']}]")
     # st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
-
     # Check if 'result' exists in session state and contains valid data
-if 'result' in st.session_state and st.session_state['result'] != "":
-    parsed_result = st.session_state['result']
-
-    # Check if 'result' contains the fields we expect (as a dictionary)
-    if isinstance(parsed_result, dict):
-        # Editable Location field or show 'Missing'
-        st.text_input("Location", value=parsed_result.get('Location', ""), placeholder="Missing" if not parsed_result.get('Location') else "")
-        if not parsed_result.get('Location'):
-            st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-
-        # Editable Stakeholders field or show 'Missing'
-        st.text_input("Stakeholders", value=parsed_result.get('Stakeholders', ""), placeholder="Missing" if not parsed_result.get('Stakeholders') else "")
-        if not parsed_result.get('Stakeholders'):
-            st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-
-        # Editable People Present field or show 'Missing'
-        st.text_input("People Present", value=parsed_result.get('People Present', ""), placeholder="Missing" if not parsed_result.get('People Present') else "")
-        if not parsed_result.get('People Present'):
-            st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-
-        # Editable Insider Language field or show 'Missing'
-        st.text_input("Insider Language", value=parsed_result.get('Insider Language', ""), placeholder="Missing" if not parsed_result.get('Insider Language') else "")
-        if not parsed_result.get('Insider Language'):
-            st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-
-        # Editable Tags field or show 'Missing'
-        st.text_input("Tags", value=parsed_result.get('Tags', ""), placeholder="Missing" if not parsed_result.get('Tags') else "")
-        if not parsed_result.get('Tags'):
-            st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    if 'result' in st.session_state and st.session_state['result'] != "":
+        parsed_result = st.session_state['result']
+    
+        # Check if 'result' contains the fields we expect (as a dictionary)
+        if isinstance(parsed_result, dict):
+            # Editable Location field or show 'Missing'
+            location = parsed_result.get('Location', "")
+            st.text_input("Location", value=location)
+            if not location:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Stakeholders field or show 'Missing'
+            stakeholders = parsed_result.get('Stakeholders', "")
+            st.text_input("Stakeholders", value=stakeholders)
+            if not stakeholders:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable People Present field or show 'Missing'
+            people_present = parsed_result.get('People Present', "")
+            st.text_input("People Present", value=people_present)
+            if not people_present:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Insider Language field or show 'Missing'
+            insider_language = parsed_result.get('Insider Language', "")
+            st.text_input("Insider Language", value=insider_language)
+            if not insider_language:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
+    
+            # Editable Tags field or show 'Missing'
+            tags = parsed_result.get('Tags', "")
+            st.text_input("Tags", value=tags)
+            if not tags:
+                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
 
         # Editable Observations field or show 'Missing'
-        st.text_area("Observations", value=parsed_result.get('Observations', ""), placeholder="Missing" if not parsed_result.get('Observations') else "", height=150)
-        if not parsed_result.get('Observations'):
+        observations = parsed_result.get('Observations', "")
+        st.text_area("Observations", value=observations, height=150)
+        if not observations:
             st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
 
-    
+
+
+
 
     if st.session_state['rerun']:
         time.sleep(3)
