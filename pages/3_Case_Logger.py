@@ -621,13 +621,16 @@ if action == "Add New Case":
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
 
-    keywords = st_tags(
-                    label='# Enter tags:',
-                    text='Press enter to add more',
-                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],
-                    suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
-                    maxtags = 4,
-                    key='1')
+    if case_details:  # Ensure case_details is not None
+        bkr = st_tags(
+            label="Enter tags:",
+            text="Press enter to add more",
+            value=case_details.get("tags", "").split(",") if case_details.get("tags") else [],
+            suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+            maxtags=10,
+        )
+    else:
+        st.error("Case details are not available.")
     
 
     if st.session_state['rerun']:
