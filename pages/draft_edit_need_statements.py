@@ -190,18 +190,18 @@ else:
             # # Debug: Print the case details (optional)
             # st.write(f"Editing case: {need_details}")
             # Editable fields for the selected case
-            need_statement = st.text_input("Need Statement", need_details.get("need_statement", ""))
             #case_date = st.date_input("Date", date.fromisoformat(need_details.get("Date", str(date.today()))))
             # case_description = st.text_area("Case Description", need_details.get("Case Description", ""))
             # location = st.text_input("Location", need_details.get("Location", ""))
             problem_var = st.text_input("Problem", need_details.get("problem", ""))
             population_var = st.text_input("Population", need_details.get("population", ""))
             outcome_var = st.text_input("Outcome", need_details.get("outcome", ""))
+            need_statement = st.text_input("Need Statement", need_details.get("need_statement", ""))
             # tags = st.text_input("Tags", need_details.get("Tags", ""))
             notes = st.text_area("Observations", need_details.get("Observations", ""))
     
              # Get and validate the date field
-            case_date_str = need_details.get("Date", "")
+            case_date_str = need_details.get("Date (YYYY/MM/DD)", "")
             try:
                         # Try to parse the date from ISO format, or default to today's date
                 case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
