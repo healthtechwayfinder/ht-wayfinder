@@ -105,6 +105,16 @@ def getExistingNeedIDS():
     print(existing_need_ids_with_preview)
     return existing_need_ids_with_preview
 
+# Function to connect to Google Sheets
+def get_google_sheet(sheet_name, worksheet_name):
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    return sheet
 
 # Fetch case details based on selected case ID
 def fetch_need_details(selected_need_ID):
