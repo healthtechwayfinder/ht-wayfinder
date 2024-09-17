@@ -627,7 +627,7 @@ if action == "Add New Case":
             st.write(f"Processing line: key='{key}', value='{value}'")
     
             # Check if this line contains the tags (with flexible matching)
-            if key.lower().replace(" ", "") == 'tags':
+            if key.lower() == 'tags':
                 st.write("Tags line found. Raw value:", value)  # Debugging print
                 tags_values = [tag.strip() for tag in value.split(",")]  # Split and clean the tags
                 st.write("Tags values after split:", tags_values)  # Debugging print for tags
