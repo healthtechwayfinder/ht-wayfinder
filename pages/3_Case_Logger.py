@@ -391,7 +391,6 @@ def fetch_case_ids():
 def fetch_case_details(case_id):
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
     data = sheet.get_all_records()
-
     # # Print the data being fetched
     # st.write(data)
 
@@ -617,20 +616,25 @@ if action == "Add New Case":
             
             # Make each key-value pair editable by using st.text_input or st.text_area
             editable_fields[key] = st.text_input(f"{key}", value=value)
+
+            # Check if this line contains the tags
+            if key.lower() == 'tags':
+                tags = value.split(",")  # Split the tags into a list
     
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
 
-    if case_details:  # Ensure case_details is not None
-        bkr = st_tags(
-            label="Enter tags:",
+    
+    # Display the tags using st_tags
+    if tags:
+        st_tags(
+            label="Tags",
             text="Press enter to add more",
-            value=case_details.get("tags", "").split(",") if case_details.get("tags") else [],
-            suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-            maxtags=10,
+            value=tags,  # Display the tags found in the result
+            maxtags=10
         )
     else:
-        st.error("Case details are not available.")
+        st.write("No tags found.")
     
 
     if st.session_state['rerun']:
