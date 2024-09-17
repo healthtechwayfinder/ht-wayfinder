@@ -605,7 +605,7 @@ if action == "Add New Case":
     parsed_result = st.session_state['result']
 
     # Initialize tags as an empty list in case it's not found
-    tags = []
+    tags-values = []
 
     #Split the result by lines and extract each case detail by assuming specific labels
     lines = parsed_result.splitlines()
@@ -624,7 +624,7 @@ if action == "Add New Case":
 
             # Check if this line contains the tags
             if key.lower() == 'Tags':
-                tags = value.split(",")  # Split the tags into a list
+                tags-values = value.split(",")  # Split the tags into a list
     
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
@@ -633,11 +633,11 @@ if action == "Add New Case":
 
     
     # Display the tags using st_tags
-    if tags:
+    if tags-values:
         st_tags(
             label="Tags",
             text="Press enter to add more",
-            value=tags,  # Display the tags found in the result
+            value=tags-values,  # Display the tags found in the result
             maxtags=10
         )
     else:
