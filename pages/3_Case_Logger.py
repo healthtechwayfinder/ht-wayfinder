@@ -598,10 +598,26 @@ if action == "Add New Case":
     if st.session_state['case_title'] != "":
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
     
-    # st.write(f":green[{st.session_state['result']}]")
-    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    # # st.write(f":green[{st.session_state['result']}]")
+    # st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    
+    parsed_result = st.session_state['result']
 
+    #Split the result by lines and extract each case detail by assuming specific labels
+    lines = parsed_result.splitlines()
+    editable_fields = {}
 
+    for line in lines:
+        if ':' in line:
+            key, value = line.split(':', 1)  # Split only by the first colon
+            key = key.strip()
+            value = value.strip()
+            
+            # Make each key-value pair editable by using st.text_input or st.text_area
+            editable_fields[key] = st.text_input(f"{key}", value=value)
+    
+    # Save the edited values back to session state
+    st.session_state['editable_result'] = editable_fields
     
 
     if st.session_state['rerun']:
