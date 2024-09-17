@@ -45,7 +45,7 @@ def get_google_sheet(sheet_name, worksheet_name):
 
 
 # Function to read the note from Google Sheets
-def read_note_from_gsheet(worksheet_name):
+def read_note_from_gsheet(sheet_name, worksheet_name):
     sheet = get_google_sheet(sheet_name, worksheet_name)
     try:
         note = sheet.cell(1, 1).value  # Read the content of cell A1
@@ -54,7 +54,7 @@ def read_note_from_gsheet(worksheet_name):
     return note
 
 # Function to save the note to Google Sheets
-def save_note_to_gsheet(note):
+def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet = get_google_sheet(sheet_name, worksheet_name)
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
@@ -80,7 +80,7 @@ if selected_user:
         worksheet_name = 'Sheet4'
 
     # Load the note from Google Sheets
-    note = read_note_from_gsheet()
+    note = read_note_from_gsheet(sheet_name, worksheet_name)
 
 
 
@@ -89,7 +89,7 @@ user_note = st.text_area("Your Note", value=note, height=300)
 
 # Save the note when the button is pressed
 if st.button("Save Note"):
-    save_note_to_gsheet(user_note)
+    save_note_to_gsheet(user_note, sheet_name, worksheet_name)
     st.success("Your note has been saved successfully!")
 
 # Provide feedback that the note is auto-loaded from Google Sheets on app load
