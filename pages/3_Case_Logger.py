@@ -604,6 +604,9 @@ if action == "Add New Case":
     
     parsed_result = st.session_state['result']
 
+    # Initialize tags as an empty list in case it's not found
+    tags = []
+
     #Split the result by lines and extract each case detail by assuming specific labels
     lines = parsed_result.splitlines()
     editable_fields = {}
