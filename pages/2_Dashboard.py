@@ -84,7 +84,7 @@ with col2:
             switch_page("Need_Statement_Logger")
 
         if st.button(":pencil: Edit a Need Statement"):
-            switch_page("Need_Statement_Logger")
+            switch_page("Need_Statement_Editor")
 
         if st.button(":hourglass: Scope Need Statements (coming soon)"):
             ""
