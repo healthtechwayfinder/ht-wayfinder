@@ -222,5 +222,5 @@ if action == "Add New Case":
             else:
                 st.session_state['editable_result'] = st.text_input(f"{field} (missing)", value="")
 
-    if st.session_state.get('rerun
+    if st.session_state.get('rerun)
 
