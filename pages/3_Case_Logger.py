@@ -1,4 +1,4 @@
- import time
+import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
