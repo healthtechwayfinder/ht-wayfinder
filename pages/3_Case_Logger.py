@@ -639,16 +639,11 @@ if action == "Add New Case":
     st.write(parsed_result)  # Print the parsed result for debugging purposes
 
     
-    # Display the tags using st_tags
-    if tags_values:
-        st_tags(
+    st_tags(
             label="Tags",
             text="Press enter to add more",
             value=tags_values,  # Display the tags found in the result
-            maxtags=10
-        )
-    else:
-        st.write("No tags found.")
+            maxtags=10)
     
 
     if st.session_state['rerun']:
