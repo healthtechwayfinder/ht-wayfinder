@@ -1,4 +1,5 @@
- import time
+
+import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -40,7 +41,6 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
-# Initialize session state variables
 if 'case_description' not in st.session_state:
     st.session_state['case_description'] = ""
 
@@ -56,13 +56,12 @@ if 'rerun' not in st.session_state:
 if 'parsed_case' not in st.session_state:
     st.session_state['parsed_case'] = ""
 
-# Define caseRecord schema for parsing
 class caseRecord(BaseModel):
-    location: Optional[str] = Field(default=None, description="Physical environment where the case took place.")
-    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event.")
-    people_present: Optional[str] = Field(default=None, description="People present during the case.")
-    insider_language: Optional[str] = Field(default=None, description="Medical terminologies used in the case.")
-    tags: Optional[str] = Field(default=None, description="Relevant tags for the medical observation.")
+    location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
+    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names).")
+    people_present: Optional[str] = Field(default=None, description="Names cited in the description")
+    insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure.")
+    tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags that are very relevant to the medical observation.")
 
 # Function to parse the case description
 def parseCase(case_description: str):
@@ -75,7 +74,7 @@ def parseCase(case_description: str):
 
     case_prompt = PromptTemplate.from_template(
 """
-You help me parse descriptions of medical procedures or cases to extract details such as surgeon, procedure, and date, whichever is available.
+You help me parse descriptions of medical procedures or cases to extract details such as surgeon, procedure and date, whichever is available.
 Format Instructions for output: {format_instructions}
 
 case_description: {case_description}
@@ -92,9 +91,7 @@ Output:"""
 
     return json.loads(output.json())
 
-# Function to extract case features and display missing fields
 def extractCaseFeatures(case_description):
-
     # Parse the case
     parsed_case = parseCase(case_description)
     st.session_state['parsed_case'] = parsed_case
@@ -119,9 +116,7 @@ def extractCaseFeatures(case_description):
 
     return f"{output}"
 
-# Function to generate the case summary
 def generateCaseSummary(case_description):
-
     llm = ChatOpenAI(
         model_name="gpt-4o",
         temperature=0.7,
@@ -145,92 +140,87 @@ Output title:"""
 
     return output
 
-# Display the form for adding a new case
+# If the user chooses "Add New Case"
 if action == "Add New Case":
     st.markdown("### Add a New Case")
     
-    # Case input fields
-    col1, col2, col3 = st.columns(3)
+    # Initialize or retrieve the clear_case counters dictionary from session state
+    if 'case_counters' not in st.session_state:
+        st.session_state['case_counters'] = {}
     
+    # Function to generate case ID with the format CAYYMMDDxxxx
+    def generate_case_ID(case_date, counter):
+        return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
+    
+    # Function to update case ID when the date changes
+    def update_case_ID():
+        case_date_str = st.session_state['case_date'].strftime('%y%m%d')
+
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+        column_values = case_sheet.col_values(1) 
+
+        case_date_ids = [case_id for case_id in column_values if case_id.startswith(f"CA{case_date_str}")]
+        case_date_ids.sort()
+
+        if len(case_date_ids) > 0:
+            counter = int(case_date_ids[-1][-4:]) + 1
+        else:
+            counter = 1
+
+        st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
+    
+    col1, col2, col3 = st.columns(3)
+
     with col1:
-        st.date_input("Case Date", date.today(), key="case_date")
+        st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
 
     with col2:
+        if 'case_ID' not in st.session_state:
+            update_case_ID()
         st.text_input("Case ID:", value=st.session_state['case_ID'], disabled=True)
 
     with col3:
         st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
 
+    if "case_description" not in st.session_state:
+        st.session_state["case_description"] = ""
+
     st.markdown("<h4 style='font-size:20px;'>Add Your Case:</h4>", unsafe_allow_html=True)
     st.session_state['case_description'] = st.text_area("Case:", value=st.session_state["case_description"], height=200)
 
-    # Submit button
     with col1:
         if st.button("Submit Case"):
             st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
 
-    # Editable case title if available
     if st.session_state['case_title'] != "":
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
 
-    # Define all expected fields, including missing ones
-    expected_fields = {
-        'Location': '',
-        'Stakeholders': '',
-        'People Present': '',
-        'Insider Language': '',
-        'Tags': '',
-        'Observations': ''
-    }
+    expected_fields = ['Location', 'Stakeholders', 'People Present', 'Insider Language', 'Tags', 'Observations']
 
-    # Display each field as editable, including missing fields
     if 'result' in st.session_state and st.session_state['result'] != "":
         parsed_result = st.session_state['result']
-        
-        # Split the result into lines
         lines = parsed_result.splitlines()
         editable_fields = {}
 
-        # Parse existing fields from the result
         for line in lines:
             if ':' in line:
                 key, value = line.split(':', 1)
                 key = key.strip()
                 value = value.strip()
-                editable_fields[key] = value  # Store existing field-value pairs
+                editable_fields[key] = value
 
-        # Display all expected fields, even the empty ones
         for field in expected_fields:
             if field in editable_fields:
-                st.text_input(f"{field}", value=editable_fields[field])
+                st.session_state['editable_result'] = st.text_input(f"{field}", value=editable_fields[field])
             else:
-                st.text_input(f"{field} (missing)", value="")
+                st.session_state['editable_result'] = st.text_input(f"{field} (missing)", value="")
 
-    # Handle rerun logic if needed
-    if st.session_state.get('rerun', False):
-        time.sleep(3)
-        clear_case()
-        st.session_state['rerun'] = False
-        st.rerun()
+    if st.session_state.get('rerun
 
-    # Logging the case
-    if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
-        if st.session_state['case_description'] == "":
-            st.markdown("<span style='color:red;'>Error: Please enter case.</span>", unsafe_allow_html=True)
-        elif st.session_state['case_title'] == "":
-            st.markdown("<span style='color:red;'>Error: Please evaluate case.</span>", unsafe_allow_html=True)
-        else:
-            status = embedCase(
-                st.session_state['attendees'], 
-                st.session_state['case_description'],  
-                st.session_state['case_title'], 
-                st.session_state['case_date'],
-                st.session_state['case_ID']
-            )
-            if status:
-                st.session_state['result'] = "Case added to your team's database."
-                st.session_state['rerun'] = True
-                st.rerun()
-            else:
-                st.session_state['result'] = "Error adding case to your team's database. Please try again!"
