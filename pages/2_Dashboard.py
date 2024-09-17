@@ -102,7 +102,7 @@ def log_out():
     st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     # st.header("Observation Tools")
@@ -148,45 +148,9 @@ with col2:
         if st.button(":hourglass: Need Statement Lens (coming soon)"):
             ""
     #st.image("https://static.streamlit.io/examples/dog.jpg")
-with col3:
-    # Streamlit app layout
-    st.title("Scratchpad 📝")
-    
-    
-    # Dropdown for selecting a user
-    selected_user = st.selectbox("Select user", users)
-    
-    # Map selected user to worksheet
-    worksheet_mapping = {
-        "Deb": "Sheet1",
-        "Kyle": "Sheet2",
-        "Lois": "Sheet3",
-        "Ryan": "Sheet4"
-    }
-    worksheet_name = worksheet_mapping[selected_user]
-    
-    # Initialize session state if it doesn't exist
-    if "note" not in st.session_state:
-        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-    
-    
-    # Check if the refresh button is pressed
-    if st.button("Refresh Note"):
-        # Reload the note from Google Sheets
-        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-        # st.success("Refreshed!")
-    
-    # Display a text area for the user to write their note, leveraging session state
-    user_note = st.text_area("Your Note", value=st.session_state["note"], height=300)
-    
-    # Save the note when the button is pressed
-    if st.button("Save Note"):
-        st.session_state["note"] = user_note  # Update session state
-        save_note_to_gsheet(user_note, sheet_name, worksheet_name)
-        st.success(f"{selected_user}'s note has been saved successfully!")
-
 
     
+       
 
 
 # Your logo URL (replace if necessary)
@@ -202,6 +166,43 @@ with col3:
 #     """,
 #     unsafe_allow_html=True,
 # )
+
+# Streamlit app layout
+st.title("Scratchpad 📝")
+    
+    
+# Dropdown for selecting a user
+selected_user = st.selectbox("Select user", users)
+    
+# Map selected user to worksheet
+worksheet_mapping = {
+    "Deb": "Sheet1",
+    "Kyle": "Sheet2",
+    "Lois": "Sheet3",
+    "Ryan": "Sheet4"
+}
+worksheet_name = worksheet_mapping[selected_user]
+    
+# Initialize session state if it doesn't exist
+if "note" not in st.session_state:
+    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+    
+    
+# Check if the refresh button is pressed
+if st.button("Refresh Note"):
+    # Reload the note from Google Sheets
+    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+    # st.success("Refreshed!")
+    
+# Display a text area for the user to write their note, leveraging session state
+user_note = st.text_area("Your Note", value=st.session_state["note"], height=300)
+    
+# Save the note when the button is pressed
+if st.button("Save Note"):
+    st.session_state["note"] = user_note  # Update session state
+    save_note_to_gsheet(user_note, sheet_name, worksheet_name)
+    st.success(f"{selected_user}'s note has been saved successfully!")
+
 
 st.markdown("---")
 
