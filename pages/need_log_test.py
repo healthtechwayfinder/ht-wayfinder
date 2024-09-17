@@ -84,7 +84,7 @@ with col3:
     if st.button("Refresh Note"):
         # Reload the note from Google Sheets
         st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-        st.success("Refreshed!")
+        # st.success("Refreshed!")
 
 # Display a text area for the user to write their note, leveraging session state
 user_note = st.text_area("Your Note", value=st.session_state["note"], height=300)
