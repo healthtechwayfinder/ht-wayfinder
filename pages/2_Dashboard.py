@@ -76,6 +76,12 @@ def refreshSheet():
     worksheet_name = worksheet_mapping[selected_user]
     read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
 
+def displaytextbox():
+    # st.session_state['user_note']
+    # Display a text area for the user to write their note, leveraging session state
+    refreshSheet()
+    st.session_state['user_note'] = st.text_area("Your Notes", value=st.session_state["note"], height=175)
+
 
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
 
@@ -171,20 +177,19 @@ with col3:
     # st.selectbox("Select an option", ["Option 1", "Option 2", "Option 3"], on_change=update_value)
 
     # Dropdown for selecting a user
-    selected_user = st.selectbox("Select user", users, on_change=refreshSheet)
-    refreshSheet()
-
+    selected_user = st.selectbox("Select user", users, on_change=displaytextbox)
+    # refreshSheet()
+    displaytextbox()
         
     
         
-    # Check if the refresh button is pressed
-    if st.button("Refresh"):
-        # Reload the note from Google Sheets
-        st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
-        # st.success("Refreshed!")
+    # # Check if the refresh button is pressed
+    # if st.button("Refresh"):
+    #     # Reload the note from Google Sheets
+    #     st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
+    #     # st.success("Refreshed!")
         
-    # Display a text area for the user to write their note, leveraging session state
-    st.session_state['user_note'] = st.text_area("Your Note", value=st.session_state["note"], height=175)
+   
         
     # Save the note when the button is pressed
     if st.button("Save"):
