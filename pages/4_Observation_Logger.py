@@ -747,6 +747,8 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
             unsafe_allow_html=True
         )
     else:
+        # update observation one last time to avoid accidental duplication with multiple users
+        update_observation_id() 
         status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                             st.session_state['observation_tags'],
                             st.session_state['observation_date'],
