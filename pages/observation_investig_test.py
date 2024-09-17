@@ -5,10 +5,11 @@ import pandas as pd
 
 # Set page configuration
 st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
-st.write("See your logs below. Swtich between them using the dropdown.")
-
-
+# title
 st.markdown("# View Logs")
+# description
+st.write("Use this page to view your logged information. Toggle between logs using the dropdown.")
+
 
 # Define the Google Sheets credentials and scope
 creds_dict = {
