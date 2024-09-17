@@ -600,44 +600,44 @@ if action == "Add New Case":
             if st.session_state['case_title'] != "":
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
             
-            # Process the result after button click
-            parsed_result = st.session_state['result']
+    # Process the result after button click
+    parsed_result = st.session_state['result']
     
-            # Split the result by lines and extract details
-            lines = parsed_result.splitlines()
-            editable_fields = {}
-            tags_values = []  # Initialize tags_values as empty
-    
-            for line in lines:
-                if ':' in line:
-                    key, value = line.split(':', 1)  # Split by the first colon
-                    key = key.strip()
-                    value = value.strip()
-    
-                    # Make key-value pairs editable
-                    editable_fields[key] = st.text_input(f"{key}", value=value)
-    
-                    # Process tags when the key is 'Tags'
-                    if key.lower() == 'tags':
-                        st.write(f"Processing line: key='{key}', value='{value}'")
-                        tags_values = [tag.strip() for tag in value.split(",")]
-                        st.write(f"Tags after splitting and stripping: {tags_values}")
-                        st.write(f"Length of tags_values: {len(tags_values)}")
-    
-            # Save the editable fields to session state
-            st.session_state['editable_result'] = editable_fields
-    
-            # Display tags if tags were found
-            if tags_values:
-                st_tags(
-                    label="Tags",
-                    text="Press enter to add more",
-                    value=tags_values,  # Show the tags found in the result
-                    maxtags=10
-                )
-            else:
-                st.write("No tags found.")
-    
+    # Split the result by lines and extract details
+    lines = parsed_result.splitlines()
+    editable_fields = {}
+    tags_values = []  # Initialize tags_values as empty
+
+    for line in lines:
+        if ':' in line:
+            key, value = line.split(':', 1)  # Split by the first colon
+            key = key.strip()
+            value = value.strip()
+
+            # Make key-value pairs editable
+            editable_fields[key] = st.text_input(f"{key}", value=value)
+
+            # Process tags when the key is 'Tags'
+            if key.lower() == 'tags':
+                st.write(f"Processing line: key='{key}', value='{value}'")
+                tags_values = [tag.strip() for tag in value.split(",")]
+                st.write(f"Tags after splitting and stripping: {tags_values}")
+                st.write(f"Length of tags_values: {len(tags_values)}")
+
+    # Save the editable fields to session state
+    st.session_state['editable_result'] = editable_fields
+
+    # Display tags if tags were found
+    if tags_values:
+        st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10
+        )
+    else:
+        st.write("No tags found.")
+
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
