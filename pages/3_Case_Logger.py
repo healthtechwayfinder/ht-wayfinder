@@ -603,8 +603,8 @@ if action == "Add New Case":
     # Process the result after button click
     parsed_result = st.session_state['result']
 
-    # Debug: Show the parsed result
-    st.write("Parsed Result:", parsed_result)
+    # # Debug: Show the parsed result
+    # st.write("Parsed Result:", parsed_result)
 
         # Initialize tags as an empty list in case it's not found
     tags_values = []
@@ -612,8 +612,8 @@ if action == "Add New Case":
         # Split the result by lines and extract each case detail by assuming specific labels
     lines = parsed_result.splitlines()
 
-        # Debug: Write lines being processed
-    st.write("Lines from parsed result:", lines)
+    #     # Debug: Write lines being processed
+    # st.write("Lines from parsed result:", lines)
     
     # Split the result by lines and extract details
     #lines = parsed_result.splitlines()
@@ -633,14 +633,12 @@ if action == "Add New Case":
             # Make key-value pairs editable
             editable_fields[key] = st.text_input(f"{key}", value=value)
 
-            if key_clean.lower() == 'stakeholders':
-                st.write("Hola")
             # Process tags when the key is 'Tags'
             if key_clean.lower() == 'tags':
-                st.write(f"Processing line: key='{key}', value='{value}'")
+                # st.write(f"Processing line: key='{key}', value='{value}'")
                 tags_values = [tag.strip() for tag in value.split(",")]
-                st.write(f"Tags after splitting and stripping: {tags_values}")
-                st.write(f"Length of tags_values: {len(tags_values)}")
+                # st.write(f"Tags after splitting and stripping: {tags_values}")
+                # st.write(f"Length of tags_values: {len(tags_values)}")
 
     # Save the editable fields to session state
     st.session_state['editable_result'] = editable_fields
