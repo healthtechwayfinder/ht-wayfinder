@@ -632,18 +632,12 @@ if action == "Add New Case":
 
                 # Preprocess the value to remove unexpected characters
                 # Remove newlines, tabs, and multiple spaces
-                cleaned_value = value.replace("\n", " ").replace("\t", " ").strip()
-                cleaned_value = ' '.join(cleaned_value.split())  # Normalize any multiple spaces
-    
-                st.write("Cleaned tags value:", cleaned_value)  # Debugging: print cleaned value
-    
-                # Split the cleaned string by commas
-                tags_values = cleaned_value.split(",")
+
                 tags_values = [tag.strip() for tag in tags_values]  # Strip spaces from each tag
     
                 # Additional debugging: Check if the list was populated correctly
-                st.write("Length of tags_values:", len(tags_values))
-                st.write("Tags after splitting and stripping:", tags_values)
+    st.write("Length of tags_values:", len(tags_values))
+    st.write("Tags after splitting and stripping:", tags_values)
             
             
 
