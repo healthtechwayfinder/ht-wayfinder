@@ -706,7 +706,18 @@ elif action == "Edit Existing Case":
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
                 # tags = st.text_input("Tags", case_details.get("Tags", ""))
-                tags = st.st_tags("Tags", case_details.get("Tags", ""))
+                
+                from streamlit_tags import st_tags
+
+                # Example usage of st_tags
+                tags = st_tags(
+                    label="Enter tags:",
+                    text="Press enter to add more",
+                    value=case_details.get("Tags", []),
+                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder'],
+                    maxtags=10,
+                )
+                
                 observations = st.text_area("Observations", case_details.get("Observations", ""))
 
                         # Get and validate the date field
