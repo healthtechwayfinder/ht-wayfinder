@@ -53,11 +53,18 @@ def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
 
+
+
+
 # Streamlit app layout
 st.title("Scratchpad 📝")
 
-# Dropdown for selecting a user
-selected_user = st.selectbox("Select user", users)
+col1, col2, col3 = st.columns(3)
+
+with col1:
+
+    # Dropdown for selecting a user
+    selected_user = st.selectbox("Select user", users)
 
 # Map selected user to worksheet
 worksheet_mapping = {
@@ -72,11 +79,12 @@ worksheet_name = worksheet_mapping[selected_user]
 if "note" not in st.session_state:
     st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
 
-# Check if the refresh button is pressed
-if st.button("Refresh Note"):
-    # Reload the note from Google Sheets
-    st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
-    st.success(f"{selected_user}'s note has been refreshed!")
+with col3:
+    # Check if the refresh button is pressed
+    if st.button("Refresh Note"):
+        # Reload the note from Google Sheets
+        st.session_state["note"] = read_note_from_gsheet(sheet_name, worksheet_name)
+        st.success(f"{Refreshed!")
 
 # Display a text area for the user to write their note, leveraging session state
 user_note = st.text_area("Your Note", value=st.session_state["note"], height=300)
