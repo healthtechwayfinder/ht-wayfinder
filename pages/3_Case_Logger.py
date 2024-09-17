@@ -631,7 +631,8 @@ if action == "Add New Case":
                 st.write("Tags line found. Raw value:", value)  # Debugging print
                 tags_values = [tag.strip() for tag in value.split(",")]  # Split and clean the tags
 
-        
+    
+    st.write("Tags values:", tags_values)    
                 
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
