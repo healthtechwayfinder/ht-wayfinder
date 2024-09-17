@@ -16,6 +16,9 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+st.set_page_config(layout="wide")
+
+
 if "worksheet_name" not in st.session_state:
     st.session_state["worksheet_name"] = "Sheet1"
 
