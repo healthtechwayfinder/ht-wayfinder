@@ -203,7 +203,7 @@ with col3:
     user_note = st.text_area("Your Note", value=st.session_state["note"], height=175)
         
     # Save the note when the button is pressed
-    if st.button("Save Note"):
+    if st.button("Save"):
         st.session_state["note"] = user_note  # Update session state
         save_note_to_gsheet(user_note, sheet_name, worksheet_name)
         st.success(f"{selected_user}'s note has been saved successfully!")
