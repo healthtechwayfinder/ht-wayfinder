@@ -621,7 +621,7 @@ if action == "Add New Case":
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
 
-     keywords = st_tags(
+    keywords = st_tags(
                     label='# Enter tags:',
                     text='Press enter to add more',
                     value=['Zero', 'One', 'Two'],
