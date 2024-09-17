@@ -100,7 +100,7 @@ if selected_user:
 if st.button("Refresh Note"):
     # Reload the note from Google Sheets if "Refresh" is clicked
     note = read_note_from_gsheet(sheet_name, worksheet_name)
-    st.success(f"{selected_user}'s note has been refreshed!")
+    # st.success(f"{selected_user}'s note has been refreshed!")
 else:
     # Load the note from the selected user's worksheet (initial load)
     note = read_note_from_gsheet(sheet_name, worksheet_name)
