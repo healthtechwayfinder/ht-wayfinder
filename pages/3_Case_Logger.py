@@ -620,6 +620,14 @@ if action == "Add New Case":
     
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
+
+     keywords = st_tags(
+                    label='# Enter tags:',
+                    text='Press enter to add more',
+                    value=['Zero', 'One', 'Two'],
+                    suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
+                    maxtags = 4,
+                    key='1')
     
 
     if st.session_state['rerun']:
@@ -707,7 +715,7 @@ elif action == "Edit Existing Case":
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
-                # tags = st.text_input("Tags", case_details.get("Tags", ""))
+                tags = st.text_input("Tags", case_details.get("Tags", ""))
 
 
                 # # Editable field for tags using st_tags
@@ -719,22 +727,7 @@ elif action == "Edit Existing Case":
                 #     maxtags=10,  # Max number of tags the user can add
                 # )
 
-                keywords = st_tags(
-                    label='# Enter tags:',
-                    text='Press enter to add more',
-                    value=['Zero', 'One', 'Two'],
-                    suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
-                    maxtags = 4,
-                    key='1')
-
-                
-                
-                # Once you have the tags in the `tags` variable, you can display them like this:
-                if tags:
-                    st.markdown("### Selected Tags:")
-                    st.markdown(", ".join([f"`{tag}`" for tag in tags]))  # Show tags as code-style elements
-
-                
+            
                         # Get and validate the date field
                 case_date_str = case_details.get("Date", "")
                 try:
