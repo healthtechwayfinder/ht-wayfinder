@@ -70,13 +70,13 @@ selected_user = st.selectbox("Select user", users)
 
 if selected_user:
 
-    if selected_user == "Deb"
+    if selected_user == "Deb":
         worksheet_name = 'Sheet1'
-    elif selected_user == "Kyle"
+    elif selected_user == "Kyle":
         wworksheet_name = 'Sheet2'
-    elif selected_user == "Lois"
+    elif selected_user == "Lois":
         worksheet_name = 'Sheet3'
-    elif selected_user == "Ryan"
+    elif selected_user == "Ryan":
         worksheet_name = 'Sheet4'
 
     # Load the note from Google Sheets
