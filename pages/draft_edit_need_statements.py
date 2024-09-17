@@ -199,10 +199,10 @@ else:
             notes = st.text_area("Notes", need_details.get("notes", ""))
     
              # Get and validate the date field
-            case_date_str = need_details.get("need_date", "")
+            need_date_str = need_details.get("need_date", "")
             try:
                         # Try to parse the date from ISO format, or default to today's date
-                case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
+                case_date = date.fromisoformat(need_date_str) if need_date_str else date.today()
             except ValueError:
                 case_date = date.today()
     
