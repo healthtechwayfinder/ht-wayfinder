@@ -190,13 +190,13 @@ else:
             # # Debug: Print the case details (optional)
             # st.write(f"Editing case: {need_details}")
             # Editable fields for the selected case
-            need_statement = st.text_input("need_statement", need_details.get("need_statement", ""))
+            need_statement = st.text_input("Need Statement", need_details.get("need_statement", ""))
             #case_date = st.date_input("Date", date.fromisoformat(need_details.get("Date", str(date.today()))))
             # case_description = st.text_area("Case Description", need_details.get("Case Description", ""))
             # location = st.text_input("Location", need_details.get("Location", ""))
-            problem_var = st.text_input("problem", need_details.get("problem", ""))
-            population_var = st.text_input("population", need_details.get("population", ""))
-            outcome_var = st.text_input("outcome", need_details.get("outcome", ""))
+            problem_var = st.text_input("Problem", need_details.get("problem", ""))
+            population_var = st.text_input("Population", need_details.get("population", ""))
+            outcome_var = st.text_input("Outcome", need_details.get("outcome", ""))
             # tags = st.text_input("Tags", need_details.get("Tags", ""))
             notes = st.text_area("Observations", need_details.get("Observations", ""))
     
@@ -214,7 +214,7 @@ else:
             if st.button("Save Changes"):
                 updated_need_data = {
                     "need_statement": need_statement,
-                    "Date": case_date_input.isoformat(),
+                    "date": case_date_input.isoformat(),
                     # "Case Description": case_description,
                     # "Location": location,
                     "problem": problem_var,
