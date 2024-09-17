@@ -266,23 +266,28 @@ def clear_form():
 
 # Function to handle form submission
 def submit_form():
-    # lil confirmation message
-    # st.write("Need statement recorded!")
-    # st.session_state['observation_ID'] = obs_id_with_title.split(" - ")[0]
+    # split the observation ID from the descriptive title
     st.session_state['observation_ID'] = st.session_state.obs_id_with_title.split(" - ")[0]
-    # st.session_state['observation_ID']
 
-    
+    # refresh the need ID once again, make sure the need ID is UTD in case anyone else has submitted one while this need statement was being authored
+    update_need_ID()
+
     # send input to google sheets    
     recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], st.session_state['problem'], st.session_state['population'], st.session_state['outcome'], st.session_state['observation_ID'], st.session_state['notes'])
     update_need_ID()
+    
     # Clear the form after sending to sheets
     clear_form()
+    
+    # lil confirmation message
     st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
 
 
+existing_obs_ids_with_title = getExistingObsIDS()
+st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
 
-col1, col2, col3 = st.columns(3)
+
+col1, col2 = st.columns(2)
 
 # date
 with col1:
@@ -296,11 +301,9 @@ with col2:
     st.text_input("Need ID (auto-generated):", value=st.session_state['need_ID'], disabled=True)
     
     # enter relevant observation IDs
-with col3:
+# with col3:
     # observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
-    existing_obs_ids_with_title = getExistingObsIDS()
-    st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
-
+    
 
 # Create the form
 with st.form("my_form"):
