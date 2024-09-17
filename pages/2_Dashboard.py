@@ -61,6 +61,8 @@ def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet = get_google_sheet(sheet_name, worksheet_name)
     sheet.update_cell(1, 1, note)  # Save the content to cell A1
 
+def refreshSheet:
+    read_note_from_gsheet(sheet_name, worksheet_name)
 
 
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍")
@@ -175,9 +177,11 @@ with col3:
     st.markdown('<h1 style="font-size:30px;">Notes</h1>', unsafe_allow_html=True)
 
         
-        
+
+    # st.selectbox("Select an option", ["Option 1", "Option 2", "Option 3"], on_change=update_value)
+
     # Dropdown for selecting a user
-    selected_user = st.selectbox("Select user", users)
+    selected_user = st.selectbox("Select user", users, on_change=refreshSheet)
         
     # Map selected user to worksheet
     worksheet_mapping = {
@@ -186,6 +190,7 @@ with col3:
         "Lois": "Sheet3",
         "Ryan": "Sheet4"
     }
+    
     worksheet_name = worksheet_mapping[selected_user]
         
     # Initialize session state if it doesn't exist
