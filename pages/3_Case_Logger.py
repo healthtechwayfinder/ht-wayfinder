@@ -617,8 +617,10 @@ if action == "Add New Case":
             # Make key-value pairs editable
             editable_fields[key] = st.text_input(f"{key}", value=value)
 
+            if key.lower() == 'stakeholders':
+                st.write("Hola")
             # Process tags when the key is 'Tags'
-            if key.strip().lower() == 'tags':
+            if key.lower() == 'tags':
                 st.write(f"Processing line: key='{key}', value='{value}'")
                 tags_values = [tag.strip() for tag in value.split(",")]
                 st.write(f"Tags after splitting and stripping: {tags_values}")
