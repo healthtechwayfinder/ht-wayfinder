@@ -19,6 +19,9 @@ from oauth2client.service_account import ServiceAccountCredentials
 if "worksheet_name" not in st.session_state:
     st.session_state["worksheet_name"] = "Sheet1"
 
+if "user_note" not in st.session_state:
+    st.session_state["user_note"] = ""
+
 # Define the Google Sheets credentials and scope
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
@@ -56,10 +59,10 @@ def get_google_sheet(sheet_name, worksheet_name):
 def read_note_from_gsheet(sheet_name, worksheet_name):
     sheet = get_google_sheet(sheet_name, st.session_state['worksheet_name'])
     try:
-        note = sheet.cell(1, 1).value  # Read the content of cell A1
+        st.session_state['note'] = sheet.cell(1, 1).value  # Read the content of cell A1
     except:
-        note = ""
-    return note
+        st.session_state['note'] = ""
+    return st.session_state['note']
 
 
        
@@ -67,7 +70,7 @@ def read_note_from_gsheet(sheet_name, worksheet_name):
 # Function to save the note to Google Sheets
 def save_note_to_gsheet(note, sheet_name, worksheet_name):
     sheet = get_google_sheet(sheet_name, st.session_state['worksheet_name'])
-    sheet.update_cell(1, 1, note)  # Save the content to cell A1
+    sheet.update_cell(1, 1, st.session_state['note'])  # Save the content to cell A1
 
 def refreshSheet():
     worksheet_name = worksheet_mapping[selected_user]
@@ -181,12 +184,12 @@ with col3:
         # st.success("Refreshed!")
         
     # Display a text area for the user to write their note, leveraging session state
-    user_note = st.text_area("Your Note", value=st.session_state["note"], height=175)
+    st.session_state['user_note'] = st.text_area("Your Note", value=st.session_state["note"], height=175)
         
     # Save the note when the button is pressed
     if st.button("Save"):
-        st.session_state["note"] = user_note  # Update session state
-        save_note_to_gsheet(user_note, sheet_name, st.session_state['worksheet_name'])
+        st.session_state["note"] = st.session_state['user_note']  # Update session state
+        save_note_to_gsheet(st.session_state['user_note'], sheet_name, st.session_state['worksheet_name'])
         st.success(f"{selected_user}'s note has been saved successfully!")
     
 
