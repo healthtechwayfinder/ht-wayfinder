@@ -710,24 +710,24 @@ elif action == "Edit Existing Case":
                 # tags = st.text_input("Tags", case_details.get("Tags", ""))
 
 
-                # Editable field for tags using st_tags
-                tags = st_tags(
-                    label="Enter tags:",
-                    text="Press enter to add more",
-                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
-                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-                    maxtags=10,  # Max number of tags the user can add
-                )
+                # # Editable field for tags using st_tags
+                # tags = st_tags(
+                #     label="Enter tags:",
+                #     text="Press enter to add more",
+                #     value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
+                #     suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                #     maxtags=10,  # Max number of tags the user can add
+                # )
+
+                keywords = st_tags(
+                    label='# Enter tags:',
+                    text='Press enter to add more',
+                    value=['Zero', 'One', 'Two'],
+                    suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
+                    maxtags = 4,
+                    key='1')
+
                 
-                # Display the selected tags visually as tags
-                st.write("Selected Tags:")
-                st_tags(
-                    label="",
-                    text="Tags display",
-                    value=tags,  # The current selected tags
-                    maxtags=10,  # Prevent exceeding 10 tags
-                    readonly=True  # Make sure this part is non-editable and purely for display
-                )
                 
                 # Once you have the tags in the `tags` variable, you can display them like this:
                 if tags:
