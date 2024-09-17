@@ -134,7 +134,7 @@ def fetch_need_details(selected_need_ID):
 
 # Update case details in Google Sheets
 def update_need(selected_need_ID, updated_need_data):
-    i = 1
+    i = 2
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Log")
         data = sheet.get_all_records()
