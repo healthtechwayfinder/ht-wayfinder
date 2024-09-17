@@ -627,8 +627,7 @@ if action == "Add New Case":
             st.write(f"Processing line: key='{key}', value='{value}'")
     
             # Check if this line contains the tags (with flexible matching)
-            if key == 'tags':
-                st.write("hola") 
+            if key.lower() == 'tags': 
                 st.write("Tags line found. Raw value:", value)  # Debugging: ensure the tags line is identified
 
                 #     # Debugging: Print raw value and character details
