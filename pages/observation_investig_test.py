@@ -61,7 +61,9 @@ if st.button("Refresh Data"):
 
 # Display the Google Sheet content as a DataFrame in Streamlit
 st.markdown("## Observation Records")
-st.dataframe(st.session_state["df"])
+# st.dataframe(st.session_state["df"])
+st.dataframe(st.session_state["df"], height=1000)
+
 
 st.markdown("---")
 
