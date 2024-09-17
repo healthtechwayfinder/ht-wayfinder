@@ -171,8 +171,9 @@ with col2:
 
 with col3:
 
-# Streamlit app layout
-    st.title("###Scratchpad")
+    # Streamlit app layout
+    st.markdown('<h1 style="font-size:30px;">Scratchpad</h1>', unsafe_allow_html=True)
+
         
         
     # Dropdown for selecting a user
