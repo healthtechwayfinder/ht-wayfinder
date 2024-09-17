@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
+st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
 
 
 if "worksheet_name" not in st.session_state:
@@ -112,8 +112,8 @@ def log_out():
 #initialize session states below functions
 
 
-if "note" not in st.session_state:
-    st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
+# if "note" not in st.session_state:
+#     st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
 
 
 # col1, col2 = st.columns(2)
