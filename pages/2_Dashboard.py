@@ -91,7 +91,7 @@ cookies = CookieManager()
 
 
 st.markdown("# Welcome!")
-#
+
 
 # Function to handle logout
 def log_out():

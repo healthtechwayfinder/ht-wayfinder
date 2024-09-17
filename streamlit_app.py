@@ -72,10 +72,12 @@ def hide_sidebar():
 
 # Check if the user selected "Stay logged in" and is already logged in via cookies
 def check_stay_logged_in():
+    print("Checking stay logged in...")
     # Attempt to load cookies and handle any errors
     if cookies.ready():
         if "login_status" not in st.session_state:
             st.session_state["login_status"] = "not_logged_in"
+        
 
         # Check the cookies to see if the user is logged in
         if cookies.get("logged_in") == "true":
@@ -129,19 +131,22 @@ def main():
 
     # Google Login
     st.write("Or use Google to log in:")
-    
+
     # Generate the OAuth URL
     auth_url = initiate_google_flow()
     
     st.markdown(f'<a href="{auth_url}" target="_self">Click here to log in with Google</a>', unsafe_allow_html=True)
 
     # Process Google authentication callback
-    query_params = st.experimental_get_query_params()
+    query_params = st.query_params
+
     if 'code' in query_params and 'oauth_state' in st.session_state:
         flow = get_google_oauth_flow()
+        st.markdown("Processing Google login...")
 
         if query_params.get('state', [''])[0] == st.session_state['oauth_state']:
             user_email = exchange_code_for_credentials(flow, query_params['code'][0])
+            st.markdown("Processing Google login, user email is ..."+user_email)
 
             if user_email:
                 allowed_emails = st.secrets["allowed_emails"]["emails"]
