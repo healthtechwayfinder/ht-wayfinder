@@ -2,7 +2,8 @@ import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from datetime import date
-
+import logging
+logging.basicConfig(level=logging.INFO)
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
@@ -89,6 +90,11 @@ creds_dict = {
 # outcome
 
 # Initialize the session state for the input if it doesn't exist
+
+
+if 'obs_id_with_title' not in st.session_state:
+    st.session_state.obs_id_with_title = ''
+
 if 'need_statement' not in st.session_state:
     st.session_state.need_statement = ''
 
@@ -103,6 +109,9 @@ if 'outcome' not in st.session_state:
 
 if 'notes' not in st.session_state:
     st.session_state['notes'] = ""
+
+if 'observation_ID' not in st.session_state:
+    st.session_state['observation_ID'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
@@ -147,20 +156,20 @@ def addToGoogleSheets(need_dict):
 # put in correct format & call function to upload to google sheets
 def recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
     
-     all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes'] # + need_keys
-     need_values = [need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes] # + [parsed_need[key] for key in need_keys]
-     need_dict = dict(zip(all_need_keys, need_values))
+    all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes'] # + need_keys
+    need_values = [need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes] # + [parsed_need[key] for key in need_keys]
+    need_dict = dict(zip(all_need_keys, need_values))
 
-     status = addToGoogleSheets(need_dict)
+    status = addToGoogleSheets(need_dict)
 
-     return status
+    return status
     
 
 # Initialize or retrieve the clear_need counters dictionary from session state
 if 'need_counters' not in st.session_state:
     st.session_state['need_counters'] = {}
 
-# make a list of potential observation IDs
+# OLD OLD OLD OLD OLD OLD OLD OLD ////////// make a list of potential observation IDs
 def getObservationIDs():
     # Define the scope for the Google Sheets API
     scope = [
@@ -184,6 +193,31 @@ def getObservationIDs():
     
     return observation_ID_list
 
+# New function for getting observation IDs
+def getExistingObsIDS():
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+    obs_ids = obs_log.col_values(1)[1:]
+    # case_dates_list = obs_log.col_values(3)[1:]
+    obs_titles = obs_log.col_values(2)[1:]
+
+    # find all observation ids with the same date
+    existing_obs_ids_with_title = dict(zip(obs_ids, obs_titles))
+
+    # make strings with case id - title
+    existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
+
+    print("Existing Observation IDS: ")
+    print(existing_obs_ids_with_title)
+    return existing_obs_ids_with_title
+
+
+
 
 # Function to generate need ID with the format NSYYMMDDxxxx
 def generate_need_ID(need_date, counter):
@@ -204,7 +238,7 @@ def update_need_ID():
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
-    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"NS{obs_date_str}")] #how to make this work
+    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"NS{obs_date_str}")]
     obs_date_ids.sort()
 
     # get the counter from the last need id
@@ -216,7 +250,7 @@ def update_need_ID():
     st.session_state['need_ID'] = generate_need_ID(st.session_state['need_date'], counter)
 
 # Fetch the observation IDs from the Google Sheet
-observation_ID_list = getObservationIDs()
+# observation_ID_list = getObservationIDs()
 
 
 
@@ -232,19 +266,28 @@ def clear_form():
 
 # Function to handle form submission
 def submit_form():
-    # lil confirmation message
-    # st.write("Need statement recorded!")
-    st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
+    # split the observation ID from the descriptive title
+    st.session_state['observation_ID'] = st.session_state.obs_id_with_title.split(" - ")[0]
 
-    
-    # send input to google sheets    
-    recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], st.session_state['problem'], st.session_state['population'], st.session_state['outcome'], observation_ID, st.session_state['notes'])
+    # refresh the need ID once again, make sure the need ID is UTD in case anyone else has submitted one while this need statement was being authored
     update_need_ID()
+
+    # send input to google sheets    
+    recordNeed(st.session_state['need_ID'], st.session_state['need_date'], st.session_state['need_statement'], st.session_state['problem'], st.session_state['population'], st.session_state['outcome'], st.session_state['observation_ID'], st.session_state['notes'])
+    update_need_ID()
+    
     # Clear the form after sending to sheets
     clear_form()
+    
+    # lil confirmation message
+    st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
 
 
-col1, col2, col3 = st.columns(3)
+existing_obs_ids_with_title = getExistingObsIDS()
+st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
+
+
+col1, col2 = st.columns(2)
 
 # date
 with col1:
@@ -258,11 +301,9 @@ with col2:
     st.text_input("Need ID (auto-generated):", value=st.session_state['need_ID'], disabled=True)
     
     # enter relevant observation IDs
-with col3:
-    observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
+# with col3:
+    # observation_ID = st.multiselect("Relevant Observations (multi-select):", observation_ID_list)
     
-
-
 
 # Create the form
 with st.form("my_form"):
@@ -276,8 +317,8 @@ with st.form("my_form"):
 
     # need ID and population
     with col2:
-        if 'need_ID' not in st.session_state:
-            update_need_ID()
+        # if 'need_ID' not in st.session_state:
+        #     update_need_ID()
         # Display the need ID
         # st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
         st.text_input("Population:", key='population')
@@ -303,22 +344,7 @@ with col3:
   #  st.button("Clear Observation", on_click=clear_text) 
     # Container for result display
     result_container = st.empty()
-    # Use custom CSS for the red button
-    # st.markdown("""
-    #     <style>
-    #     .stButton > button {
-    #         background-color: #942124;
-    #         color: white;
-    #         font-size: 16px;
-    #         padding: 10px 20px;
-    #         border-radius: 8px;
-    #         border: none;
-    #     }
-    #     .stButton > button:hover {
-    #         background-color: darkred;
-    #     }
-    #     </style>
-    #     """, unsafe_allow_html=True)
+    
 
    
     
@@ -334,10 +360,6 @@ if st.session_state['rerun']:
     
 
 st.markdown("---")
-
-# if st.button("Back to Main Menu"):
-#     clear_need()
-#     switch_page("main_menu")
 
 
 # st.markdown("---")
@@ -366,4 +388,3 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
-
