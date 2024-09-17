@@ -611,6 +611,8 @@ if action == "Add New Case":
     lines = parsed_result.splitlines()
     editable_fields = {}
 
+    st.write(parsed_result)  # Print the parsed result for debugging purposes
+
     for line in lines:
         if ':' in line:
             key, value = line.split(':', 1)  # Split only by the first colon
