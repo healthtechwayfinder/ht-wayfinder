@@ -627,6 +627,8 @@ if action == "Add New Case":
     # Save the edited values back to session state
     st.session_state['editable_result'] = editable_fields
 
+    st.write(parsed_result)  # Print the parsed result for debugging purposes
+
     
     # Display the tags using st_tags
     if tags:
