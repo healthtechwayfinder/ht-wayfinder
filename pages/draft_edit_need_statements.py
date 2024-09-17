@@ -125,10 +125,10 @@ def fetch_need_details(selected_need_ID):
     # st.write(need_data)
 
     for row in need_data:
-        if "need_ID" in row and row["need_ID"].strip() == need_id.strip():
+        if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
             return row
     
-    st.error(f"Need ID {need_id} not found.")
+    st.error(f"Need ID {st.session_state['selected_need_ID']} not found.")
     return None
 
 
