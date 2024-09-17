@@ -81,7 +81,6 @@ st.title("Scratchpad 📝")
 selected_user = st.selectbox("Select user", users)
 
 
-
 if selected_user:
 
     if selected_user == "Deb":
@@ -97,6 +96,15 @@ if selected_user:
     note = read_note_from_gsheet(sheet_name, worksheet_name)
 
 
+# Check if the refresh button is pressed
+if st.button("Refresh Note"):
+    # Reload the note from Google Sheets if "Refresh" is clicked
+    note = read_note_from_worksheet(sheet_name, worksheet_name)
+    st.success(f"{selected_user}'s note has been refreshed!")
+else:
+    # Load the note from the selected user's worksheet (initial load)
+    note = read_note_from_worksheet(sheet_name, worksheet_name)
+
 
 # Display a text area for the user to write their note
 user_note = st.text_area("Your Note", value=note, height=300)
@@ -107,6 +115,6 @@ if st.button("Save Note"):
     st.success("Your note has been saved successfully!")
 
 # Provide feedback that the note is auto-loaded from Google Sheets on app load
-st.caption("This notepad autosaves your note to Google Sheets and reloads it when you reopen the app.")
+# st.caption("This notepad autosaves your note to Google Sheets and reloads it when you reopen the app.")
 
 
