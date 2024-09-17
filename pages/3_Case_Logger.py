@@ -633,7 +633,7 @@ if action == "Add New Case":
                 # Preprocess the value to remove unexpected characters
                 # Remove newlines, tabs, and multiple spaces
 
-                tags_values = [tag.strip() for tag in tags_values]  # Strip spaces from each tag
+                tags_values = tag.strip() # Strip spaces from each tag
     
                 # Additional debugging: Check if the list was populated correctly
     st.write("Length of tags_values:", len(tags_values))
