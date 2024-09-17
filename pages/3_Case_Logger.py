@@ -710,13 +710,23 @@ elif action == "Edit Existing Case":
                 # tags = st.text_input("Tags", case_details.get("Tags", ""))
 
 
-                # Example usage of st_tags for editable tags input
+                # Editable field for tags using st_tags
                 tags = st_tags(
                     label="Enter tags:",
                     text="Press enter to add more",
-                    value=case_details.get("Tags", []),  # Default tags loaded from case details
-                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder'],  # Suggested tags
-                    maxtags=10,  # Maximum tags allowed
+                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
+                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                    maxtags=10,  # Max number of tags the user can add
+                )
+                
+                # Display the selected tags visually as tags
+                st.write("Selected Tags:")
+                st_tags(
+                    label="",
+                    text="Tags display",
+                    value=tags,  # The current selected tags
+                    maxtags=10,  # Prevent exceeding 10 tags
+                    readonly=True  # Make sure this part is non-editable and purely for display
                 )
                 
                 # Once you have the tags in the `tags` variable, you can display them like this:
