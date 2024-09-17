@@ -172,7 +172,7 @@ else:
 
 # Step 2: Fetch and display need details for the selected need
     if  st.session_state['need_ID_with_preview']:
-        need_details = fetch_need_details(need_to_edit)
+        need_details = fetch_need_details(st.session_state['selected_need_ID'])
 
 
         # need_details = fetch_need_details(need_to_edit)
@@ -214,10 +214,10 @@ else:
                     "notes": notes,
                 }
                 
-                if update_need(need_to_edit, updated_need_data):
-                    st.success(f"Changes to '{need_to_edit}' saved successfully!")
+                if update_need(st.session_state['selected_need_ID'], updated_need_data):
+                    st.success(f"Changes to '{st.session_state['selected_need_ID']}' saved successfully!")
                 else:
-                    st.error(f"Failed to save changes to '{need_to_edit}'.")
+                    st.error(f"Failed to save changes to '{st.session_state['selected_need_ID']}'.")
 
 
 
