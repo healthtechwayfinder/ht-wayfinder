@@ -629,11 +629,14 @@ if action == "Add New Case":
             # Check if this line contains the tags (with flexible matching)
             if key.lower() == 'tags':
                 st.write("Tags line found. Raw value:", value)  # Debugging: ensure the tags line is identified
-                tags_values = value.split(",")  # Split the tags into a list
-                tags_values = [tag.strip() for tag in tags_values]  # Ensure no extra spaces
+                # Split and strip spaces from tags
+                tags_values = value.split(",")
+                tags_values = [tag.strip() for tag in tags_values]
     
-                # Print the tags after splitting to check
-                st.write("Tags after splitting:", tags_values)
+                # Additional debugging: Check if the list was populated correctly
+                st.write("Length of tags_values:", len(tags_values))
+                st.write("Tags after splitting and stripping:", tags_values)
+            
 
 
                 
