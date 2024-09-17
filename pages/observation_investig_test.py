@@ -67,12 +67,18 @@ if "df" not in st.session_state or st.session_state["selected_sheet"] != selecte
     st.session_state["df"] = load_data(worksheets[selected_sheet])
     st.session_state["selected_sheet"] = selected_sheet
 
-with col3:
-
+with col2:
     # Add a button to refresh the data from Google Sheets
     if st.button("Refresh Data"):
         st.session_state["df"] = load_data(worksheets[selected_sheet])
         st.success(f"Data refreshed from {selected_sheet}!")
+    
+with col3:
+    #link to their actual sheet
+    st.link_button("View Log in Sheets", "https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969")
+
+
+    
 
 # Display the Google Sheet content as a DataFrame in Streamlit
 st.markdown(f"## {selected_sheet}")
