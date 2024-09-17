@@ -337,11 +337,19 @@ def clear_case():
     update_case_ID()
     # Refresh the page back to the initial state
 
-# Fetch case IDs from Google Sheets
-def fetch_case_ids():
-    sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")  # Adjust as per your sheet name
-    case_ids = sheet.col_values(1)  # Assuming "Case ID" is in the first column
-    return case_ids[1:]  # Exclude header
+# Fetch case IDs and titles from Google Sheets
+def fetch_case_ids_and_titles():
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")  # Ensure this is correct
+        data = sheet.get_all_records()
+        
+        # Create a list of tuples with (case_id, title)
+        case_info = [(row["Case ID"], row["Title"]) for row in data if "Case ID" in row and "Title" in row]
+        return case_info
+    except Exception as e:
+        print(f"Error fetching case IDs and titles: {e}")
+        return []
+
 
 # Function to connect to Google Sheets
 def get_google_sheet(sheet_name, worksheet_name):
@@ -629,14 +637,21 @@ elif action == "Edit Existing Case":
    
     st.markdown("### Edit an Existing Case")
 
-    # Step 1: Fetch and display case IDs in a dropdown
-    case_ids = fetch_case_ids()
+    # Fetch and display case IDs and titles in a dropdown
+    case_info = fetch_case_ids_and_titles()
 
-    # Ensure case_ids are not empty
-    if not case_ids:
+    # Ensure case_info is not empty
+    if not case_info:
         st.error("No cases found.")
     else:
-        case_to_edit = st.selectbox("Select a case to edit", case_ids)
+        # Create a list of display names in the format "case_id: title"
+        case_options = [f"{case_id}: {title}" for case_id, title in case_info]
+        
+        # Display the dropdown with combined case_id and title
+        selected_case = st.selectbox("Select a case to edit", case_options)
+
+        # Extract the selected case_id from the dropdown (case_id is before the ":")
+        case_to_edit = selected_case.split(":")[0].strip()
     
         # Step 2: Fetch and display case details for the selected case
         if case_to_edit:
