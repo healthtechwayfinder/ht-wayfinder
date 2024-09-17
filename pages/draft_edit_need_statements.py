@@ -134,14 +134,12 @@ def fetch_need_details(selected_need_ID):
 
 # Update case details in Google Sheets
 def update_need(selected_need_ID, updated_need_data):
-    # i = 0
+    i = 1
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Log")
         data = sheet.get_all_records()
 
-# st.session_state['need_ID']
-
-        
+       
         # Find the row corresponding to the selected_need_ID and update it
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["need_ID"] == st.session_state['selected_need_ID']:
@@ -213,8 +211,8 @@ else:
                     # Step 3: Save changes
             if st.button("Save Changes"):
                 updated_need_data = {
-                    "need_statement": need_statement,
                     "date": case_date_input.isoformat(),
+                    "need_statement": need_statement,
                     # "Case Description": case_description,
                     # "Location": location,
                     "problem": problem_var,
