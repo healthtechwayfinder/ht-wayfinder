@@ -59,8 +59,8 @@ if 'result' not in st.session_state:
 if 'case_title' not in st.session_state:
     st.session_state['case_title'] = ""
 
-if 'case_date' not in st.session_state:
-    st.session_state['case_date'] = date.today()
+# if 'case_date' not in st.session_state:
+#     st.session_state['case_date'] = date.today()
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
