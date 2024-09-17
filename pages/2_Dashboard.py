@@ -200,7 +200,7 @@ with col3:
         # st.success("Refreshed!")
         
     # Display a text area for the user to write their note, leveraging session state
-    user_note = st.text_area("Your Note", value=st.session_state["note"], height=300)
+    user_note = st.text_area("Your Note", value=st.session_state["note"], height=175)
         
     # Save the note when the button is pressed
     if st.button("Save Note"):
