@@ -709,17 +709,22 @@ elif action == "Edit Existing Case":
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
                 # tags = st.text_input("Tags", case_details.get("Tags", ""))
 
-                # Example usage of st_tags
+
+                # Example usage of st_tags for editable tags input
                 tags = st_tags(
                     label="Enter tags:",
                     text="Press enter to add more",
-                    value=case_details.get("Tags", []),
-                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder'],
-                    maxtags=10,
+                    value=case_details.get("Tags", []),  # Default tags loaded from case details
+                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder'],  # Suggested tags
+                    maxtags=10,  # Maximum tags allowed
                 )
                 
-                observations = st.text_area("Observations", case_details.get("Observations", ""))
+                # Once you have the tags in the `tags` variable, you can display them like this:
+                if tags:
+                    st.markdown("### Selected Tags:")
+                    st.markdown(", ".join([f"`{tag}`" for tag in tags]))  # Show tags as code-style elements
 
+                
                         # Get and validate the date field
                 case_date_str = case_details.get("Date", "")
                 try:
