@@ -621,7 +621,7 @@ if action == "Add New Case":
             editable_fields[key] = st.text_input(f"{key}", value=value)
 
             # Check if this line contains the tags
-            if key.lower() == 'tags':
+            if key.lower() == 'Tags':
                 tags = value.split(",")  # Split the tags into a list
     
     # Save the edited values back to session state
