@@ -583,25 +583,10 @@ if action == "Add New Case":
     if st.session_state['case_title'] != "":
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
     
-    # # st.write(f":green[{st.session_state['result']}]")
-    # st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    # st.write(f":green[{st.session_state['result']}]")
+    st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
-    # Check if 'result' exists in session state and is not empty
-    if 'result' in st.session_state and st.session_state['result'] != "":
-        parsed_result = st.session_state['result']
-    
-        # Check if the result is a dictionary
-        if isinstance(parsed_result, dict):
-            # Loop over each key in the parsed result and display them as editable text inputs
-            for key, value in parsed_result.items():
-                # Create a separate text input for each field (key-value pair)
-                st.session_state['result'][key] = st.text_input(f"Edit {key.capitalize()}", value=value)
-    else:
-        st.error("Error: The result is not in the expected format (dictionary).")
-        st.write(f"Result type: {type(parsed_result)}")
-        st.write(f"Result content: {parsed_result}")
 
-    
     if st.session_state['rerun']:
         time.sleep(3)
         clear_case()
