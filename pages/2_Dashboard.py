@@ -1,4 +1,6 @@
 import streamlit as st
+st.set_page_config(layout="wide")
+
 from streamlit_extras.switch_page_button import switch_page
 
 from pydantic import BaseModel, Field
@@ -16,7 +18,6 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-st.set_page_config(layout="wide")
 
 
 if "worksheet_name" not in st.session_state:
