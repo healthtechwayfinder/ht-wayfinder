@@ -624,7 +624,7 @@ if action == "Add New Case":
     keywords = st_tags(
                     label='# Enter tags:',
                     text='Press enter to add more',
-                    value=['Zero', 'One', 'Two'],
+                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],
                     suggestions=['five', 'six', 'seven', 'eight', 'nine', 'three', 'eleven', 'ten', 'four'],
                     maxtags = 4,
                     key='1')
