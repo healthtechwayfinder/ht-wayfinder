@@ -238,7 +238,7 @@ def update_need_ID():
     column_values = need_sheet.col_values(1) 
 
     # find all need ids with the same date
-    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"NS{obs_date_str}")] #how to make this work
+    obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"NS{obs_date_str}")]
     obs_date_ids.sort()
 
     # get the counter from the last need id
@@ -317,8 +317,8 @@ with st.form("my_form"):
 
     # need ID and population
     with col2:
-        if 'need_ID' not in st.session_state:
-            update_need_ID()
+        # if 'need_ID' not in st.session_state:
+        #     update_need_ID()
         # Display the need ID
         # st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
         st.text_input("Population:", key='population')
