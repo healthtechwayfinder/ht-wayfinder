@@ -622,12 +622,11 @@ if action == "Add New Case":
             if not tags:
                 st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
     
-            # Editable Observations field or show 'Missing'
-            observations = parsed_result.get('Observations', "")
-            st.text_area("Observations", value=observations, height=150)
-            if not observations:
-                st.markdown("<span style='color:red;'>Missing</span>", unsafe_allow_html=True)
-
+        else:
+        # Show an error message if parsed_result is not a dictionary
+        st.error("Error: The result data is not in the expected format. Please check the data source.")
+        st.write(f"Result type: {type(parsed_result)}")
+        st.write(f"Result content: {parsed_result}")
 
     # Check if 'result' exists in session state and contains valid data
     if 'result' in st.session_state and st.session_state['result'] != "":
