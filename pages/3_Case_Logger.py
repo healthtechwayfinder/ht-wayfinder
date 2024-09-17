@@ -596,88 +596,88 @@ if action == "Add New Case":
             st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
         
-    if st.session_state['case_title'] != "":
-        st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-    
-    # # st.write(f":green[{st.session_state['result']}]")
-    # st.markdown(st.session_state['result'], unsafe_allow_html=True)
-    
-    parsed_result = st.session_state['result']
-
-
-    #Split the result by lines and extract each case detail by assuming specific labels
-    lines = parsed_result.splitlines()
-    editable_fields = {}
-
-    st.write(parsed_result)  # Print the parsed result for debugging purposes
-
-    # Initialize tags as an empty list in case it's not found
-    tags_values = []
-
-    for line in lines:
-        if ':' in line:
-            key, value = line.split(':', 1)  # Split only by the first colon
-            key = key.strip()
-            value = value.strip()
+            if st.session_state['case_title'] != "":
+                st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
             
-            # Make each key-value pair editable by using st.text_input or st.text_area
-            editable_fields[key] = st.text_input(f"{key}", value=value)
-
-            # Debugging: print out each key and value to check
-            st.write(f"Processing line: key='{key}', value='{value}'")
-    
-            # Check if this line contains the tags (with flexible matching)
-            if key.lower() == 'tags': 
-                st.write("Tags line found. Raw value:", value)  # Debugging: ensure the tags line is identified
-
-                #     # Debugging: Print raw value and character details
-                # st.write(f"Before splitting, raw value length: {len(value)}")
-                # st.write(f"Raw value character codes: {[ord(char) for char in value]}")
-    
-                # # Split the value by commas and strip extra spaces or special characters
-                # tags_values = [tag.strip() for tag in value.split(",")]
-    
-                # # Debugging: Check if tags_values was populated correctly
-                # st.write(f"Tags after splitting and stripping: {tags_values}")
-                # st.write(f"Length of tags_values: {len(tags_values)}")
-
-            # Print each tag separately to check for issues
-            for idx, tag in enumerate(tags_values):
-                st.write(f"Tag {idx + 1}: '{tag}' (Length: {len(tag)})")
-
-
-    test_value = "urology, neurogenic bladder, chronic condition, patient care"
-    test_tags = [tag.strip() for tag in test_value.split(",")]
-    st.write(f"Test tags after splitting: {test_tags}")
-    
-                # Additional debugging: Check if the list was populated correctly
-    st.write("Length of tags_values:", len(tags_values))
-    st.write("Tags after splitting and stripping:", tags_values)
+            # # st.write(f":green[{st.session_state['result']}]")
+            # st.markdown(st.session_state['result'], unsafe_allow_html=True)
             
-            
-
-
-                
-    # Save the edited values back to session state
-    st.session_state['editable_result'] = editable_fields
-
-    #st.write(parsed_result)  # Print the parsed result for debugging purposes
-
-    st.write(tags_values)
-    
-    st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Display the tags found in the result
-            maxtags=10)
-    
-
-    if st.session_state['rerun']:
-        time.sleep(3)
-        clear_case()
-        st.session_state['rerun'] = False
-        st.rerun()
+            parsed_result = st.session_state['result']
         
+        
+            #Split the result by lines and extract each case detail by assuming specific labels
+            lines = parsed_result.splitlines()
+            editable_fields = {}
+        
+            st.write(parsed_result)  # Print the parsed result for debugging purposes
+        
+            # Initialize tags as an empty list in case it's not found
+            tags_values = []
+        
+            for line in lines:
+                if ':' in line:
+                    key, value = line.split(':', 1)  # Split only by the first colon
+                    key = key.strip()
+                    value = value.strip()
+                    
+                    # Make each key-value pair editable by using st.text_input or st.text_area
+                    editable_fields[key] = st.text_input(f"{key}", value=value)
+        
+                    # Debugging: print out each key and value to check
+                    st.write(f"Processing line: key='{key}', value='{value}'")
+            
+                    # Check if this line contains the tags (with flexible matching)
+                    if key.lower() == 'tags': 
+                        st.write("Tags line found. Raw value:", value)  # Debugging: ensure the tags line is identified
+        
+                        #     # Debugging: Print raw value and character details
+                        # st.write(f"Before splitting, raw value length: {len(value)}")
+                        # st.write(f"Raw value character codes: {[ord(char) for char in value]}")
+            
+                        # # Split the value by commas and strip extra spaces or special characters
+                        # tags_values = [tag.strip() for tag in value.split(",")]
+            
+                        # # Debugging: Check if tags_values was populated correctly
+                        # st.write(f"Tags after splitting and stripping: {tags_values}")
+                        # st.write(f"Length of tags_values: {len(tags_values)}")
+        
+                    # Print each tag separately to check for issues
+                    for idx, tag in enumerate(tags_values):
+                        st.write(f"Tag {idx + 1}: '{tag}' (Length: {len(tag)})")
+        
+        
+            test_value = "urology, neurogenic bladder, chronic condition, patient care"
+            test_tags = [tag.strip() for tag in test_value.split(",")]
+            st.write(f"Test tags after splitting: {test_tags}")
+            
+                        # Additional debugging: Check if the list was populated correctly
+            st.write("Length of tags_values:", len(tags_values))
+            st.write("Tags after splitting and stripping:", tags_values)
+                    
+                    
+        
+        
+                        
+            # Save the edited values back to session state
+            st.session_state['editable_result'] = editable_fields
+        
+            #st.write(parsed_result)  # Print the parsed result for debugging purposes
+        
+            st.write(tags_values)
+            
+            st_tags(
+                    label="Tags",
+                    text="Press enter to add more",
+                    value=tags_values,  # Display the tags found in the result
+                    maxtags=10)
+            
+        
+            if st.session_state['rerun']:
+                time.sleep(3)
+                clear_case()
+                st.session_state['rerun'] = False
+                st.rerun()
+                
         ##########
     
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
