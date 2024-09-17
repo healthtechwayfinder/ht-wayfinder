@@ -11,6 +11,8 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
+from streamlit_tags import st_tags
+
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -706,8 +708,6 @@ elif action == "Edit Existing Case":
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
                 # tags = st.text_input("Tags", case_details.get("Tags", ""))
-                
-                from streamlit_tags import st_tags
 
                 # Example usage of st_tags
                 tags = st_tags(
