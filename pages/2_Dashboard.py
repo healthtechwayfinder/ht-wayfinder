@@ -80,6 +80,9 @@ with col2:
 
     
     with st.container(border=True):
+        if st.button(":pencil2: Create a Need Statement"):
+            switch_page("Need_Statement_Logger")
+
         if st.button(":pencil: Create a Need Statement"):
             switch_page("Need_Statement_Logger")
 
