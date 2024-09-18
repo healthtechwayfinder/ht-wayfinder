@@ -702,11 +702,11 @@ if action == "Add New Case":
         </style>
     """
     
-    # Apply random colors to tags
-    for tag in tags_values:
-        color = random_color()
-        styled_tag = custom_style.format(color)
-        st.markdown(styled_tag, unsafe_allow_html=True)
+    # # Apply random colors to tags
+    # for tag in tags_values:
+    #     color = random_color()
+    #     styled_tag = custom_style.format(color)
+    #     st.markdown(styled_tag, unsafe_allow_html=True)
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
