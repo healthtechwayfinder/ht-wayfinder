@@ -491,7 +491,7 @@ if action == "Add New Case":
     # Process the result after button click
     parsed_result = st.session_state['result']
     # Ensure 'result' exists
-    if parsed_result:
+    if parsed_result and isinstance(st.session_state['parsed_case'], dict):
         # Print case title
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
         # # Debug: Show the parsed result
@@ -505,7 +505,9 @@ if action == "Add New Case":
         editable_fields = {}
         # Find missing fields by checking if any field in parsed_case is None or empty
         input_fields = list(caseRecord.__fields__.keys())
-        missing_fields = [field for field in input_fields if parsed_result.get(field) in [None, ""]]
+        # Find missing fields by checking if any field in parsed_case is None or empty
+        parsed_case = st.session_state['parsed_case']
+        missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
 
 
         for line in lines:
@@ -516,7 +518,7 @@ if action == "Add New Case":
                 # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
                 key_clean = key.replace('**', '').strip()
                 # Make key-value pairs editable
-                editable_fields[key] = st.text_input(f"{key}", value=value)
+                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
                 # Process tags when the key is 'Tags'
                 if key_clean.lower() == 'tags':
                     # st.write(f"Processing line: key='{key}', value='{value}'")
