@@ -590,7 +590,7 @@ if action == "Add New Case":
 
         #here 2------------
             # Debug: Print session state to verify changes
-         st.write("Updated session state result:", st.session_state['parsed_case'])
+        st.write("Updated session state result:", st.session_state['parsed_case'])
         #here 2------------
 
         # # Update 'result' with parsed_case
