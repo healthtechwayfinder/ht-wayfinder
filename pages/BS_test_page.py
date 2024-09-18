@@ -179,7 +179,7 @@ def getExistingObsIDS():
     client = gspread.authorize(creds)
     obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
     obs_ids = obs_log.col_values(1)[1:]
-    # case_dates_list = obs_log.col_values(3)[1:]
+    # obs_descrip = obs_log.col_values(5)[1:]
     obs_titles = obs_log.col_values(2)[1:]
 
     # find all observation ids with the same date
@@ -187,6 +187,9 @@ def getExistingObsIDS():
 
     # make strings with case id - title
     existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
+
+    # existing_obs_descrip = dict(zip(obs_ids, obs_descrip))
+
 
     print("Existing Observation IDS: ")
     print(existing_obs_ids_with_title)
@@ -259,8 +262,34 @@ def submit_form():
     st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
 
 
+def display_selected_observation(selected_obs_id):
+    obs_log = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+    df = pd.DataFrame(obs_log.get_all_records())
+
+    # Get the observation description based on the selected Observation ID
+    if selected_obs_id:
+        selected_observation = df[df['Observation ID'] == selected_obs_id]
+        if not selected_observation.empty:
+            observation_description = selected_observation.iloc[0]['Observation Description']
+            st.markdown(f"### Selected Observation Description:\n{observation_description}")
+        else:
+            st.info("No description available for this observation.")
+    else:
+        st.info("Please select an observation.")
+
+
 existing_obs_ids_with_title = getExistingObsIDS()
 st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
+
+df_descrips = pd.DataFrame(existing_obs_descrip)
+
+if st.session_state['obs_id_with_title']:
+    selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
+    display_selected_observation(selected_obs_id)
+
+    
+    # df_descrips = pd.DataFrame(existing_obs_descrip)
+    # st.dataframe(df_descrips)
 
 
 col1, col2 = st.columns(2)
@@ -288,15 +317,10 @@ with st.form("my_form"):
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        # st.date_input("Need Date", date.today(), on_change=update_need_ID, key="need_date")
         st.text_input("Problem:", key='problem')
 
-    # need ID and population
+    # population
     with col2:
-        # if 'need_ID' not in st.session_state:
-        #     update_need_ID()
-        # Display the need ID
-        # st.text_input("Need ID:", value=st.session_state['need_ID'], disabled=True)
         st.text_input("Population:", key='population')
     
     # enter relevant observation IDs & outcome text
