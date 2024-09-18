@@ -1,3 +1,4 @@
+
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
@@ -606,7 +607,7 @@ if action == "Add New Case":
     # Initialize variables to hold editable fields, tags, and missing fields
     editable_fields = {}
     tags_values = []  # Initialize tags_values as empty
-    missing_fields = []  # To store any missing fields
+    missing_fields = {}  # To store any missing fields with corresponding keys for editing
     
     # Extract parsed case from session state (ensuring it exists)
     parsed_case = st.session_state['parsed_case'] if 'parsed_case' in st.session_state else {}
@@ -614,15 +615,19 @@ if action == "Add New Case":
     # List of input fields based on caseRecord model
     input_fields = list(caseRecord.__fields__.keys())
     
-    # Check each field in the parsed case for missing values
+    # Check each field in the parsed case for missing or non-missing values
     for field in input_fields:
         value = parsed_case.get(field, None)
         
-        if value is None or not value.strip():  # Treat None or empty strings as missing
-            missing_fields.append(field.replace("_", " ").capitalize())
+        # Clean up the field name for display
+        field_label = field.replace("_", " ").capitalize()
+    
+        # Treat None or empty strings as missing
+        if value is None or not value.strip():
+            # Store missing fields separately, with a placeholder
+            missing_fields[field] = field_label
         else:
-            # Only make editable fields for non-missing values
-            field_label = field.replace("_", " ").capitalize()
+            # Show non-missing fields as editable
             editable_fields[field_label] = st.text_input(f"{field_label}", value=value)
     
     # Save the editable fields to session state (excluding tags)
@@ -640,12 +645,13 @@ if action == "Add New Case":
     else:
         st.write("No tags found.")
     
-    # Display missing fields below the tags
+    # Display missing fields below the tags as editable inputs
     if missing_fields:
-        st.markdown("### Missing Fields:")
-        for field in missing_fields:
-            st.markdown(f"- ❗️ **{field}** is missing")
-
+        st.markdown("### Missing Fields (Editable):")
+        for field, label in missing_fields.items():
+            # Create text inputs for each missing field below the tags
+            st.text_input(f"{label} (Missing)", key=f"missing_{field}", placeholder=f"Enter {label}")
+    
 
 
 
