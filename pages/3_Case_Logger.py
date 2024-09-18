@@ -569,9 +569,6 @@ if action == "Add New Case":
 
         # Convert updated_tags to a comma-separated string
         updated_tags_string = ", ".join(updated_tags)
-
-                # Iterate over the parsed result lines
-        updated_lines = []  # Store the modified lines
         for line in lines:
             if ':' in line:
                 key, value = line.split(':', 1)  # Split by the first colon
@@ -586,16 +583,6 @@ if action == "Add New Case":
                     # Substitute the old value (tags) with the updated tags
                     value = updated_tags_string  # Replace the old value with updated tags
                     st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
-        
-                # Reconstruct the line with the new or unchanged value
-                updated_line = f"{key}: {value}"
-                updated_lines.append(updated_line)  # Add to the list of updated lines
-        
-        # Now update the session state result with the updated tags
-        st.session_state['result']['tags'] = updated_tags_string  # Replace the old tags in the result
-        
-        # Optionally print the updated lines
-        st.write("Updated Lines:", updated_lines)
 
         
         st.markdown("### Missing Fields")
