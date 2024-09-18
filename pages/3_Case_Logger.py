@@ -550,22 +550,7 @@ if action == "Add New Case":
         else:
             st.write("No tags found.")
 
-        # After displaying the tags, update the result with the latest tags
-        if tags_values:
-            # Convert tags_values into a comma-separated string
-            updated_tags_string = ", ".join(tags_values)
-            
-            # Ensure that 'result' is initialized as a dictionary if not already done
-            if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
-                st.session_state['result'] = {}  # Initialize result as an empty dictionary
         
-            # Embed the updated tags in the result for logging purposes
-            st.session_state['result']['tags'] = updated_tags_string  # Store updated tags in result
-        
-            # Also update parsed_case with the new tags
-            st.session_state['parsed_case']['tags'] = updated_tags_string
-
-        # Now, add the missing fields as editable text inputs below the tags
         st.markdown("### Missing Fields")
         for field in missing_fields:
             field_clean = field.replace("_", " ").capitalize()
