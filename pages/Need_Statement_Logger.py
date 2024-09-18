@@ -34,33 +34,6 @@ st.write("For each need statement that you create, be sure to distinctly identif
 
 
 
-
-#/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-# //// PROCESS ////
-# 0. brief instructions appear at the top of the page with a link to the uder guide for more info
-# 1. select one or more observations (type them in? drop down?)
-#     -> summaries of observations are then displayed
-# 2. select the date (default to today's date)
-# 3. select the author (or NOT???? --  let's think this over)
-# 4. enter statement:
-#      -> 1st box: enter problem
-#      -> 2nd box: enter population
-#      -> 3rd box: enter outcome
-#      -> 4th box: enter full need statement
-#      -> 5th box for notes?
-#    -> statement goes to sheet and information is recorded in corresonding columns
-# 5. option to enter more statements with a (+) button (with a unique ID for each statement, user doesn't need to see this, honestly)
-# 6. statement goes to the google sheet, no AI necessary -- user sees message "Need statement(s) recorded!)
-# Other Notes:
-# -> code could lay foundation for detecting and sorting problem, population, and solution rather than manual entry
-# -> could the observation bot page have a widget in the right-hand sidebar for entering need satements from that page? (in need something comes up from a conversation)
-
-
-
-
-
-
 need_csv = "need.csv"
 OPENAI_API_KEY = st.secrets["openai_key"]
 
@@ -340,8 +313,8 @@ with st.form("my_form"):
 # yet unsure of what the rest of this does:
 
 with col3:
-      # Button to Clear the Observation Text Area
-  #  st.button("Clear Observation", on_click=clear_text) 
+    # Button to Clear the Observation Text Area
+    # st.button("Clear Observation", on_click=clear_text) 
     # Container for result display
     result_container = st.empty()
     
@@ -388,3 +361,47 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+# //// PROCESS ////
+# 0. brief instructions appear at the top of the page with a link to the uder guide for more info
+# 1. select one or more observations (type them in? drop down?)
+#     -> summaries of observations are then displayed
+# 2. select the date (default to today's date)
+# 3. select the author (or NOT???? --  let's think this over)
+# 4. enter statement:
+#      -> 1st box: enter problem
+#      -> 2nd box: enter population
+#      -> 3rd box: enter outcome
+#      -> 4th box: enter full need statement
+#      -> 5th box for notes?
+#    -> statement goes to sheet and information is recorded in corresonding columns
+# 5. option to enter more statements with a (+) button (with a unique ID for each statement, user doesn't need to see this, honestly)
+# 6. statement goes to the google sheet, no AI necessary -- user sees message "Need statement(s) recorded!)
+# Other Notes:
+# -> code could lay foundation for detecting and sorting problem, population, and solution rather than manual entry
+# -> could the observation bot page have a widget in the right-hand sidebar for entering need satements from that page? (in need something comes up from a conversation)
+
+
+
+
+
