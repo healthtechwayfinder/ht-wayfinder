@@ -487,279 +487,193 @@ if action == "Add New Case":
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
                 st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-
-        # Process the result after button click
-        parsed_result = st.session_state['result']
-        # Ensure 'result' exists
-        if parsed_result and isinstance(st.session_state['parsed_case'], dict):
-            # Print case title
-            st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
             
-            # Initialize tags as an empty list in case it's not found
-            tags_values = []
-            lines = parsed_result.splitlines()  # Split the result by lines and extract each case detail
-            editable_fields = {}
-            input_fields = list(caseRecord.__fields__.keys())
-            parsed_case = st.session_state['parsed_case']
-            missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
-        
-            # Process each line in the parsed result
-            for line in lines:
-                if ':' in line:
-                    key, value = line.split(':', 1)  # Split by the first colon
-                    key = key.strip()
-                    value = value.strip()
-                    key_clean = key.replace('**', '').strip()
-        
-                    # Skip missing fields
-                    if key_clean in missing_fields or value == "":
-                        continue
-        
-                    # If it's a tags field, handle it separately
-                    if key_clean.lower() == 'tags':
-                        tags_values = [tag.strip() for tag in value.split(",")]
-                        continue
-                    
-                    # Create editable text inputs and save changes to session state
-                    new_value = st.text_input(f"{key_clean}", value=value)
-                    st.session_state['parsed_case'][key_clean] = new_value  # Save the new value in parsed_case
-        
-            # Display tags and allow for dynamic updates using st_tags
-            updated_tags = st_tags(
-                label="Tags",
-                text="Press enter to add more",
-                value=tags_values,  # Show the tags found in the result
-                maxtags=10,
-                key="tags_input"
-            )
-        
-            # Update tags in the session state
-            st.session_state['parsed_case']['tags'] = updated_tags
-            st.session_state['result']['tags'] = ", ".join(updated_tags)  # Save updated tags in result
-        
-            # Debug: Print session state to verify changes
-            st.write("Updated session state result:", st.session_state['result'])
-        
-            st.markdown("### Missing Fields")
-            for field in missing_fields:
-                field_clean = field.replace("_", " ").capitalize()
-                # Render text input for missing fields, storing results back in parsed_case
-                st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
-            
-            # Log the case when the "Log Case" button is pressed
-            if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
-                st.session_state["error"] = ""
-            
-                if st.session_state['case_description'] == "":
-                    st.session_state["error"] = "Error: Please enter case."
-                    st.markdown(
-                        f"<span style='color:red;'>{st.session_state['error']}</span>", 
-                        unsafe_allow_html=True
-                    )
-                elif st.session_state['case_title'] == "":
-                    st.session_state["error"] = "Error: Please evaluate case."
-                    st.markdown(
-                        f"<span style='color:red;'>{st.session_state['error']}</span>", 
-                        unsafe_allow_html=True
-                    )
-                else:
-                    # Use the updated session state data to log the case
-                    status = embedCase(st.session_state['attendees'], st.session_state['case_description'], st.session_state['case_title'], 
-                                       st.session_state['case_date'], st.session_state['case_ID'])
-                    
-                    if status:
-                        st.session_state['result'] = "Case added to your team's database."
-                        st.session_state['rerun'] = True
-                        st.rerun()
-                    else:
-                        st.session_state['result'] = "Error adding case to your team's database. Please try again!"
+    # Process the result after button click
+    parsed_result = st.session_state['result']
+    # Ensure 'result' exists
+    if parsed_result and isinstance(st.session_state['parsed_case'], dict):
+        # Print case title
+        st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
+        # # Debug: Show the parsed result
+        # st.write("Parsed Result:", parsed_result)
+        # Initialize tags as an empty list in case it's not found
+        tags_values = []
+        # Split the result by lines and extract each case detail by assuming specific labels
+        lines = parsed_result.splitlines()
+        #     # Debug: Write lines being processed
+        # st.write("Lines from parsed result:", lines)
+        editable_fields = {}
+        # Find missing fields by checking if any field in parsed_case is None or empty
+        input_fields = list(caseRecord.__fields__.keys())
+        # Find missing fields by checking if any field in parsed_case is None or empty
+        parsed_case = st.session_state['parsed_case']
+        missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
 
-   #  # Process the result after button click
-   #  parsed_result = st.session_state['result']
-   #  # Ensure 'result' exists
-   #  if parsed_result and isinstance(st.session_state['parsed_case'], dict):
-   #      # Print case title
-   #      st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
-   #      # # Debug: Show the parsed result
-   #      # st.write("Parsed Result:", parsed_result)
-   #      # Initialize tags as an empty list in case it's not found
-   #      tags_values = []
-   #      # Split the result by lines and extract each case detail by assuming specific labels
-   #      lines = parsed_result.splitlines()
-   #      #     # Debug: Write lines being processed
-   #      # st.write("Lines from parsed result:", lines)
-   #      editable_fields = {}
-   #      # Find missing fields by checking if any field in parsed_case is None or empty
-   #      input_fields = list(caseRecord.__fields__.keys())
-   #      # Find missing fields by checking if any field in parsed_case is None or empty
-   #      parsed_case = st.session_state['parsed_case']
-   #      missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
-
-   #      # Ensure 'result' exists in session state
-   #      parsed_result = st.session_state.get('result', '')
+        # Ensure 'result' exists in session state
+        parsed_result = st.session_state.get('result', '')
         
         
-   #      for line in lines:
-   #          if ':' in line:
-   #              key, value = line.split(':', 1)  # Split by the first colon
-   #              key = key.strip()
-   #              value = value.strip()
-   #              # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-   #              key_clean = key.replace('**', '').strip()
-   #              # No missing fields handling here! Only make fields editable.
-   #              # Skip printing or displaying missing fields or empty fields
-   #              if key_clean in missing_fields or value == "":
-   #                  continue  # Skip this field if it's missing or has an empty value
+        for line in lines:
+            if ':' in line:
+                key, value = line.split(':', 1)  # Split by the first colon
+                key = key.strip()
+                value = value.strip()
+                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+                key_clean = key.replace('**', '').strip()
+                # No missing fields handling here! Only make fields editable.
+                # Skip printing or displaying missing fields or empty fields
+                if key_clean in missing_fields or value == "":
+                    continue  # Skip this field if it's missing or has an empty value
 
-   #              # # The following line displays each field from the parsed result as an editable text input.
-   #              # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+                # # The following line displays each field from the parsed result as an editable text input.
+                # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
 
-   #              # Process tags when the key is 'Tags'
-   #              if key_clean.lower() == 'tags':
-   #                  # st.write(f"Processing line: key='{key}', value='{value}'")
-   #                  tags_values = [tag.strip() for tag in value.split(",")]
-   #                  # st.write(f"Tags after splitting and stripping: {tags_values}")
-   #                  # st.write(f"Length of tags_values: {len(tags_values)}")
-   #                  continue
+                # Process tags when the key is 'Tags'
+                if key_clean.lower() == 'tags':
+                    # st.write(f"Processing line: key='{key}', value='{value}'")
+                    tags_values = [tag.strip() for tag in value.split(",")]
+                    # st.write(f"Tags after splitting and stripping: {tags_values}")
+                    # st.write(f"Length of tags_values: {len(tags_values)}")
+                    continue
                 
-   #              # Print non-empty fields only (non-missing fields)
-   #              editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+                # Print non-empty fields only (non-missing fields)
+                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
         
-   #      # Save the editable fields to session state
-   #      st.session_state['editable_result'] = editable_fields
+        # Save the editable fields to session state
+        st.session_state['editable_result'] = editable_fields
 
-   #      # # Display tags if tags were found
-   #      # if tags_values:
-   #      #     st_tags(
-   #      #         label="Tags",
-   #      #         text="Press enter to add more",
-   #      #         value=tags_values,  # Show the tags found in the result
-   #      #         maxtags=10
-   #      #     )
-   #      # else:
-   #      #     st.write("No tags found.")
+        # # Display tags if tags were found
+        # if tags_values:
+        #     st_tags(
+        #         label="Tags",
+        #         text="Press enter to add more",
+        #         value=tags_values,  # Show the tags found in the result
+        #         maxtags=10
+        #     )
+        # else:
+        #     st.write("No tags found.")
 
-   #      # st.write("Current Tags:", tags_values)  # This will display the list of tags
+        # st.write("Current Tags:", tags_values)  # This will display the list of tags
 
-   #      # Display tags and allow for dynamic updates using st_tags
-   #      updated_tags = st_tags(
-   #          label="Tags",
-   #          text="Press enter to add more",
-   #          value=tags_values,  # Show the tags found in the result
-   #          maxtags=10,
-   #          key="tags_input"  # Unique key to ensure it's updated correctly
-   #      )
+        # Display tags and allow for dynamic updates using st_tags
+        updated_tags = st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10,
+            key="tags_input"  # Unique key to ensure it's updated correctly
+        )
         
-   #      # Update tags_values with the modified tags from st_tags
-   #      tags_values = updated_tags
+        # Update tags_values with the modified tags from st_tags
+        tags_values = updated_tags
 
-   #      # Print the updated tags values after any modification (entry or deletion)
-   #      st.write("Updated Tags:", tags_values)
+        # Print the updated tags values after any modification (entry or deletion)
+        st.write("Updated Tags:", tags_values)
 
-   #      # Convert updated_tags to a comma-separated string
-   #      updated_tags_string = ", ".join(updated_tags)
-   #      for line in lines:
-   #          if ':' in line:
-   #              key, value = line.split(':', 1)  # Split by the first colon
-   #              key = key.strip()
-   #              value = value.strip()
-   #              # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-   #              key_clean = key.replace('**', '').strip()
+        # Convert updated_tags to a comma-separated string
+        updated_tags_string = ", ".join(updated_tags)
+        for line in lines:
+            if ':' in line:
+                key, value = line.split(':', 1)  # Split by the first colon
+                key = key.strip()
+                value = value.strip()
+                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+                key_clean = key.replace('**', '').strip()
         
-   #              # If the key is 'tags', update it with the modified tags
-   #              if key_clean.lower() == 'tags':
-   #                  st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
-   #                  # Substitute the old value (tags) with the updated tags
-   #                  value = updated_tags_string  # Replace the old value with updated tags
-   #                  st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
-   #                  # Update the session state with the updated tags
-   #                  # if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
-   #                  #     st.session_state['result'] = {}  # Initialize result if it doesn't exist
+                # If the key is 'tags', update it with the modified tags
+                if key_clean.lower() == 'tags':
+                    st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
+                    # Substitute the old value (tags) with the updated tags
+                    value = updated_tags_string  # Replace the old value with updated tags
+                    st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
+                    # Update the session state with the updated tags
+                    # if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
+                    #     st.session_state['result'] = {}  # Initialize result if it doesn't exist
                     
-   #                  # # Update the 'tags' field in the result
-   #                  # st.session_state['result']['tags'] = updated_tags_string
+                    # # Update the 'tags' field in the result
+                    # st.session_state['result']['tags'] = updated_tags_string
         
-   #              # Continue with other processing logic for the rest of the lines
-   #              # You can add further updates to the session state as needed for other fields
+                # Continue with other processing logic for the rest of the lines
+                # You can add further updates to the session state as needed for other fields
         
-   #      # Debug: Print session state to verify changes
-   #      st.write("Updated session state result:", st.session_state['result'])
+        # Debug: Print session state to verify changes
+        st.write("Updated session state result:", st.session_state['result'])
 
         
-   #      st.markdown("### Missing Fields")
+        st.markdown("### Missing Fields")
         
-   #      for field in missing_fields:
-   #          field_clean = field.replace("_", " ").capitalize()
-   #          # Render text input for missing fields, storing results back in parsed_case
-   #          st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
+        for field in missing_fields:
+            field_clean = field.replace("_", " ").capitalize()
+            # Render text input for missing fields, storing results back in parsed_case
+            st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
             
-   #      # # Ensure that parsed_case is updated in the 'result' for Google Sheets
-   #      # st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
+        # # Ensure that parsed_case is updated in the 'result' for Google Sheets
+        # st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
     
-   #      # # Save the editable fields to session state
-   #      # st.session_state['editable_result'] = editable_fields
+        # # Save the editable fields to session state
+        # st.session_state['editable_result'] = editable_fields
 
 
     
-   #  # #Rerun logic
-   #  # if st.session_state['rerun']:
-   #  #     time.sleep(3)
-   #  #     clear_case()
-   #  #     st.session_state['rerun'] = False
-   #  #     st.rerun()
-   #  # Rerun logic
-   #  if st.session_state['rerun']:
-   #      # Ensure any unsaved changes are stored in session state before rerun
-   #      # Example: Save updated case fields, tags, etc.
-   #      st.session_state['parsed_case']['tags'] = updated_tags
-   #      st.session_state['editable_result'] = editable_fields
+    # #Rerun logic
+    # if st.session_state['rerun']:
+    #     time.sleep(3)
+    #     clear_case()
+    #     st.session_state['rerun'] = False
+    #     st.rerun()
+    # Rerun logic
+    if st.session_state['rerun']:
+        # Ensure any unsaved changes are stored in session state before rerun
+        # Example: Save updated case fields, tags, etc.
+        st.session_state['parsed_case']['tags'] = updated_tags
+        st.session_state['editable_result'] = editable_fields
     
-   #      # Any other custom saving logic
-   #      time.sleep(3)  # Pause to let the user see changes, if necessary
-   #      clear_case()  # Optional: Clear case if needed before rerun
-   #      st.session_state['rerun'] = False
-   #      st.rerun()  # Trigger the rerun
+        # Any other custom saving logic
+        time.sleep(3)  # Pause to let the user see changes, if necessary
+        clear_case()  # Optional: Clear case if needed before rerun
+        st.session_state['rerun'] = False
+        st.rerun()  # Trigger the rerun
 
-   # # Logging cases  
-   #  if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
-   #      # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
-   #      st.session_state["error"] = ""
+   # Logging cases  
+    if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
+        # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
+        st.session_state["error"] = ""
     
-   #      if st.session_state['case_description'] == "":
-   #          st.session_state["error"] = "Error: Please enter case."
-   #          st.markdown(
-   #              f"<span style='color:red;'>{st.session_state['error']}</span>", 
-   #              unsafe_allow_html=True
-   #          )
-   #      elif st.session_state['case_title'] == "":
-   #          st.session_state["error"] = "Error: Please evaluate case."
-   #          st.markdown(
-   #              f"<span style='color:red;'>{st.session_state['error']}</span>", 
-   #              unsafe_allow_html=True
-   #          )
-   #      else:
-   #          status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
-   #                              st.session_state['case_date'],
-   #                              st.session_state['case_ID'])
-   #          # st.session_state['case_title'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_title'])
-   #          # "Generated Summary: "+st.session_state['case_title']+"\n\n"
-   #          if status:
-   #              st.session_state['result'] = "Case added to your team's database."
-   #              st.session_state['rerun'] = True
-   #              st.rerun()
-   #          else:
-   #              st.session_state['result'] = "Error adding case to your team's database. Please try again!"
-   #          # clear_case()
+        if st.session_state['case_description'] == "":
+            st.session_state["error"] = "Error: Please enter case."
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
+        elif st.session_state['case_title'] == "":
+            st.session_state["error"] = "Error: Please evaluate case."
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
+        else:
+            status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
+                                st.session_state['case_date'],
+                                st.session_state['case_ID'])
+            # st.session_state['case_title'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_title'])
+            # "Generated Summary: "+st.session_state['case_title']+"\n\n"
+            if status:
+                st.session_state['result'] = "Case added to your team's database."
+                st.session_state['rerun'] = True
+                st.rerun()
+            else:
+                st.session_state['result'] = "Error adding case to your team's database. Please try again!"
+            # clear_case()
     
-   #  st.markdown("---")
+    st.markdown("---")
     
-   #  # if st.button("Back to Main Menu"):
-   #  #     clear_case()
-   #  #     switch_page("main_menu")
+    # if st.button("Back to Main Menu"):
+    #     clear_case()
+    #     switch_page("main_menu")
     
     
-   #  # st.markdown("---")
-   #  # Apply custom CSS to make the button blue
+    # st.markdown("---")
+    # Apply custom CSS to make the button blue
 
 # If the user chooses "Edit Existing Case"
 elif action == "Edit Existing Case":
