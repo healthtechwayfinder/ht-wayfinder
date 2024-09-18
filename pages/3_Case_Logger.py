@@ -655,6 +655,18 @@ if action == "Add New Case":
     else:
         st.write("No tags found.")
 
+        # Update the session state when tags are modified
+    st.session_state['tags_values'] = tags_values
+    
+    # Update the parsed_case field for 'tags' with the latest tags from the user
+    st.session_state['parsed_case']['tags'] = ", ".join(tags_values)
+    
+    # Ensure 'result' reflects the updated tags
+    st.session_state['result'] = f"**Tags**: {st.session_state['parsed_case']['tags']}"
+    
+    # Debug output to display the updated tags in result
+    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+
     # Display colorful tags if tags were found
     # Display editable tags
     # Editable Tags Input with `st_tags`
