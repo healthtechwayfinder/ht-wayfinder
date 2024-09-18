@@ -508,10 +508,6 @@ if action == "Add New Case":
         # Find missing fields by checking if any field in parsed_case is None or empty
         parsed_case = st.session_state['parsed_case']
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
-        original_tags = st.session_state['parsed_case'].get('tags', '').split(", ")  # Fetch initial tags
-        # Ensure `original_tags` is a valid list even if there are no initial tags
-        if original_tags == ['']:
-            original_tags = []
 
 
         for line in lines:
@@ -543,38 +539,16 @@ if action == "Add New Case":
         # # Save the editable fields to session state
         # st.session_state['editable_result'] = editable_fields
 
-        # Display tags and allow for dynamic updates using st_tags
-        updated_tags = st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10,
-            key="tags_input"  # Optional key to ensure uniqueness
-        )
-
-        # Ensure `updated_tags` is initialized and is a list
-        if updated_tags is None:
-            updated_tags = []
-    
-        # Sync the changes in tags with parsed_case (add new, remove old)
-        added_tags = list(set(updated_tags) - set(original_tags))  # Check for newly added tags
-        removed_tags = list(set(original_tags) - set(updated_tags))  # Check for deleted tags
-    
-        # Update the parsed case's tags (remove deleted and add new)
-        new_tags_list = [tag for tag in original_tags if tag not in removed_tags]
-    
-        # Then, add the newly added tags
-        new_tags_list += added_tags
-    
-        # Save the updated tags to parsed_case and session state
-        st.session_state['tags_values'] = updated_tags
-        parsed_case['tags'] = ", ".join(new_tags_list)  # Store updated tags in parsed_case
-    
-        # Ensure that parsed_case is updated in the 'result' for Google Sheets
-        st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
-    
-        # Save the editable fields to session state
-        st.session_state['editable_result'] = editable_fields
+        # Display tags if tags were found
+        if tags_values:
+            st_tags(
+                label="Tags",
+                text="Press enter to add more",
+                value=tags_values,  # Show the tags found in the result
+                maxtags=10
+            )
+        else:
+            st.write("No tags found.")
 
         # Now, add the missing fields as editable text inputs below the tags
         st.markdown("### Missing Fields")
@@ -582,9 +556,29 @@ if action == "Add New Case":
             field_clean = field.replace("_", " ").capitalize()
             # Render text input for missing fields, storing results back in parsed_case
             st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
-
-        # Update session state and parsed case with the new tags from st_tags
+            
+        # # Update session state with current tags values
+        # st.session_state['tags_values'] = tags_values
+        # Sync the changes in tags with parsed_case (add new, remove old)
+        # Track additions (newly added tags)
+        added_tags = list(set(updated_tags) - set(original_tags))
+    
+        # Track removals (deleted tags)
+        removed_tags = list(set(original_tags) - set(updated_tags))
+    
+        # Update the parsed case's tags (add new and remove deleted)
+        new_tags_list = [tag for tag in original_tags if tag not in removed_tags] + added_tags
+    
+        # Save the updated tags to parsed_case and session state
         st.session_state['tags_values'] = updated_tags
+        parsed_case['tags'] = ", ".join(new_tags_list)  # Store updated tags in parsed_case
+
+        # Ensure that parsed_case is updated in the 'result' for Google Sheets
+        st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
+    
+        # Save the editable fields to session state
+        st.session_state['editable_result'] = editable_fields
+
 
     
     #Rerun logic
