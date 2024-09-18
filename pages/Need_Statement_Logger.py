@@ -183,7 +183,7 @@ def getExistingObsIDS():
     existing_obs_ids_with_title = dict(zip(obs_ids, obs_titles))
 
     # make strings with case id - title
-    existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
+    existing_obs_ids_with_title = [f"{obs_id} - {obs_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
 
     print("Existing Observation IDS: ")
     print(existing_obs_ids_with_title)
