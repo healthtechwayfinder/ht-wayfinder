@@ -573,8 +573,8 @@ if action == "Add New Case":
 
         st.session_state['parsed_case']['tags'] = updated_tags
 
-        # Update 'result' with parsed_case
-        st.session_state['result'] = st.session_state['parsed_case']
+        # # Update 'result' with parsed_case
+        # st.session_state['result'] = st.session_state['parsed_case']
         
         # Print the updated session state for debugging
         st.write("Updated session state result:", st.session_state['result'])
