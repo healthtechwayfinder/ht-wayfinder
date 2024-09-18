@@ -606,6 +606,7 @@ if action == "Add New Case":
     # Initialize variables to hold editable fields and tags
     editable_fields = {}
     tags_values = []  # Initialize tags_values as empty
+    missing_fields = []  # To store any missing fields
     
     # Split the result by lines and extract each case detail by assuming specific labels
     lines = parsed_result.splitlines()
@@ -619,6 +620,10 @@ if action == "Add New Case":
             # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
             key_clean = key.replace('**', '').strip()
 
+            # If the value is empty or None, consider the field as missing
+            if not value:
+                missing_fields.append(key_clean)
+                
             # Process tags when the key is 'Tags'
             if key_clean.lower() == 'tags':
                 # st.write(f"Processing line: key='{key}', value='{value}'")
@@ -643,6 +648,12 @@ if action == "Add New Case":
         )
     else:
         st.write("No tags found.")
+
+    # Display missing fields below the tags
+    if missing_fields:
+        st.markdown("### Missing Fields:")
+        for field in missing_fields:
+            st.markdown(f"<span style='color:red;'>{field}</span>", unsafe_allow_html=True)
 
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
