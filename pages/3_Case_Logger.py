@@ -246,13 +246,22 @@ if action == "Add New Case":
     with col3:
         st.button("Clear Case", on_click=clear_case)
 
-    with col1:
-        if st.button("Submit Case"):
-            st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
-            if st.session_state['case_title']:
-                st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+    # with col1:
+    #     if st.button("Submit Case"):
+    #         st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
+    #         if st.session_state['case_title']:
+    #             st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
+    #         st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
 
+    with col1:
+    if st.button("Submit Case"):
+        st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
+        if st.session_state['case_title']:
+            with st.container():
+                st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=100, key="case_title_edit")
+        st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+
+    
     parsed_result = st.session_state['result']
     tags_values = []
 
