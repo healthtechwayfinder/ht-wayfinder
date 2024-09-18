@@ -68,7 +68,7 @@ if "reviewed_observations" not in st.session_state:
 # Loop through each recent case and display it
 for index, case in recent_cases.iterrows():
     st.markdown(f"#### Case ID: {case['Case ID']}")
-    st.text_area("Case Details", value=f"Case ID: {case['Case ID']}\nDetails: {case['Case Description']}", height=150, key=f"case_{index}")
+    st.text_area("Case Details", value=f"Details: {case['Case Description']}", height=150, key=f"case_{index}")
 
     # Split the Observations column (assuming comma-separated IDs)
     observation_ids = case['Observations'].split(",")  # Split by commas and remove any extra spaces
