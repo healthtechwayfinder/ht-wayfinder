@@ -512,13 +512,6 @@ if action == "Add New Case":
         # Ensure 'result' exists in session state
         parsed_result = st.session_state.get('result', '')
         
-        # Now parsed_result is guaranteed to be a string or at least an empty string
-        if isinstance(parsed_result, str):
-            lines = parsed_result.splitlines()
-        else:
-            st.error("Parsed result is not a valid string. Please check the result.")
-            lines = []  # Default to an empty list if parsed_result is not valid
-
         
         for line in lines:
             if ':' in line:
@@ -594,11 +587,11 @@ if action == "Add New Case":
                     value = updated_tags_string  # Replace the old value with updated tags
                     st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
                     # Update the session state with the updated tags
-                    if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
-                        st.session_state['result'] = {}  # Initialize result if it doesn't exist
+                    # if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
+                    #     st.session_state['result'] = {}  # Initialize result if it doesn't exist
                     
-                    # Update the 'tags' field in the result
-                    st.session_state['result']['tags'] = updated_tags_string
+                    # # Update the 'tags' field in the result
+                    # st.session_state['result']['tags'] = updated_tags_string
         
                 # Continue with other processing logic for the rest of the lines
                 # You can add further updates to the session state as needed for other fields
