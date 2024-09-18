@@ -283,7 +283,8 @@ def display_selected_observation(selected_obs_id):
         selected_observation = df[df['Observation ID'] == selected_obs_id]
         if not selected_observation.empty:
             observation_description = selected_observation.iloc[0]['Observation Description']
-            st.markdown(f"### Selected Observation Description:\n{observation_description}")
+            st.markdown(f"### {selected_obs_id} Description:\n{observation_description}")
+            # st.markdown(f"### Selected Observation Description:\n{observation_description}")
         else:
             st.info("No description available for this observation.")
     else:
