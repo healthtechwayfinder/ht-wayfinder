@@ -536,8 +536,8 @@ if action == "Add New Case":
                 # Print non-empty fields only (non-missing fields)
                 editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
         
-        # # Save the editable fields to session state
-        # st.session_state['editable_result'] = editable_fields
+        # Save the editable fields to session state
+        st.session_state['editable_result'] = editable_fields
 
         # Display tags if tags were found
         if tags_values:
@@ -557,11 +557,11 @@ if action == "Add New Case":
             # Render text input for missing fields, storing results back in parsed_case
             st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
             
-        # Ensure that parsed_case is updated in the 'result' for Google Sheets
-        st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
+        # # Ensure that parsed_case is updated in the 'result' for Google Sheets
+        # st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
     
-        # Save the editable fields to session state
-        st.session_state['editable_result'] = editable_fields
+        # # Save the editable fields to session state
+        # st.session_state['editable_result'] = editable_fields
 
 
     
