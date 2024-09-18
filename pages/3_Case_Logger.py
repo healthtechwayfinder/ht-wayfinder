@@ -609,12 +609,13 @@ if action == "Add New Case":
     
     with col1:
         if st.button("Submit Case"):
-            # Extract and process the case description
-            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+            # Generate the case description
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             
             if st.session_state['case_title'] != "":
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
+
+            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             
     # Process the result after button click
     parsed_result = st.session_state['result']
@@ -707,12 +708,12 @@ if action == "Add New Case":
     #     color = random_color()
     #     styled_tag = custom_style.format(color)
     #     st.markdown(styled_tag, unsafe_allow_html=True)
-    # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
-    if st.session_state['rerun']:
-        time.sleep(3)
-        clear_case()
-        st.session_state['rerun'] = False
-        st.rerun()
+        # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
+        if st.session_state['rerun']:
+            time.sleep(3)
+            clear_case()
+            st.session_state['rerun'] = False
+            st.rerun()
 
     
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
