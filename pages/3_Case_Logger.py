@@ -602,44 +602,35 @@ if action == "Add New Case":
             
     # Process the result after button click
     parsed_result = st.session_state['result']
-
-    # Initialize variables to hold editable fields and tags
+    
+    # Initialize variables to hold editable fields, tags, and missing fields
     editable_fields = {}
     tags_values = []  # Initialize tags_values as empty
     missing_fields = []  # To store any missing fields
     
-    # Split the result by lines and extract each case detail by assuming specific labels
-    lines = parsed_result.splitlines()
-
-
-    for line in lines:
-        if ':' in line:
-            key, value = line.split(':', 1)  # Split by the first colon
-            key = key.strip()
-            value = value.strip()
-            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-            key_clean = key.replace('**', '').strip()
-
-            # If the value is empty or None, consider the field as missing
-            if not value:
-                missing_fields.append(key_clean)
-                
-            # Process tags when the key is 'Tags'
-            if key_clean.lower() == 'tags':
-                # st.write(f"Processing line: key='{key}', value='{value}'")
-                tags_values = [tag.strip() for tag in value.split(",")]
-                # st.write(f"Tags after splitting and stripping: {tags_values}")
-                # st.write(f"Length of tags_values: {len(tags_values)}")
-            else:
-                # Make key-value pairs editable (excluding tags)
-                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-
-    # Save the editable fields to session state (without the tags)
+    # Extract parsed case from session state (ensuring it exists)
+    parsed_case = st.session_state['parsed_case'] if 'parsed_case' in st.session_state else {}
+    
+    # List of input fields based on caseRecord model
+    input_fields = list(caseRecord.__fields__.keys())
+    
+    # Check each field in the parsed case for missing values
+    for field in input_fields:
+        value = parsed_case.get(field, None)
+        
+        if value is None or not value.strip():  # Treat None or empty strings as missing
+            missing_fields.append(field.replace("_", " ").capitalize())
+        else:
+            # Only make editable fields for non-missing values
+            field_label = field.replace("_", " ").capitalize()
+            editable_fields[field_label] = st.text_input(f"{field_label}", value=value)
+    
+    # Save the editable fields to session state (excluding tags)
     st.session_state['editable_result'] = editable_fields
-
-
-    # Display tags if tags were found
-    if tags_values:
+    
+    # Display tags if tags exist
+    if 'tags' in parsed_case and parsed_case['tags']:
+        tags_values = parsed_case['tags'].split(", ")
         st_tags(
             label="Tags",
             text="Press enter to add more",
@@ -648,13 +639,13 @@ if action == "Add New Case":
         )
     else:
         st.write("No tags found.")
-
-    # Display missing fields below the tags
+    
     # Display missing fields below the tags
     if missing_fields:
         st.markdown("### Missing Fields:")
         for field in missing_fields:
             st.markdown(f"- ❗️ **{field}** is missing")
+
 
 
 
