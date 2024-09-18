@@ -531,7 +531,14 @@ if action == "Add New Case":
         )
     else:
         st.write("No tags found.")
-    
+
+    # Now, add the missing fields as editable text inputs below the tags
+    st.markdown("### Missing Fields")
+    for field in missing_fields:
+        field_clean = field.replace("_", " ").capitalize()
+        # Render text input for missing fields, storing results back in parsed_case
+        st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
+        
     # Update session state with current tags values
     st.session_state['tags_values'] = tags_values
     
