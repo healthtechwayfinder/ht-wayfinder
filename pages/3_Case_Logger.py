@@ -585,9 +585,6 @@ if action == "Add New Case":
 
         # Update session state and parsed case with the new tags from st_tags
         st.session_state['tags_values'] = updated_tags
-    
-        # Save the editable fields to session state
-        st.session_state['editable_result'] = editable_fields
 
     
     #Rerun logic
