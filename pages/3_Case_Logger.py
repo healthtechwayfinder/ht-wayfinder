@@ -601,6 +601,7 @@ if action == "Add New Case":
 
         
         st.markdown("### Missing Fields")
+        
         for field in missing_fields:
             field_clean = field.replace("_", " ").capitalize()
             # Render text input for missing fields, storing results back in parsed_case
@@ -614,12 +615,24 @@ if action == "Add New Case":
 
 
     
-    #Rerun logic
+    # #Rerun logic
+    # if st.session_state['rerun']:
+    #     time.sleep(3)
+    #     clear_case()
+    #     st.session_state['rerun'] = False
+    #     st.rerun()
+    # Rerun logic
     if st.session_state['rerun']:
-        time.sleep(3)
-        clear_case()
+        # Ensure any unsaved changes are stored in session state before rerun
+        # Example: Save updated case fields, tags, etc.
+        st.session_state['parsed_case']['tags'] = updated_tags
+        st.session_state['editable_result'] = editable_fields
+    
+        # Any other custom saving logic
+        time.sleep(3)  # Pause to let the user see changes, if necessary
+        clear_case()  # Optional: Clear case if needed before rerun
         st.session_state['rerun'] = False
-        st.rerun()
+        st.rerun()  # Trigger the rerun
 
    # Logging cases  
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
