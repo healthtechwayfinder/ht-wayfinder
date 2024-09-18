@@ -583,6 +583,18 @@ if action == "Add New Case":
                     # Substitute the old value (tags) with the updated tags
                     value = updated_tags_string  # Replace the old value with updated tags
                     st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
+                    # Update the session state with the updated tags
+                    if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
+                        st.session_state['result'] = {}  # Initialize result if it doesn't exist
+                    
+                    # Update the 'tags' field in the result
+                    st.session_state['result']['tags'] = updated_tags_string
+        
+                # Continue with other processing logic for the rest of the lines
+                # You can add further updates to the session state as needed for other fields
+        
+        # Debug: Print session state to verify changes
+        st.write("Updated session state result:", st.session_state['result'])
 
         
         st.markdown("### Missing Fields")
