@@ -66,7 +66,7 @@ st.markdown("### Cases in the last week")
 # Display each recent case in a text box
 for index, case in recent_cases.iterrows():
     st.markdown(f"#### Case ID: {case['Case ID']}")
-    st.text_area("Case Details", value=f"Observation ID: {case['Observation ID']}\nDetails: {case['Case Description']}", height=150, key=f"case_{index}")
+    st.text_area("Case Details", value=f"Observation ID: {case['Observation ID']}\nDetails: {case['Observation Description']}", height=150, key=f"case_{index}")
 
 # Map Observation IDs from recent cases to the Observation Log
 observation_ids = recent_cases['Observation ID'].unique()
