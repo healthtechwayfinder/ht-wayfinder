@@ -448,6 +448,9 @@ def getExistingCaseIDS():
     print(existing_case_ids_with_title)
     return existing_case_ids_with_title
 
+existing_case_ids_with_title = getExistingCaseIDS()
+case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
+    # put case ID dateinformation here
 
 # Use columns to place observation_date, observation_id, and observer side by side
 col1, col2, col3 = st.columns(3)
@@ -456,9 +459,7 @@ with col1:
     # st calendar for date input with a callback to update the observation_id
     #edit this to be the same as the case date
 
-    existing_case_ids_with_title = getExistingCaseIDS()
-    case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
-    # put case ID dateinformation here
+   
     st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
   
 
