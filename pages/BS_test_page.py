@@ -1,3 +1,16 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
 import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -25,7 +38,10 @@ creds_dict = {
     "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
 }
 
-# Function to append an Observation ID to the "Observations" column in the Case Log worksheet
+
+
+
+# //// WIP //// WIP //// WIP //// Function to append an Observation ID to the "Observations" column in the Case Log worksheet //// WIP //// WIP //// WIP //// WIP //// WIP ////
 def append_observation_to_case(case_log_sheet, case_id, new_observation_id):
     # Get all data from the Case Log sheet
     all_data = case_log_sheet.get_all_values()
@@ -57,6 +73,42 @@ def append_observation_to_case(case_log_sheet, case_id, new_observation_id):
                 st.info(f"Observation ID '{new_observation_id}' already exists for Case ID '{case_id}'.")
             return
     st.error(f"Case ID '{case_id}' not found in the Case Log.")
+
+
+
+
+# # Function to append an Observation ID to the "Observations" column in the Case Log worksheet
+# def append_observation_to_case(case_log_sheet, case_id, new_observation_id):
+#     # Get all data from the Case Log sheet
+#     all_data = case_log_sheet.get_all_values()
+    
+#     # Find the index of the columns
+#     headers = all_data[0]
+#     case_id_col_index = headers.index('Case ID') + 1  # Convert to 1-based index for gspread
+#     observations_col_index = headers.index('Observations') + 1  # Convert to 1-based index
+    
+#     # Find the row with the matching Case ID
+#     for i, row in enumerate(all_data[1:], start=2):  # Start at 2 because row 1 is headers
+#         if row[headers.index('Case ID')] == case_id:
+#             # Get the existing observations (if any)
+#             existing_observations = row[headers.index('Observations')]
+#             if existing_observations:
+#                 existing_observations_list = [obs.strip() for obs in existing_observations.split(",") if obs.strip()]
+#             else:
+#                 existing_observations_list = []
+            
+#             # Check if the new Observation ID already exists
+#             if new_observation_id not in existing_observations_list:
+#                 # Append the new Observation ID to the list
+#                 updated_observations = existing_observations_list + [new_observation_id]
+                
+#                 # Update the cell in Google Sheets with the new value
+#                 case_log_sheet.update_cell(i, observations_col_index, ", ".join(updated_observations))
+#                 st.success(f"Observation ID '{new_observation_id}' has been added to Case ID '{case_id}'.")
+#             else:
+#                 st.info(f"Observation ID '{new_observation_id}' already exists for Case ID '{case_id}'.")
+#             return
+#     st.error(f"Case ID '{case_id}' not found in the Case Log.")
 
 
 
