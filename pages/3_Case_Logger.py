@@ -33,7 +33,6 @@ action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"]
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 # Access the credentials from Streamlit secrets
-#test
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
     "project_id" : st.secrets["gwf_service_account"]["project_id"],
@@ -52,17 +51,11 @@ creds_dict = {
 if 'case_description' not in st.session_state:
     st.session_state['case_description'] = ""
 
-# if 'location' not in st.session_state:
-#     st.session_state['location'] = ""
-
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
 
 if 'case_title' not in st.session_state:
     st.session_state['case_title'] = ""
-
-# if 'case_date' not in st.session_state:
-#     st.session_state['case_date'] = ""
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
@@ -177,36 +170,28 @@ def parse_result_string(result_str):
 
 # Function to extract and display case features
 def extractCaseFeatures(case_description):
-    # Parse the case
-    parsed_case = parseCase(case_description)
-    st.session_state['parsed_case'] = parsed_case
+    try:
+        parsed_case = parseCase(case_description)
+        st.session_state['parsed_case'] = parsed_case
+        input_fields = list(caseRecord.__fields__.keys())
+        missing_fields = []
 
-    input_fields = list(caseRecord.__fields__.keys())
-    
-    # Prepare a list to track missing fields
-    missing_fields = []
+        for field in input_fields:
+            value = parsed_case.get(field, None)
+            field_label = field.replace("_", " ").capitalize()
 
-    # Iterate over the fields and display them with "empty" in red if they are missing
-    for field in input_fields:
-        value = parsed_case.get(field, None)  # Get the value from parsed_case, or None if not available
-        
-        # Clean up the field name for display
-        field_label = field.replace("_", " ").capitalize()
-        
-        # If the field is missing or empty, mark it as empty
-        if value is None or value.strip() == "":
-            st.markdown(f"**{field_label}:** <span style='color:red;'>empty</span>", unsafe_allow_html=True)
-            # Create a text input to allow the user to fill in the missing field
-            st.text_input(f"Enter {field_label}:", key=f"missing_{field}")
-            missing_fields.append(field)
-        else:
-            # For non-missing fields, display the field with its value and allow editing
-            st.text_input(f"{field_label}:", value=value, key=f"editable_{field}")
-    
-    # Save missing fields to session state for later use
-    st.session_state['missing_fields'] = missing_fields
+            if not value:
+                st.markdown(f"**{field_label}:** <span style='color:red;'>empty</span>", unsafe_allow_html=True)
+                st.text_input(f"Enter {field_label}:", key=f"missing_{field}")
+                missing_fields.append(field)
+            else:
+                st.text_input(f"{field_label}:", value=value, key=f"editable_{field}")
 
-    return missing_fields
+        st.session_state['missing_fields'] = missing_fields
+        return f"Parsed fields: {', '.join(input_fields)}"
+    except Exception as e:
+        st.error(f"Error parsing case features: {e}")
+        return "No valid case data."
 
 
 def addToGlossary(insider_language_terms, case_id):
