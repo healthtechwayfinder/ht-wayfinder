@@ -283,7 +283,7 @@ def display_selected_observation(selected_obs_id):
 existing_obs_ids_with_title = getExistingObsIDS()
 st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
 
-df_descrips = pd.DataFrame(existing_obs_descrip)
+# df_descrips = pd.DataFrame(existing_obs_descrip)
 
 if st.session_state['obs_id_with_title']:
     selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
