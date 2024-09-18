@@ -50,6 +50,8 @@ case_log_sheet = get_google_sheet(sheet_name, 'Case Log')
 observation_log_sheet = get_google_sheet(sheet_name, 'Observation Log')
 
 case_df = get_google_sheet_as_dataframe(case_log_sheet)
+st.write("Columns in Case Log:", case_df.columns)
+
 observation_df = get_google_sheet_as_dataframe(observation_log_sheet)
 
 # Convert date column in case_df to datetime
