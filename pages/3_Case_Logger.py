@@ -570,6 +570,14 @@ if action == "Add New Case":
         # Print the updated tags values after any modification (entry or deletion)
         st.write("Updated Tags:", tags_values)
 
+        st.session_state['parsed_case']['tags'] = updated_tags
+
+        # Update 'result' with parsed_case
+        st.session_state['result'] = st.session_state['parsed_case']
+        
+        # Print the updated session state for debugging
+        st.write("Updated session state result:", st.session_state['result'])
+
         # Convert updated_tags to a comma-separated string
         updated_tags_string = ", ".join(updated_tags)
         for line in lines:
@@ -623,10 +631,7 @@ if action == "Add New Case":
     # Rerun logic
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
-        # Example: Save updated case fields, tags, etc.
-        st.session_state['parsed_case']['tags'] = updated_tags
-        st.session_state['editable_result'] = editable_fields
-    
+        # Example: Save updated case fields, tags, etc
         # Any other custom saving logic
         time.sleep(3)  # Pause to let the user see changes, if necessary
         #clear_case()  # Optional: Clear case if needed before rerun
