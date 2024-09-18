@@ -427,13 +427,14 @@ def update_case(case_id, updated_data):
 def random_color():
     return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
-# Function to render colorful tags
-def render_colorful_tags(tags_values):
-    tags_html = ""
+# Function to render editable colorful tags
+def render_editable_colorful_tags(tags_values):
+    colorful_tags = []
     for tag in tags_values:
         color = random_color()
-        tags_html += f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
-    return tags_html
+        tag_html = f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
+        colorful_tags.append(tag_html)
+    return colorful_tags
 
 
 
@@ -658,24 +659,54 @@ if action == "Add New Case":
     # Save the editable fields to session state
     st.session_state['editable_result'] = editable_fields
 
-    # # Display tags if tags were found
-    # if tags_values:
-    #     st_tags(
-    #         label="Tags",
-    #         text="Press enter to add more",
-    #         value=tags_values,  # Show the tags found in the result
-    #         maxtags=10
-    #     )
-    # else:
-    #     st.write("No tags found.")
-
-    # Display colorful tags if tags were found
+    # Display tags if tags were found
     if tags_values:
-        colorful_tags_html = render_colorful_tags(tags_values)
-        st.markdown(colorful_tags_html, unsafe_allow_html=True)
+        st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10
+        )
     else:
         st.write("No tags found.")
 
+    # Display colorful tags if tags were found
+    # Display editable tags
+    # Editable Tags Input with `st_tags`
+   # Initialize tags_values in session state if not already present
+    # Editable Tags Input with `st_tags`
+    # tags_values = st_tags(
+    #     label="Editable Tags",
+    #     text="Press enter to add more",
+    #     value=st.session_state['tags_values'],  # Initial tags
+    #     maxtags=10,
+    #     suggestions=[],  # Add any suggestions if needed
+    #     key="tags_input"
+    # )
+    
+    # Update session state with current tags values
+    st.session_state['tags_values'] = tags_values
+    
+    # Add custom CSS for each tag in `st_tags`
+    custom_style = """
+        <style>
+            .tag-container .tag {
+                display: inline-block;
+                background-color: {};
+                color: white;
+                padding: 5px 10px;
+                margin: 5px;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+        </style>
+    """
+    
+    # Apply random colors to tags
+    for tag in tags_values:
+        color = random_color()
+        styled_tag = custom_style.format(color)
+        st.markdown(styled_tag, unsafe_allow_html=True)
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
@@ -830,3 +861,4 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
+    
