@@ -151,10 +151,13 @@ def extractCaseFeatures(case_description):
 
     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
-    if len(missing_fields)>0:
-        output += "\n\n **Missing fields**:"
-        for field in missing_fields:
-            output += f" <span style='color:red;'>{field}</span>,"
+    # Display missing fields as editable inputs
+    output += "\n\n **Missing fields**:"
+    for field in missing_fields:
+        field_clean = field.replace("_", " ").capitalize()
+        # Render text input for missing fields, storing results back in parsed_case
+        parsed_case[field] = st.text_input(f"Enter {field_clean}", key=field)
+        
     return f"{output}"
 
 def addToGlossary(insider_language_terms, case_id):
