@@ -699,6 +699,9 @@ if action == "Add New Case":
                 unsafe_allow_html=True
             )
         else:
+            # Update tags before logging the case
+            st.session_state['parsed_case']['tags'] = ", ".join(st.session_state['tags_values'])
+
             status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
                                 st.session_state['case_date'],
                                 st.session_state['case_ID'])
