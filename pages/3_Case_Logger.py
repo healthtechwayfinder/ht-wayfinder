@@ -521,9 +521,6 @@ if action == "Add New Case":
                 # Skip printing or displaying missing fields or empty fields
                 if key_clean in missing_fields or value == "":
                     continue  # Skip this field if it's missing or has an empty value
-    
-                # Print non-empty fields only (non-missing fields)
-                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
 
                 # # The following line displays each field from the parsed result as an editable text input.
                 # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
@@ -534,8 +531,8 @@ if action == "Add New Case":
                     tags_values = [tag.strip() for tag in value.split(",")]
                     # st.write(f"Tags after splitting and stripping: {tags_values}")
                     # st.write(f"Length of tags_values: {len(tags_values)}")
-                    #skip the print 
-                    continue 
+                    continue
+                
                 # Print non-empty fields only (non-missing fields)
                 editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
         
