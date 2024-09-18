@@ -26,6 +26,8 @@ import json
 import os
 import csv
 
+import random
+
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 # Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
@@ -421,6 +423,19 @@ def update_case(case_id, updated_data):
         return False
 
 
+# Function to generate a random color
+def random_color():
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
+# Function to render colorful tags
+def render_colorful_tags(tags_values):
+    tags_html = ""
+    for tag in tags_values:
+        color = random_color()
+        tags_html += f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
+    return tags_html
+
+
 
 import streamlit as st
 from datetime import date
@@ -643,14 +658,21 @@ if action == "Add New Case":
     # Save the editable fields to session state
     st.session_state['editable_result'] = editable_fields
 
-    # Display tags if tags were found
+    # # Display tags if tags were found
+    # if tags_values:
+    #     st_tags(
+    #         label="Tags",
+    #         text="Press enter to add more",
+    #         value=tags_values,  # Show the tags found in the result
+    #         maxtags=10
+    #     )
+    # else:
+    #     st.write("No tags found.")
+
+    # Display colorful tags if tags were found
     if tags_values:
-        st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10
-        )
+        colorful_tags_html = render_colorful_tags(tags_values)
+        st.markdown(colorful_tags_html, unsafe_allow_html=True)
     else:
         st.write("No tags found.")
 
