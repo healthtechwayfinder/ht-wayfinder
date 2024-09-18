@@ -32,7 +32,7 @@ import pandas as pd
 st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil2:")
 st.markdown("# Create a New Need Statement")
 st.write("Use this tool to record needs as you draft them. Select the date that the need was generated, and a unique identifier will auto-populate. In the next box, select all related observations.")
-st.write("For each need statement that you create, be sure to distinctly identify the problem, population, and outcome, and then enter the whole statement in the corresponding text box. In the last box, add any relevant notes -- including things like how you might want to workshop the statement, specific insights, assumptions in the statement that need validation, or opportunities for improvement or more research.")
+st.write("Start by outlining the problem, population, and outcome, and then enter the whole statement in the corresponding text box. In the last box, add any relevant notes -- things like how you might want to workshop the statement, specific insights, assumptions in the statement that need validation, or opportunities for improvement or more research.")
 
 
 
