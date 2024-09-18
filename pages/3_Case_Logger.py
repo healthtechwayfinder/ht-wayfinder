@@ -600,100 +600,95 @@ if action == "Add New Case":
             
             if st.session_state['case_title'] != "":
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-            
-    # Process the result after button click
-    parsed_result = st.session_state['result']
-    
-    # Initialize variables to hold editable fields, tags, and missing fields
-    editable_fields = {}
-    tags_values = []  # Initialize tags_values as empty
-    missing_fields = {}  # To store any missing fields with corresponding keys for editing
-    
-    # Extract parsed case from session state (ensuring it exists)
-    parsed_case = st.session_state['parsed_case'] if 'parsed_case' in st.session_state else {}
-    
-    # List of input fields based on caseRecord model
-    input_fields = list(caseRecord.__fields__.keys())
-    
-    # Check each field in the parsed case for missing or non-missing values
-    for field in input_fields:
-        value = parsed_case.get(field, None)
+        # Process the result after button click
+        parsed_result = st.session_state['result']
         
-        # Clean up the field name for display
-        field_label = field.replace("_", " ").capitalize()
-    
-        # Treat None or empty strings as missing
-        if value is None or not value.strip():
-            # Store missing fields separately, with a placeholder
-            missing_fields[field] = field_label
-        else:
-            # Show non-missing fields as editable
-            editable_fields[field_label] = st.text_input(f"{field_label}", value=value)
-    
-    # Save the editable fields to session state (excluding tags)
-    st.session_state['editable_result'] = editable_fields
-    
-    # Display tags if tags exist
-    if 'tags' in parsed_case and parsed_case['tags']:
-        tags_values = parsed_case['tags'].split(", ")
-        st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10
-        )
-    else:
-        st.write("No tags found.")
-    
-    # Display missing fields below the tags as editable inputs
-    if missing_fields:
-        st.markdown("### Missing Fields (Editable):")
-        for field, label in missing_fields.items():
-            # Create text inputs for each missing field below the tags
-            st.text_input(f"{label} (Missing)", key=f"missing_{field}", placeholder=f"Enter {label}")
-    
-
-
-
-    # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
-    if st.session_state['rerun']:
-        time.sleep(3)
-        clear_case()
-        st.session_state['rerun'] = False
-        st.rerun()
-
-    
-    if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
-        # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
-        st.session_state["error"] = ""
-    
-        if st.session_state['case_description'] == "":
-            st.session_state["error"] = "Error: Please enter case."
-            st.markdown(
-                f"<span style='color:red;'>{st.session_state['error']}</span>", 
-                unsafe_allow_html=True
-            )
-        elif st.session_state['case_title'] == "":
-            st.session_state["error"] = "Error: Please evaluate case."
-            st.markdown(
-                f"<span style='color:red;'>{st.session_state['error']}</span>", 
-                unsafe_allow_html=True
-            )
-        else:
-            status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
-                                st.session_state['case_date'],
-                                st.session_state['case_ID'])
-            # st.session_state['case_title'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_title'])
-            # "Generated Summary: "+st.session_state['case_title']+"\n\n"
-            if status:
-                st.session_state['result'] = "Case added to your team's database."
-                st.session_state['rerun'] = True
-                st.rerun()
+        # Initialize variables to hold editable fields, tags, and missing fields
+        editable_fields = {}
+        tags_values = []  # Initialize tags_values as empty
+        missing_fields = {}  # To store any missing fields with corresponding keys for editing
+        
+        # Extract parsed case from session state (ensuring it exists)
+        parsed_case = st.session_state['parsed_case'] if 'parsed_case' in st.session_state else {}
+        
+        # List of input fields based on caseRecord model
+        input_fields = list(caseRecord.__fields__.keys())
+        
+        # Check each field in the parsed case for missing or non-missing values
+        for field in input_fields:
+            value = parsed_case.get(field, None)
+            
+            # Clean up the field name for display
+            field_label = field.replace("_", " ").capitalize()
+        
+            # Treat None or empty strings as missing
+            if value is None or not value.strip():
+                # Store missing fields separately, with a placeholder
+                missing_fields[field] = field_label
             else:
-                st.session_state['result'] = "Error adding case to your team's database. Please try again!"
-            # clear_case()
-    
-    st.markdown("---")
+                # Show non-missing fields as editable
+                editable_fields[field_label] = st.text_input(f"{field_label}", value=value)
+        
+        # Save the editable fields to session state (excluding tags)
+        st.session_state['editable_result'] = editable_fields
+        
+        # Display tags if tags exist
+        if 'tags' in parsed_case and parsed_case['tags']:
+            tags_values = parsed_case['tags'].split(", ")
+            st_tags(
+                label="Tags",
+                text="Press enter to add more",
+                value=tags_values,  # Show the tags found in the result
+                maxtags=10
+            )
+        else:
+            st.write("No tags found.")
+        
+        # Display missing fields below the tags as editable inputs
+        if missing_fields:
+            st.markdown("### Missing Fields (Editable):")
+            for field, label in missing_fields.items():
+                # Create text inputs for each missing field below the tags
+                st.text_input(f"{label} (Missing)", key=f"missing_{field}", placeholder=f"Enter {label}")
+        
+        # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
+        if st.session_state['rerun']:
+            time.sleep(3)
+            clear_case()
+            st.session_state['rerun'] = False
+            st.rerun()
+        
+        # Handle the log case button
+        if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
+            # Initialize error state
+            st.session_state["error"] = ""
+        
+            # Error handling for case description
+            if st.session_state['case_description'] == "":
+                st.session_state["error"] = "Error: Please enter case."
+                st.markdown(f"<span style='color:red;'>{st.session_state['error']}</span>", unsafe_allow_html=True)
+            elif st.session_state['case_title'] == "":
+                st.session_state["error"] = "Error: Please evaluate case."
+                st.markdown(f"<span style='color:red;'>{st.session_state['error']}</span>", unsafe_allow_html=True)
+            else:
+                # Embed the case and log it into the database
+                status = embedCase(
+                    st.session_state['attendees'], 
+                    st.session_state['case_description'],  
+                    st.session_state['case_title'], 
+                    st.session_state['case_date'], 
+                    st.session_state['case_ID']
+                )
+                
+                if status:
+                    st.session_state['result'] = "Case added to your team's database."
+                    st.session_state['rerun'] = True
+                    st.rerun()
+                else:
+                    st.session_state['result'] = "Error adding case to your team's database. Please try again!"
+        
+        st.markdown("---")
+
     
     # if st.button("Back to Main Menu"):
     #     clear_case()
