@@ -66,11 +66,11 @@ st.markdown("### Cases in the last week")
 # Display each recent case in a text box
 for index, case in recent_cases.iterrows():
     st.markdown(f"#### Case ID: {case['Case ID']}")
-    st.text_area("Case Details", value=f"Observation ID: {case['observation_ID']}\nDetails: {case['case_details']}", height=150, key=f"case_{index}")
+    st.text_area("Case Details", value=f"Observation ID: {case['Observation ID']}\nDetails: {case['Case Description']}", height=150, key=f"case_{index}")
 
-# Map observation_IDs from recent cases to the Observation Log
-observation_ids = recent_cases['observation_ID'].unique()
-observations_for_cases = observation_df[observation_df['observation_ID'].isin(observation_ids)]
+# Map Observation IDs from recent cases to the Observation Log
+observation_ids = recent_cases['Observation ID'].unique()
+observations_for_cases = observation_df[observation_df['Observation ID'].isin(observation_ids)]
 
 st.markdown("### Corresponding Observations")
 
@@ -80,12 +80,12 @@ if "reviewed_observations" not in st.session_state:
 
 # Display observations with checkboxes for review status
 for index, observation in observations_for_cases.iterrows():
-    observation_id = observation['observation_ID']
+    observation_id = observation['Observation ID']
     col1, col2 = st.columns([8, 2])
     
     with col1:
         st.write(f"**Observation ID: {observation_id}**")
-        st.write(f"Details: {observation['observation_details']}")
+        st.write(f"Details: {observation['Observation Description']}")
     
     with col2:
         # Checkbox for marking as reviewed
