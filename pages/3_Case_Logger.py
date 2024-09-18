@@ -512,73 +512,37 @@ if action == "Add New Case":
 
         # Ensure 'result' exists in session state
         parsed_result = st.session_state.get('result', '')
-
-                
-        # Process lines to ensure consistent updates
+        
+        
         for line in lines:
             if ':' in line:
-                key, value = line.split(':', 1)
-                
-                # Normalize the key: lowercase and replace spaces with underscores (except for 'tags')
-                key_clean = key.strip().replace('**', '').lower().replace(" ", "_")
+                key, value = line.split(':', 1)  # Split by the first colon
+                key = key.strip()
                 value = value.strip()
-        
-                # Skip fields that are missing or empty
-                if key_clean in missing_fields or value == "" or key_clean == "tags":
+                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+                key_clean = key.replace('**', '').strip()
+                # No missing fields handling here! Only make fields editable.
+                # Skip printing or displaying missing fields or empty fields
+                if key_clean in missing_fields or value == "":
+                    continue  # Skip this field if it's missing or has an empty value
+
+                # # The following line displays each field from the parsed result as an editable text input.
+                # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+
+                # Process tags when the key is 'Tags'
+                if key_clean.lower() == 'tags':
+                    # st.write(f"Processing line: key='{key}', value='{value}'")
+                    tags_values = [tag.strip() for tag in value.split(",")]
+                    # st.write(f"Tags after splitting and stripping: {tags_values}")
+                    # st.write(f"Length of tags_values: {len(tags_values)}")
                     continue
-        
-                # Render text input for each key, ensuring it updates session state
-                editable_fields[key_clean] = st.text_input(f"{key_clean.replace('_', ' ').capitalize()}", value=value)
-                
-                # Store the updated field back in the session state
-                st.session_state['parsed_case'][key_clean] = editable_fields[key_clean]
-        
-        # Handle 'tags' separately, without normalizing the key
-        tags_values = st.session_state['parsed_case'].get('tags', [])
-        updated_tags = st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,
-            maxtags=10,
-            key="tags_input"  # Ensure the key is unique
-        )
-        
-        # Update the tags in session state without normalizing
-        st.session_state['parsed_case']['tags'] = updated_tags
-        
-        # Debugging: Display the updated session state
-        st.write("Updated session state result:", st.session_state['parsed_case'])
-        
-        
-        # for line in lines:
-        #     if ':' in line:
-        #         key, value = line.split(':', 1)  # Split by the first colon
-        #         key = key.strip()
-        #         value = value.strip()
-        #         # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-        #         key_clean = key.replace('**', '').strip()
-        #         # No missing fields handling here! Only make fields editable.
-        #         # Skip printing or displaying missing fields or empty fields
-        #         if key_clean in missing_fields or value == "":
-        #             continue  # Skip this field if it's missing or has an empty value
-
-        #         # # The following line displays each field from the parsed result as an editable text input.
-        #         # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-
-        #         # Process tags when the key is 'Tags'
-        #         if key_clean.lower() == 'tags':
-        #             # st.write(f"Processing line: key='{key}', value='{value}'")
-        #             tags_values = [tag.strip() for tag in value.split(",")]
-        #             # st.write(f"Tags after splitting and stripping: {tags_values}")
-        #             # st.write(f"Length of tags_values: {len(tags_values)}")
-        #             continue
-        #         ######here 2
-        #         else:
-        #             editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-        #             # Automatically update 'result' in session state
-        #              # Update session state safely
-        #             if key_clean not in st.session_state['parsed_case'] or editable_fields[key_clean]:
-        #                 st.session_state['parsed_case'][key_clean] = editable_fields[key_clean]
+                ######here 2
+                else:
+                    editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+                    # Automatically update 'result' in session state
+                     # Update session state safely
+                    if key_clean not in st.session_state['parsed_case'] or editable_fields[key_clean]:
+                        st.session_state['parsed_case'][key_clean] = editable_fields[key_clean]
 
                  ######here 2
                 
@@ -601,26 +565,26 @@ if action == "Add New Case":
 
         # st.write("Current Tags:", tags_values)  # This will display the list of tags
 
-        # # Display tags and allow for dynamic updates using st_tags
-        # updated_tags = st_tags(
-        #     label="Tags",
-        #     text="Press enter to add more",
-        #     value=tags_values,  # Show the tags found in the result
-        #     maxtags=10,
-        #     key="tags_input"  # Unique key to ensure it's updated correctly
-        # )
+        # Display tags and allow for dynamic updates using st_tags
+        updated_tags = st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10,
+            key="tags_input"  # Unique key to ensure it's updated correctly
+        )
         
-        # # Update tags_values with the modified tags from st_tags
-        # tags_values = updated_tags
+        # Update tags_values with the modified tags from st_tags
+        tags_values = updated_tags
 
-        # # Print the updated tags values after any modification (entry or deletion)
-        # st.write("Updated Tags:", tags_values)
+        # Print the updated tags values after any modification (entry or deletion)
+        st.write("Updated Tags:", tags_values)
 
-        # st.session_state['parsed_case']['tags'] = updated_tags
+        st.session_state['parsed_case']['tags'] = updated_tags
 
-        # #here 2------------
-        #     # Debug: Print session state to verify changes
-        # st.write("Updated session state result:", st.session_state['parsed_case'])
+        #here 2------------
+            # Debug: Print session state to verify changes
+        st.write("Updated session state result:", st.session_state['parsed_case'])
         #here 2------------
 
         # # Update 'result' with parsed_case
