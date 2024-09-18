@@ -251,7 +251,8 @@ if action == "Add New Case":
             st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title']:
                 st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-    
+
+    st.text_area("Case Title (editable):", value=st.session_state['case_title'])
     parsed_result = st.session_state['result']
     tags_values = []
 
@@ -263,13 +264,23 @@ if action == "Add New Case":
             editable_fields[key] = st.text_input(f"{key.strip()}", value=value.strip())
 
             if key.strip().lower() == 'tags':
-                tags_values = [tag.strip() for tag in value.split(",")]
-
-    st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)    
+                tags_values = [tag.strip() for tag in value.split(",")]    
     
-    if tags_values:
-        st_tags(label="Tags", text="Press enter to add more", value=tags_values, maxtags=10)
+    # if tags_values:
+    #     st_tags(label="Tags", text="Press enter to add more", value=tags_values, maxtags=10)
 
+
+    #Display tags if tags were found
+    if tags_values:
+        st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10
+        )
+    else:
+        st.write("No tags found.")
+    
     st.session_state['tags_values'] = tags_values
 
     if st.button("Log Case", disabled=not st.session_state['case_title']):
