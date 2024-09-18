@@ -539,18 +539,34 @@ if action == "Add New Case":
         # Save the editable fields to session state
         st.session_state['editable_result'] = editable_fields
 
-        # Display tags if tags were found
-        if tags_values:
-            st_tags(
-                label="Tags",
-                text="Press enter to add more",
-                value=tags_values,  # Show the tags found in the result
-                maxtags=10
-            )
-        else:
-            st.write("No tags found.")
+        # # Display tags if tags were found
+        # if tags_values:
+        #     st_tags(
+        #         label="Tags",
+        #         text="Press enter to add more",
+        #         value=tags_values,  # Show the tags found in the result
+        #         maxtags=10
+        #     )
+        # else:
+        #     st.write("No tags found.")
 
-        st.write("Current Tags:", tags_values)  # This will display the list of tags
+        # st.write("Current Tags:", tags_values)  # This will display the list of tags
+
+        # Display tags and allow for dynamic updates using st_tags
+        updated_tags = st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10,
+            key="tags_input"  # Unique key to ensure it's updated correctly
+        )
+        
+        # Update tags_values with the modified tags from st_tags
+        tags_values = updated_tags
+
+# Print the updated tags values after any modification (entry or deletion)
+st.write("Updated Tags:", tags_values)
+
         
         st.markdown("### Missing Fields")
         for field in missing_fields:
