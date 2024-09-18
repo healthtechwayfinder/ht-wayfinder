@@ -26,8 +26,6 @@ import json
 import os
 import csv
 
-import random
-
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 # Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
@@ -69,14 +67,8 @@ if 'case_title' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
-# if 'parsed_case' not in st.session_state:
-#     st.session_state['parsed_case'] = ""
-
-# Session state initialization
-# Initialize session state as an empty dictionary if needed
-if 'parsed_case' not in st.session_state or not isinstance(st.session_state['parsed_case'], dict):
-    st.session_state['parsed_case'] = {}
-
+if 'parsed_case' not in st.session_state:
+    st.session_state['parsed_case'] = ""
 
 class caseRecord(BaseModel):
     location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
@@ -351,13 +343,6 @@ Output title:"""
 
     return output
 
-# Example tags handling logic
-tags_values = ["Tag1", "Tag2"]  # Example list of tags (this would be dynamically generated in real usage)
-
-# Ensure 'parsed_case' is a dictionary and set 'tags'
-if isinstance(st.session_state['parsed_case'], dict):
-    st.session_state['parsed_case']['tags'] = ", ".join(tags_values)
-
 
 def clear_case():
     if 'case_description' in st.session_state:
@@ -434,6 +419,7 @@ def update_case(case_id, updated_data):
     except Exception as e:
         print(f"Error updating case: {e}")
         return False
+
 
 
 import streamlit as st
@@ -613,9 +599,7 @@ if action == "Add New Case":
             
             if st.session_state['case_title'] != "":
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-
-            st.write(st.session_state['result'])  # Ensure result is displayed
-    
+            
     # Process the result after button click
     parsed_result = st.session_state['result']
 
@@ -670,25 +654,6 @@ if action == "Add New Case":
     else:
         st.write("No tags found.")
 
-        # Update the session state when tags are modified
-    st.session_state['tags_values'] = tags_values
-    
-    # Update the parsed_case field for 'tags' with the latest tags from the user
-    st.session_state['parsed_case']['tags'] = ", ".join(tags_values)
-    
-    # Keep the old result and add new information instead of overwriting
-    st.session_state['result'] += f"**Tags**: {st.session_state['parsed_case']['tags']}\n"
-
-    # Debug output to display the updated tags in result
-    st.markdown(st.session_state['result'], unsafe_allow_html=True)
-
-    # Display colorful tags if tags were found
-    # Display editable tags
-    # Editable Tags Input with `st_tags`
-   # Initialize tags_values in session state if not already present
-    # Editable Tags Input with `st_tags`
-    
-       
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
@@ -714,9 +679,6 @@ if action == "Add New Case":
                 unsafe_allow_html=True
             )
         else:
-            # Update tags before logging the case
-            st.session_state['parsed_case']['tags'] = ", ".join(st.session_state['tags_values'])
-
             status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
                                 st.session_state['case_date'],
                                 st.session_state['case_ID'])
