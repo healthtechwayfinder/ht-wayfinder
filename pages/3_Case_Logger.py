@@ -550,6 +550,16 @@ if action == "Add New Case":
         else:
             st.write("No tags found.")
 
+        # After displaying the tags, update the result with the latest tags
+        if tags_values:
+            # Convert tags_values into a comma-separated string
+            updated_tags_string = ", ".join(tags_values)
+            
+            # Embed the updated tags in the result for logging purposes
+            st.session_state['parsed_case']['tags'] = updated_tags_string
+            st.session_state['result']['tags'] = updated_tags_string  # Ensure it's also in the result
+
+
         # Now, add the missing fields as editable text inputs below the tags
         st.markdown("### Missing Fields")
         for field in missing_fields:
@@ -557,22 +567,6 @@ if action == "Add New Case":
             # Render text input for missing fields, storing results back in parsed_case
             st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
             
-        # # Update session state with current tags values
-        # st.session_state['tags_values'] = tags_values
-        # Sync the changes in tags with parsed_case (add new, remove old)
-        # Track additions (newly added tags)
-        added_tags = list(set(updated_tags) - set(original_tags))
-    
-        # Track removals (deleted tags)
-        removed_tags = list(set(original_tags) - set(updated_tags))
-    
-        # Update the parsed case's tags (add new and remove deleted)
-        new_tags_list = [tag for tag in original_tags if tag not in removed_tags] + added_tags
-    
-        # Save the updated tags to parsed_case and session state
-        st.session_state['tags_values'] = updated_tags
-        parsed_case['tags'] = ", ".join(new_tags_list)  # Store updated tags in parsed_case
-
         # Ensure that parsed_case is updated in the 'result' for Google Sheets
         st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
     
