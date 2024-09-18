@@ -144,36 +144,70 @@ def parse_result_string(result_str):
     
     return parsed_dict
 
-def extractCaseFeatures(case_description):
+# def extractCaseFeatures(case_description):
 
+#     # Parse the case
+#     parsed_case = parseCase(case_description)
+#     st.session_state['parsed_case'] = parsed_case
+
+#     input_fields = list(caseRecord.__fields__.keys())
+
+#     missing_fields = [field for field in input_fields if parsed_case[field] is None]
+
+#     output = ""
+
+#     for field in input_fields:
+#         if field not in missing_fields:
+#             key_output = field.replace("_", " ").capitalize()
+#             output += f"**{key_output}**: {parsed_case[field]}\n"
+#             output += "\n"
+
+
+#     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
+
+#     if len(missing_fields)>0:
+#         output += "\n\n **Missing fields**:"
+
+#         for field in missing_fields:
+#             output += f" <span style='color:red;'>{field}</span>,"
+
+#     # Display the output
+#     # st.markdown(output, unsafe_allow_html=True)
+#     return f"{output}"
+
+# Function to extract and display case features
+def extractCaseFeatures(case_description):
     # Parse the case
     parsed_case = parseCase(case_description)
     st.session_state['parsed_case'] = parsed_case
 
     input_fields = list(caseRecord.__fields__.keys())
+    
+    # Prepare a list to track missing fields
+    missing_fields = []
 
-    missing_fields = [field for field in input_fields if parsed_case[field] is None]
-
-    output = ""
-
+    # Iterate over the fields and display them with "empty" in red if they are missing
     for field in input_fields:
-        if field not in missing_fields:
-            key_output = field.replace("_", " ").capitalize()
-            output += f"**{key_output}**: {parsed_case[field]}\n"
-            output += "\n"
+        value = parsed_case.get(field, None)  # Get the value from parsed_case, or None if not available
+        
+        # Clean up the field name for display
+        field_label = field.replace("_", " ").capitalize()
+        
+        # If the field is missing or empty, mark it as empty
+        if value is None or value.strip() == "":
+            st.markdown(f"**{field_label}:** <span style='color:red;'>empty</span>", unsafe_allow_html=True)
+            # Create a text input to allow the user to fill in the missing field
+            st.text_input(f"Enter {field_label}:", key=f"missing_{field}")
+            missing_fields.append(field)
+        else:
+            # For non-missing fields, display the field with its value and allow editing
+            st.text_input(f"{field_label}:", value=value, key=f"editable_{field}")
+    
+    # Save missing fields to session state for later use
+    st.session_state['missing_fields'] = missing_fields
 
+    return missing_fields
 
-    missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
-
-    if len(missing_fields)>0:
-        output += "\n\n **Missing fields**:"
-
-        for field in missing_fields:
-            output += f" <span style='color:red;'>{field}</span>,"
-
-    # Display the output
-    # st.markdown(output, unsafe_allow_html=True)
-    return f"{output}"
 
 def addToGlossary(insider_language_terms, case_id):
     try:
@@ -592,14 +626,14 @@ if action == "Add New Case":
         
     
     with col1:
-        if st.button("Submit Case"):
-            # Extract and process the case description
-            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-            st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
-            
-            if st.session_state['case_title'] != "":
-                st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-            
+    if st.button("Submit Case"):
+        # Extract and process the case description
+        st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+        st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
+        
+        if st.session_state['case_title'] != "":
+            st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
+
     # Process the result after button click
     parsed_result = st.session_state['result']
 
