@@ -55,11 +55,11 @@ st.write("Columns in Case Log:", case_df.columns)
 observation_df = get_google_sheet_as_dataframe(observation_log_sheet)
 
 # Convert date column in case_df to datetime
-case_df['date'] = pd.to_datetime(case_df['date'])
+case_df['Date'] = pd.to_datetime(case_df['Date'])
 
 # Filter cases from the past week
 one_week_ago = datetime.now() - timedelta(days=7)
-recent_cases = case_df[case_df['date'] >= one_week_ago]
+recent_cases = case_df[case_df['Date'] >= one_week_ago]
 
 st.markdown("### Cases in the last week")
 
