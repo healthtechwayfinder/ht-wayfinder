@@ -540,8 +540,8 @@ if action == "Add New Case":
                 # Print non-empty fields only (non-missing fields)
                 editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
         
-        # Save the editable fields to session state
-        st.session_state['editable_result'] = editable_fields
+        # # Save the editable fields to session state
+        # st.session_state['editable_result'] = editable_fields
 
         # # Display tags if tags were found
         # if tags_values:
