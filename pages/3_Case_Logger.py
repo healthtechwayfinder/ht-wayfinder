@@ -670,7 +670,16 @@ if action == "Add New Case":
     #     st.write("No tags found.")
 
     # Display colorful tags if tags were found
+    # Display editable tags
     if tags_values:
+        tags_values = st_tags(
+            label="Editable Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10
+        )
+    
+        # Show colorful tags as a visual representation
         colorful_tags_html = render_colorful_tags(tags_values)
         st.markdown(colorful_tags_html, unsafe_allow_html=True)
     else:
