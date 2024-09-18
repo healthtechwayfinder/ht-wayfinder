@@ -534,6 +534,11 @@ if action == "Add New Case":
                     tags_values = [tag.strip() for tag in value.split(",")]
                     # st.write(f"Tags after splitting and stripping: {tags_values}")
                     # st.write(f"Length of tags_values: {len(tags_values)}")
+                    #skip the print 
+                    continue 
+                # Print non-empty fields only (non-missing fields)
+                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+        
         # Save the editable fields to session state
         st.session_state['editable_result'] = editable_fields
 
