@@ -613,7 +613,9 @@ if action == "Add New Case":
             
             if st.session_state['case_title'] != "":
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-            
+
+            st.write(st.session_state['result'])  # Ensure result is displayed
+    
     # Process the result after button click
     parsed_result = st.session_state['result']
 
@@ -674,9 +676,9 @@ if action == "Add New Case":
     # Update the parsed_case field for 'tags' with the latest tags from the user
     st.session_state['parsed_case']['tags'] = ", ".join(tags_values)
     
-    # Ensure 'result' reflects the updated tags
-    st.session_state['result'] = f"**Tags**: {st.session_state['parsed_case']['tags']}"
-    
+    # Keep the old result and add new information instead of overwriting
+    st.session_state['result'] += f"**Tags**: {st.session_state['parsed_case']['tags']}\n"
+
     # Debug output to display the updated tags in result
     st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
