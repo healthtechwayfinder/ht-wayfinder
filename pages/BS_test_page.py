@@ -94,6 +94,16 @@ if 'result' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
+# Function to get Google Sheets connection
+def get_google_sheet(sheet_name, worksheet_name):
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    return sheet
 
 def addToGoogleSheets(need_dict):
     try:
