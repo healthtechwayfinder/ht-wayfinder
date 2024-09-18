@@ -258,7 +258,9 @@ if action == "Add New Case":
             st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title']:
                 with st.container():
-                    st.text_area("Case Title (editable):", value=st.session_state['case_title'], key="case_title_edit", label_visibility='collapsed')
+                    col_full = st.columns(1)
+                    with col_full[0]:
+                        st.text_area("Case Title (editable):", value=st.session_state['case_title'], key="case_title_edit")
             st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
     
         
