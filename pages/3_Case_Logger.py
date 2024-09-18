@@ -504,7 +504,7 @@ if action == "Add New Case":
     tags_values = []  # Initialize tags_values as empty
     # Find missing fields by checking if any field in parsed_case is None or empty
     input_fields = list(caseRecord.__fields__.keys())
-    missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
+    missing_fields = [field for field in input_fields if parsed_result.get(field) in [None, ""]]
 
 
     for line in lines:
