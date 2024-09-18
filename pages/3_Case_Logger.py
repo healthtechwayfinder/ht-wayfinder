@@ -576,8 +576,8 @@ if action == "Add New Case":
         # # Update 'result' with parsed_case
         # st.session_state['result'] = st.session_state['parsed_case']
         
-        # Print the updated session state for debugging
-        st.write("Updated session state result:", st.session_state['result'])
+        # # Print the updated session state for debugging
+        # st.write("Updated session state result:", st.session_state['result'])
 
         # Convert updated_tags to a comma-separated string
         updated_tags_string = ", ".join(updated_tags)
