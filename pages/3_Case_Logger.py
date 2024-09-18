@@ -509,7 +509,17 @@ if action == "Add New Case":
         parsed_case = st.session_state['parsed_case']
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
 
+        # Ensure 'result' exists in session state
+        parsed_result = st.session_state.get('result', '')
+        
+        # Now parsed_result is guaranteed to be a string or at least an empty string
+        if isinstance(parsed_result, str):
+            lines = parsed_result.splitlines()
+        else:
+            st.error("Parsed result is not a valid string. Please check the result.")
+            lines = []  # Default to an empty list if parsed_result is not valid
 
+        
         for line in lines:
             if ':' in line:
                 key, value = line.split(':', 1)  # Split by the first colon
