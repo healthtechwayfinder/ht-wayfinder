@@ -1,12 +1,7 @@
-
-
-#-------------------------------OLD
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from datetime import date
-
-
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
@@ -16,20 +11,14 @@ from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
 from streamlit_tags import st_tags
-
-
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
-
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import date, datetime
-
 import json
 import os
 import csv
-
 import random
 
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
@@ -499,7 +488,7 @@ if action == "Add New Case":
     # Process the result after button click
     parsed_result = st.session_state['result']
     # Print case title
-    st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
+    st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
     # # Debug: Show the parsed result
     # st.write("Parsed Result:", parsed_result)
     # Initialize tags as an empty list in case it's not found
