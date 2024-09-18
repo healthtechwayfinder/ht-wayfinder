@@ -69,7 +69,7 @@ for index, case in recent_cases.iterrows():
     st.text_area("Case Details", value=f"Case ID: {case['Case ID']}\nDetails: {case['Case Description']}", height=150, key=f"case_{index}")
 
 # Map Observation IDs from recent cases to the Observation Log
-observation_ids = recent_cases['Observation ID'].unique()
+observation_ids = recent_cases['Observations'].unique()
 observations_for_cases = observation_df[observation_df['Observation ID'].isin(observation_ids)]
 
 st.markdown("### Corresponding Observations")
