@@ -4,6 +4,7 @@
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
+from datetime import date
 
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -32,6 +33,7 @@ import csv
 import random
 
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
+
 # Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
 
@@ -98,11 +100,9 @@ def generateDefinition(term):
         Definition:
         """
     )
-
     definition_chain = (
         prompt | llm | StrOutputParser()
     )
-
     output = definition_chain.invoke({"term": term})
     return output
 
@@ -113,7 +113,6 @@ def parseCase(case_description: str):
         openai_api_key=OPENAI_API_KEY,
         max_tokens=500,
     )
-
     case_prompt = PromptTemplate.from_template(
 """
 You help me parse descriptions of medical procedures or cases to extract details such as surgeon, procedure and date, whichever is available.
@@ -124,7 +123,6 @@ Output:"""
 )
     caseParser = PydanticOutputParser(pydantic_object=caseRecord)
     case_format_instructions = caseParser.get_format_instructions()
-
     case_chain = (
         case_prompt | llm | caseParser
     )
@@ -137,16 +135,14 @@ Output:"""
 # Function to parse the result string into a dictionary
 def parse_result_string(result_str):
     parsed_dict = {}
-    
     # Split the string into lines
     lines = result_str.splitlines()
-    
     # Iterate over each line and split on the first colon to get key-value pairs
     for line in lines:
         if ':' in line:
             key, value = line.split(':', 1)  # Split only on the first colon
             parsed_dict[key.strip()] = value.strip()  # Trim extra spaces
-    
+            
     return parsed_dict
 
 def extractCaseFeatures(case_description):
@@ -154,11 +150,8 @@ def extractCaseFeatures(case_description):
     # Parse the case
     parsed_case = parseCase(case_description)
     st.session_state['parsed_case'] = parsed_case
-
     input_fields = list(caseRecord.__fields__.keys())
-
     missing_fields = [field for field in input_fields if parsed_case[field] is None]
-
     output = ""
 
     for field in input_fields:
@@ -167,17 +160,12 @@ def extractCaseFeatures(case_description):
             output += f"**{key_output}**: {parsed_case[field]}\n"
             output += "\n"
 
-
     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
     if len(missing_fields)>0:
         output += "\n\n **Missing fields**:"
-
         for field in missing_fields:
             output += f" <span style='color:red;'>{field}</span>,"
-
-    # Display the output
-    # st.markdown(output, unsafe_allow_html=True)
     return f"{output}"
 
 def addToGlossary(insider_language_terms, case_id):
@@ -243,14 +231,7 @@ def addToGoogleSheets(case_dict):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        # # print all the sheets in the workbook
-        # print("All sheets in the workbook:")
-        # sheet_list = client.open("BioDesign Observation Record").worksheets()
-        # for sheet in sheet_list:
-        #     print(sheet.title)
-
         case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-
         headers = case_sheet.row_values(1)
         headers = [header.strip() for header in headers]
 
@@ -300,21 +281,16 @@ def embedCase(attendees, case_description, case_title, case_date, case_ID):
     # write attendees, observatoin and parsed case to csv
     case_keys = list(caseRecord.__fields__.keys())
     case_keys_formatted = [i.replace("_", " ").title() for i in case_keys]
-
     # all_case_keys = ['Title', 'People Present', 'Case Description', 'Date', 'Case ID', 'Attendees'] + case_keys_formatted
     # case_values = [case_title, attendees, case_description, case_date, case_ID] + [parsed_case[key] for key in case_keys]
-
     all_case_keys = ['Title', 'People Present', 'Case Description', 'Date', 'Case ID', 'Attendees'] + case_keys_formatted
     case_values = [case_title, attendees, case_description, case_date, case_ID, ', '.join(attendees)] + [parsed_case[key] for key in case_keys]
-
-    
     case_dict = dict(zip(all_case_keys, case_values))
     # csv_file = open(case_csv, "a")
     # csv_writer = csv.writer(csv_file, delimiter=";")
     # csv_writer.writerow(case_values)
     # Debug: Print the case_dict before saving
     print("Case Dictionary: ", case_dict)
-    
     status = addToGoogleSheets(case_dict)
     print("Case added to Google Sheets")
 
@@ -322,7 +298,6 @@ def embedCase(attendees, case_description, case_title, case_date, case_ID):
 
 
 def generateCaseSummary(case_description):
-
     llm = ChatOpenAI(
         model_name="gpt-4o",
         temperature=0.7,
@@ -330,22 +305,17 @@ def generateCaseSummary(case_description):
         max_tokens=500,
     )
 
-
     case_prompt = PromptTemplate.from_template(
 """
 You help me by creating a brief 4-10 word title of the following medical case description. Do not use quotes or special characters in the title.
-
 case_description: {case_description}
 Output title:"""
 )
-
     case_chain = (
         case_prompt | llm | StrOutputParser()
     )
-
     # with get_openai_callback() as cb:
     output = case_chain.invoke({"case_description": case_description})
-
     return output
 
 
@@ -364,14 +334,12 @@ def fetch_case_ids_and_titles():
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")  # Ensure this is correct
         data = sheet.get_all_records()
-        
         # Create a list of tuples with (case_id, title)
         case_info = [(row["Case ID"], row["Title"]) for row in data if "Case ID" in row and "Title" in row]
         return case_info
     except Exception as e:
         print(f"Error fetching case IDs and titles: {e}")
         return []
-
 
 # Function to connect to Google Sheets
 def get_google_sheet(sheet_name, worksheet_name):
@@ -383,6 +351,7 @@ def get_google_sheet(sheet_name, worksheet_name):
     client = gspread.authorize(creds)
     sheet = client.open(sheet_name).worksheet(worksheet_name)
     return sheet
+    
 # Fetch case IDs from Google Sheets
 def fetch_case_ids():
     try:
@@ -392,17 +361,16 @@ def fetch_case_ids():
     except Exception as e:
         print(f"Error fetching case IDs: {e}")
         return []
+        
 # Fetch case details based on selected case ID
 def fetch_case_details(case_id):
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
     data = sheet.get_all_records()
     # # Print the data being fetched
     # st.write(data)
-
     for row in data:
         if "Case ID" in row and row["Case ID"].strip() == case_id.strip():
             return row
-    
     st.error(f"Case ID {case_id} not found.")
     return None
 
@@ -412,7 +380,6 @@ def update_case(case_id, updated_data):
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
         data = sheet.get_all_records()
-
         # Find the row corresponding to the case_id and update it
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["Case ID"] == case_id:
@@ -438,12 +405,6 @@ def render_editable_colorful_tags(tags_values):
         tag_html = f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
         colorful_tags.append(tag_html)
     return colorful_tags
-
-
-
-import streamlit as st
-from datetime import date
-
 
 # If the user chooses "Add New Case"
 if action == "Add New Case":
@@ -480,7 +441,6 @@ if action == "Add New Case":
             counter = int(case_date_ids[-1][-4:])+1
         else:
             counter = 1
-        
        
         st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], counter)
     
@@ -491,12 +451,10 @@ if action == "Add New Case":
         # st calendar for date input with a callback to update the case_ID
         st.date_input("Case Date", date.today(), on_change=update_case_ID, key="case_date")
 
-    
     with col2:
         # Ensure the case ID is set the first time the script runs
         if 'case_ID' not in st.session_state:
             update_case_ID()
-    
         # Display the case ID
         st.text_input("Case ID:", value=st.session_state['case_ID'], disabled=True)
     
@@ -504,62 +462,14 @@ if action == "Add New Case":
         #Display attendees options 
         st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
     
-    
-    
-    ############
-    
-    # # Function to generate case ID with the format CAYYYYMMDDxxxx
-    # def generate_case_ID(case_date, counter):
-    #     return f"CA{case_date.strftime('%y%m%d')}{counter:04d}"
-    
-    # # Initialize or retrieve case ID counter from session state
-    # if 'case_ID_counter' not in st.session_state:
-    #     st.session_state['case_ID_counter'] = 1
-    
-    # # Function to update case ID when the date changes
-    # def update_case_ID():
-    #     st.session_state['case_ID'] = generate_case_ID(st.session_state['case_date'], st.session_state['case_ID_counter'])
-    
-    # # st calendar for date input with a callback to update the case_ID
-    # st.session_state['case_date'] = st.date_input("Observation Date", date.today(), on_change=update_case_ID)
-    
-    # # Initialize case_ID based on the observation date and counter
-    # st.session_state['case_ID'] = st.text_input("Observation ID:", value=st.session_state['case_ID'], disabled=True)
-    
-    ##########
-    
-    #new_case_ID = st.case_date().strftime("%Y%m%d")+"%03d"%case_ID_counter
-    #st.session_state['case_ID'] = st.text_input("Observation ID:", value=new_case_ID)
-    
-    #########
-    
-    # Textbox for name input
-    #attendees = st.selectbox("attendees", ["Ana", "Bridget"])
-    
-    # ######
-    
-    # # Text area for observation input
-    # st.session_state['observation'] = st.text_area("Add Your Observation", value=st.session_state['observation'], placeholder="Enter your observation...", height=200)
-    
-    # ######
-    
-    
     # Initialize the observation text in session state if it doesn't exist
-    
     if "case_description" not in st.session_state:
         st.session_state["case_description"] = ""
     
     # Function to clear the text area
     def clear_text():
         st.session_state["case_description"] = ""
-    
-    #st.markdown("---")
-    
-    # Observation Text Area
-    ##
-    
-    #observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
-    
+
     # Add Your case Text with larger font size
     st.markdown("<h4 style='font-size:20px;'>Add Your Case:</h4>", unsafe_allow_html=True)
     
@@ -570,73 +480,34 @@ if action == "Add New Case":
     # case Text Area
     st.session_state['case_description'] = st.text_area("Case:", value=st.session_state["case_description"], height=200)
     
-    
     # Create columns to align the buttons
     col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
     
     with col3:
-        # Use custom CSS for the red button
-        # st.markdown("""
-        #     <style>
-        #     .stButton > button {
-        #         background-color: #942124;
-        #         color: white;
-        #         font-size: 16px;
-        #         padding: 10px 20px;
-        #         border-radius: 8px;
-        #         border: none;
-        #     }
-        #     .stButton > button:hover {
-        #         background-color: darkred;
-        #     }
-        #     </style>
-        #     """, unsafe_allow_html=True)
-    
         #Button to Clear the case Text Area
         st.button("Clear Case", on_click=clear_case)
-
-        
         # Container for result display
-        result_container = st.empty()
-    
-    # #Use columns to place buttons side by side
-    # col11, col21 = st.columns(2)
-    
-    
-    #     if st.button("Generate Observation Summary"):
-    #         st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
-    
-    #     if st.session_state['case_title'] != "":
-    #         st.session_state['case_title'] = st.text_area("Generated Summary (editable):", value=st.session_state['case_title'], height=50)
-        
+        result_container = st.empty() 
     
     with col1:
         if st.button("Submit Case"):
             # Generate the case description
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
-            
             if st.session_state['case_title'] != "":
-                st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-
-            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+                st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             
     # Process the result after button click
     parsed_result = st.session_state['result']
-
+    # Print case title
+    st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
     # # Debug: Show the parsed result
     # st.write("Parsed Result:", parsed_result)
-
-        # Initialize tags as an empty list in case it's not found
+    # Initialize tags as an empty list in case it's not found
     tags_values = []
-
-        # Split the result by lines and extract each case detail by assuming specific labels
+    # Split the result by lines and extract each case detail by assuming specific labels
     lines = parsed_result.splitlines()
-
     #     # Debug: Write lines being processed
     # st.write("Lines from parsed result:", lines)
-    
-    # Split the result by lines and extract details
-    #lines = parsed_result.splitlines()
     editable_fields = {}
     tags_values = []  # Initialize tags_values as empty
 
@@ -645,21 +516,16 @@ if action == "Add New Case":
             key, value = line.split(':', 1)  # Split by the first colon
             key = key.strip()
             value = value.strip()
-
             # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
             key_clean = key.replace('**', '').strip()
-
-
             # Make key-value pairs editable
             editable_fields[key] = st.text_input(f"{key}", value=value)
-
             # Process tags when the key is 'Tags'
             if key_clean.lower() == 'tags':
                 # st.write(f"Processing line: key='{key}', value='{value}'")
                 tags_values = [tag.strip() for tag in value.split(",")]
                 # st.write(f"Tags after splitting and stripping: {tags_values}")
                 # st.write(f"Length of tags_values: {len(tags_values)}")
-
     # Save the editable fields to session state
     st.session_state['editable_result'] = editable_fields
 
@@ -673,20 +539,6 @@ if action == "Add New Case":
         )
     else:
         st.write("No tags found.")
-
-    # Display colorful tags if tags were found
-    # Display editable tags
-    # Editable Tags Input with `st_tags`
-   # Initialize tags_values in session state if not already present
-    # Editable Tags Input with `st_tags`
-    # tags_values = st_tags(
-    #     label="Editable Tags",
-    #     text="Press enter to add more",
-    #     value=st.session_state['tags_values'],  # Initial tags
-    #     maxtags=10,
-    #     suggestions=[],  # Add any suggestions if needed
-    #     key="tags_input"
-    # )
     
     # Update session state with current tags values
     st.session_state['tags_values'] = tags_values
@@ -705,20 +557,13 @@ if action == "Add New Case":
             }
         </style>
     """
-    
-    # # Apply random colors to tags
-    # for tag in tags_values:
-    #     color = random_color()
-    #     styled_tag = custom_style.format(color)
-    #     st.markdown(styled_tag, unsafe_allow_html=True)
-        # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
         clear_case()
         st.session_state['rerun'] = False
         st.rerun()
 
-    
+   # Logging cases  
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
         # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
         st.session_state["error"] = ""
