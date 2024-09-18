@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 # Set page configuration
 st.set_page_config(page_title="Weekly Case and Observation Review", page_icon="📒", layout="wide")
 
-st.markdown("# Weekly Case and Observation Review")
+st.markdown("# Weekly Observation Review")
 
 # Google Sheets credentials
 creds_dict = {
@@ -53,11 +53,11 @@ case_df = get_google_sheet_as_dataframe(case_log_sheet)
 observation_df = get_google_sheet_as_dataframe(observation_log_sheet)
 
 # Convert date column in case_df to datetime
-case_df['case_date'] = pd.to_datetime(case_df['case_date'])
+case_df['date'] = pd.to_datetime(case_df['date'])
 
 # Filter cases from the past week
 one_week_ago = datetime.now() - timedelta(days=7)
-recent_cases = case_df[case_df['case_date'] >= one_week_ago]
+recent_cases = case_df[case_df['date'] >= one_week_ago]
 
 st.markdown("### Cases in the last week")
 
