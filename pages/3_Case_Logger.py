@@ -603,35 +603,21 @@ if action == "Add New Case":
     # Process the result after button click
     parsed_result = st.session_state['result']
 
-    # # Debug: Show the parsed result
-    # st.write("Parsed Result:", parsed_result)
-
-        # Initialize tags as an empty list in case it's not found
-    tags_values = []
-
-        # Split the result by lines and extract each case detail by assuming specific labels
-    lines = parsed_result.splitlines()
-
-    #     # Debug: Write lines being processed
-    # st.write("Lines from parsed result:", lines)
-    
-    # Split the result by lines and extract details
-    #lines = parsed_result.splitlines()
+    # Initialize variables to hold editable fields and tags
     editable_fields = {}
     tags_values = []  # Initialize tags_values as empty
+    
+    # Split the result by lines and extract each case detail by assuming specific labels
+    lines = parsed_result.splitlines()
+
 
     for line in lines:
         if ':' in line:
             key, value = line.split(':', 1)  # Split by the first colon
             key = key.strip()
             value = value.strip()
-
             # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
             key_clean = key.replace('**', '').strip()
-
-
-            # Make key-value pairs editable
-            editable_fields[key] = st.text_input(f"{key}", value=value)
 
             # Process tags when the key is 'Tags'
             if key_clean.lower() == 'tags':
@@ -642,9 +628,6 @@ if action == "Add New Case":
             else:
                 # Make key-value pairs editable (excluding tags)
                 editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-
-    # # Save the editable fields to session state
-    # st.session_state['editable_result'] = editable_fields
 
     # Save the editable fields to session state (without the tags)
     st.session_state['editable_result'] = editable_fields
