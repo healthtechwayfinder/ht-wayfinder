@@ -547,9 +547,9 @@ if action == "Add New Case":
                     continue
                 ######here 2
                 else:
-                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-                # Automatically update 'result' in session state
-                st.session_state['parsed_case'][key_clean.lower()] = editable_fields[key_clean]
+                    editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+                    # Automatically update 'result' in session state
+                    st.session_state['parsed_case'][key_clean.lower()] = editable_fields[key_clean]
                  ######here 2
                 
                 # Print non-empty fields only (non-missing fields)
