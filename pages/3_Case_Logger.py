@@ -655,6 +655,7 @@ if action == "Add New Case":
         for field in missing_fields:
             st.markdown(f"<span style='color:red;'>{field}</span>", unsafe_allow_html=True)
 
+
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
