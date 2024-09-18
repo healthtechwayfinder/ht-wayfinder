@@ -626,13 +626,13 @@ if action == "Add New Case":
         
     
     with col1:
-    if st.button("Submit Case"):
-        # Extract and process the case description
-        st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-        st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
-        
-        if st.session_state['case_title'] != "":
-            st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
+        if st.button("Submit Case"):
+            # Extract and process the case description
+            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+            st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
+            
+            if st.session_state['case_title'] != "":
+                st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
 
     # Process the result after button click
     parsed_result = st.session_state['result']
