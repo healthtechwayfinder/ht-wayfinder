@@ -5,9 +5,11 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 # Set page configuration
-st.set_page_config(page_title="Weekly Case and Observation Review", page_icon="📒", layout="wide")
+st.set_page_config(page_title="Weekly Observation Review", page_icon="💫", layout="wide")
 
 st.markdown("# Weekly Observation Review")
+st.write("Below are your team's cases and observations from the last 7 days. Use this space as an opportunity to debrief, ask questions, and share insights.")
+
 
 # Google Sheets credentials
 creds_dict = {
@@ -57,7 +59,7 @@ case_df['Date'] = pd.to_datetime(case_df['Date'], errors='coerce')
 one_week_ago = datetime.now() - timedelta(days=7)
 recent_cases = case_df[case_df['Date'] >= one_week_ago]
 
-st.markdown("### Cases in the last week")
+# st.markdown("### Cases in the last week")
 
 # Initialize session state for checkboxes if not already initialized
 if "reviewed_observations" not in st.session_state:
