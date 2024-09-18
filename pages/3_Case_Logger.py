@@ -709,11 +709,11 @@ if action == "Add New Case":
     #     styled_tag = custom_style.format(color)
     #     st.markdown(styled_tag, unsafe_allow_html=True)
         # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
-        if st.session_state['rerun']:
-            time.sleep(3)
-            clear_case()
-            st.session_state['rerun'] = False
-            st.rerun()
+    if st.session_state['rerun']:
+        time.sleep(3)
+        clear_case()
+        st.session_state['rerun'] = False
+        st.rerun()
 
     
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
