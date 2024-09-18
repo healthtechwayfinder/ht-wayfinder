@@ -104,18 +104,12 @@ def generateObservationTags(observation):
 
 
 class ObservationRecord(BaseModel):
-    # location: Optional[str] = Field(default=None, description="Location or setting where this observation made. e.g. operating room (OR), hospital, exam room,....")
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event like a Patient, Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, ...")
     sensory_observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
     product_interactions: Optional[str] = Field(default=None, description="How is equipment and technology being used, engaged with, adjusted, or moved at this moment? what is missing?")
     process_actions: Optional[str] = Field(default=None, description="specific step or task that is taken within a larger workflow or process to achieve a particular goal or outcome. In the context of biodesign or healthcare, a process action could involve any number of operations that contribute to the diagnosis, treatment, or management of a patient, or the development and deployment of medical technologies..")
-    # people_present: Optional[str] = Field(default=None, description="People present during the observation. e.g. patient, clinician, scrub tech, family member, ...")
-    # specific_facts: Optional[str] = Field(default=None, description="The facts noted in the observation. e.g. the wound was 8cm, the sclera had a perforation, the patient was geriatric, ...")
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-    # summary_of_observation: Optional[str] = Field(default=None, description="A summary of 1 sentence of the encounter or observation, e.g. A rhinoplasty included portions that were functional (covered by insurance), and cosmetic portions which were not covered by insurance. During the surgery, the surgeon had to provide instructions to a nurse to switch between functional and cosmetic parts, back and forth. It was mentioned that coding was very complicated for this procedure, and for other procedures, because there are 3 entities in MEE coding the same procedure without speaking to each other, ...")
-    # questions: Optional[str] = Field(default=None, description="Recorded open questions about people or their behaviors to be investigated later. e.g. Why is this procedure performed this way?, Why is the doctor standing in this position?, Why is this specific tool used for this step of the procedure? ...")
-
-
+   
 
 def parseObservation(observation: str):
     llm = ChatOpenAI(
@@ -228,8 +222,8 @@ def update_case_observations(case_id, observation_id):
         headers = case_log.row_values(1)
         
         # Check if 'observations' column exists in the sheet headers
-        if "observations" not in headers:
-            logging.error("'observations' column not found in the sheet headers")
+        if "Observations" not in headers:
+            logging.error("'Observations' column not found in the sheet headers")
             return False
         
         # Find the index of the "observations" column
@@ -237,7 +231,7 @@ def update_case_observations(case_id, observation_id):
         
         # Log headers and column index
         logging.info(f"Headers: {headers}")
-        logging.info(f"'observations' column index: {obs_col_index}")
+        logging.info(f"'Observations' column index: {obs_col_index}")
 
         # Find the row that corresponds to the given case_id
         for i, row in enumerate(data, start=2):  # Start from 2 to skip the header row
@@ -264,7 +258,7 @@ def update_case_observations(case_id, observation_id):
         logging.warning(f"Case ID {case_id} not found in the case log")
         return False
     except Exception as e:
-        logging.error(f"Error updating case observations: {e}")
+        logging.error(f"Error updating case Observations: {e}")
         return False
 
 import gspread
