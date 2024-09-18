@@ -550,6 +550,7 @@ if action == "Add New Case":
         else:
             st.write("No tags found.")
 
+        st.write("Current Tags:", tags_values)  # This will display the list of tags
         
         st.markdown("### Missing Fields")
         for field in missing_fields:
