@@ -169,83 +169,10 @@ def extractObservationFeatures(observation):
         output += "\n\n **Missing fields**:"
         for field in missing_fields:
             output += f" <span style='color:red;'>{field}</span>,"
-    # for field in missing_fields:
-    #     output += f" {field},"
-
-    # # output += "\n\n"
-    # # output += "="*75
-    # output += "\nPlease add the missing fields to the observation if needed, then proceed with adding observation to your team record."
-
-    # return f"{output}"
-
-     # Add each missing field in red
-        
-
-    # Display the output
-    # st.markdown(output, unsafe_allow_html=True)
+    
     return f"{output}"
 
-# def addToGoogleSheets(observation_dict):
-#     try:
-#         scope = [
-#         "https://www.googleapis.com/auth/spreadsheets",
-#         "https://www.googleapis.com/auth/drive.metadata.readonly"
-#         ]
-#         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-#         client = gspread.authorize(creds)
-#         observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
 
-#         headers = observation_sheet.row_values(1)
-#         headers = [i.strip() for i in headers]
-
-#         # Prepare the row data matching the headers
-#         row_to_append = []
-#         for header in headers:
-#             if header in observation_dict:
-#                 value = observation_dict[header]
-#                 if value is None:
-#                     row_to_append.append("")
-#                 else:
-#                     row_to_append.append(str(observation_dict[header]))
-#             else:
-#                 row_to_append.append("")  # Leave cell blank if header not in dictionary
-
-#         # Append the row to the sheet
-#         observation_sheet.append_row(row_to_append)
-#         return True
-#     except Exception as e:
-#         print("Error adding to Google Sheets: ", e)
-#         return False
-
-# def embedObservation(observer, observation, observation_summary, observation_date, observation_id):
-#     db = PineconeVectorStore(
-#             index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-#             namespace="observations",
-#             embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-#             pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-#         )
-    
-#     db.add_texts([observation], metadatas=[{'observer': observer, 'observation_date': observation_date, 'observation_id': observation_id}])
-
-#     print("Added to Pinecone: ", observation_id)
-
-#     parsed_observation = parseObservation(observation)
-
-#     # write observer, observatoin and parsed observation to csv
-#     observation_keys = list(ObservationRecord.__fields__.keys())
-#     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
-#     all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Date', 'Observation ID'] + observation_keys_formatted
-#     observation_values = [observation_summary, observer, observation, observation_date, observation_id] + [parsed_observation[key] for key in observation_keys]
-
-#     observation_dict = dict(zip(all_observation_keys, observation_values))
-#     # csv_file = open(observations_csv, "a")
-#     # csv_writer = csv.writer(csv_file, delimiter=";")
-#     # csv_writer.writerow(observation_values)
-
-#     status = addToGoogleSheets(observation_dict)
-#     print("Added to Google Sheets: ", status)
-
-#     return status
 
 # Function to add the observation (including tags) to Google Sheets
 def addToGoogleSheets(observation_dict):
@@ -342,49 +269,6 @@ def update_case_observations(case_id, observation_id):
 
 
 
-# # Modified function to embed the observation and tags
-# def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
-#     related_case_id = related_case_id_with_title.split(" - ")[0]
-    
-    
-#     db = PineconeVectorStore(
-#         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-#         namespace="observations",
-#         embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-#         pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-#     )
-
-
-#     # Add observation with metadata, including tags
-#     db.add_texts([observation], metadatas=[{
-#         'observer': observer,
-#         'observation_date': observation_date,
-#         'observation_id': observation_id,
-#         'tags': observation_tags,  # Add tags to the metadata
-#         'case_id': related_case_id
-#     }])
-
-#     print("Added to Pinecone: ", observation_id)
-
-#     if 'parsed_observation' not in st.session_state:
-#         st.session_state['parsed_observation'] = parseObservation(observation)
-#     else:
-#         parsed_observation = st.session_state['parsed_observation']
-
-
-#     # Prepare the observation record with the tags
-#     observation_keys = list(ObservationRecord.__fields__.keys())
-#     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
-#     all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Tags', 'Date', 'Observation ID', 'Related Case ID'] + observation_keys_formatted
-#     observation_values = [observation_summary, observer, observation, observation_tags, observation_date, observation_id, related_case_id] + [parsed_observation[key] for key in observation_keys]
-
-#     observation_dict = dict(zip(all_observation_keys, observation_values))
-
-#     # Add the observation record (including tags) to Google Sheets
-#     status = addToGoogleSheets(observation_dict)
-#     print("Added to Google Sheets: ", status)
-
-#     return status
 
 # Modified function to embed the observation and tags
 def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
@@ -499,10 +383,6 @@ from datetime import date
 if 'observation_counters' not in st.session_state:
     st.session_state['observation_counters'] = {}
 
-
-
-
-
     
 
 # Function to generate observation ID with the format OBYYMMDDxxxx
@@ -532,18 +412,7 @@ def update_observation_id():
         counter = int(obs_date_ids[-1][-4:])+1
     else:
         counter = 1
-    
-    # # Check if the date is already in the dictionary
-    # if obs_date_str in st.session_state['observation_counters']:
-    #     # Increment the counter for this date
-    #     st.session_state['observation_counters'][obs_date_str] += 1
-    # else:
-    #     # Initialize the counter to 1 for a new date
-    #     st.session_state['observation_counters'][obs_date_str] = 1
-    
-    # Generate the observation ID using the updated counter
-    # counter = st.session_state['observation_counters'][obs_date_str]
-
+   
     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
 
 def getExistingCaseIDS():
@@ -569,25 +438,19 @@ def getExistingCaseIDS():
     return existing_case_ids_with_title
 
 
+
+existing_case_ids_with_title = getExistingCaseIDS()
+case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
+# put case ID dateinformation here
+st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+
+
 # Use columns to place observation_date, observation_id, and observer side by side
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     # st calendar for date input with a callback to update the observation_id
-    #edit this to be the same as the case date
-
-    existing_case_ids_with_title = getExistingCaseIDS()
-    case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
-    # put case ID dateinformation here
-    st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
-    # call function to get the observation date from the selected case ID
-    # use case_dates_list for the right row number for the corresponding case ID to get the date 
-    # st.text_input("Observation Date:", value=st.session_state['observation_date'], disabled=True)
-
-
-
-
-with col2:
+    # edit this to be the same as the case date
     # Ensure the observation ID is set the first time the script runs
     if 'observation_id' not in st.session_state:
         update_observation_id()
@@ -595,46 +458,9 @@ with col2:
     # Display the observation ID
     st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
 
-with col3:
+with col2:
     #Display Observer options 
     observer = st.selectbox("Observer", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
-
-############
-
-# # Function to generate observation ID with the format OBYYYYMMDDxxxx
-# def generate_observation_id(observation_date, counter):
-#     return f"OB{observation_date.strftime('%y%m%d')}{counter:04d}"
-
-# # Initialize or retrieve observation ID counter from session state
-# if 'observation_id_counter' not in st.session_state:
-#     st.session_state['observation_id_counter'] = 1
-
-# # Function to update observation ID when the date changes
-# def update_observation_id():
-#     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], st.session_state['observation_id_counter'])
-
-# # st calendar for date input with a callback to update the observation_id
-# st.session_state['observation_date'] = st.date_input("Observation Date", date.today(), on_change=update_observation_id)
-
-# # Initialize observation_id based on the observation date and counter
-# st.session_state['observation_id'] = st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
-
-##########
-
-#new_observation_id = st.observation_date().strftime("%Y%m%d")+"%03d"%observation_id_counter
-#st.session_state['observation_id'] = st.text_input("Observation ID:", value=new_observation_id)
-
-#########
-
-# Textbox for name input
-#observer = st.selectbox("Observer", ["Ana", "Bridget"])
-
-# ######
-
-# # Text area for observation input
-# st.session_state['observation'] = st.text_area("Add Your Observation", value=st.session_state['observation'], placeholder="Enter your observation...", height=200)
-
-# ######
 
 
 # Initialize the observation text in session state if it doesn't exist
@@ -644,13 +470,6 @@ if "observation" not in st.session_state:
 # Function to clear the text area
 def clear_text():
     st.session_state["observation"] = ""
-
-#st.markdown("---")
-
-# Observation Text Area
-##
-
-#observation_text = st.text_area("Observation", value=st.session_state["observation"], height=200, key="observation")
 
 # Add Your Observation Text with larger font size
 st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
@@ -667,40 +486,12 @@ st.session_state['observation'] = st.text_area("Observation:", value=st.session_
 col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
 
 with col3:
-    # Use custom CSS for the red button
-    # st.markdown("""
-    #     <style>
-    #     .stButton > button {
-    #         background-color: #942124;
-    #         color: white;
-    #         font-size: 16px;
-    #         padding: 10px 20px;
-    #         border-radius: 8px;
-    #         border: none;
-    #     }
-    #     .stButton > button:hover {
-    #         background-color: darkred;
-    #     }
-    #     </style>
-    #     """, unsafe_allow_html=True)
-
-    # Button to Clear the Observation Text Area
     st.button("Clear Observation", on_click=clear_text)
     
     # Container for result display
     result_container = st.empty()
 
-# #Use columns to place buttons side by side
-# col11, col21 = st.columns(2)
 
-
-# with col11:
-#     if st.button("Generate Observation Summary"):
-#         st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-
-#     if st.session_state['observation_summary'] != "":
-#         st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
-    
 
 with col1:
     if st.button("Evaluate Observation"):
@@ -833,3 +624,47 @@ if st.button("Back to Dashboard"):
 # 		    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
 
 
+
+# # Modified function to embed the observation and tags
+# def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
+#     related_case_id = related_case_id_with_title.split(" - ")[0]
+    
+    
+#     db = PineconeVectorStore(
+#         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
+#         namespace="observations",
+#         embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
+#         pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
+#     )
+
+
+#     # Add observation with metadata, including tags
+#     db.add_texts([observation], metadatas=[{
+#         'observer': observer,
+#         'observation_date': observation_date,
+#         'observation_id': observation_id,
+#         'tags': observation_tags,  # Add tags to the metadata
+#         'case_id': related_case_id
+#     }])
+
+#     print("Added to Pinecone: ", observation_id)
+
+#     if 'parsed_observation' not in st.session_state:
+#         st.session_state['parsed_observation'] = parseObservation(observation)
+#     else:
+#         parsed_observation = st.session_state['parsed_observation']
+
+
+#     # Prepare the observation record with the tags
+#     observation_keys = list(ObservationRecord.__fields__.keys())
+#     observation_keys_formatted = [i.replace("_", " ").title() for i in observation_keys]
+#     all_observation_keys = ['Observation Title', 'Observer', 'Observation Description', 'Tags', 'Date', 'Observation ID', 'Related Case ID'] + observation_keys_formatted
+#     observation_values = [observation_summary, observer, observation, observation_tags, observation_date, observation_id, related_case_id] + [parsed_observation[key] for key in observation_keys]
+
+#     observation_dict = dict(zip(all_observation_keys, observation_values))
+
+#     # Add the observation record (including tags) to Google Sheets
+#     status = addToGoogleSheets(observation_dict)
+#     print("Added to Google Sheets: ", status)
+
+#     return status
