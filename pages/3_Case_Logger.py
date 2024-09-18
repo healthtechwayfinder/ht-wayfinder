@@ -490,76 +490,64 @@ if action == "Add New Case":
             
     # Process the result after button click
     parsed_result = st.session_state['result']
-    # Print case title
-    st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
-    # # Debug: Show the parsed result
-    # st.write("Parsed Result:", parsed_result)
-    # Initialize tags as an empty list in case it's not found
-    tags_values = []
-    # Split the result by lines and extract each case detail by assuming specific labels
-    lines = parsed_result.splitlines()
-    #     # Debug: Write lines being processed
-    # st.write("Lines from parsed result:", lines)
-    editable_fields = {}
-    tags_values = []  # Initialize tags_values as empty
-    # Find missing fields by checking if any field in parsed_case is None or empty
-    input_fields = list(caseRecord.__fields__.keys())
-    missing_fields = [field for field in input_fields if parsed_result.get(field) in [None, ""]]
+    # Ensure 'result' exists
+    if parsed_result:
+        # Print case title
+        st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
+        # # Debug: Show the parsed result
+        # st.write("Parsed Result:", parsed_result)
+        # Initialize tags as an empty list in case it's not found
+        tags_values = []
+        # Split the result by lines and extract each case detail by assuming specific labels
+        lines = parsed_result.splitlines()
+        #     # Debug: Write lines being processed
+        # st.write("Lines from parsed result:", lines)
+        editable_fields = {}
+        # Find missing fields by checking if any field in parsed_case is None or empty
+        input_fields = list(caseRecord.__fields__.keys())
+        missing_fields = [field for field in input_fields if parsed_result.get(field) in [None, ""]]
 
 
-    for line in lines:
-        if ':' in line:
-            key, value = line.split(':', 1)  # Split by the first colon
-            key = key.strip()
-            value = value.strip()
-            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-            key_clean = key.replace('**', '').strip()
-            # Make key-value pairs editable
-            editable_fields[key] = st.text_input(f"{key}", value=value)
-            # Process tags when the key is 'Tags'
-            if key_clean.lower() == 'tags':
-                # st.write(f"Processing line: key='{key}', value='{value}'")
-                tags_values = [tag.strip() for tag in value.split(",")]
-                # st.write(f"Tags after splitting and stripping: {tags_values}")
-                # st.write(f"Length of tags_values: {len(tags_values)}")
-    # Save the editable fields to session state
-    st.session_state['editable_result'] = editable_fields
+        for line in lines:
+            if ':' in line:
+                key, value = line.split(':', 1)  # Split by the first colon
+                key = key.strip()
+                value = value.strip()
+                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+                key_clean = key.replace('**', '').strip()
+                # Make key-value pairs editable
+                editable_fields[key] = st.text_input(f"{key}", value=value)
+                # Process tags when the key is 'Tags'
+                if key_clean.lower() == 'tags':
+                    # st.write(f"Processing line: key='{key}', value='{value}'")
+                    tags_values = [tag.strip() for tag in value.split(",")]
+                    # st.write(f"Tags after splitting and stripping: {tags_values}")
+                    # st.write(f"Length of tags_values: {len(tags_values)}")
+        # Save the editable fields to session state
+        st.session_state['editable_result'] = editable_fields
 
-    # Display tags if tags were found
-    if tags_values:
-        st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10
-        )
-    else:
-        st.write("No tags found.")
+        # Display tags if tags were found
+        if tags_values:
+            st_tags(
+                label="Tags",
+                text="Press enter to add more",
+                value=tags_values,  # Show the tags found in the result
+                maxtags=10
+            )
+        else:
+            st.write("No tags found.")
 
-    # Now, add the missing fields as editable text inputs below the tags
-    st.markdown("### Missing Fields")
-    for field in missing_fields:
-        field_clean = field.replace("_", " ").capitalize()
-        # Render text input for missing fields, storing results back in parsed_case
-        st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
-        
-    # Update session state with current tags values
-    st.session_state['tags_values'] = tags_values
+        # Now, add the missing fields as editable text inputs below the tags
+        st.markdown("### Missing Fields")
+        for field in missing_fields:
+            field_clean = field.replace("_", " ").capitalize()
+            # Render text input for missing fields, storing results back in parsed_case
+            st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
+            
+        # Update session state with current tags values
+        st.session_state['tags_values'] = tags_values
     
-    # Add custom CSS for each tag in `st_tags`
-    custom_style = """
-        <style>
-            .tag-container .tag {
-                display: inline-block;
-                background-color: {};
-                color: white;
-                padding: 5px 10px;
-                margin: 5px;
-                border-radius: 8px;
-                font-size: 14px;
-            }
-        </style>
-    """
+    #Rerun logic
     if st.session_state['rerun']:
         time.sleep(3)
         clear_case()
