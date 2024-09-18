@@ -2,7 +2,6 @@ import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
 from langchain.schema import StrOutputParser
 from langchain.prompts import PromptTemplate
@@ -16,53 +15,64 @@ from datetime import date
 import json
 import random
 
+# Set page config
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 
+# Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
 
+# OpenAI API Key
 OPENAI_API_KEY = st.secrets["openai_key"]
 
-# Access the credentials from Streamlit secrets
-creds_dict = {
-    "type": st.secrets["gwf_service_account"]["type"],
-    "project_id": st.secrets["gwf_service_account"]["project_id"],
-    "private_key_id": st.secrets["gwf_service_account"]["private_key_id"],
-    "private_key": st.secrets["gwf_service_account"]["private_key"],
-    "client_email": st.secrets["gwf_service_account"]["client_email"],
-    "client_id": st.secrets["gwf_service_account"]["client_id"],
-    "auth_uri": st.secrets["gwf_service_account"]["auth_uri"],
-    "token_uri": st.secrets["gwf_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url": st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
-    "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
-}
+# Credentials from Streamlit secrets
+creds_dict = {key: st.secrets["gwf_service_account"][key] for key in [
+    "type", "project_id", "private_key_id", "private_key", "client_email", "client_id", 
+    "auth_uri", "token_uri", "auth_provider_x509_cert_url", "client_x509_cert_url", 
+    "universe_domain"
+]}
 
-# Initialize session state
+# Initialize session state variables
 for key in ['case_description', 'result', 'case_title', 'rerun', 'parsed_case']:
     if key not in st.session_state:
         st.session_state[key] = ""
 
-# Model for case record
+# Pydantic model for case records
 class caseRecord(BaseModel):
-    location: Optional[str] = Field(default=None, description="Location of the event.")
-    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved.")
+    location: Optional[str] = Field(default=None, description="Physical environment where the case took place.")
+    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event.")
     people_present: Optional[str] = Field(default=None, description="Names cited in the description.")
     insider_language: Optional[str] = Field(default=None, description="Terminology specific to this medical practice.")
-    tags: Optional[str] = Field(default=None, description="Relevant tags for the case.")
+    tags: Optional[str] = Field(default=None, description="Relevant tags.")
 
 # Helper functions
 def generateDefinition(term):
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.7, openai_api_key=OPENAI_API_KEY, max_tokens=100)
-    prompt = PromptTemplate.from_template("Provide a brief, simple definition for the following medical term.\nTerm: {term}\nDefinition:")
+    prompt = PromptTemplate.from_template(
+        """
+        Provide a brief, simple definition for the following medical term.
+
+        Term: {term}
+        Definition:
+        """
+    )
     definition_chain = prompt | llm | StrOutputParser()
     return definition_chain.invoke({"term": term})
 
 def parseCase(case_description):
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.7, openai_api_key=OPENAI_API_KEY, max_tokens=500)
-    case_prompt = PromptTemplate.from_template("You help me parse descriptions of medical procedures or cases to extract details. Format Instructions: {format_instructions}\ncase_description: {case_description}\nOutput:")
+    case_prompt = PromptTemplate.from_template(
+        """
+        You help me parse descriptions of medical procedures or cases to extract details such as surgeon, procedure, and date, whichever is available.
+        Format Instructions for output: {format_instructions}
+
+        case_description: {case_description}
+        Output:
+        """
+    )
     caseParser = PydanticOutputParser(pydantic_object=caseRecord)
     case_chain = case_prompt | llm | caseParser
-    return json.loads(case_chain.invoke({"case_description": case_description, "format_instructions": caseParser.get_format_instructions()}).json())
+    output = case_chain.invoke({"case_description": case_description, "format_instructions": caseParser.get_format_instructions()})
+    return json.loads(output.json())
 
 def extractCaseFeatures(case_description):
     parsed_case = parseCase(case_description)
@@ -73,10 +83,10 @@ def extractCaseFeatures(case_description):
     for field in caseRecord.__fields__.keys():
         if field not in missing_fields:
             output += f"**{field.replace('_', ' ').capitalize()}**: {parsed_case[field]}\n\n"
-    
+
     if missing_fields:
         output += "\n\n **Missing fields**:\n" + ", ".join([f"<span style='color:red;'>{field.replace('_', ' ').capitalize()}</span>" for field in missing_fields])
-    
+
     return output
 
 def addToGlossary(insider_language_terms, case_id):
@@ -110,10 +120,8 @@ def addToGoogleSheets(case_dict):
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
         case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-
         headers = [header.strip() for header in case_sheet.row_values(1)]
         row_to_append = [str(case_dict.get(header, "")) for header in headers]
-
         case_sheet.append_row(row_to_append)
         return True
     except Exception as e:
@@ -121,10 +129,15 @@ def addToGoogleSheets(case_dict):
         return False
 
 def embedCase(attendees, case_description, case_title, case_date, case_ID):
-    db = PineconeVectorStore(index_name=st.secrets["pinecone-keys"]["index_to_connect"], namespace="cases", embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY), pinecone_api_key=st.secrets["pinecone-keys"]["api_key"])
+    db = PineconeVectorStore(
+        index_name=st.secrets["pinecone-keys"]["index_to_connect"], 
+        namespace="cases", 
+        embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY), 
+        pinecone_api_key=st.secrets["pinecone-keys"]["api_key"]
+    )
     db.add_texts([case_description], metadatas=[{'attendees': attendees, 'case_date': case_date, 'case_ID': case_ID}])
 
-    parsed_case = st.session_state['parsed_case'] if 'parsed_case' in st.session_state and st.session_state['parsed_case'] else parseCase(case_description)
+    parsed_case = st.session_state['parsed_case'] if st.session_state['parsed_case'] else parseCase(case_description)
     st.session_state['parsed_case'] = parsed_case
 
     if parsed_case['insider_language']:
@@ -139,7 +152,14 @@ def embedCase(attendees, case_description, case_title, case_date, case_ID):
 
 def generateCaseSummary(case_description):
     llm = ChatOpenAI(model_name="gpt-4o", temperature=0.7, openai_api_key=OPENAI_API_KEY, max_tokens=500)
-    case_prompt = PromptTemplate.from_template("Create a brief 4-10 word title for the medical case description.\ncase_description: {case_description}\nOutput title:")
+    case_prompt = PromptTemplate.from_template(
+        """
+        You help me by creating a brief 4-10 word title of the following medical case description. Do not use quotes or special characters in the title.
+
+        case_description: {case_description}
+        Output title:
+        """
+    )
     case_chain = case_prompt | llm | StrOutputParser()
     return case_chain.invoke({"case_description": case_description})
 
@@ -193,8 +213,7 @@ def update_case(case_id, updated_data):
 # Page logic
 if action == "Add New Case":
     st.markdown("### Add a New Case")
-    
-    # Case ID generation and display
+
     if 'case_counters' not in st.session_state:
         st.session_state['case_counters'] = {}
 
@@ -223,7 +242,6 @@ if action == "Add New Case":
     st.markdown("<h4 style='font-size:20px;'>Add Your Case:</h4>", unsafe_allow_html=True)
     st.session_state['case_description'] = st.text_area("Case:", value=st.session_state["case_description"], height=200)
 
-    # Buttons and Actions
     col1, col2, col3 = st.columns([2, 2, 2])
     with col3:
         st.button("Clear Case", on_click=clear_case)
@@ -235,7 +253,6 @@ if action == "Add New Case":
                 st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
             st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
 
-    # Display parsed results
     parsed_result = st.session_state['result']
     tags_values = []
 
@@ -254,7 +271,6 @@ if action == "Add New Case":
 
     st.session_state['tags_values'] = tags_values
 
-    # Log case to database
     if st.button("Log Case", disabled=not st.session_state['case_title']):
         if st.session_state['case_description']:
             status = embedCase(
@@ -273,7 +289,6 @@ if action == "Add New Case":
         else:
             st.error("Please enter case description.")
 
-# Edit Existing Case
 elif action == "Edit Existing Case":
     st.markdown("### Edit an Existing Case")
     case_info = fetch_case_ids_and_titles()
@@ -309,7 +324,6 @@ elif action == "Edit Existing Case":
                 else:
                     st.error(f"Failed to save changes to '{case_to_edit}'.")
 
-# Styling for buttons
 st.markdown("""
     <style>
     div.stButton > button {
@@ -328,9 +342,6 @@ st.markdown("""
 
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
-
-
-
 
 
 #-------------------------------OLD
