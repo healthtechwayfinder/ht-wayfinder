@@ -488,17 +488,8 @@ if action == "Add New Case":
             if st.session_state['case_title'] != "":
                 st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             
-    # # Process the result after button click
-    # parsed_result = st.session_state['result']
-
-    ######here 2
     # Process the result after button click
-    if 'result' in st.session_state and st.session_state['result']:
-        parsed_result = st.session_state['result']
-    else:
-        st.error("No result found. Please submit a valid case.")
-        st.stop()  # Stops further execution if no result is found
-     ######here 2
+    parsed_result = st.session_state['result']
 
     # Ensure 'result' exists
     if parsed_result and isinstance(st.session_state['parsed_case'], dict):
@@ -552,8 +543,8 @@ if action == "Add New Case":
                     st.session_state['parsed_case'][key_clean.lower()] = editable_fields[key_clean]
                  ######here 2
                 
-                # Print non-empty fields only (non-missing fields)
-                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+                # # Print non-empty fields only (non-missing fields)
+                # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
         
         # # Save the editable fields to session state
         # st.session_state['editable_result'] = editable_fields
