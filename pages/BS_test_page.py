@@ -261,15 +261,15 @@ st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", e
 
 # ///////////////////////////////// ADDED ///////////////////////////////////
 
- if selected_obs_id:
-        selected_observation = df[df['Observation ID'] == selected_obs_id]
-        if not selected_observation.empty:
-            observation_description = selected_observation.iloc[0]['Observation Description']
-            st.markdown(f"### Selected Observation Description:\n{observation_description}")
-        else:
-            st.info("No description available for this observation.")
-    else:
-        st.info("Please select an observation.")
+ # if selected_obs_id:
+ #        selected_observation = df[df['Observation ID'] == selected_obs_id]
+ #        if not selected_observation.empty:
+ #            observation_description = selected_observation.iloc[0]['Observation Description']
+ #            st.markdown(f"### Selected Observation Description:\n{observation_description}")
+ #        else:
+ #            st.info("No description available for this observation.")
+ #    else:
+ #        st.info("Please select an observation.")
 
 # ///////////////////////////////// ADDED ///////////////////////////////////
 
