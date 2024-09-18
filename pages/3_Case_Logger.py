@@ -175,6 +175,7 @@ def extractCaseFeatures(case_description):
         st.session_state['parsed_case'] = parsed_case
         input_fields = list(caseRecord.__fields__.keys())
         missing_fields = []
+        tags_values = []  # Initialize an empty list to hold the tags
 
         for field in input_fields:
             value = parsed_case.get(field, None)
@@ -185,13 +186,24 @@ def extractCaseFeatures(case_description):
                 st.text_input(f"Enter {field_label}:", key=f"missing_{field}")
                 missing_fields.append(field)
             else:
-                st.text_input(f"{field_label}:", value=value, key=f"editable_{field}")
+                if field == "tags":
+                    # Display tags using st_tags
+                    tags_values = [tag.strip() for tag in value.split(",")]
+                    st_tags(
+                        label="Tags",
+                        text="Press enter to add more",
+                        value=tags_values,  # Show the tags found in the result
+                        maxtags=10  # Max number of tags the user can add
+                    )
+                else:
+                    st.text_input(f"{field_label}:", value=value, key=f"editable_{field}")
 
         st.session_state['missing_fields'] = missing_fields
         return f"Parsed fields: {', '.join(input_fields)}"
     except Exception as e:
         st.error(f"Error parsing case features: {e}")
         return "No valid case data."
+
 
 
 def addToGlossary(insider_language_terms, case_id):
