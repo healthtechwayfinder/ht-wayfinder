@@ -673,6 +673,11 @@ if action == "Add New Case":
     # Display colorful tags if tags were found
     # Display editable tags
     # Editable Tags Input with `st_tags`
+   # Initialize tags_values in session state if not already present
+    if 'tags_values' not in st.session_state:
+        st.session_state['tags_values'] = ['urology', 'patient care', 'neurogenic bladder']  # Default tags or empty list
+    
+    # Editable Tags Input with `st_tags`
     tags_values = st_tags(
         label="Editable Tags",
         text="Press enter to add more",
