@@ -639,9 +639,16 @@ if action == "Add New Case":
                 tags_values = [tag.strip() for tag in value.split(",")]
                 # st.write(f"Tags after splitting and stripping: {tags_values}")
                 # st.write(f"Length of tags_values: {len(tags_values)}")
+            else:
+                # Make key-value pairs editable (excluding tags)
+                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
 
-    # Save the editable fields to session state
+    # # Save the editable fields to session state
+    # st.session_state['editable_result'] = editable_fields
+
+    # Save the editable fields to session state (without the tags)
     st.session_state['editable_result'] = editable_fields
+
 
     # Display tags if tags were found
     if tags_values:
