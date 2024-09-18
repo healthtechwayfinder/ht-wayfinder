@@ -564,8 +564,8 @@ if action == "Add New Case":
         # Update tags_values with the modified tags from st_tags
         tags_values = updated_tags
 
-# Print the updated tags values after any modification (entry or deletion)
-st.write("Updated Tags:", tags_values)
+        # Print the updated tags values after any modification (entry or deletion)
+        st.write("Updated Tags:", tags_values)
 
         
         st.markdown("### Missing Fields")
