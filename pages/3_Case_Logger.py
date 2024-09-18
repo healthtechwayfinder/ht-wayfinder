@@ -26,6 +26,8 @@ import json
 import os
 import csv
 
+import random
+
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 # Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
@@ -33,6 +35,7 @@ action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"]
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 # Access the credentials from Streamlit secrets
+#test
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
     "project_id" : st.secrets["gwf_service_account"]["project_id"],
@@ -51,11 +54,17 @@ creds_dict = {
 if 'case_description' not in st.session_state:
     st.session_state['case_description'] = ""
 
+# if 'location' not in st.session_state:
+#     st.session_state['location'] = ""
+
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
 
 if 'case_title' not in st.session_state:
     st.session_state['case_title'] = ""
+
+# if 'case_date' not in st.session_state:
+#     st.session_state['case_date'] = ""
 
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
@@ -137,74 +146,36 @@ def parse_result_string(result_str):
     
     return parsed_dict
 
-# def extractCaseFeatures(case_description):
-
-#     # Parse the case
-#     parsed_case = parseCase(case_description)
-#     st.session_state['parsed_case'] = parsed_case
-
-#     input_fields = list(caseRecord.__fields__.keys())
-
-#     missing_fields = [field for field in input_fields if parsed_case[field] is None]
-
-#     output = ""
-
-#     for field in input_fields:
-#         if field not in missing_fields:
-#             key_output = field.replace("_", " ").capitalize()
-#             output += f"**{key_output}**: {parsed_case[field]}\n"
-#             output += "\n"
-
-
-#     missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
-
-#     if len(missing_fields)>0:
-#         output += "\n\n **Missing fields**:"
-
-#         for field in missing_fields:
-#             output += f" <span style='color:red;'>{field}</span>,"
-
-#     # Display the output
-#     # st.markdown(output, unsafe_allow_html=True)
-#     return f"{output}"
-
-# Function to extract and display case features
 def extractCaseFeatures(case_description):
-    try:
-        parsed_case = parseCase(case_description)
-        st.session_state['parsed_case'] = parsed_case
-        input_fields = list(caseRecord.__fields__.keys())
-        missing_fields = []
-        tags_values = []  # Initialize an empty list to hold the tags
 
-        for field in input_fields:
-            value = parsed_case.get(field, None)
-            field_label = field.replace("_", " ").capitalize()
+    # Parse the case
+    parsed_case = parseCase(case_description)
+    st.session_state['parsed_case'] = parsed_case
 
-            if not value:
-                st.markdown(f"**{field_label}:** <span style='color:red;'>empty</span>", unsafe_allow_html=True)
-                st.text_input(f"Enter {field_label}:", key=f"missing_{field}")
-                missing_fields.append(field)
-            else:
-                if field == "tags":
-                    # Display tags using st_tags
-                    tags_values = [tag.strip() for tag in value.split(",")]
-                    st_tags(
-                        label="Tags",
-                        text="Press enter to add more",
-                        value=tags_values,  # Show the tags found in the result
-                        maxtags=10  # Max number of tags the user can add
-                    )
-                else:
-                    st.text_input(f"{field_label}:", value=value, key=f"editable_{field}")
+    input_fields = list(caseRecord.__fields__.keys())
 
-        st.session_state['missing_fields'] = missing_fields
-        return f"Parsed fields: {', '.join(input_fields)}"
-    except Exception as e:
-        st.error(f"Error parsing case features: {e}")
-        return "No valid case data."
+    missing_fields = [field for field in input_fields if parsed_case[field] is None]
+
+    output = ""
+
+    for field in input_fields:
+        if field not in missing_fields:
+            key_output = field.replace("_", " ").capitalize()
+            output += f"**{key_output}**: {parsed_case[field]}\n"
+            output += "\n"
 
 
+    missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
+
+    if len(missing_fields)>0:
+        output += "\n\n **Missing fields**:"
+
+        for field in missing_fields:
+            output += f" <span style='color:red;'>{field}</span>,"
+
+    # Display the output
+    # st.markdown(output, unsafe_allow_html=True)
+    return f"{output}"
 
 def addToGlossary(insider_language_terms, case_id):
     try:
@@ -452,6 +423,19 @@ def update_case(case_id, updated_data):
         return False
 
 
+# Function to generate a random color
+def random_color():
+    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
+
+# Function to render colorful tags
+def render_colorful_tags(tags_values):
+    tags_html = ""
+    for tag in tags_values:
+        color = random_color()
+        tags_html += f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
+    return tags_html
+
+
 
 import streamlit as st
 from datetime import date
@@ -624,65 +608,73 @@ if action == "Add New Case":
     
     with col1:
         if st.button("Submit Case"):
-            # First, generate and display the case title
-            st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
+            # Extract and process the case description
+            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+            st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             
             if st.session_state['case_title'] != "":
-                # Display the case title at the beginning
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
-    
-            # Now, extract and process the case description and display the other fields
-            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
-    
-        # Process the result after button click
-        parsed_result = st.session_state['result']
-    
-        # Initialize variables to hold editable fields and tags
-        editable_fields = {}
-        tags_values = []  # Initialize tags_values as empty
-        missing_fields = []  # To store any missing fields
-        
+            
+    # Process the result after button click
+    parsed_result = st.session_state['result']
+
+    # # Debug: Show the parsed result
+    # st.write("Parsed Result:", parsed_result)
+
+        # Initialize tags as an empty list in case it's not found
+    tags_values = []
+
         # Split the result by lines and extract each case detail by assuming specific labels
-        lines = parsed_result.splitlines()
+    lines = parsed_result.splitlines()
+
+    #     # Debug: Write lines being processed
+    # st.write("Lines from parsed result:", lines)
     
-        for line in lines:
-            if ':' in line:
-                key, value = line.split(':', 1)  # Split by the first colon
-                key = key.strip()
-                value = value.strip()
-                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-                key_clean = key.replace('**', '').strip()
-    
-                # If the value is empty or None, consider the field as missing
-                if not value:
-                    missing_fields.append(key_clean)
-                    
-                # Process tags when the key is 'Tags'
-                if key_clean.lower() == 'tags':
-                    tags_values = [tag.strip() for tag in value.split(",")]
-                else:
-                    # Make key-value pairs editable (excluding tags)
-                    editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-    
-        # Save the editable fields to session state (without the tags)
-        st.session_state['editable_result'] = editable_fields
-    
-        # Display tags if tags were found
-        if tags_values:
-            st_tags(
-                label="Tags",
-                text="Press enter to add more",
-                value=tags_values,  # Show the tags found in the result
-                maxtags=10
-            )
-        else:
-            st.write("No tags found.")
-    
-        # Display missing fields below the tags
-        if missing_fields:
-            st.markdown("### Missing Fields:")
-            for field in missing_fields:
-                st.markdown(f"<span style='color:red;'>{field}</span>", unsafe_allow_html=True)
+    # Split the result by lines and extract details
+    #lines = parsed_result.splitlines()
+    editable_fields = {}
+    tags_values = []  # Initialize tags_values as empty
+
+    for line in lines:
+        if ':' in line:
+            key, value = line.split(':', 1)  # Split by the first colon
+            key = key.strip()
+            value = value.strip()
+
+            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+            key_clean = key.replace('**', '').strip()
+
+
+            # Make key-value pairs editable
+            editable_fields[key] = st.text_input(f"{key}", value=value)
+
+            # Process tags when the key is 'Tags'
+            if key_clean.lower() == 'tags':
+                # st.write(f"Processing line: key='{key}', value='{value}'")
+                tags_values = [tag.strip() for tag in value.split(",")]
+                # st.write(f"Tags after splitting and stripping: {tags_values}")
+                # st.write(f"Length of tags_values: {len(tags_values)}")
+
+    # Save the editable fields to session state
+    st.session_state['editable_result'] = editable_fields
+
+    # # Display tags if tags were found
+    # if tags_values:
+    #     st_tags(
+    #         label="Tags",
+    #         text="Press enter to add more",
+    #         value=tags_values,  # Show the tags found in the result
+    #         maxtags=10
+    #     )
+    # else:
+    #     st.write("No tags found.")
+
+    # Display colorful tags if tags were found
+    if tags_values:
+        colorful_tags_html = render_colorful_tags(tags_values)
+        st.markdown(colorful_tags_html, unsafe_allow_html=True)
+    else:
+        st.write("No tags found.")
 
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
