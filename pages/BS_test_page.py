@@ -205,6 +205,9 @@ def addToGoogleSheets(observation_dict):
 import logging
 
 # Function to update the "observations" column for a specific case ID in Google Sheets
+import logging
+
+# Function to update the "Observations" column for a specific case ID in Google Sheets
 def update_case_observations(case_id, observation_id):
     try:
         scope = [
@@ -218,29 +221,29 @@ def update_case_observations(case_id, observation_id):
         # Get all data from the sheet
         data = case_log.get_all_records()
 
-        # Get the header row to find the "observations" column
+        # Get the header row to find the "Observations" column
         headers = case_log.row_values(1)
         
-        # Check if 'observations' column exists in the sheet headers
+        # Check if 'Observations' column exists in the sheet headers (case-sensitive)
         if "Observations" not in headers:
             logging.error("'Observations' column not found in the sheet headers")
             return False
         
-        # Find the index of the "observations" column
-        obs_col_index = headers.index("observations") + 1  # gspread uses 1-based indexing
-        
+        # Find the index of the "Observations" column (1-based index for gspread)
+        obs_col_index = headers.index("Observations") + 1  # 'Observations' column
+
         # Log headers and column index
         logging.info(f"Headers: {headers}")
         logging.info(f"'Observations' column index: {obs_col_index}")
 
         # Find the row that corresponds to the given case_id
-        for i, row in enumerate(data, start=2):  # Start from 2 to skip the header row
+        for i, row in enumerate(data, start=2):  # Start from row 2 to skip the header row
             logging.info(f"Checking row {i}: {row}")
             if row["Case ID"] == case_id:
                 logging.info(f"Found matching case ID: {case_id} at row {i}")
                 
-                # Get the current observations in the "observations" column (if any)
-                current_observations = row.get("observations", "")
+                # Get the current observations in the "Observations" column (if any)
+                current_observations = row.get("Observations", "")
                 
                 # Append the new observation ID to the existing observations
                 if current_observations:
@@ -251,7 +254,7 @@ def update_case_observations(case_id, observation_id):
                 # Log the update before writing
                 logging.info(f"Updating row {i}, column {obs_col_index} with: {updated_observations}")
 
-                # Update the "observations" column with the new value
+                # Update the "Observations" column with the new value
                 case_log.update_cell(i, obs_col_index, updated_observations)
                 return True
 
@@ -260,8 +263,6 @@ def update_case_observations(case_id, observation_id):
     except Exception as e:
         logging.error(f"Error updating case Observations: {e}")
         return False
-
-import gspread
 
 # Function to append an Observation ID to the "Observations" column in the Case Log worksheet
 def append_observation_to_case(case_log_sheet, case_id, new_observation_id):
