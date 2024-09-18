@@ -488,19 +488,9 @@ if action == "Add New Case":
             if st.session_state['case_title'] != "":
                 st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             
-    # # Process the result after button click
-    # parsed_result = st.session_state['result']
-
     # Process the result after button click
-    parsed_result = st.session_state.get('result', '')
-    
-    # Ensure parsed_result is a valid string before calling .splitlines()
-    if isinstance(parsed_result, str) and parsed_result:
-        lines = parsed_result.splitlines()
-    else:
-        st.error("No valid result found to process. Please submit a valid case.")
-    
-        
+    parsed_result = st.session_state['result']
+
     # Ensure 'result' exists
     if parsed_result and isinstance(st.session_state['parsed_case'], dict):
         # Print case title
