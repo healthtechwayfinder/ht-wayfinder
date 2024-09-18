@@ -650,10 +650,12 @@ if action == "Add New Case":
         st.write("No tags found.")
 
     # Display missing fields below the tags
+    # Display missing fields below the tags
     if missing_fields:
         st.markdown("### Missing Fields:")
         for field in missing_fields:
-            st.markdown(f"<span style='color:red;'>{field}</span>", unsafe_allow_html=True)
+            st.markdown(f"- ❗️ **{field}** is missing")
+
 
 
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
