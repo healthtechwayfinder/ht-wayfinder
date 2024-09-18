@@ -517,8 +517,17 @@ if action == "Add New Case":
                 value = value.strip()
                 # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
                 key_clean = key.replace('**', '').strip()
-                # Make key-value pairs editable
+                # No missing fields handling here! Only make fields editable.
+                # Skip printing or displaying missing fields or empty fields
+                if key_clean in missing_fields or value == "":
+                    continue  # Skip this field if it's missing or has an empty value
+    
+                # Print non-empty fields only (non-missing fields)
                 editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+
+                # # The following line displays each field from the parsed result as an editable text input.
+                # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+
                 # Process tags when the key is 'Tags'
                 if key_clean.lower() == 'tags':
                     # st.write(f"Processing line: key='{key}', value='{value}'")
