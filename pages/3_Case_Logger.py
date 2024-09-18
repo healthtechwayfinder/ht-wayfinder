@@ -488,8 +488,17 @@ if action == "Add New Case":
             if st.session_state['case_title'] != "":
                 st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
             
+    # # Process the result after button click
+    # parsed_result = st.session_state['result']
+
+    ######here 2
     # Process the result after button click
-    parsed_result = st.session_state['result']
+    if 'result' in st.session_state and st.session_state['result']:
+        parsed_result = st.session_state['result']
+    else:
+        st.error("No result found. Please submit a valid case.")
+        st.stop()  # Stops further execution if no result is found
+     ######here 2
 
     # Ensure 'result' exists
     if parsed_result and isinstance(st.session_state['parsed_case'], dict):
@@ -536,6 +545,12 @@ if action == "Add New Case":
                     # st.write(f"Tags after splitting and stripping: {tags_values}")
                     # st.write(f"Length of tags_values: {len(tags_values)}")
                     continue
+                ######here 2
+                else:
+                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+                # Automatically update 'result' in session state
+                st.session_state['parsed_case'][key_clean.lower()] = editable_fields[key_clean]
+                 ######here 2
                 
                 # Print non-empty fields only (non-missing fields)
                 editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
@@ -572,6 +587,11 @@ if action == "Add New Case":
         st.write("Updated Tags:", tags_values)
 
         st.session_state['parsed_case']['tags'] = updated_tags
+
+        #here 2------------
+            # Debug: Print session state to verify changes
+         st.write("Updated session state result:", st.session_state['parsed_case'])
+        #here 2------------
 
         # # Update 'result' with parsed_case
         # st.session_state['result'] = st.session_state['parsed_case']
