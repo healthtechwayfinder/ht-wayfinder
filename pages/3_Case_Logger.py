@@ -427,13 +427,14 @@ def update_case(case_id, updated_data):
 def random_color():
     return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
-# Function to render colorful tags
-def render_colorful_tags(tags_values):
-    tags_html = ""
+# Function to render editable colorful tags
+def render_editable_colorful_tags(tags_values):
+    colorful_tags = []
     for tag in tags_values:
         color = random_color()
-        tags_html += f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
-    return tags_html
+        tag_html = f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
+        colorful_tags.append(tag_html)
+    return colorful_tags
 
 
 
@@ -671,16 +672,22 @@ if action == "Add New Case":
 
     # Display colorful tags if tags were found
     # Display editable tags
-    if tags_values:
-        tags_values = st_tags(
-            label="Editable Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10
-        )
+    # Editable Tags Input with `st_tags`
+    tags_values = st_tags(
+        label="Editable Tags",
+        text="Press enter to add more",
+        value=st.session_state['tags_values'],  # Initial tags
+        maxtags=10,
+        suggestions=[],  # Add any suggestions if needed
+        key="tags_input"
+    )
     
-        # Show colorful tags as a visual representation
-        colorful_tags_html = render_colorful_tags(tags_values)
+    # Update session state with current tags values
+    st.session_state['tags_values'] = tags_values
+    
+    # Show colorful tags
+    if tags_values:
+        colorful_tags_html = " ".join(render_editable_colorful_tags(tags_values))
         st.markdown(colorful_tags_html, unsafe_allow_html=True)
     else:
         st.write("No tags found.")
