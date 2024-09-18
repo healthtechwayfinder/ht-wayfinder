@@ -634,60 +634,60 @@ if action == "Add New Case":
             if st.session_state['case_title'] != "":
                 st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'], height=50)
 
-    # Process the result after button click
-    parsed_result = st.session_state['result']
-
-    # Initialize variables to hold editable fields and tags
-    editable_fields = {}
-    tags_values = []  # Initialize tags_values as empty
-    missing_fields = []  # To store any missing fields
-    
-    # Split the result by lines and extract each case detail by assuming specific labels
-    lines = parsed_result.splitlines()
-
-
-    for line in lines:
-        if ':' in line:
-            key, value = line.split(':', 1)  # Split by the first colon
-            key = key.strip()
-            value = value.strip()
-            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-            key_clean = key.replace('**', '').strip()
-
-            # If the value is empty or None, consider the field as missing
-            if not value:
-                missing_fields.append(key_clean)
-                
-            # Process tags when the key is 'Tags'
-            if key_clean.lower() == 'tags':
-                # st.write(f"Processing line: key='{key}', value='{value}'")
-                tags_values = [tag.strip() for tag in value.split(",")]
-                # st.write(f"Tags after splitting and stripping: {tags_values}")
-                # st.write(f"Length of tags_values: {len(tags_values)}")
+            # Process the result after button click
+            parsed_result = st.session_state['result']
+        
+            # Initialize variables to hold editable fields and tags
+            editable_fields = {}
+            tags_values = []  # Initialize tags_values as empty
+            missing_fields = []  # To store any missing fields
+            
+            # Split the result by lines and extract each case detail by assuming specific labels
+            lines = parsed_result.splitlines()
+        
+        
+            for line in lines:
+                if ':' in line:
+                    key, value = line.split(':', 1)  # Split by the first colon
+                    key = key.strip()
+                    value = value.strip()
+                    # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+                    key_clean = key.replace('**', '').strip()
+        
+                    # If the value is empty or None, consider the field as missing
+                    if not value:
+                        missing_fields.append(key_clean)
+                        
+                    # Process tags when the key is 'Tags'
+                    if key_clean.lower() == 'tags':
+                        # st.write(f"Processing line: key='{key}', value='{value}'")
+                        tags_values = [tag.strip() for tag in value.split(",")]
+                        # st.write(f"Tags after splitting and stripping: {tags_values}")
+                        # st.write(f"Length of tags_values: {len(tags_values)}")
+                    else:
+                        # Make key-value pairs editable (excluding tags)
+                        editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+        
+            # Save the editable fields to session state (without the tags)
+            st.session_state['editable_result'] = editable_fields
+        
+        
+            # Display tags if tags were found
+            if tags_values:
+                st_tags(
+                    label="Tags",
+                    text="Press enter to add more",
+                    value=tags_values,  # Show the tags found in the result
+                    maxtags=10
+                )
             else:
-                # Make key-value pairs editable (excluding tags)
-                editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-
-    # Save the editable fields to session state (without the tags)
-    st.session_state['editable_result'] = editable_fields
-
-
-    # Display tags if tags were found
-    if tags_values:
-        st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10
-        )
-    else:
-        st.write("No tags found.")
-
-    # Display missing fields below the tags
-    if missing_fields:
-        st.markdown("### Missing Fields:")
-        for field in missing_fields:
-            st.markdown(f"<span style='color:red;'>{field}</span>", unsafe_allow_html=True)
+                st.write("No tags found.")
+        
+            # Display missing fields below the tags
+            if missing_fields:
+                st.markdown("### Missing Fields:")
+                for field in missing_fields:
+                    st.markdown(f"<span style='color:red;'>{field}</span>", unsafe_allow_html=True)
 
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
