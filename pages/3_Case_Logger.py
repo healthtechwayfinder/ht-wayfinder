@@ -69,8 +69,14 @@ if 'case_title' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
-if 'parsed_case' not in st.session_state:
-    st.session_state['parsed_case'] = ""
+# if 'parsed_case' not in st.session_state:
+#     st.session_state['parsed_case'] = ""
+
+# Session state initialization
+# Initialize session state as an empty dictionary if needed
+if 'parsed_case' not in st.session_state or not isinstance(st.session_state['parsed_case'], dict):
+    st.session_state['parsed_case'] = {}
+
 
 class caseRecord(BaseModel):
     location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
@@ -344,6 +350,13 @@ Output title:"""
     output = case_chain.invoke({"case_description": case_description})
 
     return output
+
+# Example tags handling logic
+tags_values = ["Tag1", "Tag2"]  # Example list of tags (this would be dynamically generated in real usage)
+
+# Ensure 'parsed_case' is a dictionary and set 'tags'
+if isinstance(st.session_state['parsed_case'], dict):
+    st.session_state['parsed_case']['tags'] = ", ".join(tags_values)
 
 
 def clear_case():
