@@ -598,7 +598,6 @@ if action == "Add New Case":
         
         # Debug: Print session state to verify changes
         st.write("Updated session state result:", st.session_state['result'])
-
         
         st.markdown("### Missing Fields")
         
@@ -630,7 +629,7 @@ if action == "Add New Case":
     
         # Any other custom saving logic
         time.sleep(3)  # Pause to let the user see changes, if necessary
-        clear_case()  # Optional: Clear case if needed before rerun
+        #clear_case()  # Optional: Clear case if needed before rerun
         st.session_state['rerun'] = False
         st.rerun()  # Trigger the rerun
 
