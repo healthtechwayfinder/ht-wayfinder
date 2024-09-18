@@ -567,6 +567,11 @@ if action == "Add New Case":
         # Print the updated tags values after any modification (entry or deletion)
         st.write("Updated Tags:", tags_values)
 
+        # Convert updated_tags to a comma-separated string
+        updated_tags_string = ", ".join(updated_tags)
+
+                # Iterate over the parsed result lines
+        updated_lines = []  # Store the modified lines
         for line in lines:
             if ':' in line:
                 key, value = line.split(':', 1)  # Split by the first colon
@@ -574,9 +579,23 @@ if action == "Add New Case":
                 value = value.strip()
                 # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
                 key_clean = key.replace('**', '').strip()
-            
+        
+                # If the key is 'tags', update it with the modified tags
                 if key_clean.lower() == 'tags':
-                    st.write(f"Processing line: key='{key}', value='{value}'")
+                    st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
+                    # Substitute the old value (tags) with the updated tags
+                    value = updated_tags_string  # Replace the old value with updated tags
+                    st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
+        
+                # Reconstruct the line with the new or unchanged value
+                updated_line = f"{key}: {value}"
+                updated_lines.append(updated_line)  # Add to the list of updated lines
+        
+        # Now update the session state result with the updated tags
+        st.session_state['result']['tags'] = updated_tags_string  # Replace the old tags in the result
+        
+        # Optionally print the updated lines
+        st.write("Updated Lines:", updated_lines)
 
         
         st.markdown("### Missing Fields")
