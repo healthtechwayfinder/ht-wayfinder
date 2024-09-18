@@ -567,6 +567,19 @@ if action == "Add New Case":
         # Print the updated tags values after any modification (entry or deletion)
         st.write("Updated Tags:", tags_values)
 
+        # Ensure 'result' exists in session state
+        if 'result' in st.session_state and isinstance(st.session_state['result'], dict):
+            # Access the 'tags' from the result
+            tags_from_result = st.session_state['result'].get('tags', '')
+        
+            # Print the tags
+            if tags_from_result:
+                st.write("Tags from result:", tags_from_result)
+            else:
+                st.write("No tags found in the result.")
+        else:
+            st.write("Result not found.")
+
         
         st.markdown("### Missing Fields")
         for field in missing_fields:
