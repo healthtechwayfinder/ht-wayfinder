@@ -674,9 +674,6 @@ if action == "Add New Case":
     # Display editable tags
     # Editable Tags Input with `st_tags`
    # Initialize tags_values in session state if not already present
-    if 'tags_values' not in st.session_state:
-        st.session_state['tags_values'] = ['urology', 'patient care', 'neurogenic bladder']  # Default tags or empty list
-    
     # Editable Tags Input with `st_tags`
     tags_values = st_tags(
         label="Editable Tags",
@@ -690,13 +687,26 @@ if action == "Add New Case":
     # Update session state with current tags values
     st.session_state['tags_values'] = tags_values
     
-    # Show colorful tags
-    if tags_values:
-        colorful_tags_html = " ".join(render_editable_colorful_tags(tags_values))
-        st.markdown(colorful_tags_html, unsafe_allow_html=True)
-    else:
-        st.write("No tags found.")
-
+    # Add custom CSS for each tag in `st_tags`
+    custom_style = """
+        <style>
+            .tag-container .tag {
+                display: inline-block;
+                background-color: {};
+                color: white;
+                padding: 5px 10px;
+                margin: 5px;
+                border-radius: 8px;
+                font-size: 14px;
+            }
+        </style>
+    """
+    
+    # Apply random colors to tags
+    for tag in tags_values:
+        color = random_color()
+        styled_tag = custom_style.format(color)
+        st.markdown(styled_tag, unsafe_allow_html=True)
     # Only call st.rerun() if absolutely necessary and ensure all required data is saved first
     if st.session_state['rerun']:
         time.sleep(3)
