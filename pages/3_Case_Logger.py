@@ -257,12 +257,18 @@ if action == "Add New Case":
         if st.button("Submit Case"):
             st.session_state['case_title'] = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title']:
-                with st.container():
-                    col_full = st.columns(1)
-                    with col_full[0]:
-                        st.text_area("Case Title (editable):", value=st.session_state['case_title'], key="case_title_edit")
-            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+                # Full width text area for case title
+                st.markdown("""
+                    <style>
+                    .full-width-text-area .stTextArea textarea {
+                        width: 100% !important;
+                    }
+                    </style>
+                    """, unsafe_allow_html=True)
     
+                st.text_area("Case Title (editable):", value=st.session_state['case_title'], key="case_title_edit", placeholder="Enter case title here", class_="full-width-text-area")
+            st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+
         
     parsed_result = st.session_state['result']
     tags_values = []
