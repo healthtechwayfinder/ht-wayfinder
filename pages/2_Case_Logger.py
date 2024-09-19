@@ -623,45 +623,46 @@ elif action == "Edit Existing Case":
         # Create a list of display names in the format "case_id: title"
         case_options = [f"{case_id}: {title}" for case_id, title in case_info]
         # Display the dropdown with combined case_id and title
-        selected_case = st.selectbox("Select a case to edit", case_options)
-        # Extract the selected case_id from the dropdown (case_id is before the ":")
-        case_to_edit = selected_case.split(":")[0].strip()
-        # Step 2: Fetch and display case details for the selected case
-        if case_to_edit:
-            case_details = fetch_case_details(case_to_edit)
-            if case_details:
-                # Editable fields for the selected case
-                case_title = st.text_input("Title", case_details.get("Title", ""))
-                case_date_str = case_details.get("Date", "")
-                try:
-                    # Try to parse the date from ISO format, or default to today's date
-                    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
-                except ValueError:
-                    case_date = date.today()
-                case_date_input = st.date_input("Date", case_date)
-                case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
-                location = st.text_input("Location", case_details.get("Location", ""))
-                stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
-                people_present = st.text_input("People Present", case_details.get("People Present", ""))
-                insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
-                
-                observations = case_details.get("Observations", "")  
-                if isinstance(observations, str):
-                    observations = [obs.strip() for obs in observations.split(",")]  # Split by comma if needed
-                
-                # Step 1: Print the list of observation IDs provided
-                # st.write("Observation IDs to filter:", observations)
-                all_observations, observation_ids_with_title = fetch_all_observation_ids_and_titles()
+        selected_case = st.selectbox("Select a case to edit", [""] + case_options)
+        if selected_case != "":
+            # Extract the selected case_id from the dropdown (case_id is before the ":")
+            case_to_edit = selected_case.split(":")[0].strip()
+            # Step 2: Fetch and display case details for the selected case
+            if case_to_edit:
+                case_details = fetch_case_details(case_to_edit)
+                if case_details:
+                    # Editable fields for the selected case
+                    case_title = st.text_input("Title", case_details.get("Title", ""))
+                    case_date_str = case_details.get("Date", "")
+                    try:
+                        # Try to parse the date from ISO format, or default to today's date
+                        case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
+                    except ValueError:
+                        case_date = date.today()
+                    case_date_input = st.date_input("Date", case_date)
+                    case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
+                    location = st.text_input("Location", case_details.get("Location", ""))
+                    stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
+                    people_present = st.text_input("People Present", case_details.get("People Present", ""))
+                    insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
+                    
+                    observations = case_details.get("Observations", "")  
+                    if isinstance(observations, str):
+                        observations = [obs.strip() for obs in observations.split(",")]  # Split by comma if needed
+                    
+                    # Step 1: Print the list of observation IDs provided
+                    # st.write("Observation IDs to filter:", observations)
+                    all_observations, observation_ids_with_title = fetch_all_observation_ids_and_titles()
                 # st.write("Full observation data:", all_observations)
-                formatted_observations = get_filtered_observation_data(observations,observation_ids_with_title)
-                # st.write("Filtered observation data:", formatted_observations)
-                # Multi-select dropdown with observation IDs
-                selected_observations = st.multiselect("Select Observation IDs:", all_observations, formatted_observations)  # Preselect the values
-                # Extract only the observation IDs from the selected_observations list
-                observation_ids_only = [obs.split(" - ")[0] for obs in selected_observations]
-
-                # Debugging to check the extracted observation IDs
-                st.write("Selected Observation IDs:", observation_ids_only)
+                    formatted_observations = get_filtered_observation_data(observations,observation_ids_with_title)
+                    # st.write("Filtered observation data:", formatted_observations)
+                    # Multi-select dropdown with observation IDs
+                    selected_observations = st.multiselect("Select Observation IDs:", all_observations, formatted_observations)  # Preselect the values
+                    # Extract only the observation IDs from the selected_observations list
+                    observation_ids_only = [obs.split(" - ")[0] for obs in selected_observations]
+    
+                    # Debugging to check the extracted observation IDs
+                    st.write("Selected Observation IDs:", observation_ids_only)
                                 # # Editable field for observations
                 # observations = st_tags(
                 #     label="Enter observation-IDs:",
@@ -672,37 +673,37 @@ elif action == "Edit Existing Case":
                 # )
                 #observations = st.text_input("Observations", case_details.get("Observations", ""))
                 #tags = st.text_input("Tags", case_details.get("Tags", ""))
-                # Editable field for tags using st_tags
-                tags = st_tags(
-                    label="Enter tags:",
-                    text="Press enter to add more",
-                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
-                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-                    maxtags=10,  # Max number of tags the user can add
-                )
-                # Step 3: Save changes
-                if st.button("Save Changes"):
-                    tags_string = ", ".join(tags)
-                    observations_string = ", ".join(observation_ids_only)
-                    updated_data = {
-                        "Title": case_title,
-                        "Date": case_date_input.isoformat(),
-                        "Case Description": case_description,
-                        "Location": location,
-                        "Stakeholders": stakeholders,
-                        "People Present": people_present,
-                        "Insider Language": insider_language,
-                        "Tags": tags_string,
-                        "Observations": observations_string,
-                    }
-                    if update_case(case_to_edit, updated_data):
-                        st.success(f"Changes to '{case_to_edit}' saved successfully!")
-                        # st.session_state['rerun'] = True
-                        clear_casex()
-                        st.rerun()
-                    else:
-                        st.error(f"Failed to save changes to '{case_to_edit}'.")
-
+                    # Editable field for tags using st_tags
+                    tags = st_tags(
+                        label="Enter tags:",
+                        text="Press enter to add more",
+                        value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=10,  # Max number of tags the user can add
+                    )
+                    # Step 3: Save changes
+                    if st.button("Save Changes"):
+                        tags_string = ", ".join(tags)
+                        observations_string = ", ".join(observation_ids_only)
+                        updated_data = {
+                            "Title": case_title,
+                            "Date": case_date_input.isoformat(),
+                            "Case Description": case_description,
+                            "Location": location,
+                            "Stakeholders": stakeholders,
+                            "People Present": people_present,
+                            "Insider Language": insider_language,
+                            "Tags": tags_string,
+                            "Observations": observations_string,
+                        }
+                        if update_case(case_to_edit, updated_data):
+                            st.success(f"Changes to '{case_to_edit}' saved successfully!")
+                            # st.session_state['rerun'] = True
+                            clear_casex()
+                            st.rerun()
+                        else:
+                            st.error(f"Failed to save changes to '{case_to_edit}'.")
+    
 
 # add a break line
 st.markdown("<br>", unsafe_allow_html=True)
