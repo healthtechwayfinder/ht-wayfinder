@@ -521,6 +521,7 @@ if action == "Add New Case":
                 field_clean = field.replace("_", " ").capitalize()
                 # Render text input for missing fields, storing results back in parsed_case
                 st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+                st.rerun()
 
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
