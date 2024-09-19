@@ -57,7 +57,7 @@ with col1:
     # Create a dropdown for selecting which sheet to view
     st.markdown("##### Select Sheet")
 
-    selected_sheet = st.selectbox(list(worksheets.keys()))
+    selected_sheet = st.selectbox("",list(worksheets.keys()))
 
 # Fetch data from Google Sheets based on the selected worksheet
 def load_data(worksheet_name):
