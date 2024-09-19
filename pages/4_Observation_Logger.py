@@ -322,10 +322,18 @@ def embedObservation(observer, observation, observation_summary, observation_tag
 
     print("Added to Pinecone: ", observation_id)
 
-    if 'parsed_observation' not in st.session_state:
-        st.session_state['parsed_observation'] = parseObservation(observation)
-    else:
+    # if 'parsed_observation' not in st.session_state:
+    #     st.session_state['parsed_observation'] = parseObservation(observation)
+    # else:
+    #     parsed_observation = st.session_state['parsed_observation']
+
+
+    if 'parsed_observation' in st.session_state and len(st.session_state['parsed_observation'])>0:
         parsed_observation = st.session_state['parsed_observation']
+    else:
+        parsed_observation = parseCase(observation)
+        st.session_state['parsed_observation'] = parsed_observation
+    
 
     # Prepare the observation record with the tags
     observation_keys = list(ObservationRecord.__fields__.keys())
