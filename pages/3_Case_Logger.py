@@ -486,7 +486,7 @@ if action == "Add New Case":
             # Generate the case description
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
-                st.session_state['parsed_case'] = extractCaseFeatures(st.session_state['case_description'])
+                extractCaseFeatures(st.session_state['case_description'])
                 st.session_state['result'] = st.session_state['parsed_case']
     # Process the result after button click
     parsed_result = st.session_state['parsed_case']
