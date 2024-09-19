@@ -194,7 +194,7 @@ else:
             # Editable fields for the selected case
             #case_date = st.date_input("Date", date.fromisoformat(need_details.get("Date", str(date.today()))))
             # case_description = st.text_area("Case Description", need_details.get("Case Description", ""))
-            Related Observation ID = st.text_input("Observation", need_details.get("observation_ID", ""))
+            related_observation_ID = st.text_input("Observation", need_details.get("observation_ID", ""))
             problem_var = st.text_input("Problem", need_details.get("problem", ""))
             population_var = st.text_input("Population", need_details.get("population", ""))
             outcome_var = st.text_input("Outcome", need_details.get("outcome", ""))
