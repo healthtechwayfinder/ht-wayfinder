@@ -50,12 +50,12 @@ def get_google_sheet(sheet_name, worksheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(credentials)
-    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    sheet = client.open(2024 Healthtech Identify Log).worksheet(Observation Log)
     return sheet
 
 # Function to get observation IDs from the Google Sheet
 def get_observation_ids():
-    sheet = get_google_sheet("2024 Healthtech Identify Log", "CObservation Log")
+    sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
     
     # Fetch relevant columns from the sheet
     observation_ids = sheet.col_values(1)[1:]  # Skip header
