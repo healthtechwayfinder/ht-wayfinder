@@ -309,15 +309,15 @@ Output title:"""
 
 
 def clear_case():
-    if 'case_description' in st.session_state:
-        st.session_state['case_description'] = ""
-    if 'case_title' in st.session_state:
-        st.session_state['case_title'] = ""
-    if 'result' in st.session_state:
-        st.session_state['result'] = ""
-    if 'parsed_case' in st.session_state:
-        st.session_state['parsed_case'] = ""
-    parsed_case = st.session_state['parsed_case']
+    # if 'case_description' in st.session_state:
+    #     st.session_state['case_description'] = ""
+    # if 'case_title' in st.session_state:
+    #     st.session_state['case_title'] = ""
+    # if 'result' in st.session_state:
+    #     st.session_state['result'] = ""
+    # if 'parsed_case' in st.session_state:
+    #     st.session_state['parsed_case'] = ""
+    parsed_case = ""
 
     update_case_ID()
     # Refresh the page back to the initial state
