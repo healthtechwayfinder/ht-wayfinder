@@ -107,7 +107,7 @@ with col2:
         if reviewed_status == "Reviewed":
             df = df[df['Reviewed'] == "TRUE"]
         elif reviewed_status == "Not Reviewed":
-            df = df[df['Reviewed'] == "FALSE"]
+            df = df[df['Reviewed'] != "TRUE"]
 
     elif selected_sheet == "Need Statement Log":
         # Filters for Need Log (Population)
