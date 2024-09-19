@@ -149,7 +149,7 @@ def convertCaseToStringOutput(parsed_case):
     output = ""
 
     for field in parsed_case:
-        if field == 'tags:
+        if field == 'tags':
             continue
         key_output = field.replace("_", " ").capitalize()
         output += f"**{key_output}**: {parsed_case[field]}\n"
