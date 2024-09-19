@@ -430,14 +430,6 @@ def update_observation_log(observation_ids_only, case_id):
         data = sheet.get_all_records()
 
         headers = list(data[0].keys())
-        
-        # Loop through each observation and update the corresponding row
-       def update_observation_log(observation_ids_only, old_observation_ids, case_id):
-    try:
-        sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
-        data = sheet.get_all_records()
-
-        headers = list(data[0].keys())
 
         # Handle removed observation IDs
         removed_observation_ids = set(old_observation_ids) - set(observation_ids_only)
