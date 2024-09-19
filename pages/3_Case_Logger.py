@@ -490,7 +490,6 @@ if action == "Add New Case":
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
                 extractCaseFeatures(st.session_state['case_description'])
-                st.session_state['result'] = convertCaseToStringOutput(st.session_state['parsed_case'])
     # Process the result after button click
     parsed_case = st.session_state['parsed_case']
 
@@ -516,14 +515,13 @@ if action == "Add New Case":
         # Update tags_values with the modified tags from st_tags
         tags_values = updated_tags
         
-        st.write("Updated Tags:", tags_values)
+        # st.write("Updated Tags:", tags_values)
         updated_tags_string = ", ".join(updated_tags)
                 
 
         st.session_state['parsed_case']['tags'] = updated_tags_string
         # Ensure 'result' exists in session state
         # parsed_result = st.session_state.get('parsed_case', '')
-        st.write("Updated session state result:", st.session_state['parsed_case'])
         
         st.markdown("### Missing Fields")
         
@@ -531,7 +529,10 @@ if action == "Add New Case":
             field_clean = field.replace("_", " ").capitalize()
             # Render text input for missing fields, storing results back in parsed_case
             st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
-            
+
+        # st.write("Updated session state result:", st.session_state['parsed_case'])
+    st.session_state['result'] = convertCaseToStringOutput(st.session_state.get('parsed_case', ''))
+    st.markdown(st.session_state['result'])
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
         # Example: Save updated case fields, tags, etc
