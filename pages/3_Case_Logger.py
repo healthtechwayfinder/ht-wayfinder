@@ -504,21 +504,20 @@ if action == "Add New Case":
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
         
         tags_values = parsed_case.get('tags', '')
-                tags_values = [tag.strip() for tag in tags_values.split(",")]
-                updated_tags = st_tags(
-                    label="Tags",
-                    text="Press enter to add more",
-                    value=tags_values,  # Show the tags found in the result
-                    maxtags=10,
-                    key="tags_input"  # Unique key to ensure it's updated correctly
-                )
-                
-                # Update tags_values with the modified tags from st_tags
-                tags_values = updated_tags
+        tags_values = [tag.strip() for tag in tags_values.split(",")]
+        updated_tags = st_tags(
+            label="Tags",
+            text="Press enter to add more",
+            value=tags_values,  # Show the tags found in the result
+            maxtags=10,
+            key="tags_input"  # Unique key to ensure it's updated correctly
+        )
         
-                # Print the updated tags values after any modification (entry or deletion)
-                st.write("Updated Tags:", tags_values)
-                updated_tags_string = ", ".join(updated_tags)
+        # Update tags_values with the modified tags from st_tags
+        tags_values = updated_tags
+        
+        st.write("Updated Tags:", tags_values)
+        updated_tags_string = ", ".join(updated_tags)
                 
 
         st.session_state['parsed_case']['tags'] = updated_tags_string
