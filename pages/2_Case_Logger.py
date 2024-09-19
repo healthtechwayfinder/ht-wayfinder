@@ -695,7 +695,7 @@ elif action == "Edit Existing Case":
                             st.success(f"Changes to '{case_to_edit}' saved successfully!")
                             # st.session_state['rerun'] = True
                             clear_it()
-                            st.rerun()
+                            # st.rerun()
                         else:
                             st.error(f"Failed to save changes to '{case_to_edit}'.")
     
