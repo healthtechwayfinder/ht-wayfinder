@@ -547,7 +547,7 @@ if action == "Add New Case":
         result_container = st.empty() 
     
     with col1:
-        if st.button("Submit Case"):
+        if st.button("Review Case"):
             # Generate the case description
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
@@ -617,7 +617,7 @@ if action == "Add New Case":
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
         # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
         st.session_state["error"] = ""
-
+        update_case_ID()
         # Error handling for empty case description
         if st.session_state['case_description'] == "":
             st.session_state["error"] = "Error: Please enter case."
