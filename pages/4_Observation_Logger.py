@@ -604,13 +604,11 @@ if isinstance(parsed_observation, dict):
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
 
-    
-#     ##########
 
 
 
 
-if st.button("Add Observation to Team Record", disabled=st.session_state['observation_summary'] == ""):
+if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
     # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
     st.session_state["error"] = ""
 
@@ -627,7 +625,7 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
             unsafe_allow_html=True
         )
     else:
-        # update observation one last time to avoid accidental duplication with multiple users
+        # update observation ID one last time to avoid accidental duplication with multiple users
         update_observation_id() 
         status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                             st.session_state['observation_tags'],
@@ -655,10 +653,6 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
 
 
 st.markdown("---")
-
-# if st.button("Back to Main Menu"):
-#     clear_observation()
-#     switch_page("main_menu")
 
 
 # st.markdown("---")
