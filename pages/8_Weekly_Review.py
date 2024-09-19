@@ -89,7 +89,10 @@ observations_to_update = pd.DataFrame()
 # Loop through each recent case and display it
 for index, case in recent_cases.iterrows():
     st.markdown(f"#### Case ID: {case['Case ID']}")
-    st.text_area("Case Details", value=f"Details: {case['Case Description']}", height=150, key=f"case_{index}")
+    with st.container(border=True):
+        # st.text_area("Case Details", value=f"Details: {case['Case Description']}", height=150, key=f"case_{index}")
+        st.write(f"**Case Details:** {case['Case Description']}")
+
 
     # Split the Observations column (assuming comma-separated IDs)
     observation_ids = case['Observations'].split(",")  # Split by commas and remove any extra spaces
