@@ -539,11 +539,14 @@ if action == "Add New Case":
 
             if field == "tags":
                 tags_values = parsed_case.get('tags', '')
-                if isinstance(tags_values, str):
+               # Check if tags_values is not None or some invalid type
+                if tags_values is None:
+                    tags_values = []  # Set as an empty list if it's None
+                elif isinstance(tags_values, str):
                     tags_values = [tag.strip() for tag in tags_values.split(",")]
-                else:
-                    tags_values = list(tags_values)  # Convert to list if it's already not a stringtags_values = [tag.strip() for tag in tags_values.split(",")]
-                updated_tags = st_tags(
+                elif not isinstance(tags_values, list):
+                    tags_values = list(tags_values)  # Try to convert to a list if it isn't already
+
                     label="**Tags**",
                     text="Press enter to add more",
                     value=tags_values,  # Show the tags found in the result
