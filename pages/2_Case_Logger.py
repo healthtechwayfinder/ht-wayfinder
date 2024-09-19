@@ -640,7 +640,7 @@ elif action == "Edit Existing Case":
                 formatted_observations = get_filtered_observation_data(observations,observation_ids_with_title)
                 st.write("Filtered observation data:", formatted_observations)
                 # Multi-select dropdown with observation IDs
-                selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, default=formatted_observations)  # Preselect the values
+                selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, default=list(formatted_observations.keys()))  # Preselect the values
                 
                 # # Editable field for observations
                 # observations = st_tags(
