@@ -623,9 +623,18 @@ elif action == "Edit Existing Case":
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
-                observations = st.text_input("Observations", case_details.get("Observations", ""))
+                
+                # Editable field for observations
+                observations = st_tags(
+                    label="Enter observation-IDs:",
+                    text="Press enter to add more",
+                    value=case_details.get("Observations", "").split(",") if case_details.get("Observations") else [],  # Split tags into a list
+                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                    maxtags=40,  # Max number of tags the user can add
+                )
+                #observations = st.text_input("Observations", case_details.get("Observations", ""))
                 #tags = st.text_input("Tags", case_details.get("Tags", ""))
-                # # Editable field for tags using st_tags
+                # Editable field for tags using st_tags
                 tags = st_tags(
                     label="Enter tags:",
                     text="Press enter to add more",
@@ -636,6 +645,7 @@ elif action == "Edit Existing Case":
                 # Step 3: Save changes
                 if st.button("Save Changes"):
                     tags_string = ", ".join(tags)
+                    observations_string = ", ".join(observations)
                     updated_data = {
                         "Title": case_title,
                         "Date": case_date_input.isoformat(),
@@ -645,7 +655,7 @@ elif action == "Edit Existing Case":
                         "People Present": people_present,
                         "Insider Language": insider_language,
                         "Tags": tags_string,
-                        "Observations": observations,
+                        "Observations": observations_string,
                     }
                     if update_case(case_to_edit, updated_data):
                         st.success(f"Changes to '{case_to_edit}' saved successfully!")
