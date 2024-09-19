@@ -366,24 +366,7 @@ def fetch_case_details(case_id):
             return row
     st.error(f"Case ID {case_id} not found.")
     return None
-
-
-# Update case details in Google Sheets
-# def update_case(case_id, updated_data):
-#     try:
-#         sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
-#         data = sheet.get_all_records()
-#         # Find the row corresponding to the case_id and update it
-#         for i, row in enumerate(data, start=2):  # Skip header row
-#             if row["Case ID"] == case_id:
-#                 # Update the necessary fields (Assuming the updated_data has the same keys as Google Sheets columns)
-#                 for key, value in updated_data.items():
-#                     sheet.update_cell(i, list(row.keys()).index(key) + 1, value)
-#                 return True
-#         return False
-#     except Exception as e:
-#         print(f"Error updating case: {e}")
-#         return False
+    
 def update_case(case_id, updated_data):
     try:
         # Fetch the Google Sheet
@@ -411,6 +394,29 @@ def update_case(case_id, updated_data):
     except Exception as e:
         print(f"Error updating case: {e}")
         return False
+
+def fetch_all_observation_ids_and_titles():
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")  # Ensure this is correct
+        # Fetch relevant columns from the sheet
+        observation_ids = sheet.col_values(1)[1:]  # Skip header
+        observation_titles = sheet.col_values(2)[1:]  # Titles
+        observation_ids_with_title = dict(zip(observation_ids, observation_titles))
+        # Create formatted list with ID - title format
+        formatted_observations = [f"{obs_id} - {title}" for obs_id, title in observation_ids_with_title.items()]
+        logging.info(f"Existing Observation IDs: {formatted_observations}")
+        return formatted_observations
+    
+    except Exception as e:
+        print(f"Error fetching case IDs and titles: {e}")
+        return []
+        
+# Function to filter and return observation data for the given list of observation IDs
+def get_filtered_observation_data(observations, observation_data):
+    filtered_data = {obs_id: observation_data[obs_id] for obs_id in observations if obs_id in observation_data}
+    return filtered_data
+
+
 
 # If the user chooses "Add New Case"
 if action == "Add New Case":
@@ -625,15 +631,20 @@ elif action == "Edit Existing Case":
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
+
+                all_observations = fetch_all_observation_ids_and_titles()
+                formatted_observations = get_filtered_observation_data(observations,all_observations)
+                # Multi-select dropdown with observation IDs
+                selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, default=formatted_observations)  # Preselect the values
                 
-                # Editable field for observations
-                observations = st_tags(
-                    label="Enter observation-IDs:",
-                    text="Press enter to add more",
-                    value=case_details.get("Observations", "").split(",") if case_details.get("Observations") else [],  # Split tags into a list
-                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-                    maxtags=40,  # Max number of tags the user can add
-                )
+                # # Editable field for observations
+                # observations = st_tags(
+                #     label="Enter observation-IDs:",
+                #     text="Press enter to add more",
+                #     value=case_details.get("Observations", "").split(",") if case_details.get("Observations") else [],  # Split tags into a list
+                #     suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                #     maxtags=40,  # Max number of tags the user can add
+                # )
                 #observations = st.text_input("Observations", case_details.get("Observations", ""))
                 #tags = st.text_input("Tags", case_details.get("Tags", ""))
                 # Editable field for tags using st_tags
