@@ -8,7 +8,7 @@ st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
 # title
 st.markdown("# View Logs")
 # description
-st.write("Use this page to view your logged information. Toggle between logs using the dropdown.")
+st.write("Use this page to view your logged information. Toggle between logs using the dropdown and use the filters to narrow your results.")
 
 # Define the Google Sheets credentials and scope
 creds_dict = {
