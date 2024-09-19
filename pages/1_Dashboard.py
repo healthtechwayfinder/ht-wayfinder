@@ -166,7 +166,7 @@ with col3:
     
     # Map selected user to worksheet
     worksheet_mapping = {
-        " ": "Sheet 5"
+        " ": "Sheet 5",
         "Deb": "Sheet1",
         "Kyle": "Sheet2",
         "Lois": "Sheet3",
