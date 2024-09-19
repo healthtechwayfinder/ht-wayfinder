@@ -424,8 +424,48 @@ def get_filtered_observation_data(observations, observation_data):
     filtered_data = [f"{obs_id} - {observation_data[obs_id]}" for obs_id in observations if obs_id in observation_data]
     return filtered_data
 
+def update_observation_log(observation_ids_only, case_id):
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+        data = sheet.get_all_records()
 
+        headers = list(data[0].keys())
+        
+        # Loop through each observation and update the corresponding row
+       def update_observation_log(observation_ids_only, old_observation_ids, case_id):
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+        data = sheet.get_all_records()
 
+        headers = list(data[0].keys())
+
+        # Handle removed observation IDs
+        removed_observation_ids = set(old_observation_ids) - set(observation_ids_only)
+        
+        # Loop through each observation and update the corresponding row
+        for i, row in enumerate(data, start=2):  # Skipping the header row
+            observation_id = row['Observation ID']  # Assuming you have an 'Observation ID' column
+
+            if observation_id in observation_ids_only:
+                # Update the row to add the case ID
+                col_index = headers.index("Related Case ID") + 1  
+                existing_related_cases = row['Related Case ID']
+                if case_id not in existing_related_cases.split(", "):
+                    updated_related_cases = f"{existing_related_cases}, {case_id}".strip(", ")
+                    sheet.update_cell(i, col_index, updated_related_cases)
+            
+            elif observation_id in removed_observation_ids:
+                # Update the row to remove the case ID
+                col_index = headers.index("Related Case ID") + 1
+                existing_related_cases = row['Related Case ID']
+                updated_related_cases = [cid for cid in existing_related_cases.split(", ") if cid != case_id]
+                sheet.update_cell(i, col_index, ", ".join(updated_related_cases))
+
+        return True
+
+    except Exception as e:
+        print(f"Error updating observation log: {e}")
+        return False
 
 # If the user chooses "Add New Case"
 if action == "Add New Case":
@@ -689,6 +729,9 @@ elif action == "Edit Existing Case":
                     if st.button("Save Changes"):
                         tags_string = ", ".join(tags)
                         observations_string = ", ".join(observation_ids_only)
+                        # Get the old observation IDs (assumed to be in case_details)
+                        old_observation_ids = case_details.get("Observations", "").split(", ")
+
                         updated_data = {
                             "Title": case_title,
                             "Date": case_date_input.isoformat(),
@@ -702,11 +745,14 @@ elif action == "Edit Existing Case":
                         }
                         
                         if update_case(case_to_edit, updated_data):
+                            # Call the function to update the observation log
+                            if update_observation_log(observation_ids_only, old_observation_ids, case_to_edit):
+                                st.success("Changes and observation log saved successfully!")
+                            else:
+                                st.error(f"Failed to save observation log for case '{case_to_edit}'")
                             
-                            # del st.session_state["selected_case"] 
+                            # Optionally clear the selected case after saving
                             st.session_state.pop("selected_case", None)
-                            st.success("Changes saved successfully!")
-                            # st.rerun()
                         else:
                             st.error(f"Failed to save changes to '{case_to_edit}'.")
             
