@@ -395,31 +395,97 @@ def submit_form():
     st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
 
 
-def display_selected_observation(selected_obs_id):
+# def display_selected_observation(selected_obs_id):
+#     obs_log = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+#     df = pd.DataFrame(obs_log.get_all_records())
+
+#     # Get the observation description based on the selected Observation ID
+#     if selected_obs_id:
+#         selected_observation = df[df['Observation ID'] == selected_obs_id]
+#         if not selected_observation.empty:
+#             observation_description = selected_observation.iloc[0]['Observation Description']
+#             st.markdown(f"### {selected_obs_id} Description:\n{observation_description}")
+#             # st.markdown(f"### Selected Observation Description:\n{observation_description}")
+#         else:
+#             st.info("No description available for this observation.")
+#     else:
+#         st.info("Please select an observation.")
+
+
+
+# ///////////////////////////////////////////// dropdown funcs here ////////////////////////////
+
+# Function to get Google Sheets connection
+def get_google_sheet(sheet_name, worksheet_name):
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly",
+    ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(sheet_name).worksheet(worksheet_name)
+    return sheet
+
+# New function for getting observation IDs
+def getExistingObsIDS():
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+    ])
+    client = gspread.authorize(creds)
+    obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+    obs_ids = obs_log.col_values(1)[1:]  # Observation IDs
+    obs_titles = obs_log.col_values(2)[1:]  # Observation titles
+    
+    # Combine IDs and titles for display
+    existing_obs_ids_with_title = [f"{obs_id} - {obs_title}" for obs_id, obs_title in zip(obs_ids, obs_titles)]
+    return existing_obs_ids_with_title
+
+# Function to display the selected observations
+def display_selected_observations(selected_obs_ids):
     obs_log = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
     df = pd.DataFrame(obs_log.get_all_records())
 
-    # Get the observation description based on the selected Observation ID
-    if selected_obs_id:
-        selected_observation = df[df['Observation ID'] == selected_obs_id]
+    # Iterate over all selected Observation IDs and display the corresponding description
+    for obs_id in selected_obs_ids:
+        clean_obs_id = obs_id.split(" - ")[0]  # Extract only the Observation ID
+        selected_observation = df[df['Observation ID'] == clean_obs_id]
         if not selected_observation.empty:
             observation_description = selected_observation.iloc[0]['Observation Description']
-            st.markdown(f"### {selected_obs_id} Description:\n{observation_description}")
-            # st.markdown(f"### Selected Observation Description:\n{observation_description}")
+            st.markdown(f"### {clean_obs_id} Description:\n{observation_description}")
         else:
-            st.info("No description available for this observation.")
-    else:
-        st.info("Please select an observation.")
+            st.info(f"No description available for {obs_id}.")
 
-# prepare list of observations and prompt user to pick one
+
+
+
+
+
+
+
+
+# ///////////////////////////////////////////// switch to dropdown here ////////////////////////////
+
+
+# prepare list of observations and allow user to pick multiple
 existing_obs_ids_with_title = getExistingObsIDS()
-st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
+st.session_state['obs_ids_with_title'] = st.multiselect("Related Observation IDs", existing_obs_ids_with_title)
+
+# If any observation IDs are selected, display their descriptions
+if st.session_state['obs_ids_with_title']:
+    display_selected_observations(st.session_state['obs_ids_with_title'])
+
+
+
+# # prepare list of observations and prompt user to pick one
+# existing_obs_ids_with_title = getExistingObsIDS()
+# st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
 
 # df_descrips = pd.DataFrame(existing_obs_descrip)
 
-if st.session_state['obs_id_with_title']:
-    selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
-    display_selected_observation(selected_obs_id)
+# if st.session_state['obs_id_with_title']:
+#     selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
+#     display_selected_observation(selected_obs_id)
 
     
     # df_descrips = pd.DataFrame(existing_obs_descrip)
