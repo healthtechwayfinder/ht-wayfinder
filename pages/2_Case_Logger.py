@@ -424,40 +424,49 @@ def get_filtered_observation_data(observations, observation_data):
     filtered_data = [f"{obs_id} - {observation_data[obs_id]}" for obs_id in observations if obs_id in observation_data]
     return filtered_data
 
-def update_observation_log(observation_ids_only, case_id):
+def update_observation_log(observation_ids_only, old_observation_ids, case_id):
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
         data = sheet.get_all_records()
 
         headers = list(data[0].keys())
+        st.write("Headers:", headers)  # Debug print to see headers
+        st.write("Data:", data)  # Debug print to see the fetched data
 
         # Handle removed observation IDs
         removed_observation_ids = set(old_observation_ids) - set(observation_ids_only)
-        
+        st.write("Removed observation IDs:", removed_observation_ids)  # Debug print
+
         # Loop through each observation and update the corresponding row
         for i, row in enumerate(data, start=2):  # Skipping the header row
-            observation_id = row['Observation ID']  # Assuming you have an 'Observation ID' column
+            observation_id = row.get('Observation ID')  # Ensure key exists
+            st.write(f"Processing row {i} with observation ID:", observation_id)  # Debug print
 
             if observation_id in observation_ids_only:
                 # Update the row to add the case ID
-                col_index = headers.index("Related Case ID") + 1  
-                existing_related_cases = row['Related Case ID']
+                col_index = headers.index("Related Case ID") + 1
+                existing_related_cases = row.get('Related Case ID', '')
+                st.write("Existing related cases:", existing_related_cases)  # Debug print
+                
                 if case_id not in existing_related_cases.split(", "):
                     updated_related_cases = f"{existing_related_cases}, {case_id}".strip(", ")
+                    st.write(f"Updating row {i}: Adding case ID {case_id}")  # Debug print
                     sheet.update_cell(i, col_index, updated_related_cases)
             
             elif observation_id in removed_observation_ids:
                 # Update the row to remove the case ID
                 col_index = headers.index("Related Case ID") + 1
-                existing_related_cases = row['Related Case ID']
+                existing_related_cases = row.get('Related Case ID', '')
                 updated_related_cases = [cid for cid in existing_related_cases.split(", ") if cid != case_id]
+                st.write(f"Updating row {i}: Removing case ID {case_id}")  # Debug print
                 sheet.update_cell(i, col_index, ", ".join(updated_related_cases))
 
         return True
 
     except Exception as e:
-        print(f"Error updating observation log: {e}")
+        st.write(f"Error in update_observation_log: {e}")  # Print the error message
         return False
+
 
 # If the user chooses "Add New Case"
 if action == "Add New Case":
