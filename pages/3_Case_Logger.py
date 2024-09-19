@@ -410,21 +410,6 @@ def update_case(case_id, updated_data):
         print(f"Error updating case: {e}")
         return False
 
-
-
-# Function to generate a random color
-def random_color():
-    return "#{:06x}".format(random.randint(0, 0xFFFFFF))
-
-# Function to render editable colorful tags
-def render_editable_colorful_tags(tags_values):
-    colorful_tags = []
-    for tag in tags_values:
-        color = random_color()
-        tag_html = f"<span style='background-color:{color}; padding:5px 10px; border-radius:8px; margin-right:5px; color:white;'>{tag}</span>"
-        colorful_tags.append(tag_html)
-    return colorful_tags
-
 # If the user chooses "Add New Case"
 if action == "Add New Case":
     st.markdown("### Add a New Case")
@@ -639,17 +624,18 @@ elif action == "Edit Existing Case":
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
                 observations = st.text_input("Observations", case_details.get("Observations", ""))
-                tags = st.text_input("Tags", case_details.get("Tags", ""))
+                #tags = st.text_input("Tags", case_details.get("Tags", ""))
                 # # Editable field for tags using st_tags
-                # tags = st_tags(
-                #     label="Enter tags:",
-                #     text="Press enter to add more",
-                #     value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
-                #     suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-                #     maxtags=10,  # Max number of tags the user can add
-                # )
+                tags = st_tags(
+                    label="Enter tags:",
+                    text="Press enter to add more",
+                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
+                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                    maxtags=10,  # Max number of tags the user can add
+                )
                 # Step 3: Save changes
                 if st.button("Save Changes"):
+                    tags_string = ", ".join(tags)
                     updated_data = {
                         "Title": case_title,
                         "Date": case_date_input.isoformat(),
@@ -658,7 +644,7 @@ elif action == "Edit Existing Case":
                         "Stakeholders": stakeholders,
                         "People Present": people_present,
                         "Insider Language": insider_language,
-                        "Tags": tags,
+                        "Tags": tags_string,
                         "Observations": observations,
                     }
                     if update_case(case_to_edit, updated_data):
