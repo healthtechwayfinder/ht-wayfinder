@@ -539,7 +539,10 @@ if action == "Add New Case":
 
             if field == "tags":
                 tags_values = parsed_case.get('tags', '')
-                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                if isinstance(tags_values, str):
+                    tags_values = [tag.strip() for tag in tags_values.split(",")]
+                else:
+                    tags_values = list(tags_values)  # Convert to list if it's already not a stringtags_values = [tag.strip() for tag in tags_values.split(",")]
                 updated_tags = st_tags(
                     label="**Tags**",
                     text="Press enter to add more",
