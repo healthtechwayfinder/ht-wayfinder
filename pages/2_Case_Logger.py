@@ -406,7 +406,7 @@ def fetch_all_observation_ids_and_titles():
     # Create formatted list with ID - title format
     formatted_observations = [f"{obs_id} - {title}" for obs_id, title in observation_ids_with_title.items()]
 
-    return formatted_observations
+    return formatted_observations, observation_ids_with_title
         
 # Function to filter and return observation data for the given list of observation IDs
 def get_filtered_observation_data(observations, observation_data):
@@ -632,9 +632,9 @@ elif action == "Edit Existing Case":
                 observations = case_details.get("Observations", "")  # Split tags into a list
                 # Step 1: Print the list of observation IDs provided
                 st.write("Observation IDs to filter:", observations)
-                all_observations = fetch_all_observation_ids_and_titles()
+                all_observations, observation_ids_with_title = fetch_all_observation_ids_and_titles()
                 st.write("Full observation data:", all_observations)
-                formatted_observations = get_filtered_observation_data(observations,all_observations)
+                formatted_observations = get_filtered_observation_data(observations,observation_ids_with_title)
                 st.write("Filtered observation data:", formatted_observations)
                 # Multi-select dropdown with observation IDs
                 selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, default=formatted_observations)  # Preselect the values
