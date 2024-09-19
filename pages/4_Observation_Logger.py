@@ -53,6 +53,8 @@ creds_dict = {
 
 if 'observation' not in st.session_state:
     st.session_state['observation'] = ""
+if 'parsed_observation' not in st.session_state:
+    st.session_state['parsed_observation'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
