@@ -111,10 +111,10 @@ with col2:
 
     elif selected_sheet == "Need Statement Log":
         # Filters for Need Log (Population)
-        population = st.multiselect("Filter by Population", options=df['Population'].unique(), default=None)
+        population = st.multiselect("Filter by Population", options=df['population'].unique(), default=None)
 
         if population:
-            df = df[df['Population'].isin(population)]
+            df = df[df['population'].isin(population)]
 
 with col3:
     # Add a button to refresh the data from Google Sheets
