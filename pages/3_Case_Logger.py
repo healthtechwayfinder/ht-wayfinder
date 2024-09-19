@@ -568,6 +568,8 @@ if action == "Add New Case":
         # st.write("Current Tags:", tags_values)  # This will display the list of tags
 
         # Display tags and allow for dynamic updates using st_tags
+        tags_values = parsed_case.get('tags', '')
+        tags_values = [tag.strip() for tag in value.split(",")]
         updated_tags = st_tags(
             label="Tags",
             text="Press enter to add more",
@@ -625,6 +627,7 @@ if action == "Add New Case":
         st.write("Updated session state result:", st.session_state['parsed_case'])
         
         st.markdown("### Missing Fields")
+        st.write("Missing Feilds: ", missing_fields)
         
         for field in missing_fields:
             field_clean = field.replace("_", " ").capitalize()
