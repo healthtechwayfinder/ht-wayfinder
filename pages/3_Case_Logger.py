@@ -498,23 +498,41 @@ if action == "Add New Case":
     if isinstance(parsed_case, dict):
         # Print case title
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
-        # # Debug: Show the parsed result
-        # st.write("Parsed Result:", parsed_result)
-        # Initialize tags as an empty list in case it's not found
-        # tags_values = []
-        # Split the result by lines and extract each case detail by assuming specific labels
-        # lines = parsed_result.splitlines()
-        #     # Debug: Write lines being processed
-        # st.write("Lines from parsed result:", lines)
-        # editable_fields = {}
-        # Find missing fields by checking if any field in parsed_case is None or empty
+        
         input_fields = list(caseRecord.__fields__.keys())
         # Find missing fields by checking if any field in parsed_case is None or empty
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
+        
+        tags_values = parsed_case.get('tags', '')
+                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                updated_tags = st_tags(
+                    label="Tags",
+                    text="Press enter to add more",
+                    value=tags_values,  # Show the tags found in the result
+                    maxtags=10,
+                    key="tags_input"  # Unique key to ensure it's updated correctly
+                )
+                
+                # Update tags_values with the modified tags from st_tags
+                tags_values = updated_tags
+        
+                # Print the updated tags values after any modification (entry or deletion)
+                st.write("Updated Tags:", tags_values)
+                updated_tags_string = ", ".join(updated_tags)
+                
 
+        st.session_state['parsed_case']['tags'] = updated_tags_string
         # Ensure 'result' exists in session state
         # parsed_result = st.session_state.get('parsed_case', '')
+        st.write("Updated session state result:", st.session_state['parsed_case'])
         
+        st.markdown("### Missing Fields")
+        
+        for field in missing_fields:
+            field_clean = field.replace("_", " ").capitalize()
+            # Render text input for missing fields, storing results back in parsed_case
+            st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+            
         
         # for line in lines:
             # if ':' in line:
@@ -568,25 +586,6 @@ if action == "Add New Case":
         # st.write("Current Tags:", tags_values)  # This will display the list of tags
 
         # Display tags and allow for dynamic updates using st_tags
-        tags_values = parsed_case.get('tags', '')
-        tags_values = [tag.strip() for tag in tags_values.split(",")]
-        updated_tags = st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10,
-            key="tags_input"  # Unique key to ensure it's updated correctly
-        )
-        
-        # Update tags_values with the modified tags from st_tags
-        tags_values = updated_tags
-
-        # Print the updated tags values after any modification (entry or deletion)
-        st.write("Updated Tags:", tags_values)
-        updated_tags_string = ", ".join(updated_tags)
-        
-
-        st.session_state['parsed_case']['tags'] = updated_tags_string
 
         #here 2------------
             # Debug: Print session state to verify changes
@@ -600,20 +599,20 @@ if action == "Add New Case":
         # st.write("Updated session state result:", st.session_state['result'])
 
         # Convert updated_tags to a comma-separated string
-        for key in parsed_case:
-            # key, value = line.split(':', 1)  # Split by the first colon
-            # key = key.strip()
-            # value = value.strip()
-            value = parsed_case[key]
-            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-            # key_clean = key.replace('**', '').strip()
+        # for key in parsed_case:
+        #     # key, value = line.split(':', 1)  # Split by the first colon
+        #     # key = key.strip()
+        #     # value = value.strip()
+        #     value = parsed_case[key]
+        #     # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+        #     # key_clean = key.replace('**', '').strip()
     
-            # If the key is 'tags', update it with the modified tags
-            if key == 'tags':
-                st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
-                # Substitute the old value (tags) with the updated tags
-                value = updated_tags_string  # Replace the old value with updated tags
-                st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
+        #     # If the key is 'tags', update it with the modified tags
+        #     if key == 'tags':
+        #         # st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
+        #         # Substitute the old value (tags) with the updated tags
+        #         value = updated_tags_string  # Replace the old value with updated tags
+                # st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
                     # Update the session state with the updated tags
                     # if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
                     #     st.session_state['result'] = {}  # Initialize result if it doesn't exist
@@ -625,15 +624,14 @@ if action == "Add New Case":
                 # You can add further updates to the session state as needed for other fields
         
         # Debug: Print session state to verify changes
-        st.write("Updated session state result:", st.session_state['parsed_case'])
+        # st.write("Updated session state result:", st.session_state['parsed_case'])
         
-        st.markdown("### Missing Fields")
-        st.write("Missing Feilds: ", missing_fields)
+        # st.markdown("### Missing Fields")
         
-        for field in missing_fields:
-            field_clean = field.replace("_", " ").capitalize()
-            # Render text input for missing fields, storing results back in parsed_case
-            st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+        # for field in missing_fields:
+        #     field_clean = field.replace("_", " ").capitalize()
+        #     # Render text input for missing fields, storing results back in parsed_case
+        #     st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
             
         # # Ensure that parsed_case is updated in the 'result' for Google Sheets
         # st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
