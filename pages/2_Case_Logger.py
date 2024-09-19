@@ -699,7 +699,7 @@ elif action == "Edit Existing Case":
                         else:
                             st.error(f"Failed to save changes to '{case_to_edit}'.")
 
-        if st.button("clear case"):
+        if st.button("clearing"):
             st.session_state["selected_case"] = "" 
     
 
