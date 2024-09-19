@@ -66,6 +66,11 @@ if 'rerun' not in st.session_state:
 if 'parsed_case' not in st.session_state:
     st.session_state['parsed_case'] = ""
 
+# Initialize session state for selected_case if it doesn't exist
+if "selected_case" not in st.session_state:
+    st.session_state["selected_case"] = ""  # Set initial value to an empty string
+
+
 class caseRecord(BaseModel):
     location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names) like a Patient, Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, ...")
@@ -323,8 +328,8 @@ def clear_case():
     # Refresh the page back to the initial state
 
 def clear_it():
-    selected_case = [""]
-    # selected_case = st.selectbox("Select a case to edit", [""] + case_options)
+    
+    selected_case = st.selectbox("Select a case to edit", [""] + case_options)
         
 
 
@@ -692,9 +697,10 @@ elif action == "Edit Existing Case":
                             "Observations": observations_string,
                         }
                         if update_case(case_to_edit, updated_data):
+                            st.session_state["selected_case"] = "" 
                             st.success(f"Changes to '{case_to_edit}' saved successfully!")
                             # st.session_state['rerun'] = True
-                            clear_it()
+                            
                             # st.rerun()
                         else:
                             st.error(f"Failed to save changes to '{case_to_edit}'.")
