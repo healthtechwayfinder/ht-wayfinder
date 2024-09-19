@@ -640,6 +640,8 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
             st.session_state['result'] = "Observation added to your team's database."
             st.session_state['rerun'] = True
             st.rerun()
+            clear_observation()
+
         else:
             st.session_state['result'] = "Error adding observation to your team's database, try again!"
         # clear_observation()
