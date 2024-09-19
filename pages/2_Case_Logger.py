@@ -618,7 +618,7 @@ elif action == "Edit Existing Case":
         # Create a list of display names in the format "case_id: title"
         case_options = [f"{case_id}: {title}" for case_id, title in case_info]
         # Display the dropdown with combined case_id and title
-        selected_case = st.selectbox("Select a case to edit", [""] + case_options)
+        selected_case = st.selectbox("Select a case to edit", [""] + case_options, key="selected_case" )
         if selected_case != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             case_to_edit = selected_case.split(":")[0].strip()
