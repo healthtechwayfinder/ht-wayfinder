@@ -490,7 +490,7 @@ if action == "Add New Case":
     # Ensure 'result' exists
     if isinstance(parsed_case, dict):
         # Print case title
-        st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
+        st.session_state['case_title'] = st.text_area("**Case Title**", value=st.session_state['case_title'])
         
         input_fields = list(caseRecord.__fields__.keys())
         # Find missing fields by checking if any field in parsed_case is None or empty
@@ -503,13 +503,13 @@ if action == "Add New Case":
         for field in input_fields:
             if field not in missing_fields and field != "tags":
                 field_clean = field.replace("_", " ").capitalize()
-                st.session_state['parsed_case'][field] = st.text_input(f'**"{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+                st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
 
             if field == "tags":
                 tags_values = parsed_case.get('tags', '')
                 tags_values = [tag.strip() for tag in tags_values.split(",")]
                 updated_tags = st_tags(
-                    label="Tags",
+                    label="**Tags**",
                     text="Press enter to add more",
                     value=tags_values,  # Show the tags found in the result
                     maxtags=10,
@@ -526,7 +526,7 @@ if action == "Add New Case":
             
             for field in missing_fields:
                 field_clean = field.replace("_", " ").capitalize()
-                st.session_state['parsed_case'][field] = st.text_input(f'Enter **{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+                st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
 
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
