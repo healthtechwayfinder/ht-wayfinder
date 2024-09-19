@@ -543,13 +543,15 @@ if action == "Add New Case":
     if st.button("Log Case", disabled=st.session_state['case_title'] == ""):
         # st.session_state['case_title']  = generateCaseSummary(st.session_state['observation'])
         st.session_state["error"] = ""
-    
+
+        # Error handling for empty case description
         if st.session_state['case_description'] == "":
             st.session_state["error"] = "Error: Please enter case."
             st.markdown(
                 f"<span style='color:red;'>{st.session_state['error']}</span>", 
                 unsafe_allow_html=True
             )
+        # Error handling for empty case title
         elif st.session_state['case_title'] == "":
             st.session_state["error"] = "Error: Please evaluate case."
             st.markdown(
@@ -564,11 +566,11 @@ if action == "Add New Case":
             # "Generated Summary: "+st.session_state['case_title']+"\n\n"
             if status:
                 st.session_state['result'] = "Case added to your team's database."
-                st.session_state['rerun'] = True
-                st.rerun()
+                # st.session_state['rerun'] = True
+                # st.rerun()
+                st.experimental_rerun() 
             else:
                 st.session_state['result'] = "Error adding case to your team's database. Please try again!"
-        clear_case()
     
     
     st.markdown("---")
