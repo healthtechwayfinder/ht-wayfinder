@@ -101,6 +101,11 @@ with col2:
         elif selected_sheet == "Observation Log":
             # Filters for Observation Log (Observer, Tags, and Reviewed status)
             observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
+
+            # Extract unique tags from the "Tags" column (comma-separated values)
+            all_observation_cases = extract_unique_tags(df, 'Related Case ID')
+            selected_observation_cases = st.multiselect("Filter by Case", options=all_observation_tags, default=None)
+        
             
             # Extract unique tags from the "Tags" column (comma-separated values)
             all_observation_tags = extract_unique_tags(df, 'Tags')
@@ -110,6 +115,8 @@ with col2:
     
             if observer:
                 df = df[df['Observer'].isin(observer)]
+             if selected_observation_cases:
+                df = df[df['Related Case ID'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
             if selected_observation_tags:
                 df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
             if reviewed_status == "Reviewed":
