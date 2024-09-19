@@ -75,46 +75,48 @@ def extract_unique_tags(df, tag_column):
 
 # Filter section based on the selected sheet
 with col2:
-    df = st.session_state["df"]
+    with st.container(border=True):
 
-    if selected_sheet == "Case Log":
-        # Filters for Case Log (Attendees and Tags)
-        attendees = st.multiselect("Filter by Attendees", options=df['Attendees'].unique(), default=None)
-        
-        # Extract unique tags from the "Tags" column (comma-separated values)
-        all_case_tags = extract_unique_tags(df, 'Tags')
-        selected_case_tags = st.multiselect("Filter by Tags", options=all_case_tags, default=None)
-
-        if attendees:
-            df = df[df['Attendees'].isin(attendees)]
-        if selected_case_tags:
-            df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_case_tags))]
-
-    elif selected_sheet == "Observation Log":
-        # Filters for Observation Log (Observer, Tags, and Reviewed status)
-        observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
-        
-        # Extract unique tags from the "Tags" column (comma-separated values)
-        all_observation_tags = extract_unique_tags(df, 'Tags')
-        selected_observation_tags = st.multiselect("Filter by Tags", options=all_observation_tags, default=None)
-        
-        reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
-
-        if observer:
-            df = df[df['Observer'].isin(observer)]
-        if selected_observation_tags:
-            df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
-        if reviewed_status == "Reviewed":
-            df = df[df['Reviewed'] == "TRUE"]
-        elif reviewed_status == "Not Reviewed":
-            df = df[df['Reviewed'] != "TRUE"]
-
-    elif selected_sheet == "Need Statement Log":
-        # Filters for Need Log (Population)
-        population = st.multiselect("Filter by Population", options=df['population'].unique(), default=None)
-
-        if population:
-            df = df[df['population'].isin(population)]
+        df = st.session_state["df"]
+    
+        if selected_sheet == "Case Log":
+            # Filters for Case Log (Attendees and Tags)
+            attendees = st.multiselect("Filter by Attendees", options=df['Attendees'].unique(), default=None)
+            
+            # Extract unique tags from the "Tags" column (comma-separated values)
+            all_case_tags = extract_unique_tags(df, 'Tags')
+            selected_case_tags = st.multiselect("Filter by Tags", options=all_case_tags, default=None)
+    
+            if attendees:
+                df = df[df['Attendees'].isin(attendees)]
+            if selected_case_tags:
+                df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_case_tags))]
+    
+        elif selected_sheet == "Observation Log":
+            # Filters for Observation Log (Observer, Tags, and Reviewed status)
+            observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
+            
+            # Extract unique tags from the "Tags" column (comma-separated values)
+            all_observation_tags = extract_unique_tags(df, 'Tags')
+            selected_observation_tags = st.multiselect("Filter by Tags", options=all_observation_tags, default=None)
+            
+            reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
+    
+            if observer:
+                df = df[df['Observer'].isin(observer)]
+            if selected_observation_tags:
+                df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
+            if reviewed_status == "Reviewed":
+                df = df[df['Reviewed'] == "TRUE"]
+            elif reviewed_status == "Not Reviewed":
+                df = df[df['Reviewed'] != "TRUE"]
+    
+        elif selected_sheet == "Need Statement Log":
+            # Filters for Need Log (Population)
+            population = st.multiselect("Filter by Population", options=df['population'].unique(), default=None)
+    
+            if population:
+                df = df[df['population'].isin(population)]
 
 with col3:
     # Add a button to refresh the data from Google Sheets
