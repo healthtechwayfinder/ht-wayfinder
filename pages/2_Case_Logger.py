@@ -701,7 +701,7 @@ elif action == "Edit Existing Case":
 
         if st.button("clearing"):
             st.session_state["selected_case"] = ""
-            st.experimental_rerun()
+        
     
 
 # add a break line
