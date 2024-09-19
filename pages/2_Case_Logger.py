@@ -431,27 +431,20 @@ def update_observation_log(observation_ids_only, old_observation_ids, case_id):
         data = sheet.get_all_records()
 
         headers = list(data[0].keys())
-        st.write("Headers:", headers)  # Debug print to see headers
-        st.write("Data:", data)  # Debug print to see the fetched data
-
         # Handle removed observation IDs
         removed_observation_ids = set(old_observation_ids) - set(observation_ids_only)
-        st.write("Removed observation IDs:", removed_observation_ids)  # Debug print
 
         # Loop through each observation and update the corresponding row
         for i, row in enumerate(data, start=2):  # Skipping the header row
             observation_id = row.get('Observation ID')  # Ensure key exists
-            st.write(f"Processing row {i} with observation ID:", observation_id)  # Debug print
 
             if observation_id in observation_ids_only:
                 # Update the row to add the case ID
                 col_index = headers.index("Related Case ID") + 1
                 existing_related_cases = row.get('Related Case ID', '')
-                st.write("Existing related cases:", existing_related_cases)  # Debug print
-                
+
                 if case_id not in existing_related_cases.split(", "):
                     updated_related_cases = f"{existing_related_cases}, {case_id}".strip(", ")
-                    st.write(f"Updating row {i}: Adding case ID {case_id}")  # Debug print
                     sheet.update_cell(i, col_index, updated_related_cases)
             
             elif observation_id in removed_observation_ids:
@@ -461,13 +454,11 @@ def update_observation_log(observation_ids_only, old_observation_ids, case_id):
                 
                 # Split and filter the case IDs, then rejoin without the current case_id
                 updated_related_cases = [cid for cid in existing_related_cases.split(", ") if cid != case_id]
-                st.write(f"Updating row {i}: Removing case ID {case_id}")  # Debug print
                 sheet.update_cell(i, col_index, ", ".join(updated_related_cases))
 
         return True
 
     except Exception as e:
-        st.write(f"Error in update_observation_log: {e}")  # Print the error message
         return False
 
 
@@ -748,23 +739,7 @@ elif action == "Edit Existing Case":
                             "Tags": tags_string,
                             "Observations": observations_string,
                         }
-                        # Ensure observation_ids_only is a list
-                        if isinstance(observation_ids_only, list):
-                            st.write("observation_ids_only is a list:", observation_ids_only)
-                        else:
-                            st.write("Error: observation_ids_only is not a list")
-                        
-                        # Ensure old_observation_ids is a list
-                        if isinstance(old_observation_ids, list):
-                            st.write("old_observation_ids is a list:", old_observation_ids)
-                        else:
-                            st.write("Error: old_observation_ids is not a list")
-                        
-                        # Ensure case_to_edit is a string
-                        if isinstance(case_to_edit, str):
-                            st.write("case_to_edit is a string:", case_to_edit)
-                        else:
-                            st.write("Error: case_to_edit is not a string")
+        
                         
                         if update_case(case_to_edit, updated_data):
                             # Call the function to update the observation log
