@@ -142,24 +142,16 @@ def extractCaseFeatures(case_description):
     
 
 def convertCaseToStringOutput(parsed_case):
+    if parsed_case == "":
+        return ""
+        
     input_fields = list(caseRecord.__fields__.keys())
-    missing_fields = [field for field in input_fields if parsed_case[field] is None]
     output = ""
 
-    for field in input_fields:
-        if field not in missing_fields:
-            key_output = field.replace("_", " ").capitalize()
-            output += f"**{key_output}**: {parsed_case[field]}\n"
-            output += "\n"
-
-    # missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
-
-    # Display missing fields as editable inputs
-    output += "\n\n **Missing fields**:"
-    for field in missing_fields:
-        field_clean = field.replace("_", " ").capitalize()
-        # Render text input for missing fields, storing results back in parsed_case
-        parsed_case[field] = st.text_input(f'Enter \"{field_clean}\"', key=field)
+    for field in parsed_case:
+        key_output = field.replace("_", " ").capitalize()
+        output += f"**{key_output}**: {parsed_case[field]}\n"
+        output += "\n"
         
     return f"{output}"
 
@@ -514,25 +506,22 @@ if action == "Add New Case":
         
         # Update tags_values with the modified tags from st_tags
         tags_values = updated_tags
-        
-        # st.write("Updated Tags:", tags_values)
         updated_tags_string = ", ".join(updated_tags)
                 
-
         st.session_state['parsed_case']['tags'] = updated_tags_string
-        # Ensure 'result' exists in session state
-        # parsed_result = st.session_state.get('parsed_case', '')
-        
-        st.markdown("### Missing Fields")
-        
-        for field in missing_fields:
-            field_clean = field.replace("_", " ").capitalize()
-            # Render text input for missing fields, storing results back in parsed_case
-            st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
 
-        # st.write("Updated session state result:", st.session_state['parsed_case'])
-    st.session_state['result'] = convertCaseToStringOutput(st.session_state.get('parsed_case', ''))
-    st.markdown(st.session_state['result'])
+        # print the current result
+        st.session_state['result'] = convertCaseToStringOutput(st.session_state.get('parsed_case', ''))
+        st.markdown(st.session_state['result'])
+
+        if st.session_state.get('parsed_case', '') != '':
+            st.markdown("### Missing Fields")
+            
+            for field in missing_fields:
+                field_clean = field.replace("_", " ").capitalize()
+                # Render text input for missing fields, storing results back in parsed_case
+                st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
         # Example: Save updated case fields, tags, etc
