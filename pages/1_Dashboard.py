@@ -126,7 +126,7 @@ with col1:
         if st.button("🔍 Record a New Observation"):
             switch_page("Observation_Logger")
     
-        if st.button("❓ Chat with Observations"):
+        if st.button("🤖 Chat with Observations"):
             switch_page("Observation_Investigator")
     
         if st.button("📒 View Logs"):
