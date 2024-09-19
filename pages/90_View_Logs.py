@@ -104,7 +104,7 @@ with col2:
 
             # Extract unique tags from the "Tags" column (comma-separated values)
             all_observation_cases = extract_unique_tags(df, 'Related Case ID')
-            selected_observation_cases = st.multiselect("Filter by Case", options=all_observation_tags, default=None)
+            selected_observation_cases = st.multiselect("Filter by Case", options=all_observation_cases, default=None)
         
             
             # Extract unique tags from the "Tags" column (comma-separated values)
