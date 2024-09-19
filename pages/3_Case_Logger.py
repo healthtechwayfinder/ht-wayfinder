@@ -149,7 +149,7 @@ def extractCaseFeatures(case_description):
             output += f"**{key_output}**: {parsed_case[field]}\n"
             output += "\n"
 
-    missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
+    # missing_fields = [field.replace("_", " ").capitalize() for field in missing_fields]
 
     # Display missing fields as editable inputs
     output += "\n\n **Missing fields**:"
