@@ -635,8 +635,8 @@ if action == "Add New Case":
         # # Save the editable fields to session state
         # st.session_state['editable_result'] = editable_fields
 
+    st.session_state['result'] = st.session_state['parsed_case']
 
-    
     # #Rerun logic
     # if st.session_state['rerun']:
     #     time.sleep(3)
