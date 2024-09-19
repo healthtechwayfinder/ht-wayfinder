@@ -387,27 +387,27 @@ Output Title:"""
 
 
 def clear_observation():
-    if 'observation' in st.session_state:
-        st.session_state['observation'] = ""
-    if 'observation_summary' in st.session_state:
-        st.session_state['observation_summary'] = ""
-    if 'result' in st.session_state:
-        st.session_state['result'] = ""
-    if 'observation_tags' in st.session_state:
-        st.session_state['observation_tags'] = ""
-    if 'observer' in st.session_state:
-        st.session_state['observer'] = ""
-    if 'sensory_observations' in st.session_state:
-        st.session_state['sensory_observations'] = ""
-    if 'stakeholders' in st.session_state:
-        st.session_state['stakeholders'] = ""
-    if 'product_interactions' in st.session_state:
-        st.session_state['product_interactions'] = ""
-    if 'insider_language' in st.session_state:
-        st.session_state['insider_language'] = ""
-    if 'process_actions' in st.session_state:
-        st.session_state['process_actions'] = ""    
-    
+    # if 'observation' in st.session_state:
+    #     st.session_state['observation'] = ""
+    # if 'observation_summary' in st.session_state:
+    #     st.session_state['observation_summary'] = ""
+    # if 'result' in st.session_state:
+    #     st.session_state['result'] = ""
+    # if 'observation_tags' in st.session_state:
+    #     st.session_state['observation_tags'] = ""
+    # if 'observer' in st.session_state:
+    #     st.session_state['observer'] = ""
+    # if 'sensory_observations' in st.session_state:
+    #     st.session_state['sensory_observations'] = ""
+    # if 'stakeholders' in st.session_state:
+    #     st.session_state['stakeholders'] = ""
+    # if 'product_interactions' in st.session_state:
+    #     st.session_state['product_interactions'] = ""
+    # if 'insider_language' in st.session_state:
+    #     st.session_state['insider_language'] = ""
+    # if 'process_actions' in st.session_state:
+    #     st.session_state['process_actions'] = ""    
+    parsed_observation = ""
     update_observation_id()
 
 import streamlit as st
