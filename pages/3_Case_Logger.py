@@ -487,7 +487,7 @@ if action == "Add New Case":
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
                 st.session_state['parsed_case'] = extractCaseFeatures(st.session_state['case_description'])
-            
+                st.session_state['result'] = st.session_state['parsed_case']
     # Process the result after button click
     parsed_result = st.session_state['parsed_case']
 
@@ -635,7 +635,7 @@ if action == "Add New Case":
         # # Save the editable fields to session state
         # st.session_state['editable_result'] = editable_fields
 
-    st.session_state['result'] = st.session_state['parsed_case']
+    # st.session_state['result'] = st.session_state['parsed_case']
 
     # #Rerun logic
     # if st.session_state['rerun']:
