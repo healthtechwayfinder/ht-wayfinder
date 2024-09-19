@@ -325,6 +325,7 @@ def clear_case():
 def clear_it():
     if 'selected_case' in st.session_state:
         st.session_state['selected_case'] = ""
+        
 
 
 # Fetch case IDs and titles from Google Sheets
