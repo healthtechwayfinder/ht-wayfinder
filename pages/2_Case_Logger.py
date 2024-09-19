@@ -636,9 +636,9 @@ elif action == "Edit Existing Case":
                 # Step 1: Print the list of observation IDs provided
                 print("Observation IDs to filter:", observations)
                 all_observations = fetch_all_observation_ids_and_titles()
-                print("Full observation data:", observation_data)
+                print("Full observation data:", all_observations)
                 formatted_observations = get_filtered_observation_data(observations,all_observations)
-                print("Filtered observation data:", filtered_data)
+                print("Filtered observation data:", formatted_observations)
                 # Multi-select dropdown with observation IDs
                 selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, default=formatted_observations)  # Preselect the values
                 
