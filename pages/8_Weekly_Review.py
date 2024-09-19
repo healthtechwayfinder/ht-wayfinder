@@ -117,7 +117,7 @@ for index, case in recent_cases.iterrows():
             relevant_observations.at[obs_idx, 'Reviewed'] = reviewed_checkbox
 
         # Display the observations in a DataFrame
-        st.dataframe(relevant_observations[['Observation ID', 'Observation Description', 'Reviewed']])
+        st.dataframe(relevant_observations[['Observation ID', 'Observer', 'Observation Description', 'Reviewed']])
 
         # Collect the relevant observations to update later
         observations_to_update = pd.concat([observations_to_update, relevant_observations])
