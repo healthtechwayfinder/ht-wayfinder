@@ -139,6 +139,9 @@ def extractCaseFeatures(case_description):
     # Parse the case
     parsed_case = parseCase(case_description)
     st.session_state['parsed_case'] = parsed_case
+    
+
+def convertCaseToStringOutput(parsed_case):
     input_fields = list(caseRecord.__fields__.keys())
     missing_fields = [field for field in input_fields if parsed_case[field] is None]
     output = ""
@@ -487,12 +490,12 @@ if action == "Add New Case":
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
                 extractCaseFeatures(st.session_state['case_description'])
-                st.session_state['result'] = st.session_state['parsed_case']
+                st.session_state['result'] = convertCaseToStringOutput(st.session_state['parsed_case'])
     # Process the result after button click
-    parsed_result = st.session_state['parsed_case']
+    parsed_case = st.session_state['parsed_case']
 
     # Ensure 'result' exists
-    if parsed_result and isinstance(st.session_state['parsed_case'], dict):
+    if isinstance(parsed_case, dict):
         # Print case title
         st.session_state['case_title'] = st.text_area("Case Title (editable):", value=st.session_state['case_title'])
         # # Debug: Show the parsed result
@@ -500,14 +503,13 @@ if action == "Add New Case":
         # Initialize tags as an empty list in case it's not found
         tags_values = []
         # Split the result by lines and extract each case detail by assuming specific labels
-        lines = parsed_result.splitlines()
+        # lines = parsed_result.splitlines()
         #     # Debug: Write lines being processed
         # st.write("Lines from parsed result:", lines)
         editable_fields = {}
         # Find missing fields by checking if any field in parsed_case is None or empty
         input_fields = list(caseRecord.__fields__.keys())
         # Find missing fields by checking if any field in parsed_case is None or empty
-        parsed_case = st.session_state['parsed_case']
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
 
         # Ensure 'result' exists in session state
@@ -595,20 +597,20 @@ if action == "Add New Case":
 
         # Convert updated_tags to a comma-separated string
         updated_tags_string = ", ".join(updated_tags)
-        for line in lines:
-            if ':' in line:
-                key, value = line.split(':', 1)  # Split by the first colon
-                key = key.strip()
-                value = value.strip()
-                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-                key_clean = key.replace('**', '').strip()
-        
-                # If the key is 'tags', update it with the modified tags
-                if key_clean.lower() == 'tags':
-                    st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
-                    # Substitute the old value (tags) with the updated tags
-                    value = updated_tags_string  # Replace the old value with updated tags
-                    st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
+        for key in parsed_case:
+            # key, value = line.split(':', 1)  # Split by the first colon
+            # key = key.strip()
+            # value = value.strip()
+            value = parsed_case[key]
+            # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+            # key_clean = key.replace('**', '').strip()
+    
+            # If the key is 'tags', update it with the modified tags
+            if key == 'tags':
+                st.write(f"Processing line: key='{key}', value='{value}'")  # Debugging output
+                # Substitute the old value (tags) with the updated tags
+                value = updated_tags_string  # Replace the old value with updated tags
+                st.write(f"Updated Tags: {updated_tags_string}")  # Debugging output
                     # Update the session state with the updated tags
                     # if 'result' not in st.session_state or not isinstance(st.session_state['result'], dict):
                     #     st.session_state['result'] = {}  # Initialize result if it doesn't exist
