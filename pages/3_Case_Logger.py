@@ -604,7 +604,7 @@ elif action == "Edit Existing Case":
                     case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
                 except ValueError:
                     case_date = date.today()
-                #case_date_input = st.date_input("Date", case_date)
+                case_date_input = st.date_input("Date", case_date)
                 case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
                 location = st.text_input("Location", case_details.get("Location", ""))
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
