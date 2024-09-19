@@ -629,7 +629,10 @@ elif action == "Edit Existing Case":
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
                 
-                observations = case_details.get("Observations", "")  # Split tags into a list
+                observations = case_details.get("Observations", "")  
+                if isinstance(observations, str):
+                    observations = [obs.strip() for obs in observations.split(",")]  # Split by comma if needed
+                
                 # Step 1: Print the list of observation IDs provided
                 st.write("Observation IDs to filter:", observations)
                 all_observations, observation_ids_with_title = fetch_all_observation_ids_and_titles()
