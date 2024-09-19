@@ -474,7 +474,7 @@ with col2:
 
 with col3:
     #Display Observer options 
-    observer = st.selectbox("Observer", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
+    observer = st.selectbox("Observer", ["Deb", "Kyle", "Ryan", "Lois"])
 
 
 # Initialize the observation text in session state if it doesn't exist
@@ -513,24 +513,75 @@ with col1:
         st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
         # Generate tags for the observation
         st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
+        
     
 if st.session_state['observation_summary'] != "":
     st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
 
-# st.write(f":green[{st.session_state['result']}]")
-# Display the generated tags in a text area (editable by the user if needed)
-if st.session_state['observation_tags'] != "":
-    st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
+# here, add the function call to turn parsed results into editable text fields  
+
+
+ # Ensure 'result' exists
+    if isinstance(parsed_observation, dict):
+        # Print case title
+        # st.session_state['case_title'] = st.text_area("**Observation Title**", value=st.session_state['observation_title'])
+
+# FOR REFERENCE
+    # db.add_texts([observation], metadatas=[{
+    #     'observer': observer,
+    #     'observation_date': observation_date,
+    #     'observation_id': observation_id,
+    #     'tags': observation_tags,  # Add tags to the metadata
+    #     'case_id': related_case_id
+    # }])
+        
+        input_fields = list(ObservationRecord.__fields__.keys())
+        # Find missing fields by checking if any field in parsed_observation is None or empty
+        missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
+
+
+
+        for field in input_fields:
+            if field not in missing_fields and field != "tags":
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+
+            if field == "tags":
+                tags_values = parsed_observation.get('tags', '')
+                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                updated_tags = st_tags(
+                    label="**Tags**",
+                    text="Press enter to add more",
+                    value=tags_values,  # Show the tags found in the result
+                    maxtags=10,
+                    key="tags_input"  # Unique key to ensure it's updated correctly
+                )
+                
+                # Update tags_values with the modified tags from st_tags
+                tags_values = updated_tags
+                updated_tags_string = ", ".join(updated_tags)
+                st.session_state['parsed_observation']['tags'] = updated_tags_string
+        
+        if st.session_state.get('parsed_observation', '') != '':
+            st.markdown("### Missing Fields")
+            
+            for field in missing_fields:
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+
+
+
+
+# # st.write(f":green[{st.session_state['result']}]")
+# # Display the generated tags in a text area (editable by the user if needed)
+# if st.session_state['observation_tags'] != "":
+#     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
 
 st.markdown(st.session_state['result'], unsafe_allow_html=True)
 
-if st.session_state['rerun']:
-    time.sleep(3)
-    clear_observation()
-    st.session_state['rerun'] = False
-    st.rerun()
+
     
-    ##########
+#     ##########
 
 
 
@@ -568,6 +619,13 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
         else:
             st.session_state['result'] = "Error adding observation to your team's database, try again!"
         # clear_observation()
+
+if st.session_state['rerun']:
+    time.sleep(3)
+    clear_observation()
+    st.session_state['rerun'] = False
+    st.rerun()
+
 
 st.markdown("---")
 
