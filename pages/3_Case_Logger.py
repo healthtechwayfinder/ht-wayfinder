@@ -495,38 +495,38 @@ if action == "Add New Case":
         input_fields = list(caseRecord.__fields__.keys())
         # Find missing fields by checking if any field in parsed_case is None or empty
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
-        
-        tags_values = parsed_case.get('tags', '')
-        tags_values = [tag.strip() for tag in tags_values.split(",")]
-        updated_tags = st_tags(
-            label="Tags",
-            text="Press enter to add more",
-            value=tags_values,  # Show the tags found in the result
-            maxtags=10,
-            key="tags_input"  # Unique key to ensure it's updated correctly
-        )
-        
-        # Update tags_values with the modified tags from st_tags
-        tags_values = updated_tags
-        updated_tags_string = ", ".join(updated_tags)
-                
-        st.session_state['parsed_case']['tags'] = updated_tags_string
 
         # print the current result
-        st.session_state['result'] = convertCaseToStringOutput(st.session_state.get('parsed_case', ''))
-        st.markdown(st.session_state['result'])
+        # st.session_state['result'] = convertCaseToStringOutput(st.session_state.get('parsed_case', ''))
+        # st.markdown(st.session_state['result'])
 
         for field in input_fields:
-            if field not in missing_fields:
+            if field not in missing_fields and field != "tags":
                 field_clean = field.replace("_", " ").capitalize()
-                st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+                st.session_state['parsed_case'][field] = st.text_input(f'**"{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
 
+            if field == "tags":
+                tags_values = parsed_case.get('tags', '')
+                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                updated_tags = st_tags(
+                    label="Tags",
+                    text="Press enter to add more",
+                    value=tags_values,  # Show the tags found in the result
+                    maxtags=10,
+                    key="tags_input"  # Unique key to ensure it's updated correctly
+                )
+                
+                # Update tags_values with the modified tags from st_tags
+                tags_values = updated_tags
+                updated_tags_string = ", ".join(updated_tags)
+                st.session_state['parsed_case']['tags'] = updated_tags_string
+        
         if st.session_state.get('parsed_case', '') != '':
             st.markdown("### Missing Fields")
             
             for field in missing_fields:
                 field_clean = field.replace("_", " ").capitalize()
-                st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+                st.session_state['parsed_case'][field] = st.text_input(f'Enter **{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
 
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
