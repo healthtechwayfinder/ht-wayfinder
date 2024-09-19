@@ -547,6 +547,8 @@ if action == "Add New Case":
                 elif not isinstance(tags_values, list):
                     tags_values = list(tags_values)  # Try to convert to a list if it isn't already
 
+                # Now use the `tags_values` safely in st_tags
+                updated_tags = st_tags(
                     label="**Tags**",
                     text="Press enter to add more",
                     value=tags_values,  # Show the tags found in the result
