@@ -92,12 +92,43 @@ with col2:
 
     elif selected_sheet == "Observation Log":
         # Filters for Observation Log (Observer, Tags, and Reviewed status)
-        observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(),
+        observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
+        
+        # Extract unique tags from the "Tags" column (comma-separated values)
+        all_observation_tags = extract_unique_tags(df, 'Tags')
+        selected_observation_tags = st.multiselect("Filter by Tags", options=all_observation_tags, default=None)
+        
+        reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
 
+        if observer:
+            df = df[df['Observer'].isin(observer)]
+        if selected_observation_tags:
+            df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
+        if reviewed_status == "Reviewed":
+            df = df[df['Reviewed'] == "TRUE"]
+        elif reviewed_status == "Not Reviewed":
+            df = df[df['Reviewed'] == "FALSE"]
 
+    elif selected_sheet == "Need Statement Log":
+        # Filters for Need Log (Population)
+        population = st.multiselect("Filter by Population", options=df['Population'].unique(), default=None)
 
+        if population:
+            df = df[df['Population'].isin(population)]
 
+with col3:
+    # Add a button to refresh the data from Google Sheets
+    if st.button("🔁 Refresh Data"):
+        st.session_state["df"] = load_data(worksheets[selected_sheet])
+        st.success(f"Data refreshed from {selected_sheet}!")
+    # Link to their actual sheet
+    st.link_button("View Log in Sheets", "https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969")
 
+# Display the Google Sheet content as a DataFrame in Streamlit with filters applied
+st.markdown(f"## {selected_sheet}")
+st.dataframe(df, height=550)
+
+st.markdown("---")
 
 
 
