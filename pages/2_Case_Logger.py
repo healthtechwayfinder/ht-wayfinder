@@ -409,9 +409,14 @@ def fetch_all_observation_ids_and_titles():
     return formatted_observations, observation_ids_with_title
         
 # Function to filter and return observation data for the given list of observation IDs
+# def get_filtered_observation_data(observations, observation_data):
+#     filtered_data = {obs_id: observation_data[obs_id] for obs_id in observations if obs_id in observation_data}
+#     return filtered_data
 def get_filtered_observation_data(observations, observation_data):
-    filtered_data = {obs_id: observation_data[obs_id] for obs_id in observations if obs_id in observation_data}
+    # Generate a list of formatted "ID - Title" strings for the filtered observations
+    filtered_data = [f"{obs_id} - {observation_data[obs_id]}" for obs_id in observations if obs_id in observation_data]
     return filtered_data
+
 
 
 
