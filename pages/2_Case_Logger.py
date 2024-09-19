@@ -327,10 +327,11 @@ def clear_casex():
         st.session_state['case_description'] = ""
     if 'case_title' in st.session_state:
         st.session_state['case_title'] = ""
-    if 'result' in st.session_state:
+    if 'case_info' in st.session_state:
         st.session_state['result'] = ""
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
+
 
 # Fetch case IDs and titles from Google Sheets
 def fetch_case_ids_and_titles():
