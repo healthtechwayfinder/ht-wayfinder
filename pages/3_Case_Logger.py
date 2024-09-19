@@ -566,9 +566,8 @@ if action == "Add New Case":
             # "Generated Summary: "+st.session_state['case_title']+"\n\n"
             if status:
                 st.session_state['result'] = "Case added to your team's database."
-                # st.session_state['rerun'] = True
-                # st.rerun() 
-                st.session_state['reload'] = True
+                st.session_state['rerun'] = True
+                st.rerun() 
             else:
                 st.session_state['result'] = "Error adding case to your team's database. Please try again!"
     
