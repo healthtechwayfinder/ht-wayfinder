@@ -424,6 +424,7 @@ def get_filtered_observation_data(observations, observation_data):
     filtered_data = [f"{obs_id} - {observation_data[obs_id]}" for obs_id in observations if obs_id in observation_data]
     return filtered_data
 
+
 def update_observation_log(observation_ids_only, old_observation_ids, case_id):
     try:
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
@@ -457,6 +458,8 @@ def update_observation_log(observation_ids_only, old_observation_ids, case_id):
                 # Update the row to remove the case ID
                 col_index = headers.index("Related Case ID") + 1
                 existing_related_cases = row.get('Related Case ID', '')
+                
+                # Split and filter the case IDs, then rejoin without the current case_id
                 updated_related_cases = [cid for cid in existing_related_cases.split(", ") if cid != case_id]
                 st.write(f"Updating row {i}: Removing case ID {case_id}")  # Debug print
                 sheet.update_cell(i, col_index, ", ".join(updated_related_cases))
@@ -466,6 +469,7 @@ def update_observation_log(observation_ids_only, old_observation_ids, case_id):
     except Exception as e:
         st.write(f"Error in update_observation_log: {e}")  # Print the error message
         return False
+
 
 
 # If the user chooses "Add New Case"
