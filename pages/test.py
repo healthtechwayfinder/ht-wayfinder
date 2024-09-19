@@ -1,31 +1,31 @@
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-
 import logging
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+from typing import Optional
+from datetime import date
+
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 
+# Import langchain and other required libraries
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
-# from langchain.callbacks import get_openai_callback
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
 
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-
-
+# Pydantic models and other dependencies
 from pydantic import BaseModel, Field
-from typing import Optional
-from datetime import date, datetime
-
 import json
 import os
 import csv
 
+# Load credentials from Streamlit secrets
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
     "project_id" : st.secrets["gwf_service_account"]["project_id"],
@@ -40,73 +40,44 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
-
-if 'observation' not in st.session_state:
-    st.session_state['observation'] = ""
-
-if 'result' not in st.session_state:
-    st.session_state['result'] = ""
-
-if 'observation_summary' not in st.session_state:
-    st.session_state['observation_summary'] = ""
-
-if 'observation_tags' not in st.session_state:
-    st.session_state['observation_tags'] = ""
-
-# if 'observation_date' not in st.session_state:
-#     st.session_state['observation_date'] = date.today()
-
-if 'rerun' not in st.session_state:
-    st.session_state['rerun'] = False
+# Initialize session state variables
+for key in ["observation", "result", "observation_summary", "observation_tags", "rerun"]:
+    if key not in st.session_state:
+        st.session_state[key] = ""
 
 # Function to connect to Google Sheets
 def get_google_sheet(sheet_name, worksheet_name):
-    # Define the scope for accessing Google Sheets API
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    
-    # Use the credentials from your service account JSON file
-    credentials = ServiceAccountCredentials.from_json_keyfile_name("path_to_your_credentials.json", scope)
-    
-    # Authorize the client
+    credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(credentials)
-    
-    # Open the Google Sheet
     sheet = client.open(sheet_name).worksheet(worksheet_name)
-    
     return sheet
 
 # Function to get observation IDs from the Google Sheet
 def get_observation_ids():
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    observation_log = client.open("2024 Healthtech Identify Log").worksheet("CObservation Log")
-    observation_ids = observation_log.col_values(1)[1:]
-    observation_dates_list = observation_log.col_values(3)[1:]
-    observation_titles = observation_log.col_values(2)[1:]
+    sheet = get_google_sheet("2024 Healthtech Identify Log", "CObservation Log")
+    
+    # Fetch relevant columns from the sheet
+    observation_ids = sheet.col_values(1)[1:]  # Skip header
+    observation_titles = sheet.col_values(2)[1:]  # Titles
+    observation_ids_with_title = dict(zip(observation_ids, observation_titles))
+    
+    # Create formatted list with ID - title format
+    formatted_observations = [f"{obs_id} - {title}" for obs_id, title in observation_ids_with_title.items()]
+    
+    logging.info(f"Existing Observation IDs: {formatted_observations}")
+    return formatted_observations
 
-    # find all observation ids with the same date
-    existing_observation_ids_with_title = dict(zip(observation_ids, observation_titles))
-
-    # make strings with case id - title
-    existing_observation_ids_with_title = [f"{observation_id} - {observation_title}" for observation_id, observation_title in existing_observation_ids_with_title.items()]
-
-    print("Existing Observation IDS: ")
-    print(existing_observation_ids_with_title)
-    return existing_observation_ids_with_title
-
-# In your Streamlit app, create a multi-select dropdown
+# Streamlit UI for Observation ID Selection
 st.title("Observation ID Selection")
 
 # Get the observation IDs from Google Sheets
 observation_ids = get_observation_ids()
 
-# Display the multi-select dropdown with the observation IDs
+# Multi-select dropdown with observation IDs
 selected_observation_ids = st.multiselect("Select Observation IDs:", observation_ids)
 
 # Display the selected Observation IDs
 if selected_observation_ids:
     st.write("You selected the following Observation IDs:", selected_observation_ids)
+
