@@ -68,7 +68,11 @@ def get_observation_ids():
     logging.info(f"Existing Observation IDs: {formatted_observations}")
     return formatted_observations
 
-observations = [OB2409100015, OB2409180003, OB2409190002, OB2409190003, OB2409190004, OB2409190005, OB2409190006, OB2409190007]
+# Correct the list of observations to use string literals
+observations = [
+    "OB2409100015", "OB2409180003", "OB2409190002", "OB2409190003", 
+    "OB2409190004", "OB2409190005", "OB2409190006", "OB2409190007"
+]
 
 # Function to filter and return observation data for the given list of observation IDs
 def get_filtered_observation_data(observations, observation_data):
