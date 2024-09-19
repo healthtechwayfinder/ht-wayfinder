@@ -149,6 +149,8 @@ def convertCaseToStringOutput(parsed_case):
     output = ""
 
     for field in parsed_case:
+        if field == 'tags:
+            continue
         key_output = field.replace("_", " ").capitalize()
         output += f"**{key_output}**: {parsed_case[field]}\n"
         output += "\n"
@@ -514,14 +516,17 @@ if action == "Add New Case":
         st.session_state['result'] = convertCaseToStringOutput(st.session_state.get('parsed_case', ''))
         st.markdown(st.session_state['result'])
 
+        for field in input_fields:
+            if field not in missing_fields:
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
+
         if st.session_state.get('parsed_case', '') != '':
             st.markdown("### Missing Fields")
             
             for field in missing_fields:
                 field_clean = field.replace("_", " ").capitalize()
-                # Render text input for missing fields, storing results back in parsed_case
                 st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
-                # st.rerun()
 
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
