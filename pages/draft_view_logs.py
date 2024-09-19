@@ -106,7 +106,7 @@ with col2:
             df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
         if reviewed_status == "Reviewed":
             df = df[df['Reviewed'] == "TRUE"]
-        elif reviewed_status == "Not Reviewed":
+        else:
             df = df[df['Reviewed'] == "FALSE"]
 
     elif selected_sheet == "Need Statement Log":
