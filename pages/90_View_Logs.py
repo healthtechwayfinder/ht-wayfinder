@@ -1,175 +1,3 @@
-# import streamlit as st
-# import gspread
-# from oauth2client.service_account import ServiceAccountCredentials
-# import pandas as pd
-
-# # Set page configuration
-# st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
-# # title
-# st.markdown("# View Logs")
-# # description
-# st.write("Use this page to view your logged information. Toggle between logs using the dropdown, click on the column headers to sort alphabetically, and use the filters to narrow your results.")
-
-# # Define the Google Sheets credentials and scope
-# creds_dict = {
-#     "type": st.secrets["gwf_service_account"]["type"],
-#     "project_id": st.secrets["gwf_service_account"]["project_id"],
-#     "private_key_id": st.secrets["gwf_service_account"]["private_key_id"],
-#     "private_key": st.secrets["gwf_service_account"]["private_key"].replace('\\n', '\n'),  # Fix formatting
-#     "client_email": st.secrets["gwf_service_account"]["client_email"],
-#     "client_id": st.secrets["gwf_service_account"]["client_id"],
-#     "auth_uri": st.secrets["gwf_service_account"]["auth_uri"],
-#     "token_uri": st.secrets["gwf_service_account"]["token_uri"],
-#     "auth_provider_x509_cert_url": st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
-#     "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
-# }
-
-# # Function to get Google Sheets connection
-# def get_google_sheet(sheet_name, worksheet_name):
-#     scope = [
-#         "https://www.googleapis.com/auth/spreadsheets",
-#         "https://www.googleapis.com/auth/drive.metadata.readonly",
-#     ]
-#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-#     client = gspread.authorize(creds)
-#     sheet = client.open(sheet_name).worksheet(worksheet_name)
-#     return sheet
-
-# # Function to convert Google Sheets data to a Pandas DataFrame
-# def get_google_sheet_as_dataframe(sheet):
-#     # Get all data from the worksheet
-#     data = sheet.get_all_values()
-#     # Convert to a Pandas DataFrame
-#     df = pd.DataFrame(data[1:], columns=data[0])  # Use the first row as headers
-#     return df
-
-# # Google Sheets settings
-# sheet_name = '2024 Healthtech Identify Log'
-# worksheets = {
-#     "Case Log": "Case Log",
-#     "Observation Log": "Observation Log",
-#     "Need Statement Log": "Need Statement Log"
-# }
-
-# col1, col2, col3 = st.columns([2, 2, 1])
-
-# with col1:
-#     # Create a dropdown for selecting which sheet to view
-#     st.markdown("##### Sheet")
-
-#     selected_sheet = st.selectbox("View...",list(worksheets.keys()))
-
-# # Fetch data from Google Sheets based on the selected worksheet
-# def load_data(worksheet_name):
-#     sheet = get_google_sheet(sheet_name, worksheet_name)
-#     return get_google_sheet_as_dataframe(sheet)
-
-# # Load the data based on the selected sheet
-# if "df" not in st.session_state or st.session_state["selected_sheet"] != selected_sheet:
-#     st.session_state["df"] = load_data(worksheets[selected_sheet])
-#     st.session_state["selected_sheet"] = selected_sheet
-
-# # Helper function to parse tags and return a unique list of tags
-# def extract_unique_tags(df, tag_column):
-#     all_tags = df[tag_column].dropna().apply(lambda x: [tag.strip() for tag in x.split(',')])  # Split by commas and strip spaces
-#     flattened_tags = [tag for sublist in all_tags for tag in sublist]  # Flatten the list of lists
-#     return sorted(set(flattened_tags))  # Return unique, sorted tags
-
-# # Filter section based on the selected sheet
-# with col2:
-#     # st.markdown('<h1 style="font-size:18px;">Filters</h1>', unsafe_allow_html=True)
-#     st.markdown("##### Filters")
-
-
-#     with st.container(border=True):
-
-#         df = st.session_state["df"]
-    
-#         if selected_sheet == "Case Log":
-#             # Filters for Case Log (Attendees and Tags)
-#             attendees = st.multiselect("Filter by Attendees", options=df['Attendees'].unique(), default=None)
-            
-#             # Extract unique tags from the "Tags" column (comma-separated values)
-#             all_case_tags = extract_unique_tags(df, 'Tags')
-#             selected_case_tags = st.multiselect("Filter by Tags", options=all_case_tags, default=None)
-    
-#             if attendees:
-#                 df = df[df['Attendees'].isin(attendees)]
-#             if selected_case_tags:
-#                 df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_case_tags))]
-    
-#         elif selected_sheet == "Observation Log":
-#             # Filters for Observation Log (Observer, Tags, and Reviewed status)
-#             observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
-
-#             # Extract unique tags from the "Tags" column (comma-separated values)
-#             all_observation_cases = extract_unique_tags(df, 'Related Case ID')
-#             selected_observation_cases = st.multiselect("Filter by Case", options=all_observation_cases, default=None)
-        
-            
-#             # Extract unique tags from the "Tags" column (comma-separated values)
-#             all_observation_tags = extract_unique_tags(df, 'Tags')
-#             selected_observation_tags = st.multiselect("Filter by Tags", options=all_observation_tags, default=None)
-            
-#             reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
-    
-#             if observer:
-#                 df = df[df['Observer'].isin(observer)]
-#             if selected_observation_cases:
-#                 df = df[df['Related Case ID'].apply(lambda tags: any(tag in tags for tag in selected_observation_cases))]
-#             if selected_observation_tags:
-#                 df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
-#             if reviewed_status == "Reviewed":
-#                 df = df[df['Reviewed'] == "TRUE"]
-#             elif reviewed_status == "Not Reviewed":
-#                 df = df[df['Reviewed'] != "TRUE"]
-    
-#         elif selected_sheet == "Need Statement Log":
-#             # Filters for Need Log (Population)
-#             population = st.multiselect("Filter by Population", options=df['population'].unique(), default=None)
-    
-#             if population:
-#                 df = df[df['population'].isin(population)]
-
-# with col3:
-#     # Add a button to refresh the data from Google Sheets
-#     st.markdown("##### Other Actions")
-
-#     if st.button("🔁 Refresh Data"):
-#         st.session_state["df"] = load_data(worksheets[selected_sheet])
-#         st.success(f"Data refreshed from {selected_sheet}!")
-#     # Link to their actual sheet
-#     st.link_button("View Log in Sheets", "https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969")
-
-# # Display the Google Sheet content as a DataFrame in Streamlit with filters applied
-# st.markdown(f"## {selected_sheet}")
-# st.dataframe(df, height=550)
-
-# st.markdown("---")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -180,7 +8,7 @@ st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
 # title
 st.markdown("# View Logs")
 # description
-st.write("Use this page to view your logged information. Toggle between logs using the dropdown.")
+st.write("Use this page to view your logged information. Toggle between logs using the dropdown, click on the column headers to sort alphabetically, and use the filters to narrow your results.")
 
 # Define the Google Sheets credentials and scope
 creds_dict = {
@@ -227,7 +55,9 @@ col1, col2, col3 = st.columns([2, 2, 1])
 
 with col1:
     # Create a dropdown for selecting which sheet to view
-    selected_sheet = st.selectbox("Select a sheet to view:", list(worksheets.keys()))
+    st.markdown("##### Sheet")
+
+    selected_sheet = st.selectbox("View...",list(worksheets.keys()))
 
 # Fetch data from Google Sheets based on the selected worksheet
 def load_data(worksheet_name):
@@ -239,43 +69,72 @@ if "df" not in st.session_state or st.session_state["selected_sheet"] != selecte
     st.session_state["df"] = load_data(worksheets[selected_sheet])
     st.session_state["selected_sheet"] = selected_sheet
 
+# Helper function to parse tags and return a unique list of tags
+def extract_unique_tags(df, tag_column):
+    all_tags = df[tag_column].dropna().apply(lambda x: [tag.strip() for tag in x.split(',')])  # Split by commas and strip spaces
+    flattened_tags = [tag for sublist in all_tags for tag in sublist]  # Flatten the list of lists
+    return sorted(set(flattened_tags))  # Return unique, sorted tags
+
 # Filter section based on the selected sheet
 with col2:
-    df = st.session_state["df"]
-    if selected_sheet == "Case Log":
-        # Filters for Case Log (Attendees and Tags)
-        attendees = st.multiselect("Filter by Attendees", options=df['Attendees'].unique(), default=None)
-        tags = st.multiselect("Filter by Tags", options=df['Tags'].unique(), default=None)
+    # st.markdown('<h1 style="font-size:18px;">Filters</h1>', unsafe_allow_html=True)
+    st.markdown("##### Filters")
 
-        if attendees:
-            df = df[df['Attendees'].isin(attendees)]
-        if tags:
-            df = df[df['Tags'].isin(tags)]
 
-    elif selected_sheet == "Observation Log":
-        # Filters for Observation Log (Observer, Tags, and Reviewed status)
-        observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
-        tags = st.multiselect("Filter by Tags", options=df['Tags'].unique(), default=None)
-        reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
+    with st.container(border=True):
 
-        if observer:
-            df = df[df['Observer'].isin(observer)]
-        if tags:
-            df = df[df['Tags'].isin(tags)]
-        if reviewed_status == "Reviewed":
-            df = df[df['Reviewed'] == "TRUE"]
-        elif reviewed_status == "Not Reviewed":
-            df = df[df['Reviewed'] == "FALSE"]
+        df = st.session_state["df"]
+    
+        if selected_sheet == "Case Log":
+            # Filters for Case Log (Attendees and Tags)
+            attendees = st.multiselect("Filter by Attendees", options=df['Attendees'].unique(), default=None)
+            
+            # Extract unique tags from the "Tags" column (comma-separated values)
+            all_case_tags = extract_unique_tags(df, 'Tags')
+            selected_case_tags = st.multiselect("Filter by Tags", options=all_case_tags, default=None)
+    
+            if attendees:
+                df = df[df['Attendees'].isin(attendees)]
+            if selected_case_tags:
+                df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_case_tags))]
+    
+        elif selected_sheet == "Observation Log":
+            # Filters for Observation Log (Observer, Tags, and Reviewed status)
+            observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
 
-    elif selected_sheet == "Need Statement Log":
-        # Filters for Need Log (Population)
-        population = st.multiselect("Filter by Population", options=df['Population'].unique(), default=None)
-
-        if population:
-            df = df[df['Population'].isin(population)]
+            # Extract unique tags from the "Tags" column (comma-separated values)
+            all_observation_cases = extract_unique_tags(df, 'Related Case ID')
+            selected_observation_cases = st.multiselect("Filter by Case", options=all_observation_cases, default=None)
+        
+            
+            # Extract unique tags from the "Tags" column (comma-separated values)
+            all_observation_tags = extract_unique_tags(df, 'Tags')
+            selected_observation_tags = st.multiselect("Filter by Tags", options=all_observation_tags, default=None)
+            
+            reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
+    
+            if observer:
+                df = df[df['Observer'].isin(observer)]
+            if selected_observation_cases:
+                df = df[df['Related Case ID'].apply(lambda tags: any(tag in tags for tag in selected_observation_cases))]
+            if selected_observation_tags:
+                df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
+            if reviewed_status == "Reviewed":
+                df = df[df['Reviewed'] == "TRUE"]
+            elif reviewed_status == "Not Reviewed":
+                df = df[df['Reviewed'] != "TRUE"]
+    
+        elif selected_sheet == "Need Statement Log":
+            # Filters for Need Log (Population)
+            population = st.multiselect("Filter by Population", options=df['population'].unique(), default=None)
+    
+            if population:
+                df = df[df['population'].isin(population)]
 
 with col3:
     # Add a button to refresh the data from Google Sheets
+    st.markdown("##### Other Actions")
+
     if st.button("🔁 Refresh Data"):
         st.session_state["df"] = load_data(worksheets[selected_sheet])
         st.success(f"Data refreshed from {selected_sheet}!")
@@ -287,6 +146,147 @@ st.markdown(f"## {selected_sheet}")
 st.dataframe(df, height=550)
 
 st.markdown("---")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# import streamlit as st
+# import gspread
+# from oauth2client.service_account import ServiceAccountCredentials
+# import pandas as pd
+
+# # Set page configuration
+# st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
+# # title
+# st.markdown("# View Logs")
+# # description
+# st.write("Use this page to view your logged information. Toggle between logs using the dropdown.")
+
+# # Define the Google Sheets credentials and scope
+# creds_dict = {
+#     "type": st.secrets["gwf_service_account"]["type"],
+#     "project_id": st.secrets["gwf_service_account"]["project_id"],
+#     "private_key_id": st.secrets["gwf_service_account"]["private_key_id"],
+#     "private_key": st.secrets["gwf_service_account"]["private_key"].replace('\\n', '\n'),  # Fix formatting
+#     "client_email": st.secrets["gwf_service_account"]["client_email"],
+#     "client_id": st.secrets["gwf_service_account"]["client_id"],
+#     "auth_uri": st.secrets["gwf_service_account"]["auth_uri"],
+#     "token_uri": st.secrets["gwf_service_account"]["token_uri"],
+#     "auth_provider_x509_cert_url": st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+#     "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
+# }
+
+# # Function to get Google Sheets connection
+# def get_google_sheet(sheet_name, worksheet_name):
+#     scope = [
+#         "https://www.googleapis.com/auth/spreadsheets",
+#         "https://www.googleapis.com/auth/drive.metadata.readonly",
+#     ]
+#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+#     client = gspread.authorize(creds)
+#     sheet = client.open(sheet_name).worksheet(worksheet_name)
+#     return sheet
+
+# # Function to convert Google Sheets data to a Pandas DataFrame
+# def get_google_sheet_as_dataframe(sheet):
+#     # Get all data from the worksheet
+#     data = sheet.get_all_values()
+#     # Convert to a Pandas DataFrame
+#     df = pd.DataFrame(data[1:], columns=data[0])  # Use the first row as headers
+#     return df
+
+# # Google Sheets settings
+# sheet_name = '2024 Healthtech Identify Log'
+# worksheets = {
+#     "Case Log": "Case Log",
+#     "Observation Log": "Observation Log",
+#     "Need Statement Log": "Need Statement Log"
+# }
+
+# col1, col2, col3 = st.columns([2, 2, 1])
+
+# with col1:
+#     # Create a dropdown for selecting which sheet to view
+#     selected_sheet = st.selectbox("Select a sheet to view:", list(worksheets.keys()))
+
+# # Fetch data from Google Sheets based on the selected worksheet
+# def load_data(worksheet_name):
+#     sheet = get_google_sheet(sheet_name, worksheet_name)
+#     return get_google_sheet_as_dataframe(sheet)
+
+# # Load the data based on the selected sheet
+# if "df" not in st.session_state or st.session_state["selected_sheet"] != selected_sheet:
+#     st.session_state["df"] = load_data(worksheets[selected_sheet])
+#     st.session_state["selected_sheet"] = selected_sheet
+
+# # Filter section based on the selected sheet
+# with col2:
+#     df = st.session_state["df"]
+#     if selected_sheet == "Case Log":
+#         # Filters for Case Log (Attendees and Tags)
+#         attendees = st.multiselect("Filter by Attendees", options=df['Attendees'].unique(), default=None)
+#         tags = st.multiselect("Filter by Tags", options=df['Tags'].unique(), default=None)
+
+#         if attendees:
+#             df = df[df['Attendees'].isin(attendees)]
+#         if tags:
+#             df = df[df['Tags'].isin(tags)]
+
+#     elif selected_sheet == "Observation Log":
+#         # Filters for Observation Log (Observer, Tags, and Reviewed status)
+#         observer = st.multiselect("Filter by Observer", options=df['Observer'].unique(), default=None)
+#         tags = st.multiselect("Filter by Tags", options=df['Tags'].unique(), default=None)
+#         reviewed_status = st.selectbox("Reviewed Status", ["All", "Reviewed", "Not Reviewed"])
+
+#         if observer:
+#             df = df[df['Observer'].isin(observer)]
+#         if tags:
+#             df = df[df['Tags'].isin(tags)]
+#         if reviewed_status == "Reviewed":
+#             df = df[df['Reviewed'] == "TRUE"]
+#         elif reviewed_status == "Not Reviewed":
+#             df = df[df['Reviewed'] == "FALSE"]
+
+#     elif selected_sheet == "Need Statement Log":
+#         # Filters for Need Log (Population)
+#         population = st.multiselect("Filter by Population", options=df['Population'].unique(), default=None)
+
+#         if population:
+#             df = df[df['Population'].isin(population)]
+
+# with col3:
+#     # Add a button to refresh the data from Google Sheets
+#     if st.button("🔁 Refresh Data"):
+#         st.session_state["df"] = load_data(worksheets[selected_sheet])
+#         st.success(f"Data refreshed from {selected_sheet}!")
+#     # Link to their actual sheet
+#     st.link_button("View Log in Sheets", "https://docs.google.com/spreadsheets/d/17TnyhGWNPqhzNSF5vTVQvY3R0XrqLang3h2Wi2lYD1k/edit?gid=2115125969#gid=2115125969")
+
+# # Display the Google Sheet content as a DataFrame in Streamlit with filters applied
+# st.markdown(f"## {selected_sheet}")
+# st.dataframe(df, height=550)
+
+# st.markdown("---")
 
 
 
