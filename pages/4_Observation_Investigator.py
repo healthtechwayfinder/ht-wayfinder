@@ -55,7 +55,7 @@ if "chat_sheet" not in st.session_state:
 
 OPENAI_API_KEY = st.secrets["openai_key"]
 
-st.set_page_config(page_title="Observation Investigator", page_icon="❓")
+st.set_page_config(page_title="Observation Investigator", page_icon="🤖")
 
 st.markdown("""
     <style>
