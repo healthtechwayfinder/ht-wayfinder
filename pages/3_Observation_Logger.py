@@ -472,7 +472,7 @@ def getExistingCaseIDS():
     return existing_case_ids_with_title
 
 existing_case_ids_with_title = getExistingCaseIDS()
-case_id_with_title = st.selectbox("Related Case ID", existing_case_ids_with_title)
+case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
     # put case ID dateinformation here
 
 # Use columns to place observation_date, observation_id, and observer side by side
@@ -497,7 +497,7 @@ with col2:
 
 with col3:
     #Display Observer options 
-    observer = st.selectbox("Observer", ["Deb", "Kyle", "Ryan", "Lois"])
+    observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"])
 
 
 # Initialize the observation text in session state if it doesn't exist
