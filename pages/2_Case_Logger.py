@@ -327,11 +327,6 @@ def clear_case():
     update_case_ID()
     # Refresh the page back to the initial state
 
-def clear_it():
-    
-    selected_case = st.selectbox("Select a case to edit", [""] + case_options)
-        
-
 
 # Fetch case IDs and titles from Google Sheets
 def fetch_case_ids_and_titles():
