@@ -568,15 +568,13 @@ if action == "Add New Case":
                 st.rerun()
             else:
                 st.session_state['result'] = "Error adding case to your team's database. Please try again!"
-            # clear_case()
+        clear_case()
+    
     
     st.markdown("---")
 
     # Container for result display
-    time.sleep(3)  # Pause to let the user see changes, if necessary
-        #clear_case()  # Optional: Clear case if needed before rerun
-    st.session_state['rerun'] = False
-    st.rerun()  # Trigger the rerun
+     #clear_case()  # Optional: Clear case if needed before rerun
     
     # if st.button("Back to Main Menu"):
     #     clear_case()
