@@ -567,8 +567,7 @@ if action == "Add New Case":
             if status:
                 st.session_state['result'] = "Case added to your team's database."
                 # st.session_state['rerun'] = True
-                # st.rerun()
-                st.experimental_rerun() 
+                st.rerun() 
             else:
                 st.session_state['result'] = "Error adding case to your team's database. Please try again!"
     
