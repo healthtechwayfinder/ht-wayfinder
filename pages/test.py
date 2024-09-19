@@ -68,14 +68,23 @@ def get_observation_ids():
     logging.info(f"Existing Observation IDs: {formatted_observations}")
     return formatted_observations
 
-# Streamlit UI for Observation ID Selection
-st.title("Observation ID Selection")
+observations = [OB2409100015, OB2409180003, OB2409190002, OB2409190003, OB2409190004, OB2409190005, OB2409190006, OB2409190007]
+
+# Function to filter and return observation data for the given list of observation IDs
+def get_filtered_observation_data(observations, observation_data):
+    filtered_data = {obs_id: observation_data[obs_id] for obs_id in observations if obs_id in observation_data}
+    return filtered_data
 
 # Get the observation IDs from Google Sheets
 observation_ids = get_observation_ids()
 
+formatted_observations = get_filtered_observation_data(observations,observation_ids)
+
+# Streamlit UI for Observation ID Selection
+st.title("Observation ID Selection")
+
 # Multi-select dropdown with observation IDs
-selected_observation_ids = st.multiselect("Select Observation IDs:", observation_ids)
+selected_observation_ids = st.multiselect("Select Observation IDs:", formatted_observations)
 
 # Display the selected Observation IDs
 if selected_observation_ids:
