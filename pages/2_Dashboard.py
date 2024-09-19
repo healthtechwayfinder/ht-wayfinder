@@ -139,8 +139,8 @@ with col1:
         if st.button("📊 View Glossary"):
             switch_page("Glossary")
 
-        if st.button(":hourglass: Weekly Review (coming soon)"):
-            ""
+        if st.button("💫 Weekly Review"):
+            switch_page("Weekly_Review")
             # switch_page("Tips_for_Observations")
     #st.image("https://static.streamlit.io/examples/cat.jpg")
 
