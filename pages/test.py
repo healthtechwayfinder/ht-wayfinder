@@ -10,15 +10,6 @@ from datetime import date
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Import langchain and other required libraries
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.chains import LLMChain
-from langchain.output_parsers import PydanticOutputParser
-from langchain.schema import StrOutputParser
-from langchain.schema.runnable import RunnableLambda
-from langchain.prompts import PromptTemplate
-from langchain_pinecone import PineconeVectorStore
-
 # Pydantic models and other dependencies
 from pydantic import BaseModel, Field
 import json
@@ -68,7 +59,7 @@ def get_observation_ids():
     logging.info(f"Existing Observation IDs: {formatted_observations}")
     return formatted_observations
 
-# Correct the list of observations to use string literals
+# Correcting the list of observation IDs to strings
 observations = [
     "OB2409100015", "OB2409180003", "OB2409190002", "OB2409190003", 
     "OB2409190004", "OB2409190005", "OB2409190006", "OB2409190007"
@@ -82,7 +73,8 @@ def get_filtered_observation_data(observations, observation_data):
 # Get the observation IDs from Google Sheets
 observation_ids = get_observation_ids()
 
-formatted_observations = get_filtered_observation_data(observations,observation_ids)
+# Apply the filter to get the formatted observations
+formatted_observations = get_filtered_observation_data(observations, observation_ids)
 
 # Streamlit UI for Observation ID Selection
 st.title("Observation ID Selection")
@@ -93,4 +85,3 @@ selected_observation_ids = st.multiselect("Select Observation IDs:", formatted_o
 # Display the selected Observation IDs
 if selected_observation_ids:
     st.write("You selected the following Observation IDs:", selected_observation_ids)
-
