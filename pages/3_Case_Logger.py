@@ -367,21 +367,49 @@ def fetch_case_details(case_id):
 
 
 # Update case details in Google Sheets
+# def update_case(case_id, updated_data):
+#     try:
+#         sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
+#         data = sheet.get_all_records()
+#         # Find the row corresponding to the case_id and update it
+#         for i, row in enumerate(data, start=2):  # Skip header row
+#             if row["Case ID"] == case_id:
+#                 # Update the necessary fields (Assuming the updated_data has the same keys as Google Sheets columns)
+#                 for key, value in updated_data.items():
+#                     sheet.update_cell(i, list(row.keys()).index(key) + 1, value)
+#                 return True
+#         return False
+#     except Exception as e:
+#         print(f"Error updating case: {e}")
+#         return False
 def update_case(case_id, updated_data):
     try:
+        # Fetch the Google Sheet
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
         data = sheet.get_all_records()
+        
+        # Get the list of column headers once
+        headers = list(data[0].keys())
+        
         # Find the row corresponding to the case_id and update it
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["Case ID"] == case_id:
-                # Update the necessary fields (Assuming the updated_data has the same keys as Google Sheets columns)
+                # Update the necessary fields
                 for key, value in updated_data.items():
-                    sheet.update_cell(i, list(row.keys()).index(key) + 1, value)
-                return True
+                    if key in headers:
+                        col_index = headers.index(key) + 1  # Get the correct column index
+                        sheet.update_cell(i, col_index, value)
+                    else:
+                        print(f"Warning: {key} not found in Google Sheets columns")
+                return True  # Case updated
+        # Case ID not found
+        print(f"Case ID {case_id} not found")
         return False
+    
     except Exception as e:
         print(f"Error updating case: {e}")
         return False
+
 
 
 # Function to generate a random color
@@ -610,6 +638,7 @@ elif action == "Edit Existing Case":
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
+                observations = st.text_input("Observations", case_details.get("Observations", ""))
                 #tags = st.text_input("Tags", case_details.get("Tags", ""))
                 # # Editable field for tags using st_tags
                 tags = st_tags(
@@ -630,7 +659,7 @@ elif action == "Edit Existing Case":
                         "People Present": people_present,
                         "Insider Language": insider_language,
                         "Tags": tags,
-                        #"Observations": observations,
+                        "Observations": observations,
                     }
                     if update_case(case_to_edit, updated_data):
                         st.success(f"Changes to '{case_to_edit}' saved successfully!")
