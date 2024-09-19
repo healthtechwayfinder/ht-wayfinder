@@ -501,12 +501,12 @@ if action == "Add New Case":
         # # Debug: Show the parsed result
         # st.write("Parsed Result:", parsed_result)
         # Initialize tags as an empty list in case it's not found
-        tags_values = []
+        # tags_values = []
         # Split the result by lines and extract each case detail by assuming specific labels
         # lines = parsed_result.splitlines()
         #     # Debug: Write lines being processed
         # st.write("Lines from parsed result:", lines)
-        editable_fields = {}
+        # editable_fields = {}
         # Find missing fields by checking if any field in parsed_case is None or empty
         input_fields = list(caseRecord.__fields__.keys())
         # Find missing fields by checking if any field in parsed_case is None or empty
@@ -569,7 +569,7 @@ if action == "Add New Case":
 
         # Display tags and allow for dynamic updates using st_tags
         tags_values = parsed_case.get('tags', '')
-        tags_values = [tag.strip() for tag in value.split(",")]
+        tags_values = [tag.strip() for tag in tags_values.split(",")]
         updated_tags = st_tags(
             label="Tags",
             text="Press enter to add more",
