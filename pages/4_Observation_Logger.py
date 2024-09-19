@@ -634,13 +634,14 @@ if st.button("Add Observation to Team Record", disabled=st.session_state['observ
                             st.session_state['observation_date'],
                             st.session_state['observation_id'],
                             case_id_with_title)
+        clear_observation()
+
         # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
         # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
         if status:
             st.session_state['result'] = "Observation added to your team's database."
             st.session_state['rerun'] = True
             st.rerun()
-            clear_observation()
 
         else:
             st.session_state['result'] = "Error adding observation to your team's database, try again!"
