@@ -107,14 +107,8 @@ def log_out():
     # Redirect to the main URL of your app
     st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
-#initialize session states below functions
 
 
-# if "note" not in st.session_state:
-#     st.session_state["note"] = read_note_from_gsheet(sheet_name, st.session_state['worksheet_name'])
-
-
-# col1, col2 = st.columns(2)
 col1, col2, col3 = st.columns(3)
 # col1, col2, col3 = st.columns([2, 2, 1])
 
@@ -135,8 +129,8 @@ with col1:
         if st.button("❓ Chat with Observations"):
             switch_page("Observation_Investigator")
     
-        if st.button("📒 View Observation, Case, & Need Logs"):
-            switch_page("Cases_&_Observations_Dataset")
+        if st.button("📒 View Logs"):
+            switch_page("View_Logs")
             
         if st.button("📊 View Glossary"):
             switch_page("Glossary")
