@@ -156,7 +156,7 @@ def extractCaseFeatures(case_description):
     for field in missing_fields:
         field_clean = field.replace("_", " ").capitalize()
         # Render text input for missing fields, storing results back in parsed_case
-        parsed_case[field] = st.text_input(f"Enter {field_clean}", key=field)
+        parsed_case[field] = st.text_input(f'Enter \"{field_clean}\"', key=field)
         
     return f"{output}"
 
@@ -486,10 +486,10 @@ if action == "Add New Case":
             # Generate the case description
             st.session_state['case_title']  = generateCaseSummary(st.session_state['case_description'])
             if st.session_state['case_title'] != "":
-                st.session_state['result'] = extractCaseFeatures(st.session_state['case_description'])
+                st.session_state['parsed_case'] = extractCaseFeatures(st.session_state['case_description'])
             
     # Process the result after button click
-    parsed_result = st.session_state['result']
+    parsed_result = st.session_state['parsed_case']
 
     # Ensure 'result' exists
     if parsed_result and isinstance(st.session_state['parsed_case'], dict):
@@ -511,38 +511,38 @@ if action == "Add New Case":
         missing_fields = [field for field in input_fields if parsed_case.get(field) in [None, ""]]
 
         # Ensure 'result' exists in session state
-        parsed_result = st.session_state.get('result', '')
+        # parsed_result = st.session_state.get('parsed_case', '')
         
         
-        for line in lines:
-            if ':' in line:
-                key, value = line.split(':', 1)  # Split by the first colon
-                key = key.strip()
-                value = value.strip()
-                # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
-                key_clean = key.replace('**', '').strip()
-                # No missing fields handling here! Only make fields editable.
-                # Skip printing or displaying missing fields or empty fields
-                if key_clean in missing_fields or value == "":
-                    continue  # Skip this field if it's missing or has an empty value
+        # for line in lines:
+            # if ':' in line:
+            #     key, value = line.split(':', 1)  # Split by the first colon
+            #     key = key.strip()
+            #     value = value.strip()
+            #     # Remove markdown bold characters (e.g., **Tags**) by replacing them with an empty string
+            #     key_clean = key.replace('**', '').strip()
+            #     # No missing fields handling here! Only make fields editable.
+            #     # Skip printing or displaying missing fields or empty fields
+            #     if key_clean in missing_fields or value == "":
+            #         continue  # Skip this field if it's missing or has an empty value
 
-                # # The following line displays each field from the parsed result as an editable text input.
-                # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+            #     # # The following line displays each field from the parsed result as an editable text input.
+            #    # editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
 
-                # Process tags when the key is 'Tags'
-                if key_clean.lower() == 'tags':
-                    # st.write(f"Processing line: key='{key}', value='{value}'")
-                    tags_values = [tag.strip() for tag in value.split(",")]
-                    # st.write(f"Tags after splitting and stripping: {tags_values}")
-                    # st.write(f"Length of tags_values: {len(tags_values)}")
-                    continue
-                ######here 2
-                else:
-                    editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
-                    # Automatically update 'result' in session state
-                     # Update session state safely
-                    if key_clean not in st.session_state['parsed_case'] or editable_fields[key_clean]:
-                        st.session_state['parsed_case'][key_clean] = editable_fields[key_clean]
+            #     # Process tags when the key is 'Tags'
+            #     if key_clean.lower() == 'tags':
+            #         # st.write(f"Processing line: key='{key}', value='{value}'")
+            #         tags_values = [tag.strip() for tag in value.split(",")]
+            #         # st.write(f"Tags after splitting and stripping: {tags_values}")
+            #         # st.write(f"Length of tags_values: {len(tags_values)}")
+            #         continue
+            #     ######here 2
+            #     else:
+            #         editable_fields[key_clean] = st.text_input(f"{key_clean}", value=value)
+            #         # Automatically update 'result' in session state
+            #          # Update session state safely
+            #         if key_clean not in st.session_state['parsed_case'] or editable_fields[key_clean]:
+            #             st.session_state['parsed_case'][key_clean] = editable_fields[key_clean]
 
                  ######here 2
                 
@@ -584,7 +584,7 @@ if action == "Add New Case":
 
         #here 2------------
             # Debug: Print session state to verify changes
-        st.write("Updated session state result:", st.session_state['parsed_case'])
+        # st.write("Updated session state result:", st.session_state['parsed_case'])
         #here 2------------
 
         # # Update 'result' with parsed_case
@@ -620,14 +620,14 @@ if action == "Add New Case":
                 # You can add further updates to the session state as needed for other fields
         
         # Debug: Print session state to verify changes
-        st.write("Updated session state result:", st.session_state['result'])
+        st.write("Updated session state result:", st.session_state['parsed_case'])
         
         st.markdown("### Missing Fields")
         
         for field in missing_fields:
             field_clean = field.replace("_", " ").capitalize()
             # Render text input for missing fields, storing results back in parsed_case
-            st.session_state['parsed_case'][field] = st.text_input(f"Enter {field_clean}", key=field, value=st.session_state['parsed_case'].get(field, ""))
+            st.session_state['parsed_case'][field] = st.text_input(f'Enter \"{field_clean}\"', key=field, value=st.session_state['parsed_case'].get(field, ""))
             
         # # Ensure that parsed_case is updated in the 'result' for Google Sheets
         # st.session_state['result'] = parsed_case  # Update the result with the modified parsed_case
