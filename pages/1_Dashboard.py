@@ -175,10 +175,13 @@ with col3:
     # Dropdown for selecting a user with on_change callback to update note
     if "selected_user" not in st.session_state:
         st.session_state["selected_user"] = users[0]  # Default to the first user
+
+    # case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
+
     
     st.selectbox(
         "Select User", 
-        users, 
+        [""] + users, 
         key="selected_user", 
         on_change=update_note
     )
