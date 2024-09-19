@@ -570,8 +570,8 @@ if isinstance(parsed_observation, dict):
             field_clean = field.replace("_", " ").capitalize()
             st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
 
-        if field == "tags":
-            tags_values = parsed_observation.get('tags', '')
+        if field == "observation_tags":
+            tags_values = parsed_observation.get('observation_tags', '')
             tags_values = [tag.strip() for tag in tags_values.split(",")]
             updated_tags = st_tags(
                 label="**Tags**",
@@ -584,7 +584,7 @@ if isinstance(parsed_observation, dict):
             # Update tags_values with the modified tags from st_tags
             tags_values = updated_tags
             updated_tags_string = ", ".join(updated_tags)
-            st.session_state['parsed_observation']['tags'] = updated_tags_string
+            st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
     
     if st.session_state.get('parsed_observation', '') != '':
         st.markdown("### Missing Fields")
