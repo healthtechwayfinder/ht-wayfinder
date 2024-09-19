@@ -583,8 +583,10 @@ if action == "Add New Case":
 
         # Print the updated tags values after any modification (entry or deletion)
         st.write("Updated Tags:", tags_values)
+        updated_tags_string = ", ".join(updated_tags)
+        
 
-        st.session_state['parsed_case']['tags'] = updated_tags
+        st.session_state['parsed_case']['tags'] = updated_tags_string
 
         #here 2------------
             # Debug: Print session state to verify changes
@@ -598,7 +600,6 @@ if action == "Add New Case":
         # st.write("Updated session state result:", st.session_state['result'])
 
         # Convert updated_tags to a comma-separated string
-        updated_tags_string = ", ".join(updated_tags)
         for key in parsed_case:
             # key, value = line.split(':', 1)  # Split by the first colon
             # key = key.strip()
