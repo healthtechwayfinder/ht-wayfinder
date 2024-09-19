@@ -599,6 +599,12 @@ elif action == "Edit Existing Case":
                 # Editable fields for the selected case
                 case_title = st.text_input("Title", case_details.get("Title", ""))
                 case_date_str = case_details.get("Date", "")
+                try:
+                    # Try to parse the date from ISO format, or default to today's date
+                    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
+                except ValueError:
+                    case_date = date.today()
+                #case_date_input = st.date_input("Date", case_date)
                 case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
                 location = st.text_input("Location", case_details.get("Location", ""))
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
@@ -613,14 +619,6 @@ elif action == "Edit Existing Case":
                     suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
                     maxtags=10,  # Max number of tags the user can add
                 )
-                try:
-                    # Try to parse the date from ISO format, or default to today's date
-                    case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
-                except ValueError:
-                    case_date = date.today()
-
-                case_date_input = st.date_input("Date", case_date)
-            
                 # Step 3: Save changes
                 if st.button("Save Changes"):
                     updated_data = {
@@ -632,7 +630,7 @@ elif action == "Edit Existing Case":
                         "People Present": people_present,
                         "Insider Language": insider_language,
                         "Tags": tags,
-                        "Observations": observations,
+                        #"Observations": observations,
                     }
                     if update_case(case_to_edit, updated_data):
                         st.success(f"Changes to '{case_to_edit}' saved successfully!")
