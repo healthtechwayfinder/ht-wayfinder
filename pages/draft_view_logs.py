@@ -55,7 +55,9 @@ col1, col2, col3 = st.columns([2, 2, 1])
 
 with col1:
     # Create a dropdown for selecting which sheet to view
-    selected_sheet = st.selectbox("Select a sheet to view:", list(worksheets.keys()))
+    st.markdown("##### Select Sheet")
+
+    selected_sheet = st.selectbox(list(worksheets.keys()))
 
 # Fetch data from Google Sheets based on the selected worksheet
 def load_data(worksheet_name):
@@ -75,6 +77,10 @@ def extract_unique_tags(df, tag_column):
 
 # Filter section based on the selected sheet
 with col2:
+    # st.markdown('<h1 style="font-size:18px;">Filters</h1>', unsafe_allow_html=True)
+    st.markdown("##### Filters")
+
+
     with st.container(border=True):
 
         df = st.session_state["df"]
