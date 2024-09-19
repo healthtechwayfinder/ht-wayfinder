@@ -322,6 +322,16 @@ def clear_case():
     update_case_ID()
     # Refresh the page back to the initial state
 
+def clear_casex():
+    if 'case_description' in st.session_state:
+        st.session_state['case_description'] = ""
+    if 'case_title' in st.session_state:
+        st.session_state['case_title'] = ""
+    if 'result' in st.session_state:
+        st.session_state['result'] = ""
+    if 'parsed_case' in st.session_state:
+        st.session_state['parsed_case'] = ""
+
 # Fetch case IDs and titles from Google Sheets
 def fetch_case_ids_and_titles():
     try:
@@ -687,7 +697,7 @@ elif action == "Edit Existing Case":
                     if update_case(case_to_edit, updated_data):
                         st.success(f"Changes to '{case_to_edit}' saved successfully!")
                         # st.session_state['rerun'] = True
-                        clear_case()
+                        clear_casex()
                         st.rerun()
                     else:
                         st.error(f"Failed to save changes to '{case_to_edit}'.")
