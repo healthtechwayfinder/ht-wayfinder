@@ -121,9 +121,6 @@ def fetch_need_details(selected_need_ID):
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Statement Log")
     need_data = sheet.get_all_records()
 
-    # # Print the need_data being fetched
-    # st.write(need_data)
-
     for row in need_data:
         if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
             return row
@@ -175,7 +172,7 @@ existing_need_ids_with_preview = getExistingNeedIDS()
 
 # Step 1: Fetch and display need IDs in a dropdown
 if not existing_need_ids_with_preview:
-    st.error("No cases found.")
+    st.error("No needs found.")
 else:
     # get ID from the dropdown value
     st.session_state['need_ID_with_preview'] = st.selectbox("Select Need Statement", existing_need_ids_with_preview)
@@ -185,6 +182,10 @@ else:
     if  st.session_state['need_ID_with_preview']:
         need_details = fetch_need_details(st.session_state['selected_need_ID'])
 
+        #adding this for observation handling
+      #  need_details = fetch_observation_details(st.session_state['selected_need_ID'])
+
+
 
         # need_details = fetch_need_details(need_to_edit)
         if need_details:
@@ -193,7 +194,7 @@ else:
             # Editable fields for the selected case
             #case_date = st.date_input("Date", date.fromisoformat(need_details.get("Date", str(date.today()))))
             # case_description = st.text_area("Case Description", need_details.get("Case Description", ""))
-            # location = st.text_input("Location", need_details.get("Location", ""))
+            Related Observation ID = st.text_input("Observation", need_details.get("observation_ID", ""))
             problem_var = st.text_input("Problem", need_details.get("problem", ""))
             population_var = st.text_input("Population", need_details.get("population", ""))
             outcome_var = st.text_input("Outcome", need_details.get("outcome", ""))
@@ -228,7 +229,72 @@ else:
                     st.error(f"Failed to save changes to '{st.session_state['selected_need_ID']}'.")
 
 
+# ////////////////////// DRAFT ////////////////////// DRAFT ////////////////////// DRAFT ////////////////////// 
+# finding & displaying observations
 
+def getExistingObsIDS():
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+    obs_ids = obs_log.col_values(1)[1:]
+    # obs_descrip = obs_log.col_values(5)[1:]
+    obs_titles = obs_log.col_values(2)[1:]
+
+    # find all observation ids with the same date
+    existing_obs_ids_with_title = dict(zip(obs_ids, obs_titles))
+
+    # make strings with case id - title
+    existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
+
+    # existing_obs_descrip = dict(zip(obs_ids, obs_descrip))
+
+
+    print("Existing Observation IDS: ")
+    print(existing_obs_ids_with_title)
+    return existing_obs_ids_with_title
+
+# def fetch_observation_details(selected_need_ID):
+#     sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Statement Log")
+#     need_data = sheet.get_all_records()
+
+#     for row in need_data:
+#         if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
+#             return row
+    
+#     st.error(f"Need ID {st.session_state['selected_need_ID']} not found.")
+#     return None
+
+def display_selected_observation(selected_obs_id):
+    obs_log = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+    df = pd.DataFrame(obs_log.get_all_records())
+
+    # Get the observation description based on the selected Observation ID
+    if selected_obs_id:
+        selected_observation = df[df['Observation ID'] == selected_obs_id]
+        if not selected_observation.empty:
+            observation_description = selected_observation.iloc[0]['Observation Description']
+            st.markdown(f"### {selected_obs_id} Description:\n{observation_description}")
+            # st.markdown(f"### Selected Observation Description:\n{observation_description}")
+        else:
+            st.info("No description available for this observation.")
+    else:
+        st.info("Please select an observation.")
+
+# preprae list of observations and prompt user to pick one
+existing_obs_ids_with_title = getExistingObsIDS()
+st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
+
+#  INSTEAD of ABOVE -- fetch observation ID from the sheet
+
+# df_descrips = pd.DataFrame(existing_obs_descrip)
+
+if st.session_state['obs_id_with_title']:
+    selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
+    display_selected_observation(selected_obs_id)
 
 
 
