@@ -639,15 +639,15 @@ elif action == "Edit Existing Case":
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
                 observations = st.text_input("Observations", case_details.get("Observations", ""))
-                #tags = st.text_input("Tags", case_details.get("Tags", ""))
+                tags = st.text_input("Tags", case_details.get("Tags", ""))
                 # # Editable field for tags using st_tags
-                tags = st_tags(
-                    label="Enter tags:",
-                    text="Press enter to add more",
-                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
-                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-                    maxtags=10,  # Max number of tags the user can add
-                )
+                # tags = st_tags(
+                #     label="Enter tags:",
+                #     text="Press enter to add more",
+                #     value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
+                #     suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                #     maxtags=10,  # Max number of tags the user can add
+                # )
                 # Step 3: Save changes
                 if st.button("Save Changes"):
                     updated_data = {
