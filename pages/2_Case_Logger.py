@@ -396,15 +396,16 @@ def update_case(case_id, updated_data):
         return False
 
 def fetch_all_observation_ids_and_titles():
-    sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")  # Ensure this is correct
-        # Fetch relevant columns from the sheet
+    sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+    
+    # Fetch relevant columns from the sheet
     observation_ids = sheet.col_values(1)[1:]  # Skip header
     observation_titles = sheet.col_values(2)[1:]  # Titles
     observation_ids_with_title = dict(zip(observation_ids, observation_titles))
-        # Create formatted list with ID - title format
-    formatted_observations = [f"{obs_id} - {title}" for obs_id, title in observation_ids_with_title.items()]
-    logging.info(f"Existing Observation IDs: {formatted_observations}")
     
+    # Create formatted list with ID - title format
+    formatted_observations = [f"{obs_id} - {title}" for obs_id, title in observation_ids_with_title.items()]
+
     return formatted_observations
         
 # Function to filter and return observation data for the given list of observation IDs
