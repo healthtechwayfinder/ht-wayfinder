@@ -10,12 +10,6 @@ from datetime import date
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Pydantic models and other dependencies
-from pydantic import BaseModel, Field
-import json
-import os
-import csv
-
 # Load credentials from Streamlit secrets
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
@@ -41,7 +35,7 @@ def get_google_sheet(sheet_name, worksheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     credentials = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(credentials)
-    sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+    sheet = client.open(sheet_name).worksheet(worksheet_name)
     return sheet
 
 # Function to get observation IDs from the Google Sheet
@@ -51,15 +45,21 @@ def get_observation_ids():
     # Fetch relevant columns from the sheet
     observation_ids = sheet.col_values(1)[1:]  # Skip header
     observation_titles = sheet.col_values(2)[1:]  # Titles
+    
+    # Debug: Log the raw data
+    st.write("Raw Observation IDs:", observation_ids)
+    st.write("Raw Observation Titles:", observation_titles)
+    
     observation_ids_with_title = dict(zip(observation_ids, observation_titles))
     
     # Create formatted list with ID - title format
     formatted_observations = [f"{obs_id} - {title}" for obs_id, title in observation_ids_with_title.items()]
     
-    logging.info(f"Existing Observation IDs: {formatted_observations}")
-    return formatted_observations
+    st.write("Formatted Observations:", formatted_observations)  # Debugging step
+    
+    return formatted_observations, observation_ids_with_title
 
-# Correcting the list of observation IDs to strings
+# Correct the list of observation IDs to strings
 observations = [
     "OB2409100015", "OB2409180003", "OB2409190002", "OB2409190003", 
     "OB2409190004", "OB2409190005", "OB2409190006", "OB2409190007"
@@ -67,20 +67,25 @@ observations = [
 
 # Function to filter and return observation data for the given list of observation IDs
 def get_filtered_observation_data(observations, observation_data):
+    st.write("Observations List (for filtering):", observations)  # Debugging step
+    st.write("Observation Data (from Google Sheet):", observation_data)  # Debugging step
     filtered_data = {obs_id: observation_data[obs_id] for obs_id in observations if obs_id in observation_data}
+    
+    st.write("Filtered Data:", filtered_data)  # Debugging step
+    
     return filtered_data
 
-# Get the observation IDs from Google Sheets
-observation_ids = get_observation_ids()
+# Get the observation IDs and titles from Google Sheets
+formatted_observations, observation_ids_with_title = get_observation_ids()
 
 # Apply the filter to get the formatted observations
-formatted_observations = get_filtered_observation_data(observations, observation_ids)
+filtered_observations = get_filtered_observation_data(observations, observation_ids_with_title)
 
 # Streamlit UI for Observation ID Selection
 st.title("Observation ID Selection")
 
 # Multi-select dropdown with observation IDs
-selected_observation_ids = st.multiselect("Select Observation IDs:", formatted_observations)
+selected_observation_ids = st.multiselect("Select Observation IDs:", list(filtered_observations.keys()))
 
 # Display the selected Observation IDs
 if selected_observation_ids:
