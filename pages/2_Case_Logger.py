@@ -693,15 +693,13 @@ elif action == "Edit Existing Case":
                         }
                         
                         if update_case(case_to_edit, updated_data):
-                            st.success("Changes saved successfully!")
                             
+                            del st.session_state["selected_case"] 
+                            st.success("Changes saved successfully!")
                             # st.rerun()
                         else:
                             st.error(f"Failed to save changes to '{case_to_edit}'.")
-
-        if st.button("clearing"):
-            del st.session_state["selected_case"] 
-        
+            
     
 
 # add a break line
