@@ -631,9 +631,14 @@ elif action == "Edit Existing Case":
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
+                
                 observations = case_details.get("Observations", "")  # Split tags into a list
+                # Step 1: Print the list of observation IDs provided
+                print("Observation IDs to filter:", observations)
                 all_observations = fetch_all_observation_ids_and_titles()
+                print("Full observation data:", observation_data)
                 formatted_observations = get_filtered_observation_data(observations,all_observations)
+                print("Filtered observation data:", filtered_data)
                 # Multi-select dropdown with observation IDs
                 selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, default=formatted_observations)  # Preselect the values
                 
