@@ -127,7 +127,9 @@ with st.form("my_form"):
     st.text_input("Notes:", key="notes")
 
     # Form submit button
-    submitted = st.form_submit_button("Submit")
+    # submitted = st.form_submit_button("Submit")
+    submitted = st.form_submit_button("Submit", on_click=submit_form)
+
     if submitted:
         st.write('<p style="color:green;">Need statement recorded!</p>', unsafe_allow_html=True)
 
