@@ -639,15 +639,19 @@ elif action == "Edit Existing Case":
                     observations = [obs.strip() for obs in observations.split(",")]  # Split by comma if needed
                 
                 # Step 1: Print the list of observation IDs provided
-                st.write("Observation IDs to filter:", observations)
+                # st.write("Observation IDs to filter:", observations)
                 all_observations, observation_ids_with_title = fetch_all_observation_ids_and_titles()
-                st.write("Full observation data:", all_observations)
+                # st.write("Full observation data:", all_observations)
                 formatted_observations = get_filtered_observation_data(observations,observation_ids_with_title)
-                st.write("Filtered observation data:", formatted_observations)
+                # st.write("Filtered observation data:", formatted_observations)
                 # Multi-select dropdown with observation IDs
-                selected_observation_ids = st.multiselect("Select Observation IDs:", all_observations, formatted_observations)  # Preselect the values
-                
-                # # Editable field for observations
+                selected_observations = st.multiselect("Select Observation IDs:", all_observations, formatted_observations)  # Preselect the values
+                # Extract only the observation IDs from the selected_observations list
+                observation_ids_only = [obs.split(" - ")[0] for obs in selected_observations]
+
+                # Debugging to check the extracted observation IDs
+                st.write("Selected Observation IDs:", observation_ids_only)
+                                # # Editable field for observations
                 # observations = st_tags(
                 #     label="Enter observation-IDs:",
                 #     text="Press enter to add more",
@@ -668,7 +672,7 @@ elif action == "Edit Existing Case":
                 # Step 3: Save changes
                 if st.button("Save Changes"):
                     tags_string = ", ".join(tags)
-                    observations_string = ", ".join(observations)
+                    observations_string = ", ".join(observation_ids_only)
                     updated_data = {
                         "Title": case_title,
                         "Date": case_date_input.isoformat(),
