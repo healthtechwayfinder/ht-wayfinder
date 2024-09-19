@@ -575,22 +575,10 @@ if action == "Add New Case":
     
     st.markdown("---")
 
-    # Container for result display
-     #clear_case()  # Optional: Clear case if needed before rerun
-    
-    # if st.button("Back to Main Menu"):
-    #     clear_case()
-    #     switch_page("main_menu")
-    
-    
-    # st.markdown("---")
-    # Apply custom CSS to make the button blue
-
 # If the user chooses "Edit Existing Case"
 elif action == "Edit Existing Case":
    
     st.markdown("### Edit an Existing Case")
-
     # Fetch and display case IDs and titles in a dropdown
     case_info = fetch_case_ids_and_titles()
 
@@ -600,44 +588,31 @@ elif action == "Edit Existing Case":
     else:
         # Create a list of display names in the format "case_id: title"
         case_options = [f"{case_id}: {title}" for case_id, title in case_info]
-        
         # Display the dropdown with combined case_id and title
         selected_case = st.selectbox("Select a case to edit", case_options)
-
         # Extract the selected case_id from the dropdown (case_id is before the ":")
         case_to_edit = selected_case.split(":")[0].strip()
-    
         # Step 2: Fetch and display case details for the selected case
         if case_to_edit:
             case_details = fetch_case_details(case_to_edit)
-            
             if case_details:
-                # # Debug: Print the case details (optional)
-                # st.write(f"Editing case: {case_details}")
-    
                 # Editable fields for the selected case
                 case_title = st.text_input("Title", case_details.get("Title", ""))
-                #case_date = st.date_input("Date", date.fromisoformat(case_details.get("Date", str(date.today()))))
+                case_date_str = case_details.get("Date", "")
                 case_description = st.text_area("Case Description", case_details.get("Case Description", ""))
                 location = st.text_input("Location", case_details.get("Location", ""))
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
-                tags = st.text_input("Tags", case_details.get("Tags", ""))
-
-
+                #tags = st.text_input("Tags", case_details.get("Tags", ""))
                 # # Editable field for tags using st_tags
-                # tags = st_tags(
-                #     label="Enter tags:",
-                #     text="Press enter to add more",
-                #     value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
-                #     suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
-                #     maxtags=10,  # Max number of tags the user can add
-                # )
-
-            
-                        # Get and validate the date field
-                case_date_str = case_details.get("Date", "")
+                tags = st_tags(
+                    label="Enter tags:",
+                    text="Press enter to add more",
+                    value=case_details.get("Tags", "").split(",") if case_details.get("Tags") else [],  # Split tags into a list
+                    suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                    maxtags=10,  # Max number of tags the user can add
+                )
                 try:
                     # Try to parse the date from ISO format, or default to today's date
                     case_date = date.fromisoformat(case_date_str) if case_date_str else date.today()
