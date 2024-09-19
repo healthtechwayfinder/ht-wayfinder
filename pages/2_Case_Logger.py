@@ -631,7 +631,7 @@ elif action == "Edit Existing Case":
                 stakeholders = st.text_input("Stakeholders", case_details.get("Stakeholders", ""))
                 people_present = st.text_input("People Present", case_details.get("People Present", ""))
                 insider_language = st.text_input("Insider Language", case_details.get("Insider Language", ""))
-                observations = case_details.get("Observations", "").split(",") if case_details.get("Observations") else [],  # Split tags into a list
+                observations = case_details.get("Observations", "")  # Split tags into a list
                 all_observations = fetch_all_observation_ids_and_titles()
                 formatted_observations = get_filtered_observation_data(observations,all_observations)
                 # Multi-select dropdown with observation IDs
