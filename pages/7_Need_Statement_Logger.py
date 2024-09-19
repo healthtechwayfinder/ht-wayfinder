@@ -379,7 +379,10 @@ def clear_form():
 # Function to handle form submission
 def submit_form():
     # split the observation ID from the descriptive title
-    st.session_state['observation_ID'] = st.session_state.obs_id_with_title.split(" - ")[0]
+
+    # selected_obs_ids = [obs.split(" - ")[0] for obs in st.session_state['obs_ids_with_title']]
+
+    st.session_state['observation_ID'] = [obs.split(" - ")[0] for obs in st.session_state['obs_ids_with_title']]
 
     # refresh the need ID once again, make sure the need ID is UTD in case anyone else has submitted one while this need statement was being authored
     update_need_ID()
