@@ -735,6 +735,23 @@ elif action == "Edit Existing Case":
                             "Tags": tags_string,
                             "Observations": observations_string,
                         }
+                        # Ensure observation_ids_only is a list
+                        if isinstance(observation_ids_only, list):
+                            st.write("observation_ids_only is a list:", observation_ids_only)
+                        else:
+                            st.write("Error: observation_ids_only is not a list")
+                        
+                        # Ensure old_observation_ids is a list
+                        if isinstance(old_observation_ids, list):
+                            st.write("old_observation_ids is a list:", old_observation_ids)
+                        else:
+                            st.write("Error: old_observation_ids is not a list")
+                        
+                        # Ensure case_to_edit is a string
+                        if isinstance(case_to_edit, str):
+                            st.write("case_to_edit is a string:", case_to_edit)
+                        else:
+                            st.write("Error: case_to_edit is not a string")
                         
                         if update_case(case_to_edit, updated_data):
                             # Call the function to update the observation log
