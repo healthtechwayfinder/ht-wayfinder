@@ -78,6 +78,7 @@ class caseRecord(BaseModel):
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags (only noun) that are very relevant to the medical observation. The tags can be used to identify the type of procedure: (invasive procedure, minimally invasive, open procedure, non invasive, in the clinic, in the OR, in the emergency room..) the medical specialty (e.g.: rhynology, oncology, ophtalmology,..)  area of medicine, or type of technology being used for example Do not use numbers and separate them by commas. Give only the list of tags without any quotes or special characters.")
 
+
 def generateDefinition(term):
     llm = ChatOpenAI(
         model_name="gpt-4o",
@@ -694,7 +695,8 @@ elif action == "Edit Existing Case":
                         
                         if update_case(case_to_edit, updated_data):
                             
-                            del st.session_state["selected_case"] 
+                            # del st.session_state["selected_case"] 
+                            st.session_state.pop("selected_case", None)
                             st.success("Changes saved successfully!")
                             # st.rerun()
                         else:
