@@ -19,6 +19,22 @@ from oauth2client.service_account import ServiceAccountCredentials
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
 
 
+
+
+
+
+
+st.markdown("# H1 Heading")
+st.markdown("## H2 Heading")
+st.markdown("### H3 Heading")
+st.markdown("#### H4 Heading")
+st.markdown("##### H5 Heading")
+st.markdown("###### H6 Heading")
+
+
+
+
+
 if "worksheet_name" not in st.session_state:
     st.session_state["worksheet_name"] = "Sheet1"
 
