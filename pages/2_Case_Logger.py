@@ -323,8 +323,8 @@ def clear_case():
     # Refresh the page back to the initial state
 
 def clear_it():
-    if 'selected_case' in st.session_state:
-        st.session_state['selected_case'] = ""
+    selected_case = [""]
+    # selected_case = st.selectbox("Select a case to edit", [""] + case_options)
         
 
 
