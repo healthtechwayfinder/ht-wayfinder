@@ -166,6 +166,7 @@ with col3:
     
     # Map selected user to worksheet
     worksheet_mapping = {
+        " ": "Sheet 5"
         "Deb": "Sheet1",
         "Kyle": "Sheet2",
         "Lois": "Sheet3",
@@ -181,7 +182,7 @@ with col3:
     
     st.selectbox(
         "Select User", 
-        [""] + users, 
+        [" "] + users, 
         key="selected_user", 
         on_change=update_note
     )
