@@ -115,7 +115,7 @@ with col2:
     
             if observer:
                 df = df[df['Observer'].isin(observer)]
-             if selected_observation_cases:
+            if selected_observation_cases:
                 df = df[df['Related Case ID'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
             if selected_observation_tags:
                 df = df[df['Tags'].apply(lambda tags: any(tag in tags for tag in selected_observation_tags))]
