@@ -693,8 +693,8 @@ elif action == "Edit Existing Case":
                         }
                         if update_case(case_to_edit, updated_data):
                             st.session_state["selected_case"] = "" 
-                            st.success(f"Changes to '{case_to_edit}' saved successfully!")
-                            # st.session_state['rerun'] = True
+                            st.success("Changes saved successfully!")
+                            st.session_state['rerun'] = True
                             
                             # st.rerun()
                         else:
