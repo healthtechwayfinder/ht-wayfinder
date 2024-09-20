@@ -250,15 +250,15 @@ else:
             # tags = st.text_input("Tags", need_details.get("Tags", ""))
             notes = st.text_area("Notes", need_details.get("notes", ""))
             existing_obs_ids_with_title = getExistingObsIDS()
-            st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
+            # st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
 
 #  INSTEAD of ABOVE -- fetch observation ID from the sheet
 
 # df_descrips = pd.DataFrame(existing_obs_descrip)
 
-            if st.session_state['obs_id_with_title']:
-                selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
-                display_selected_observation(selected_obs_id)
+            # if st.session_state['obs_id_with_title']:
+            #     selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
+            #     display_selected_observation(selected_obs_id)
 
 
     
