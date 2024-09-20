@@ -526,7 +526,6 @@ case_id_with_title = st.selectbox(
 )
 # Ensure observation date is displayed
 # Ensure observation date is displayed
-st.date_input("Observation Date", key="unique_observation_date_key")  # Use a unique key here
 
 
 # Use columns to place observation_date, observation_id, and observer side by side
