@@ -471,6 +471,48 @@ def getExistingCaseIDS():
     print(existing_case_ids_with_title)
     return existing_case_ids_with_title
 
+
+ Function to get the date of the selected case from Google Sheets
+def get_case_date(case_id_with_title):
+    # Extract the case ID from the selected case (before the hyphen)
+    case_id = case_id_with_title.split(" - ")[0]
+
+    try:
+        scope = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive.metadata.readonly"
+        ]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        
+        # Open the case log sheet
+        case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+
+        # Fetch all case data
+        case_data = case_log.get_all_records()
+
+        # Loop through the rows and find the case with the matching Case ID
+        for row in case_data:
+            if row['Case ID'] == case_id:
+                case_date_str = row['Date']
+                case_date = datetime.strptime(case_date_str, '%Y-%m-%d').date()  # Adjust date format if needed
+                return case_date
+
+    except Exception as e:
+        logging.error(f"Error fetching case date: {e}")
+        return None
+
+
+# Function to update the observation date when a case is selected
+def update_observation_date(case_id_with_title):
+    case_date = get_case_date(case_id_with_title)
+    if case_date:
+        st.session_state['observation_date'] = case_date  # Update observation date to match the case date
+        st.success(f"Observation date updated to match case date: {case_date}")
+    else:
+        st.error("Failed to retrieve case date.")
+
+
 existing_case_ids_with_title = getExistingCaseIDS()
 case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
     # put case ID dateinformation here
@@ -482,7 +524,8 @@ with col1:
     # st calendar for date input with a callback to update the observation_id
     #edit this to be the same as the case date
 
-   
+   # Ensure observation date is displayed
+    st.date_input("Observation Date", key="observation_date")
     st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
   
 
@@ -547,17 +590,6 @@ parsed_observation = st.session_state['parsed_observation']
 
  # Ensure 'result' exists
 if isinstance(parsed_observation, dict):
-    # Print case title
-    # st.session_state['case_title'] = st.text_area("**Observation Title**", value=st.session_state['observation_title'])
-
-# FOR REFERENCE
-# db.add_texts([observation], metadatas=[{
-#     'observer': observer,
-#     'observation_date': observation_date,
-#     'observation_id': observation_id,
-#     'tags': observation_tags,  # Add tags to the metadata
-#     'case_id': related_case_id
-# }])
     
     input_fields = list(ObservationRecord.__fields__.keys())
     # Find missing fields by checking if any field in parsed_observation is None or empty
