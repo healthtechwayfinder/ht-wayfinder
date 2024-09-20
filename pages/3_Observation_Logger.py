@@ -580,15 +580,12 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    # Retrieve the selected case ID and title from the session state
     case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
-
-    # Ensure a case is selected (i.e., not an empty value)
     if case_id_with_title:
-        case_date = get_case_date(case_id_with_title)  # Get the case date using your function
+        case_date = get_case_date(case_id_with_title)
         if case_date:
-            st.session_state['observation_date'] = case_date  # Update the observation date in session state
-            update_observation_id()  # Ensure observation ID is updated when the date is updated
+            st.session_state['observation_date'] = case_date
+            update_observation_id()  # Also update the observation ID if the date changes
 
 
 def fetch_all_case_ids_and_titles():
@@ -622,7 +619,7 @@ def update_observation(observation_id, updated_data):
         
         # Find the row corresponding to the observation_id and update it
         for i, row in enumerate(data, start=2):  # Skip header row
-            if row["observation ID"] == observation_id:
+            if row["Observation ID"] == observation_id:
                 # Update the necessary fields
                 for key, value in updated_data.items():
                     if key in headers:
@@ -634,9 +631,10 @@ def update_observation(observation_id, updated_data):
         # Case ID not found
         print(f"observation ID {observation_id} not found")
         return False
+        
     except Exception as e:
-        print(f"Error")
-        return []
+        print(f"Error updating observation: {e}")
+        return False
 
 
 # If the user chooses "Add New Case"
@@ -905,21 +903,6 @@ elif action == "Edit Existing Observation":
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
                     # st.write("Filtered observation data:", formatted_observations)
                     # Multi-select dropdown with observation IDs
-                # Find the index of formatted_case in all_cases
-                if formatted_case in all_cases:
-                    selected_index = all_cases.index(formatted_case)
-                else:
-                    selected_index = 0  # Default to the first item if not found
-                
-                # Use the index in st.selectbox
-                selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index)
-
-                    # Extract only the observation IDs from the selected_observations list
-                case_id = selected_case.split(" - ")[0]
-                case_title = selected_case.split(" - ")[1]
-                st.write(case_id)
-
-
                 
                 observation_date_str = observation_details.get("Date", "")
                 try:
@@ -927,6 +910,32 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                 observation_date_input = st.date_input("Date", observation_date)
+
+                observation_date_input = st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
+
+                
+                # Find the index of formatted_case in all_cases
+                if formatted_case in all_cases:
+                    selected_index = all_cases.index(formatted_case)
+                else:
+                    selected_index = 0  # Default to the first item if not found
+                
+                # Use the index in st.selectbox
+                # selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index, on_change=update_observation_date)
+
+                selected_case = st.selectbox(
+                    "Select a Related Case",
+                    all_cases,
+                    index=selected_index,
+                    on_change=update_observation_date  # Call the update function only when a case ID is selected
+                )
+
+                
+                    # Extract only the observation IDs from the selected_observations list
+                case_id = selected_case.split(" - ")[0]
+                case_title = selected_case.split(" - ")[1]
+                st.write(case_id)
+
                 
                 observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
                 observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
@@ -992,17 +1001,10 @@ elif action == "Edit Existing Observation":
                             "Case Title": case_title,
                             
                         }
-                        if update_observation(observation_to_edit, updated_data):
-                            # Call the function to update the observation log
-                            # if update_observation_log(observation_ids_only, old_observation_ids, observation_to_edit):
-                            #     st.success("Changes and observation log saved successfully!")
-                            # else:
-                            #     st.error(f"Failed to save observation log for case '{case_to_edit}'")
-                            
-                            # Optionally clear the selected case after saving
-                            st.session_state.pop("selected_observation", None)
-                        else:
-                            st.error(f"Failed to save changes to '{observation_to_edit}'.")
+                    if update_observation(observation_to_edit, updated_data):
+                        st.session_state.pop("selected_observation", None)
+                    else:
+                        st.error(f"Failed to save changes to '{observation_to_edit}'.")
             
         
 
