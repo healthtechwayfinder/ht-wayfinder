@@ -580,13 +580,16 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    case_id_with_title = st.session_state.get('selected_observation', '')
+    case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')  # Fetch selected case from session state
     if case_id_with_title:
-        case_id = case_id_with_title.split(" - ")[0]
-        case_date = get_case_date(case_id)  # Assuming get_case_date returns the date for the given case_id
+        case_id = case_id_with_title.split(" - ")[0]  # Extract case ID from the formatted string
+        case_date = get_case_date(case_id)  # Fetch case date using the case ID
         if case_date:
-            st.session_state['observation_date'] = case_date  # Update observation date
-            update_observation_id()  # Ensure the observation ID is updated
+            st.session_state['observation_date'] = case_date  # Update the observation date in session state
+            update_observation_id()  # Update observation ID when the date changes
+        else:
+            st.error("Error fetching the case date.")
+
 
 def fetch_all_case_ids_and_titles():
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
@@ -914,24 +917,35 @@ elif action == "Edit Existing Observation":
                 st.session_state['observation_date'] = observation_date
                 # observation_date_input = st.date_input("Date", observation_date, key='observation_date', on_change=update_observation_id)
                 # Ensure that the session state is used for the observation date input
-                observation_date_input = st.date_input("Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
-
+                observation_date_input = st.date_input(
+                    "Observation Date",
+                    value=st.session_state['observation_date'],
+                    key='observation_date',  # Tie it to the session state
+                    on_change=update_observation_id  # Ensure observation ID is updated when the date changes
+                )
                 
                 # Handle case selection
                 if formatted_case in all_cases:
                     selected_index = all_cases.index(formatted_case)
                 else:
                     selected_index = 0  # Default to the first item if not found
-        
-                selected_case = st.selectbox(
-                    "Select a Related Case",
+
+                # Selectbox for Related Case ID
+                case_id_with_title = st.selectbox(
+                    "Related Case ID",
                     all_cases,
-                    index=selected_index,
-                    on_change=update_observation_date  # Call update function when case is changed
+                    key='selected_observation_id_with_title',
+                    on_change=update_observation_date  # Trigger date update when a case is selected
                 )
+                # selected_case = st.selectbox(
+                #     "Select a Related Case",
+                #     all_cases,
+                #     index=selected_index,
+                #     on_change=update_observation_date  # Call update function when case is changed
+                # )
         
-                case_id = selected_case.split(" - ")[0]
-                case_title = selected_case.split(" - ")[1]
+                case_id = case_id_with_title.split(" - ")[0]
+                case_title = case_id_with_title.split(" - ")[1]
                 st.write(case_id)
 
                 
