@@ -472,7 +472,7 @@ def getExistingCaseIDS():
     return existing_case_ids_with_title
 
 
- Function to get the date of the selected case from Google Sheets
+ #Function to get the date of the selected case from Google Sheets
 def get_case_date(case_id_with_title):
     # Extract the case ID from the selected case (before the hyphen)
     case_id = case_id_with_title.split(" - ")[0]
@@ -523,11 +523,9 @@ col1, col2, col3 = st.columns(3)
 with col1:
     # st calendar for date input with a callback to update the observation_id
     #edit this to be the same as the case date
-
-   # Ensure observation date is displayed
-    st.date_input("Observation Date", key="observation_date")
     st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
-  
+    # Ensure observation date is displayed
+    st.date_input("Observation Date", key="observation_date")
 
 
 with col2:
