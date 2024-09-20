@@ -19,6 +19,14 @@ import os
 import csv
 import time
 
+creds_dict = st.secrets["gwf_service_account"]
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.metadata.readonly"
+]
+creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+client = gspread.authorize(creds)
+glossary_sheet = client.open("Glossary").sheet1
 
 def clear_row_by_term(term_to_search, glossary_sheet):
     """
