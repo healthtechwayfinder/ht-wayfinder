@@ -28,7 +28,11 @@ import csv
 
 st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
 
-st.markdown("# Add a New Observation")
+# st.markdown("# Add a New Observation")
+
+# Dropdown menu for selecting action
+action = st.selectbox("Choose an action", ["Add New Observation", "Edit Existing Observation"])
+
 
 
 observations_csv = "observations.csv"
@@ -529,223 +533,231 @@ def update_observation_date():
             st.session_state['observation_date'] = case_date  # Update the observation date in session state
             update_observation_id()  # Ensure observation ID is updated when the date is updated
 
-# Ensure observation_date is in session state
-if 'observation_date' not in st.session_state:
-    st.session_state['observation_date'] = date.today()  # Default to today's date
-# Ensure observation_id is in session state
-if 'observation_id' not in st.session_state:
-    update_observation_id()  # Initialize the observation ID
 
-
-existing_case_ids_with_title = getExistingCaseIDS()
-# case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
-
-# Selectbox for Related Case ID
-case_id_with_title = st.selectbox(
-    "Select a Related Case ID",
-    [""] + existing_case_ids_with_title,
-    key='selected_case_id_with_title',
-    on_change=update_observation_date  # Call the update function only when a case ID is selected
-)
-
-
-# Use columns to place observation_date, observation_id, and observer side by side
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    # st calendar for date input with a callback to update the observation_id
-    #edit this to be the same as the case date
-    # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
-
-    # Display the observation date input and make it reflect session state
-    st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
-
-
-with col2:
-    # Ensure the observation ID is set the first time the script runs
+# If the user chooses "Add New Case"
+if action == "Add New Observation":
+    
+    # Ensure observation_date is in session state
+    if 'observation_date' not in st.session_state:
+        st.session_state['observation_date'] = date.today()  # Default to today's date
+    # Ensure observation_id is in session state
     if 'observation_id' not in st.session_state:
-        update_observation_id()
-
-    # Display the observation ID
-    st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
-
-with col3:
-    #Display Observer options 
-    observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"])
-
-
-# Initialize the observation text in session state if it doesn't exist
-if "observation" not in st.session_state:
-    st.session_state["observation"] = ""
-
-# Function to clear the text area
-def clear_text():
-    st.session_state["observation"] = ""
-
-# Add Your Observation Text with larger font size
-st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
-
-# Button for voice input (currently as a placeholder)
-if st.button("🎤 Record Observation (Coming Soon)"):
-    st.info("Voice recording feature coming soon!")
-
-# Observation Text Area
-st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
-
-
-# Create columns to align the buttons
-col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
-
-with col3:
-    st.button("Clear Observation", on_click=clear_text)
+        update_observation_id()  # Initialize the observation ID
     
-    # Container for result display
-    result_container = st.empty()
-
-
-
-with col1:
-    if st.button("Evaluate Observation"):
-        st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
-        st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-        # Generate tags for the observation
-        st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
+    
+    existing_case_ids_with_title = getExistingCaseIDS()
+    # case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
+    
+    # Selectbox for Related Case ID
+    case_id_with_title = st.selectbox(
+        "Select a Related Case ID",
+        [""] + existing_case_ids_with_title,
+        key='selected_case_id_with_title',
+        on_change=update_observation_date  # Call the update function only when a case ID is selected
+    )
+    
+    
+    # Use columns to place observation_date, observation_id, and observer side by side
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        # st calendar for date input with a callback to update the observation_id
+        #edit this to be the same as the case date
+        # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+    
+        # Display the observation date input and make it reflect session state
+        st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
+    
+    
+    with col2:
+        # Ensure the observation ID is set the first time the script runs
+        if 'observation_id' not in st.session_state:
+            update_observation_id()
+    
+        # Display the observation ID
+        st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+    
+    with col3:
+        #Display Observer options 
+        observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"])
+    
+    
+    # Initialize the observation text in session state if it doesn't exist
+    if "observation" not in st.session_state:
+        st.session_state["observation"] = ""
+    
+    # Function to clear the text area
+    def clear_text():
+        st.session_state["observation"] = ""
+    
+    # Add Your Observation Text with larger font size
+    st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
+    
+    # Button for voice input (currently as a placeholder)
+    if st.button("🎤 Record Observation (Coming Soon)"):
+        st.info("Voice recording feature coming soon!")
+    
+    # Observation Text Area
+    st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
+    
+    
+    # Create columns to align the buttons
+    col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
+    
+    with col3:
+        st.button("Clear Observation", on_click=clear_text)
         
+        # Container for result display
+        result_container = st.empty()
     
-if st.session_state['observation_summary'] != "":
-    st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
-
-# here, add the function call to turn parsed results into editable text fields  
-
-parsed_observation = st.session_state['parsed_observation']
-
- # Ensure 'result' exists
-if isinstance(parsed_observation, dict):
     
-    input_fields = list(ObservationRecord.__fields__.keys())
-    # Find missing fields by checking if any field in parsed_observation is None or empty
-    missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
-
-
-
-    for field in input_fields:
-        if field not in missing_fields and field != "tags":
-            field_clean = field.replace("_", " ").capitalize()
-            st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
-
-        if field == "observation_tags":
-            tags_values = parsed_observation.get('observation_tags', '')
-            tags_values = [tag.strip() for tag in tags_values.split(",")]
-            updated_tags = st_tags(
-                label="**Tags**",
-                text="Press enter to add more",
-                value=tags_values,  # Show the tags found in the result
-                maxtags=10,
-                key="tags_input"  # Unique key to ensure it's updated correctly
-            )
+    
+    with col1:
+        if st.button("Evaluate Observation"):
+            st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
+            st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+            # Generate tags for the observation
+            st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
             
-            # Update tags_values with the modified tags from st_tags
-            tags_values = updated_tags
-            updated_tags_string = ", ".join(updated_tags)
-            st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
-    
-    if st.session_state.get('parsed_observation', '') != '':
-        st.markdown("### Missing Fields")
         
-        for field in missing_fields:
-            field_clean = field.replace("_", " ").capitalize()
-            st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
-
-
-
-
-# # st.write(f":green[{st.session_state['result']}]")
-# # Display the generated tags in a text area (editable by the user if needed)
-# if st.session_state['observation_tags'] != "":
-#     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
-
-st.markdown(st.session_state['result'], unsafe_allow_html=True)
-
-
-
-
-
-
-if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
-    # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-    st.session_state["error"] = ""
-
-    if st.session_state['observation'] == "":
-        st.session_state["error"] = "Error! Please enter observation first"
-        st.markdown(
-            f"<span style='color:red;'>{st.session_state['error']}</span>", 
-            unsafe_allow_html=True
-        )
-    elif st.session_state['observation_summary'] == "":
-        st.session_state["error"] = "Error! Please evaluate observation first"
-        st.markdown(
-            f"<span style='color:red;'>{st.session_state['error']}</span>", 
-            unsafe_allow_html=True
-        )
-    else:
-        # update observation ID one last time to avoid accidental duplication with multiple users
-        update_observation_id() 
-        status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
-                            st.session_state['observation_tags'],
-                            st.session_state['observation_date'],
-                            st.session_state['observation_id'],
-                            case_id_with_title)
-        clear_observation()
-
-        # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
-        # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
-        if status:
-            st.session_state['result'] = "Observation added to your team's database."
-            st.session_state['rerun'] = True
-            st.rerun()
-
+    if st.session_state['observation_summary'] != "":
+        st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
+    
+    # here, add the function call to turn parsed results into editable text fields  
+    
+    parsed_observation = st.session_state['parsed_observation']
+    
+     # Ensure 'result' exists
+    if isinstance(parsed_observation, dict):
+        
+        input_fields = list(ObservationRecord.__fields__.keys())
+        # Find missing fields by checking if any field in parsed_observation is None or empty
+        missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
+    
+    
+    
+        for field in input_fields:
+            if field not in missing_fields and field != "tags":
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+    
+            if field == "observation_tags":
+                tags_values = parsed_observation.get('observation_tags', '')
+                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                updated_tags = st_tags(
+                    label="**Tags**",
+                    text="Press enter to add more",
+                    value=tags_values,  # Show the tags found in the result
+                    maxtags=10,
+                    key="tags_input"  # Unique key to ensure it's updated correctly
+                )
+                
+                # Update tags_values with the modified tags from st_tags
+                tags_values = updated_tags
+                updated_tags_string = ", ".join(updated_tags)
+                st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
+        
+        if st.session_state.get('parsed_observation', '') != '':
+            st.markdown("### Missing Fields")
+            
+            for field in missing_fields:
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+    
+    
+    
+    
+    # # st.write(f":green[{st.session_state['result']}]")
+    # # Display the generated tags in a text area (editable by the user if needed)
+    # if st.session_state['observation_tags'] != "":
+    #     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
+    
+    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    
+    
+    
+    
+    
+    
+    if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
+        # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+        st.session_state["error"] = ""
+    
+        if st.session_state['observation'] == "":
+            st.session_state["error"] = "Error! Please enter observation first"
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
+        elif st.session_state['observation_summary'] == "":
+            st.session_state["error"] = "Error! Please evaluate observation first"
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
         else:
-            st.session_state['result'] = "Error adding observation to your team's database, try again!"
-        # clear_observation()
+            # update observation ID one last time to avoid accidental duplication with multiple users
+            update_observation_id() 
+            status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
+                                st.session_state['observation_tags'],
+                                st.session_state['observation_date'],
+                                st.session_state['observation_id'],
+                                case_id_with_title)
+            clear_observation()
+    
+            # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
+            # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
+            if status:
+                st.session_state['result'] = "Observation added to your team's database."
+                st.session_state['rerun'] = True
+                st.rerun()
+    
+            else:
+                st.session_state['result'] = "Error adding observation to your team's database, try again!"
+            # clear_observation()
+    
+    # if st.session_state['rerun']:
+    #     time.sleep(3)
+    #     clear_observation()
+    #     st.session_state['rerun'] = False
+    #     st.rerun()
+    
+    
+    st.markdown("---")
+    
+    
+    # st.markdown("---")
+    # Apply custom CSS to make the button blue
+    # add a break line
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            background-color: #A51C30;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+        }
+        div.stButton > button:hover {
+            background-color: #E7485F;
+            color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+    
+    
+    
+    # Create a button using Streamlit's native functionality
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if st.button("Back to Dashboard"):
+        switch_page("Dashboard")
 
-# if st.session_state['rerun']:
-#     time.sleep(3)
-#     clear_observation()
-#     st.session_state['rerun'] = False
-#     st.rerun()
-
-
-st.markdown("---")
-
-
-# st.markdown("---")
-# Apply custom CSS to make the button blue
-# add a break line
-st.markdown("<br>", unsafe_allow_html=True)
-
-st.markdown("""
-    <style>
-    div.stButton > button {
-        background-color: #A51C30;
-        color: white;
-        font-size: 16px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-    }
-    div.stButton > button:hover {
-        background-color: #E7485F;
-        color: white;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-
-
-# Create a button using Streamlit's native functionality
-st.markdown("<br>", unsafe_allow_html=True)
-
-if st.button("Back to Dashboard"):
-    switch_page("Dashboard")
-
-
+# If the user chooses "Edit Existing Case"
+elif action == "Edit Existing Case":
+    
+    
+    
