@@ -452,11 +452,13 @@ def clear_observation():
         st.session_state['observation_description'] = ""
     if 'observation_title' in st.session_state:
         st.session_state['observation_title'] = ""
+    if 'observation_summary' in st.session_state:
+        st.session_state['observation_summary'] = ""
     if 'result' in st.session_state:
         st.session_state['result'] = ""
     if 'parsed_observation' in st.session_state:
         st.session_state['parsed_observation'] = ""
-        
+    clear_text()
     update_observation_id()
 
 import streamlit as st
