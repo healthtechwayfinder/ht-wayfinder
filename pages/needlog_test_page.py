@@ -26,22 +26,22 @@ OPENAI_API_KEY = st.secrets["openai_key"]
 st.set_page_config(page_title="Glossary", page_icon="📊")
 st.markdown("# Glossary")
 
-st.markdown("""
-    <style>
-    div.stButton > button {
-        background-color: #a51c30;
-        color: white;
-        font-size: 16px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-    }
-    div.stButton > button:hover {
-        background-color: #2c4a70;
-        color: white;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+# st.markdown("""
+#     <style>
+#     div.stButton > button {
+#         background-color: #a51c30;
+#         color: white;
+#         font-size: 16px;
+#         padding: 10px 20px;
+#         border: none;
+#         border-radius: 5px;
+#     }
+#     div.stButton > button:hover {
+#         background-color: #2c4a70;
+#         color: white;
+#     }
+#     </style>
+#     """, unsafe_allow_html=True)
 
 # Authenticate and connect to Google Sheets using service account credentials
 creds_dict = st.secrets["gwf_service_account"]
