@@ -903,30 +903,20 @@ elif action == "Edit Existing Observation":
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
                     # st.write("Filtered observation data:", formatted_observations)
                     # Multi-select dropdown with observation IDs
+
+                # Ensure session state for observation date and case selection
+                if 'observation_date' not in st.session_state:
+                    st.session_state['observation_date'] = date.today()
                 
+                                
                 observation_date_str = observation_details.get("Date", "")
                 try:
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
                 except ValueError:
                     observation_date = date.today()
                 
-                # # Ensure the observation date is tied directly to the observation details
-                # observation_date_input = st.date_input(
-                #     "Observation Date", 
-                #     value=observation_date,  # Directly from observation details, not session state
-                #     key='observation_date', 
-                #     on_change=update_observation_id
-                # )
-
-                # Ensure that the observation date input is directly tied to the session state
-                observation_date_input = st.date_input(
-                    "Observation Date", 
-                    value=st.session_state.get('observation_date', date.today()),  # Fetch date from session state
-                    key='observation_date',
-                    on_change=update_observation_id  # Trigger any additional updates if necessary
-                )
-                
-
+                if 'selected_observation_id_with_title' not in st.session_state:
+                    st.session_state['selected_observation_id_with_title'] = ''
                 
                 case_id_from_observation = observation_details.get("Related Case ID", "")
                 formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
@@ -941,14 +931,18 @@ elif action == "Edit Existing Observation":
                     "Select Related Case:", 
                     all_cases, 
                     index=selected_index, 
+                    key='selected_observation_id_with_title',
                     on_change=update_observation_date
                 )
 
-                if 'selected_observation_id_with_title' not in st.session_state:
-                    st.session_state['selected_observation_id_with_title'] = formatted_case  # Initialize with the correct case
-                if 'observation_date' not in st.session_state:
-                    st.session_state['observation_date'] = observation_date  # Initialize with the correct date
-                
+
+                observation_date_input = st.date_input(
+                    "Observation Date", 
+                    value=st.session_state.get('observation_date', date.today()),  # Fetch date from session state
+                    key='observation_date',
+                    on_change=update_observation_id  # Trigger any additional updates if necessary
+                )
+
                                     # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
                 case_title = selected_case.split(" - ")[1]
