@@ -909,29 +909,38 @@ elif action == "Edit Existing Observation":
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
                 except ValueError:
                     observation_date = date.today()
-                observation_date_input = st.date_input("Date", observation_date)
-
-                # observation_date_input = st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
+                
+                # Ensure the observation date is tied directly to the observation details
+                observation_date_input = st.date_input(
+                    "Observation Date", 
+                    value=observation_date,  # Directly from observation details, not session state
+                    key='observation_date', 
+                    on_change=update_observation_id
+                )
 
                 
-                # Find the index of formatted_case in all_cases
+                case_id_from_observation = observation_details.get("Related Case ID", "")
+                formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
+                
+                # Ensure proper index selection
                 if formatted_case in all_cases:
                     selected_index = all_cases.index(formatted_case)
                 else:
-                    selected_index = 0  # Default to the first item if not found
+                    selected_index = 0  # Fallback to the first case if not found
                 
-                # Use the index in st.selectbox
-                # selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index, on_change=update_observation_date)
-
                 selected_case = st.selectbox(
-                    "Select a Related Case",
-                    all_cases,
-                    index=selected_index,
-                    key='selected_observation_id_with_title',
-                    on_change=update_observation_date  # Call the update function only when a case ID is selected
+                    "Select Related Case:", 
+                    all_cases, 
+                    index=selected_index, 
+                    on_change=update_observation_date
                 )
+
+                if 'selected_observation_id_with_title' not in st.session_state:
+                    st.session_state['selected_observation_id_with_title'] = formatted_case  # Initialize with the correct case
+                if 'observation_date' not in st.session_state:
+                    st.session_state['observation_date'] = observation_date  # Initialize with the correct date
                 
-                    # Extract only the observation IDs from the selected_observations list
+                                    # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
                 case_title = selected_case.split(" - ")[1]
                 st.write(case_id)
