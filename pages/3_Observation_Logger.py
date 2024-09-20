@@ -536,6 +536,7 @@ def getExistingCaseIDS():
 
  #Function to get the date of the selected case from Google Sheets
 def get_case_date(case_id_with_title):
+    # Extract the case ID from the selected case (before the hyphen)
     case_id = case_id_with_title.split(" - ")[0]
 
     try:
@@ -546,7 +547,11 @@ def get_case_date(case_id_with_title):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
+        
+        # Open the case log sheet
         case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+
+        # Fetch all case data
         case_data = case_log.get_all_records()
 
         # Loop through the rows and find the case with the matching Case ID
@@ -575,28 +580,15 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')  # Fetch selected case from session state
+    # Retrieve the selected case ID and title from the session state
+    case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
+
+    # Ensure a case is selected (i.e., not an empty value)
     if case_id_with_title:
-        case_id = case_id_with_title.split(" - ")[0]  # Extract case ID from the formatted string
-        case_date = get_case_date(case_id)  # Fetch case date using the case ID
+        case_date = get_case_date(case_id_with_title)  # Get the case date using your function
         if case_date:
             st.session_state['observation_date'] = case_date  # Update the observation date in session state
-            update_observation_id()  # Update observation ID when the date changes
-        else:
-            st.error("Error fetching the case date.")
-
-# def update_observation_edit_date(case):
-#     case = st.session_state.get('case', '')
-#     if case:
-#         case_id = case.split(" - ")[0]  # Extract case ID from the formatted string
-#         case_date = get_case_date(case_id)  # Fetch case date using the case ID
-#         if case_date:
-#             st.session_state['observation_date'] = case_date  # Update the observation date in session state
-#             update_observation_id()  # Update observation ID when the date changes
-#         else:
-#             st.error("Error fetching the case date.")
-#     else:
-#             st.error("Error fetching the case date.")
+            update_observation_id()  # Ensure observation ID is updated when the date is updated
 
 
 def fetch_all_case_ids_and_titles():
@@ -630,7 +622,7 @@ def update_observation(observation_id, updated_data):
         
         # Find the row corresponding to the observation_id and update it
         for i, row in enumerate(data, start=2):  # Skip header row
-            if row["Observation ID"] == observation_id:
+            if row["observation ID"] == observation_id:
                 # Update the necessary fields
                 for key, value in updated_data.items():
                     if key in headers:
@@ -642,27 +634,244 @@ def update_observation(observation_id, updated_data):
         # Case ID not found
         print(f"observation ID {observation_id} not found")
         return False
+
+
+# If the user chooses "Add New Case"
+if action == "Add New Observation":
+    
+    # Ensure observation_date is in session state
+    if 'observation_date' not in st.session_state:
+        st.session_state['observation_date'] = date.today()  # Default to today's date
+    # Ensure observation_id is in session state
+    if 'observation_id' not in st.session_state:
+        update_observation_id()  # Initialize the observation ID
+    
+    
+    existing_case_ids_with_title = getExistingCaseIDS()
+    # case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
+    
+    # Selectbox for Related Case ID
+    case_id_with_title = st.selectbox(
+        "Select a Related Case ID",
+        [""] + existing_case_ids_with_title,
+        key='selected_observation_id_with_title',
+        on_change=update_observation_date  # Call the update function only when a case ID is selected
+    )
+    
+    
+    # Use columns to place observation_date, observation_id, and observer side by side
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        # st calendar for date input with a callback to update the observation_id
+        #edit this to be the same as the case date
+        # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+    
+        # Display the observation date input and make it reflect session state
+        st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
+    
+    
+    with col2:
+        # Ensure the observation ID is set the first time the script runs
+        if 'observation_id' not in st.session_state:
+            update_observation_id()
+    
+        # Display the observation ID
+        st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+    
+    with col3:
+        #Display Observer options 
+        observer = st.selectbox("Observer", [""] + ["Deborah", "Kyle", "Ryan", "Lois"])
+    
+    
+    # Initialize the observation text in session state if it doesn't exist
+    if "observation" not in st.session_state:
+        st.session_state["observation"] = ""
+    
+    # Function to clear the text area
+    def clear_text():
+        st.session_state["observation"] = ""
+    
+    # Add Your Observation Text with larger font size
+    st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
+    
+    # Button for voice input (currently as a placeholder)
+    if st.button("🎤 Record Observation (Coming Soon)"):
+        st.info("Voice recording feature coming soon!")
+    
+    # Observation Text Area
+    st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
+    
+    
+    # Create columns to align the buttons
+    col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
+    
+    with col3:
+        st.button("Clear Observation", on_click=clear_text)
         
-    except Exception as e:
-        print(f"Error updating observation: {e}")
-        return False
+        # Container for result display
+        result_container = st.empty()
+    
+    
+    
+    with col1:
+        if st.button("Evaluate Observation"):
+            st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
+            st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+            # Generate tags for the observation
+            st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
+            
+        
+    if st.session_state['observation_summary'] != "":
+        st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
+    
+    # here, add the function call to turn parsed results into editable text fields  
+    
+    parsed_observation = st.session_state['parsed_observation']
+    
+     # Ensure 'result' exists
+    if isinstance(parsed_observation, dict):
+        
+        input_fields = list(ObservationRecord.__fields__.keys())
+        # Find missing fields by checking if any field in parsed_observation is None or empty
+        missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
+    
+    
+    
+        for field in input_fields:
+            if field not in missing_fields and field != "tags":
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+    
+            if field == "observation_tags":
+                tags_values = parsed_observation.get('observation_tags', '')
+                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                updated_tags = st_tags(
+                    label="**Tags**",
+                    text="Press enter to add more",
+                    value=tags_values,  # Show the tags found in the result
+                    maxtags=10,
+                    key="tags_input"  # Unique key to ensure it's updated correctly
+                )
+                
+                # Update tags_values with the modified tags from st_tags
+                tags_values = updated_tags
+                updated_tags_string = ", ".join(updated_tags)
+                st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
+        
+        if st.session_state.get('parsed_observation', '') != '':
+            st.markdown("### Missing Fields")
+            
+            for field in missing_fields:
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+    
+    
+    
+    
+    # # st.write(f":green[{st.session_state['result']}]")
+    # # Display the generated tags in a text area (editable by the user if needed)
+    # if st.session_state['observation_tags'] != "":
+    #     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
+    
+    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    
+    
+    
+    
+    
+    
+    if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
+        # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+        st.session_state["error"] = ""
+    
+        if st.session_state['observation'] == "":
+            st.session_state["error"] = "Error! Please enter observation first"
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
+        elif st.session_state['observation_summary'] == "":
+            st.session_state["error"] = "Error! Please evaluate observation first"
+            st.markdown(
+                f"<span style='color:red;'>{st.session_state['error']}</span>", 
+                unsafe_allow_html=True
+            )
+        else:
+            # update observation ID one last time to avoid accidental duplication with multiple users
+            update_observation_id() 
+            status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
+                                st.session_state['observation_tags'],
+                                st.session_state['observation_date'],
+                                st.session_state['observation_id'],
+                                case_id_with_title)
+            clear_observation()
+    
+            # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
+            # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
+            if status:
+                st.session_state['result'] = "Observation added to your team's database."
+                st.session_state['rerun'] = True
+                st.rerun()
+    
+            else:
+                st.session_state['result'] = "Error adding observation to your team's database, try again!"
+            # clear_observation()
+    
+    # if st.session_state['rerun']:
+    #     time.sleep(3)
+    #     clear_observation()
+    #     st.session_state['rerun'] = False
+    #     st.rerun()
+    
+    
+    st.markdown("---")
+    
+    
+    # st.markdown("---")
+    # Apply custom CSS to make the button blue
+    # add a break line
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            background-color: #A51C30;
+            color: white;
+            font-size: 16px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+        }
+        div.stButton > button:hover {
+            background-color: #E7485F;
+            color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+    
+    
+    
+    # Create a button using Streamlit's native functionality
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    if st.button("Back to Dashboard"):
+        switch_page("Dashboard")
 
-
-# If the user chooses "Edit Existing Observation"
+# If the user chooses "Add New Case"
 elif action == "Edit Existing Observation":
 
     st.markdown("### Edit an Existing Observation")
 
     # Load existing observations from Google Sheets (or another source)
-    observation_info = fetch_observation_ids_and_titles()
-
-    # Ensure observation_info is not empty
+    observation_info = fetch_observation_ids_and_titles()  # Implement this function to load existing observation data
+    
+    # Ensure case_info is not empty
     if not observation_info:
         st.error("No observations found.")
     else:
-        # Create a list of display names in the format "Observation ID: Title"
+        # Create a list of display names in the format "case_id: title"
         observation_options = [f"{observation_id}: {title}" for observation_id, title in observation_info]
-
         st.markdown("""
         <style>
         h4 {
@@ -672,133 +881,131 @@ elif action == "Edit Existing Observation":
         </style>
         <h4>Select an Observation to edit</h4>
         """, unsafe_allow_html=True)
-
-        # Selectbox for selecting an observation to edit
+        # Display the dropdown with combined case_id and title
         selected_observation = st.selectbox("", [""] + observation_options, key="selected_observation", label_visibility="collapsed")
-
-        # If an observation is selected
-        if selected_observation:
-            # Extract the selected Observation ID from the dropdown (before the colon)
+        if selected_observation != "":
+            # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
             observation_details = fetch_observation_details(observation_to_edit)
-
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_to_edit}")
                 
-                # Fetch existing case IDs and titles from Google Sheets
+                # # Loop through observation fields and display editable fields (except for Observation ID)
+                # for field_name, field_value in observation_details.items():
+                #     if field_name != "Observation ID":  # Ensure ID is not editable
+                #         st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
+                # st.write(f"Editing Observation ID: {observation_to_edit}")
+
+                case = observation_details.get("Related Case ID", "")  
                 all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
+                # st.write("Full observation data:", all_observations)
+                formatted_case = get_filtered_case_data(case,case_ids_with_title)
+                    # st.write("Filtered observation data:", formatted_observations)
+                    # Multi-select dropdown with observation IDs
+                # Find the index of formatted_case in all_cases
+                if formatted_case in all_cases:
+                    selected_index = all_cases.index(formatted_case)
+                else:
+                    selected_index = 0  # Default to the first item if not found
+                
+                # Use the index in st.selectbox
+                selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index)
 
-                # Get the formatted case related to the observation
-                case_id_from_observation = observation_details.get("Related Case ID", "")
-                formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
+                    # Extract only the observation IDs from the selected_observations list
+                case_id = selected_case.split(" - ")[0]
+                case_title = selected_case.split(" - ")[1]
+                st.write(case_id)
 
-                # Pre-fill the observation date
+
+                
                 observation_date_str = observation_details.get("Date", "")
                 try:
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
                 except ValueError:
                     observation_date = date.today()
-
-                # Initialize session state for 'observation_date' and 'selected_observation_id_with_title'
-                if 'observation_date' not in st.session_state:
-                    st.session_state['observation_date'] = observation_date
-                if 'selected_observation_id_with_title' not in st.session_state:
-                    st.session_state['selected_observation_id_with_title'] = formatted_case
-
-                # Function to handle date update (this must not take any arguments)
-                def update_observation_edit_id():
-                    st.session_state['observation_id_updated'] = True  # Example flag for state change
-                    # Perform any other necessary operations when the observation date changes
-
-                # Function to update observation when case changes
-                def update_observation_edit_date():
-                    selected_case = st.session_state['selected_observation_id_with_title']
-                    st.session_state['observation_date'] = get_case_date(selected_case)
-
-                # Observation Date input
-                observation_date_input = st.date_input(
-                    "Observation Date",
-                    value=st.session_state['observation_date'],
-                    key='observation_date',
-                    on_change=update_observation_edit_id  # Ensure observation ID is updated when the date changes
-                )
-
-                # Selectbox for Related Case ID
-                case = st.selectbox(
-                    "Related Case ID",
-                    all_cases,
-                    index=all_cases.index(formatted_case) if formatted_case in all_cases else 0,
-                    key='selected_observation_id_with_title',
-                    on_change=update_observation_edit_date  # Trigger date update when a case is selected
-                )
-
-                # Extract case_id and case_title from the selected case
-                case_id = case.split(" - ")[0]
-                case_title = case.split(" - ")[1]
-
-                # Observer selection
+                observation_date_input = st.date_input("Date", observation_date)
+                
                 observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
-                observer_value = observation_details.get("Observer", "")
-                observer_index = observer_list.index(observer_value) if observer_value in observer_list else 0
-                observer = st.selectbox("Observer", observer_list, index=observer_index)
-
-                # Observation form fields
+                observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
+                # Ensure the observer_value exists in the list, and get its index
+                if observer_value in observer_list:
+                    observer_index = observer_list.index(observer_value)
+                else:
+                    observer_index = 0  # Default to the first item if the value isn't in the list
+                    
+                observer = st.selectbox("Observer", observer_list , index=observer_index)
                 observation_title = st.text_input("Title", observation_details.get("Observation Title", ""))
                 observation_description = st.text_input("Description", observation_details.get("Observation Description", ""))
+                # observation_stakeholders = st.text_input("Title", observation_details.get("Observation Title", ""))
                 observation_stakeholders = st_tags(
-                    label="Stakeholders:",
-                    text="Press enter to add more",
-                    value=observation_details.get("Stakeholders", "").split(",") if observation_details.get("Stakeholders") else [],
-                    maxtags=30
-                )
+                        label="Stakeholders:",
+                        text="Press enter to add more",
+                        value=observation_details.get("Stakeholders", "").split(",") if observation_details.get("Stakeholders") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=30,  # Max number of tags the user can add
+                    )
+
                 observation_sensory_observations = st.text_input("Sensory Observations", observation_details.get("Sensory Observations", ""))
                 observation_product_interactions = st.text_input("Product Interactions", observation_details.get("Product Interactions", ""))
                 observation_people_interactions = st.text_input("People Interactions", observation_details.get("People Interactions", ""))
                 observation_process_actions = st.text_input("Process Actions", observation_details.get("Process Actions", ""))
                 insider_language = st_tags(
-                    label="Insider Language:",
-                    text="Press enter to add more",
-                    value=observation_details.get("Insider Language", "").split(",") if observation_details.get("Insider Language") else [],
-                    maxtags=30
-                )
+                        label="Insider Language:",
+                        text="Press enter to add more",
+                        value=observation_details.get("Insider Language", "").split(",") if observation_details.get("Insider Language") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=30,  # Max number of tags the user can add
+                    )
                 tags = st_tags(
-                    label="Tags:",
-                    text="Press enter to add more",
-                    value=observation_details.get("Tags", "").split(",") if observation_details.get("Tags") else [],
-                    maxtags=30
-                )
+                        label="Tags:",
+                        text="Press enter to add more",
+                        value=observation_details.get("Tags", "").split(",") if observation_details.get("Tags") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=30,  # Max number of tags the user can add
+                    )
                 observation_notes = st.text_input("Notes", observation_details.get("Notes", ""))
 
-                # Save Changes button
+                #Save Changes 
                 if st.button("Save Changes"):
-                    # Prepare updated data
                     tags_string = ", ".join(tags)
                     insider_language_string = ", ".join(insider_language)
                     observation_stakeholders_string = ", ".join(observation_stakeholders)
+                    old_case_id = observation_details.get("Related Case ID", "") 
 
                     updated_data = {
-                        "Observation Title": observation_title,
-                        "Date": observation_date_input.isoformat(),
-                        "Observer": observer,
-                        "Observation Description": observation_description,
-                        "Stakeholders": observation_stakeholders_string,
-                        "Sensory Observations": observation_sensory_observations,
-                        "Product Interactions": observation_product_interactions,
-                        "People Interactions": observation_people_interactions,
-                        "Process Actions": observation_process_actions,
-                        "Insider Language": insider_language_string,
-                        "Tags": tags_string,
-                        "Related Case ID": case_id,
-                        "Case Title": case_title,
-                    }
+                            # "Observation ID": observation_id,
+                            "Observation Title": observation_title,
+                            "Date": observation_date_input.isoformat(),
+                            "Observer": observer,
+                            "Observation Description": observation_description,
+                            "Stakeholders": observation_stakeholders_string,
+                            "Sensory Observations": observation_sensory_observations,
+                            "Product Interactions": observation_product_interactions,
+                            "People Interactions": observation_people_interactions,
+                            "Process Actions": observation_process_actions,
+                            "Insider Language": insider_language_string,
+                            "Tags": tags_string,
+                            "Related Case ID": case_id,
+                            "Case Title": case_title,
+                            
+                        }
+                        if update_observation(observation_to_edit, updated_data):
+                            # Call the function to update the observation log
+                            # if update_observation_log(observation_ids_only, old_observation_ids, observation_to_edit):
+                            #     st.success("Changes and observation log saved successfully!")
+                            # else:
+                            #     st.error(f"Failed to save observation log for case '{case_to_edit}'")
+                            
+                            # Optionally clear the selected case after saving
+                            st.session_state.pop("selected_observation", None)
+                        else:
+                            st.error(f"Failed to save changes to '{observation_to_edit}'.")
+            
+        
 
-                    # Call update function and provide feedback
-                    if update_observation(observation_to_edit, updated_data):
-                        st.session_state.pop("selected_observation", None)  # Clear session state after update
-                        st.success(f"Successfully updated observation '{observation_to_edit}'")
-                    else:
-                        st.error(f"Failed to save changes to observation '{observation_to_edit}'.")
+# Create a button using Streamlit's native functionality
+st.markdown("<br>", unsafe_allow_html=True)
 
-# Back to Dashboard button
 if st.button("Back to Dashboard"):
     switch_page("Dashboard")
+    
