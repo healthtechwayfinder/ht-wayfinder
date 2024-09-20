@@ -861,14 +861,16 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                 observation_date_input = st.date_input("Date", observation_date)
-                observer_value = observation_details.get("Observer", "")
+
+                observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
+                observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
                 # Ensure the observer_value exists in the list, and get its index
                 if observer_value in observer_list:
                     observer_index = observer_list.index(observer_value)
                 else:
                     observer_index = 0  # Default to the first item if the value isn't in the list
-
-                observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"], index=observer_index)
+                    
+                observer = st.selectbox("Observer", observer_list , index=observer_index)
                 
             else:
                 st.write("Observation not found.")
