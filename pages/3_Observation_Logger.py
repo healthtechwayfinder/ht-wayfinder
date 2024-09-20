@@ -536,7 +536,6 @@ def getExistingCaseIDS():
 
  #Function to get the date of the selected case from Google Sheets
 def get_case_date(case_id_with_title):
-    # Extract the case ID from the selected case (before the hyphen)
     case_id = case_id_with_title.split(" - ")[0]
 
     try:
@@ -547,11 +546,7 @@ def get_case_date(case_id_with_title):
         ]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        
-        # Open the case log sheet
         case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-
-        # Fetch all case data
         case_data = case_log.get_all_records()
 
         # Loop through the rows and find the case with the matching Case ID
@@ -588,6 +583,18 @@ def update_observation_date():
             st.session_state['observation_date'] = case_date  # Update the observation date in session state
             update_observation_id()  # Update observation ID when the date changes
         else:
+            st.error("Error fetching the case date.")
+
+def update_observation_edit_date(case):
+    if case:
+        case_id = case.split(" - ")[0]  # Extract case ID from the formatted string
+        case_date = get_case_date(case_id)  # Fetch case date using the case ID
+        if case_date:
+            st.session_state['observation_date'] = case_date  # Update the observation date in session state
+            update_observation_id()  # Update observation ID when the date changes
+        else:
+            st.error("Error fetching the case date.")
+    else:
             st.error("Error fetching the case date.")
 
 
@@ -935,7 +942,7 @@ elif action == "Edit Existing Observation":
                     "Related Case ID",
                     all_cases,
                     key='selected_observation_id_with_title',
-                    on_change=update_observation_date  # Trigger date update when a case is selected
+                    on_change=update_observation_edit_date(case_id_with_title)  # Trigger date update when a case is selected
                 )
                 # selected_case = st.selectbox(
                 #     "Select a Related Case",
