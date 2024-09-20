@@ -30,7 +30,7 @@ st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
 
 st.markdown("# Observation Logger")
 # Add a title for choosing an action
-st.markdown("<h3 style='text-align: center;'>Choose an action</h3>", unsafe_allow_html=True)
+st.markdown("<h3>Choose an action</h3>", unsafe_allow_html=True)
 
 # Dropdown menu for selecting action
 action = st.selectbox("", ["Add New Observation", "Edit Existing Observation"])
