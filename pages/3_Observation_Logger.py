@@ -815,9 +815,16 @@ elif action == "Edit Existing Observation":
         if selected_observation != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
-            st.write(observation_to_edit)
-            # Loop through observation fields and display editable fields (except for Observation ID)
-            for field_name, field_value in observation_details.items():
-                if field_name != "Observation ID":  # Ensure ID is not editable
-                    st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
+            if observation_details:
+                st.write(f"Editing Observation ID: {observation_id}")
+                
+                # Loop through observation fields and display editable fields (except for Observation ID)
+                for field_name, field_value in observation_details.items():
+                    if field_name != "Observation ID":  # Ensure ID is not editable
+                        st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
+            else:
+                st.write("Observation not found.")
+        else:
+            st.write("Please select an observation to edit.")
+
     
