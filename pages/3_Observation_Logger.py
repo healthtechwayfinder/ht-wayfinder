@@ -1077,7 +1077,12 @@ elif action == "Edit Existing Observation":
                     
                     if update_observation(observation_to_edit, updated_data):
                         # st.session_state.pop("selected_observation", None)
+                        if "selected_observation" not in st.session_state:
+                            st.session_state["selected_observation"] = ""  # Initialize the key
+                        
+                        # Clear session state value
                         st.session_state["selected_observation"] = ""
+
                         st.markdown("<script>window.location.reload();</script>", unsafe_allow_html=True)
                         
                     else:
