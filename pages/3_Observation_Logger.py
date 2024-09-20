@@ -938,11 +938,11 @@ elif action == "Edit Existing Observation":
                     selected_index = 0  # Default to the first item if not found
 
                 # Selectbox for Related Case ID
-                case_id_with_title = st.selectbox(
+                case = st.selectbox(
                     "Related Case ID",
                     all_cases,
                     key='selected_observation_id_with_title',
-                    on_change=update_observation_edit_date(case_id_with_title)  # Trigger date update when a case is selected
+                    on_change=update_observation_edit_date  # Trigger date update when a case is selected
                 )
                 # selected_case = st.selectbox(
                 #     "Select a Related Case",
@@ -951,8 +951,8 @@ elif action == "Edit Existing Observation":
                 #     on_change=update_observation_date  # Call update function when case is changed
                 # )
         
-                case_id = case_id_with_title.split(" - ")[0]
-                case_title = case_id_with_title.split(" - ")[1]
+                case_id = case.split(" - ")[0]
+                case_title = case.split(" - ")[1]
                 st.write(case_id)
 
                 
