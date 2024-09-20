@@ -116,6 +116,22 @@ def fetch_observation_ids_and_titles():
         print(f"Error fetching Observation IDs and titles: {e}")
         return []
 
+# Sample function to simulate fetching observation details from Google Sheets
+def fetch_observation_details(observation_id):
+    sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+    data = sheet.get_all_records()
+    # # Print the data being fetched
+    # st.write(data)
+    for row in data:
+        if "Observation ID" in row and row["Observation ID ID"].strip() == observation_id.strip():
+            return row
+    st.error(f"Observation ID {observation_id} not found.")
+    
+    return None
+
+
+
+
 def generateObservationTags(observation):
     # Create the LLM model
     llm = ChatOpenAI(
@@ -815,6 +831,7 @@ elif action == "Edit Existing Observation":
         if selected_observation != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
+            observation_details = fetch_observation_details(observation_id)
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_id}")
                 
