@@ -1083,11 +1083,11 @@ elif action == "Edit Existing Observation":
                         
                         st.markdown("<script>window.location.reload();</script>", unsafe_allow_html=True)
                         # Optionally clear the selected case after saving
-                        switch.page(Observation_Logger)
+                       
                     else:
                         st.error(f"Failed to save changes to '{observation_to_edit}'.")
             
-        
+                    st.session_state["selected_observation"] = ""
 
 # Create a button using Streamlit's native functionality
 st.markdown("<br>", unsafe_allow_html=True)
