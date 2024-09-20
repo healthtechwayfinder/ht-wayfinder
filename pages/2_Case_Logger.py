@@ -72,7 +72,7 @@ if "selected_case" not in st.session_state:
 
 
 class caseRecord(BaseModel):
-    location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room, at the hospital MGH, in the emergency room...")
+    location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room (OR), MGH (Massachusetts General Hospital), emergency room (ER), neurology clinic, step-down unit, intensive care unit (ICU)...")
     procedure: Optional[str] = Field(default=None, description="the main medical procedure being performed or discussed; use medical terminology")
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names) like a Patient (specify their condition or ailment), Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, Neurosurgeon, ...")
     people_present: Optional[str] = Field(default=None, description="Names cited in the description")
