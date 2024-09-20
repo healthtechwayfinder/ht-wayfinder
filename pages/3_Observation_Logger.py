@@ -636,6 +636,54 @@ def update_observation(observation_id, updated_data):
         print(f"Error updating observation: {e}")
         return False
 
+def update_case_log_with_observation(old_case_id, new_case_id, observation_id):
+    """Updates the case log, adding the observation ID to the new case and removing it from the old case."""
+
+    try:
+        scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+
+        # Get all data from the case log
+        case_data = case_log.get_all_records()
+        headers = case_log.row_values(1)
+        
+        # Get the "Observations" column index
+        obs_col_index = headers.index("Observations") + 1
+        
+        # Helper function to update observations for a case ID
+        def update_observations(case_id, action):
+            """Adds or removes the observation ID from a case's 'Observations' field."""
+            for i, row in enumerate(case_data, start=2):  # Start at row 2 (skipping header)
+                if row.get("Case ID") == case_id:
+                    current_observations = row.get("Observations", "")
+                    observations_list = [obs.strip() for obs in current_observations.split(",") if obs.strip()]
+                    
+                    # Modify the list based on the action
+                    if action == "add" and observation_id not in observations_list:
+                        observations_list.append(observation_id)
+                    elif action == "remove" and observation_id in observations_list:
+                        observations_list.remove(observation_id)
+                    
+                    # Update the cell with the modified list of observations
+                    case_log.update_cell(i, obs_col_index, ", ".join(observations_list))
+                    break
+        
+        # Remove the observation ID from the old case
+        if old_case_id:
+            update_observations(old_case_id, "remove")
+
+        # Add the observation ID to the new case
+        update_observations(new_case_id, "add")
+        
+        st.success(f"Observation ID '{observation_id}' updated from Case ID '{old_case_id}' to '{new_case_id}' successfully.")
+    
+    except Exception as e:
+        logging.error(f"Error updating case log: {e}")
+        st.error(f"Failed to update the case log for observation '{observation_id}'. Error: {str(e)}")
+
+
 
 # If the user chooses "Add New Case"
 if action == "Add New Observation":
@@ -1017,6 +1065,12 @@ elif action == "Edit Existing Observation":
                             "Case Title": case_title,
                             
                         }
+
+                    if old_case_id != case_id:
+                        # Update the case log to move the observation from old to new case
+                        update_case_log_with_observation(old_case_id, case_id, observation_to_edit)
+                    
+                    
                     if update_observation(observation_to_edit, updated_data):
                         st.session_state.pop("selected_observation", None)
                     else:
