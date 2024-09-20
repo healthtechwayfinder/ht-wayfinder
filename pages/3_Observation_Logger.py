@@ -28,10 +28,12 @@ import csv
 
 st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
 
-# st.markdown("# Add a New Observation")
+st.markdown("# Observation Logger")
+# Add a title for choosing an action
+st.title("Choose an action")
 
 # Dropdown menu for selecting action
-action = st.selectbox("Choose an action", ["Add New Observation", "Edit Existing Observation"])
+action = st.selectbox("", ["Add New Observation", "Edit Existing Observation"])
 
 
 
