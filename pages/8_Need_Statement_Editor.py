@@ -48,13 +48,13 @@ creds_dict = {
 
 # Initialize the session state for the input if it doesn't exist
 if 'need_ID_with_preview' not in st.session_state:
-    st.session_state.['need_ID_with_preview'] = ''
+    st.session_state['need_ID_with_preview'] = ''
 
 # if 'need_ID' not in st.session_state:
 #     st.session_state.need_ID = ''
 
 if 'need_statement' not in st.session_state:
-    st.session_state.['need_statement'] = ''
+    st.session_state['need_statement'] = ''
 
 if 'problem_var' not in st.session_state:
     st.session_state['problem_var'] = ""
