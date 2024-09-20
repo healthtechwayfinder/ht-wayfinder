@@ -753,10 +753,10 @@ if action == "Add New Observation":
     # Create a button using Streamlit's native functionality
     st.markdown("<br>", unsafe_allow_html=True)
     
-    if st.button("Back to Dashboard"):
-        switch_page("Dashboard")
+    # if st.button("Back to Dashboard"):
+    #     switch_page("Dashboard")
 
-# If the user chooses "Edit Existing Case"
+# If the user chooses "Add New Case"
 elif action == "Edit Existing Observation":
     
     
