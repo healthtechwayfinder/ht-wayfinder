@@ -520,13 +520,14 @@ def get_case_date(case_id_with_title):
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
     # Retrieve the selected case ID and title from the session state
-    case_id_with_title = st.session_state['selected_case_id_with_title']
+    case_id_with_title = st.session_state.get('selected_case_id_with_title', '')
 
     # Ensure a case is selected (i.e., not an empty value)
     if case_id_with_title:
         case_date = get_case_date(case_id_with_title)  # Get the case date using your function
         if case_date:
             st.session_state['observation_date'] = case_date  # Update the observation date in session state
+            update_observation_id()  # Ensure observation ID is updated when the date is updated
 
 # Ensure observation_date is in session state
 if 'observation_date' not in st.session_state:
