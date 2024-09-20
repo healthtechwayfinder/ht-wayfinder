@@ -448,26 +448,6 @@ Output Title:"""
 
 
 def clear_observation():
-    # if 'observation' in st.session_state:
-    #     st.session_state['observation'] = ""
-    # if 'observation_summary' in st.session_state:
-    #     st.session_state['observation_summary'] = ""
-    # if 'result' in st.session_state:
-    #     st.session_state['result'] = ""
-    # if 'observation_tags' in st.session_state:
-    #     st.session_state['observation_tags'] = ""
-    # if 'observer' in st.session_state:
-    #     st.session_state['observer'] = ""
-    # if 'sensory_observations' in st.session_state:
-    #     st.session_state['sensory_observations'] = ""
-    # if 'stakeholders' in st.session_state:
-    #     st.session_state['stakeholders'] = ""
-    # if 'product_interactions' in st.session_state:
-    #     st.session_state['product_interactions'] = ""
-    # if 'insider_language' in st.session_state:
-    #     st.session_state['insider_language'] = ""
-    # if 'process_actions' in st.session_state:
-    #     st.session_state['process_actions'] = ""    
     parsed_observation = ""
     update_observation_id()
 
@@ -533,6 +513,9 @@ def getExistingCaseIDS():
     print(existing_case_ids_with_title)
     return existing_case_ids_with_title
 
+# Function to clear the text area
+def clear_text():
+    st.session_state["observation"] = ""
 
  #Function to get the date of the selected case from Google Sheets
 def get_case_date(case_id_with_title):
@@ -736,10 +719,7 @@ if action == "Add New Observation":
     # Initialize the observation text in session state if it doesn't exist
     if "observation" not in st.session_state:
         st.session_state["observation"] = ""
-    
-    # Function to clear the text area
-    def clear_text():
-        st.session_state["observation"] = ""
+
     
     # Add Your Observation Text with larger font size
     st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
