@@ -534,8 +534,9 @@ col1, col2, col3 = st.columns(3)
 with col1:
     # st calendar for date input with a callback to update the observation_id
     #edit this to be the same as the case date
-    st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
-    
+    # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
+
+    st.date_input("Observation Date", key="unique_observation_date_key")
 
 
 with col2:
