@@ -850,7 +850,23 @@ elif action == "Edit Existing Observation":
                 #     if field_name != "Observation ID":  # Ensure ID is not editable
                 #         st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
                 # st.write(f"Editing Observation ID: {observation_to_edit}")
-            
+                
+                observation_date_str = observation_details.get("Date", "")
+                try:
+                    observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
+                except ValueError:
+                    observation_date = date.today()
+                observation_date_input = st.date_input("Date", observation_date)
+                
+                observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
+                observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
+                # Ensure the observer_value exists in the list, and get its index
+                if observer_value in observer_list:
+                    observer_index = observer_list.index(observer_value)
+                else:
+                    observer_index = 0  # Default to the first item if the value isn't in the list
+                    
+                observer = st.selectbox("Observer", observer_list , index=observer_index)
                 observation_title = st.text_input("Title", observation_details.get("Observation Title", ""))
                 observation_description = st.text_input("Description", observation_details.get("Observation Description", ""))
                 # observation_stakeholders = st.text_input("Title", observation_details.get("Observation Title", ""))
@@ -863,24 +879,10 @@ elif action == "Edit Existing Observation":
                     )
 
                 observation_sensory_observations = st.text_input("Sensory Observations", observation_details.get("Sensory Observations", ""))
+                observation_product_interactions = st.text_input("Product Interactions", observation_details.get("Product Interactions", ""))
+                observation_people_interactions = st.text_input("People Interactions", observation_details.get("People Interactions", ""))
+                observation_process_actions = st.text_input("Process Actions", observation_details.get("Process Actions", ""))
                 
-                
-                observation_date_str = observation_details.get("Date", "")
-                try:
-                    observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
-                except ValueError:
-                    observation_date = date.today()
-                observation_date_input = st.date_input("Date", observation_date)
-
-                observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
-                observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
-                # Ensure the observer_value exists in the list, and get its index
-                if observer_value in observer_list:
-                    observer_index = observer_list.index(observer_value)
-                else:
-                    observer_index = 0  # Default to the first item if the value isn't in the list
-                    
-                observer = st.selectbox("Observer", observer_list , index=observer_index)
                 
             else:
                 st.write("Observation not found.")
