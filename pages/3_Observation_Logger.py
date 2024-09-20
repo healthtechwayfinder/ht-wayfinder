@@ -47,7 +47,7 @@ st.markdown("""
 
 
 # Dropdown menu for selecting action
-action = st.selectbox("", ["Add New Observation", "Edit Existing Observation"])
+action = st.selectbox("", ["Add New Observation", "Edit Existing Observation"], label_visibility="collapsed")
 
 
 
