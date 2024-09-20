@@ -910,13 +910,22 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                 
-                # Ensure the observation date is tied directly to the observation details
+                # # Ensure the observation date is tied directly to the observation details
+                # observation_date_input = st.date_input(
+                #     "Observation Date", 
+                #     value=observation_date,  # Directly from observation details, not session state
+                #     key='observation_date', 
+                #     on_change=update_observation_id
+                # )
+
+                # Ensure that the observation date input is directly tied to the session state
                 observation_date_input = st.date_input(
                     "Observation Date", 
-                    value=observation_date,  # Directly from observation details, not session state
-                    key='observation_date', 
-                    on_change=update_observation_id
+                    value=st.session_state.get('observation_date', date.today()),  # Fetch date from session state
+                    key='observation_date',
+                    on_change=update_observation_id  # Trigger any additional updates if necessary
                 )
+                
 
                 
                 case_id_from_observation = observation_details.get("Related Case ID", "")
