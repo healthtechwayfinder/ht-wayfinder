@@ -878,7 +878,15 @@ elif action == "Edit Existing Observation":
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
                     # st.write("Filtered observation data:", formatted_observations)
                     # Multi-select dropdown with observation IDs
-                selected_case = st.selectbox("Select Related Case:", all_cases, formatted_case)  # Preselect the values
+                # Find the index of formatted_case in all_cases
+                if formatted_case in all_cases:
+                    selected_index = all_cases.index(formatted_case)
+                else:
+                    selected_index = 0  # Default to the first item if not found
+                
+                # Use the index in st.selectbox
+                selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index)
+
                     # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
 
