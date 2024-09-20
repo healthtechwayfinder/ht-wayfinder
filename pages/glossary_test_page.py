@@ -316,8 +316,13 @@ for idx, item in enumerate(filtered_items):
                 pass
         else:
             if st.button('Delete Term'):
-              # delete the term in the glossary
-              delete_row_by_term(term, glossary_sheet)
+                
+                # delete the term in the glossary
+                delete_row_by_term(term, glossary_sheet)
+                time.sleep(3)
+                st.session_state[edit_mode_key] = False
+                st.rerun()
+                
           # st.write('Deleted')
             if st.button("Save", key=f"save_button_{idx}"):
                 # Save changes to Google Sheets
