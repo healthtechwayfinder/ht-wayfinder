@@ -514,8 +514,17 @@ def update_observation_date(case_id_with_title):
 
 
 existing_case_ids_with_title = getExistingCaseIDS()
-case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
+# case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
     # put case ID dateinformation here
+# Create a dropdown for selecting a case, with a callback to update the observation date
+case_id_with_title = st.selectbox(
+    "Select a Related Case ID",
+    [""] + existing_case_ids_with_title,
+    on_change=update_observation_date,  # Call the update function when a case is selected
+    args=(st.session_state.get('case_id_with_title', ''),)
+)
+# Ensure observation date is displayed
+st.date_input("Observation Date", key="observation_date")
 
 # Use columns to place observation_date, observation_id, and observer side by side
 col1, col2, col3 = st.columns(3)
@@ -524,8 +533,7 @@ with col1:
     # st calendar for date input with a callback to update the observation_id
     #edit this to be the same as the case date
     st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
-    # Ensure observation date is displayed
-    st.date_input("Observation Date", key="observation_date")
+    
 
 
 with col2:
