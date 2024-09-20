@@ -654,7 +654,7 @@ if action == "Add New Observation":
         st.info("Voice recording feature coming soon!")
     
     # Observation Text Area
-    st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
+    st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200))
     
     
     # Create columns to align the buttons
