@@ -534,9 +534,6 @@ if 'observation_date' not in st.session_state:
 
 existing_case_ids_with_title = getExistingCaseIDS()
 # case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
-    # put case ID dateinformation here
-# Create a dropdown for selecting a case, with a callback to update the observation date
-# Create a dropdown for selecting a case, with a callback to update the observation date
 
 # Selectbox for Related Case ID
 case_id_with_title = st.selectbox(
@@ -545,8 +542,6 @@ case_id_with_title = st.selectbox(
     key='selected_case_id_with_title',
     on_change=update_observation_date  # Call the update function only when a case ID is selected
 )
-# Ensure observation date is displayed
-# Ensure observation date is displayed
 
 
 # Use columns to place observation_date, observation_id, and observer side by side
