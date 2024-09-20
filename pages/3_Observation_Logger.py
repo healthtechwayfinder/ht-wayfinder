@@ -33,11 +33,16 @@ st.markdown("# Observation Logger")
 # Add a slightly smaller title with reduced space after
 st.markdown("""
     <style>
-    h3 {
-        margin-bottom: 0rem; /* Adjust this value to reduce or increase space */
+    h4 {
+        margin-bottom: 0rem;  /* No margin below the title */
+        padding-bottom: 0rem; /* No padding below the title */
+    }
+    div[data-baseweb="select"] {
+        margin-top: 0rem; /* No margin above the dropdown */
+        padding-top: 0rem; /* No padding above the dropdown */
     }
     </style>
-    <h3>Choose an action</h4>
+    <h3>Choose an action</h3>
     """, unsafe_allow_html=True)
 
 
