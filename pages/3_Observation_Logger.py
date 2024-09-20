@@ -889,6 +889,8 @@ elif action == "Edit Existing Observation":
 
                     # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
+                case_title = selected_case.split(" - ")[1]
+                st.write(case_id)
 
 
                 
@@ -937,7 +939,33 @@ elif action == "Edit Existing Observation":
                         suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
                         maxtags=30,  # Max number of tags the user can add
                     )
+                observation_notes = st.text_input("Notes", observation_details.get("Notes", ""))
 
+                #Save Changes 
+                if st.button("Save Changes"):
+                    tags_string = ", ".join(tags)
+                    insider_language_string = ", ".join(insider_language)
+                    observation_stakeholders_string = ", ".join(observation_stakeholders)
+                    old_case_id = observation_details.get("Related Case ID", "") 
+
+                    updated_data = {
+                            # "Observation ID": observation_id,
+                            "Observation Title": observation_title,
+                            "Date": observation_date_input.isoformat(),
+                            "Observer": observer,
+                            "Observation Description": observation_description,
+                            "Stakeholders": observation_stakeholders_string,
+                            "Sensory Observations": observation_sensory_observations,
+                            "Product Interactions": observation_product_interactions,
+                            "People Interactions": observation_people_interactions,
+                            "Process Actions": observation_process_actions,
+                            "Insider Language": insider_language_string,
+                            "Tags": tags_string,
+                            "Related Case ID": case_id,
+                            "Case Title": case_title,
+                            
+                        }
+            
             
             
             else:
