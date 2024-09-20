@@ -1,168 +1,3 @@
-# import streamlit as st
-# import gspread
-# from oauth2client.service_account import ServiceAccountCredentials
-# import time
-
-# # Authenticate and connect to Google Sheets using service account credentials
-# creds_dict = st.secrets["gwf_service_account"]
-# scope = [
-#     "https://www.googleapis.com/auth/spreadsheets",
-#     "https://www.googleapis.com/auth/drive.metadata.readonly"
-# ]
-# creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-# client = gspread.authorize(creds)
-# observation_sheet = client.open("Glossary").sheet1
-
-# # Initialize session state variables if not already initialized
-# if "show_new_term_fields" not in st.session_state:
-#     st.session_state["show_new_term_fields"] = False
-
-# # Fetch glossary data from the Google Sheet
-# terms = observation_sheet.col_values(1)  # Terms are in column 1
-# definitions = observation_sheet.col_values(2)  # Definitions are in column 2
-# variants = observation_sheet.col_values(3)  # Variants are in column 3
-# related_cases = observation_sheet.col_values(4)  # Related Cases are in column 4
-
-# glossary_db = []
-# term_and_variants = []
-# for idx in range(1, len(terms)):
-#     item = {
-#         'term': terms[idx],
-#         'definition': definitions[idx],
-#         'related_cases': related_cases[idx] if idx < len(related_cases) else ''
-#     }
-#     term_and_variant = terms[idx]
-
-#     if idx < len(variants):
-#         item['variant'] = variants[idx]
-#         term_and_variant += ' (' + variants[idx] + ')'
-#     else:
-#         term_and_variant += ' ()'
-
-#     glossary_db.append(item)
-#     term_and_variants.append(term_and_variant)
-
-# # Sort the list alphabetically by the term, then by variant (if any)
-# sorted_glossary_db = sorted(glossary_db, key=lambda x: (x['term'].lower(), x.get('variant', '').lower()))
-
-# # Search bar for filtering terms
-# search_term = st.text_input("Search Glossary", key="search_term")
-
-# # Filter the glossary based on the search term (case-insensitive)
-# filtered_items = [item for item in sorted_glossary_db if search_term.lower() in item['term'].lower()]
-
-# def onEditClickFunction(edit_mode_key):
-#     st.session_state[edit_mode_key] = True
-
-# def onCancelClickFunction(edit_mode_key):
-#     st.session_state[edit_mode_key] = False
-
-# def delete_row_from_sheet(row_index):
-#     """Delete a specific row from Google Sheets."""
-#     observation_sheet.delete_rows(row_index)
-
-# # Display the terms and their definitions inside the scrollable container
-# for idx, item in enumerate(filtered_items):
-#     term = item['term']
-#     definition = item['definition']
-#     variant = item.get('variant', None)
-#     related_cases = item.get('related_cases', '')
-
-#     term_key = f"term_{idx}"
-#     definition_key = f"definition_{idx}"
-#     edit_mode_key = f"edit_mode_{idx}"
-#     variant_key = f"variant_{idx}"
-
-#     # Initialize edit mode in session state
-#     if edit_mode_key not in st.session_state:
-#         st.session_state[edit_mode_key] = False
-
-#     col1, col2 = st.columns([8, 2])
-
-#     with col1:
-#         if not st.session_state[edit_mode_key]:
-#             # Display term and definition in normal mode
-#             if variant:
-#                 st.markdown(f"**{term}** ({variant}): {definition}")
-#             else:
-#                 st.markdown(f"**{term}**: {definition}")
-#             # Display related cases if available
-#             if related_cases:
-#                 st.markdown(f"_Related Cases:_ {related_cases}")
-#         else:
-#             # Display editable fields in edit mode
-#             st.text_input("Edit term", value=term, key=term_key)
-
-#             if variant:
-#                 st.text_input("Edit variant", value=variant, key=variant_key)
-#             else:
-#                 st.session_state[variant_key] = None
-
-#             st.text_area("Edit definition", value=definition, key=definition_key)
-
-#     with col2:
-#         if not st.session_state[edit_mode_key]:
-#             if st.button("Edit", key=f"edit_button_{idx}", on_click=onEditClickFunction, args=(edit_mode_key,)):
-#                 pass
-#         else:
-#             if st.button("Save", key=f"save_button_{idx}"):
-#                 # Save changes to Google Sheets
-#                 term_variant = term + ' (' + variant + ')' if variant else term
-#                 row_index = term_and_variants.index(term_variant)+2
-                
-#                 updated_term = st.session_state[term_key]
-#                 updated_definition = st.session_state[definition_key]
-#                 updated_variant = st.session_state[variant_key]
-                
-#                 # Update Google Sheets with the edited values
-#                 observation_sheet.update(values=[[updated_term]], range_name=f'A{row_index}')
-#                 observation_sheet.update(values=[[updated_definition]], range_name=f'B{row_index}')
-#                 if updated_variant:
-#                     observation_sheet.update(values=[[updated_variant]], range_name=f'C{row_index}') 
-#                 st.success(f"Term '{updated_term}' has been updated.")
-#                 time.sleep(2)
-#                 st.session_state[edit_mode_key] = False
-#                 st.rerun()
-
-#             # Delete button for removing a term
-#             if st.button("Delete", key=f"delete_button_{idx}"):
-#                 term_variant = term + ' (' + variant + ')' if variant else term
-#                 row_index = term_and_variants.index(term_variant) + 2  # Adjust for 1-based index and header
-#                 delete_row_from_sheet(row_index)  # Delete row from Google Sheets
-#                 st.success(f"Term '{term}' has been deleted.")
-#                 time.sleep(2)
-#                 st.rerun()
-
-#             if st.button("Cancel", key=f"cancel_button_{idx}", on_click=onCancelClickFunction, args=(edit_mode_key,)):
-#                 pass
-
-#     # Add a break line
-#     st.markdown("<br>", unsafe_allow_html=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 import streamlit as st
@@ -218,7 +53,7 @@ scope = [
 ]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
-observation_sheet = client.open("Glossary").sheet1
+glossary_sheet = client.open("Glossary").sheet1
 
 # Initialize session state variables if not already initialized
 if "show_new_term_fields" not in st.session_state:
@@ -232,10 +67,10 @@ if "new_variant" not in st.session_state:
 
 
 # Print test 
-terms = observation_sheet.col_values(1)  # Terms are in column 1
-definitions = observation_sheet.col_values(2)  # Definitions are in column 2
-variants = observation_sheet.col_values(3)  # Variants are in column 3
-related_cases = observation_sheet.col_values(4)  # Related Cases are in column 4
+terms = glossary_sheet.col_values(1)  # Terms are in column 1
+definitions = glossary_sheet.col_values(2)  # Definitions are in column 2
+variants = glossary_sheet.col_values(3)  # Variants are in column 3
+related_cases = glossary_sheet.col_values(4)  # Related Cases are in column 4
 
 # Combine terms and definitions into a list of tuples
 # terms_definitions = list(zip(terms[1:], definitions[1:]))  # Skip header row
@@ -299,20 +134,37 @@ Output Variant Name for target definition:
 
     return output
 
-# Add custom CSS to make the container scrollable
-st.markdown("""
-    <style>
-    .scrollable-container {
-        height: 300px;
-        overflow-y: scroll;
-        border: 1px solid #ccc;
-        padding: 10px;
-        font-size: 16px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
-# Add custom CSS for white search bar
+# delete the row for a specific term in google sheets
+def delete_row_by_term(term_to_search, glossary_sheet):
+    """
+    Searches the first column of a Google Sheet for a term and clears the contents of the corresponding row.
+
+    Args:
+    - term_to_search: The term to search for in the first column.
+    - glossary_sheet: The gspread sheet object where the operation will take place.
+    """
+    # Get all values in the first column (Terms column)
+    terms_list = glossary_sheet.col_values(1)  # Column 1 is typically the "Term" column
+    
+    try:
+        # Find the row index of the term (0-based, so we add 1 for 1-based indexing)
+        row_index = terms_list.index(term_to_search) + 1  # 1-based index for Google Sheets
+        
+        # Get the number of columns in the sheet to clear all cells in the row
+        num_cols = glossary_sheet.col_count
+        
+        # Clear the contents of the row by replacing it with empty strings
+        # glossary_sheet.update(f'A{row_index}:Z{row_index}', [[''] * num_cols])
+        glossary_sheet.delete_rows(row_index)
+        
+        print(f"Cleared contents of row {row_index} for term '{term_to_search}'")
+        
+    except ValueError:
+        print(f"Term '{term_to_search}' not found in the glossary.")
+
+
+
 st.markdown("""
     <style>
     input[type="text"] {
@@ -373,7 +225,7 @@ if st.session_state["show_new_term_fields"]:
                             print("Generated variant name for old definition: ", old_variant)
                             if old_variant:
                                 update_idx = term_and_variants.index(new_term_and_variant)+2
-                                observation_sheet.update(values=[[old_variant]], range_name=f'C{update_idx}')
+                                glossary_sheet.update(values=[[old_variant]], range_name=f'C{update_idx}')
                                 existing_variant = old_variant
 
                         existing_variants.append(existing_variant)
@@ -389,7 +241,7 @@ if st.session_state["show_new_term_fields"]:
             new_term = new_term.capitalize()
             new_definition = new_definition.capitalize()
             new_variant = new_variant_input.capitalize() if new_variant_input else None
-            observation_sheet.append_row([new_term, new_definition, new_variant])
+            glossary_sheet.append_row([new_term, new_definition, new_variant])
             st.success(f"Term '{new_term}' has been added successfully!")
 
             # Clear the session state for inputs
@@ -463,6 +315,10 @@ for idx, item in enumerate(filtered_items):
                 print(f"Edit button clicked for term {edit_mode_key}" )
                 pass
         else:
+            if st.button('Delete Term'):
+              # delete the term in the glossary
+              delete_row_by_term(term, glossary_sheet)
+          # st.write('Deleted')
             if st.button("Save", key=f"save_button_{idx}"):
                 # Save changes to Google Sheets
                 term_variant = term + ' (' + variant + ')' if variant else term
@@ -473,10 +329,10 @@ for idx, item in enumerate(filtered_items):
                 updated_definition = st.session_state[definition_key]
                 updated_variant = st.session_state[variant_key]
                 print("Updating for term with index: ", row_index)
-                observation_sheet.update(values=[[updated_term]], range_name=f'A{row_index}')
-                observation_sheet.update(values=[[updated_definition]], range_name=f'B{row_index}')
+                glossary_sheet.update(values=[[updated_term]], range_name=f'A{row_index}')
+                glossary_sheet.update(values=[[updated_definition]], range_name=f'B{row_index}')
                 if updated_variant:
-                    observation_sheet.update(values=[[updated_variant]], range_name=f'C{row_index}') 
+                    glossary_sheet.update(values=[[updated_variant]], range_name=f'C{row_index}') 
                 st.success(f"Term '{updated_term}' has been updated.")
                 time.sleep(3)
                 st.session_state[edit_mode_key] = False
