@@ -95,6 +95,13 @@ if 'rerun' not in st.session_state:
 if "selected_observation" not in st.session_state:
     st.session_state["selected_observation"] = ""  # Set initial value to an empty string
 
+def get_google_sheet(spreadsheet_name, worksheet_name):
+    scope = ["https://www.googleapis.com/auth/spreadsheets",
+             "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open(spreadsheet_name).worksheet(worksheet_name)
+    return sheet
 
 
 # Fetch case IDs and titles from Google Sheets
