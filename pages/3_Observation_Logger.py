@@ -591,6 +591,27 @@ def update_observation_date():
             update_observation_id()  # Ensure observation ID is updated when the date is updated
 
 
+def fetch_all_case_ids_and_titles():
+    sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
+    
+    # Fetch relevant columns from the sheet
+    case_ids = sheet.col_values(1)[1:]  # Skip header
+    case_titles = sheet.col_values(2)[1:]  # Titles
+    case_ids_with_title = dict(zip(case_ids, case_titles))
+    
+    # Create formatted list with ID - title format
+    formatted_cases = [f"{case_id} - {title}" for case_id, title in case_ids_with_title.items()]
+
+    return formatted_cases, case_ids_with_title
+  
+
+def get_filtered_case_data(case, case_data):
+    # Generate a list of formatted "ID - Title" strings for the filtered observations
+    filtered_data = [f"{case_id} - {case_data[case_id]}" for case_id in case if case_id in case_data]
+    return filtered_data
+
+
+
 # If the user chooses "Add New Case"
 if action == "Add New Observation":
     
@@ -850,6 +871,18 @@ elif action == "Edit Existing Observation":
                 #     if field_name != "Observation ID":  # Ensure ID is not editable
                 #         st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
                 # st.write(f"Editing Observation ID: {observation_to_edit}")
+
+                case = observation_details.get("Related Case ID", "")  
+                all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
+                # st.write("Full observation data:", all_observations)
+                formatted_case = get_filtered_case_data(case,case_ids_with_title)
+                    # st.write("Filtered observation data:", formatted_observations)
+                    # Multi-select dropdown with observation IDs
+                selected_case = st.selectbox("Select Related Case:", all_cases, formatted_case)  # Preselect the values
+                    # Extract only the observation IDs from the selected_observations list
+                case_id = selected_case.split(" - ")[0]
+
+
                 
                 observation_date_str = observation_details.get("Date", "")
                 try:
@@ -890,13 +923,15 @@ elif action == "Edit Existing Observation":
                         maxtags=30,  # Max number of tags the user can add
                     )
                 tags = st_tags(
-                        label="Insider Language:",
+                        label="Tags:",
                         text="Press enter to add more",
                         value=observation_details.get("Tags", "").split(",") if observation_details.get("Tags") else [],  # Split tags into a list
                         suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
                         maxtags=30,  # Max number of tags the user can add
                     )
-                
+
+            
+            
             else:
                 st.write("Observation not found.")
 
