@@ -634,6 +634,10 @@ def update_observation(observation_id, updated_data):
         # Case ID not found
         print(f"observation ID {observation_id} not found")
         return False
+        
+    except Exception as e:
+        print(f"Error updating case: {e}")
+        return False
 
 
 # If the user chooses "Add New Case"
