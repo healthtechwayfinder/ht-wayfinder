@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 import pandas as pd
@@ -26,7 +24,14 @@ OPENAI_API_KEY = st.secrets["openai_key"]
 
 # Set up the Streamlit page
 st.set_page_config(page_title="Glossary", page_icon="📊")
+# title
 st.markdown("# Glossary")
+# overview
+st.write("Listed here with definitions are terms that have been identified as insider language -- things like procedures, tools, pathologies, and anatomical features. ")
+st.write("Use this space to familiarize yourself with terminology parsed from your cases, or add terminology manually for your team's benefit. Use the edit feature to change the definitions or delete unwanted terms.")
+
+# st.write("Start by outlining the problem, population, and outcome, and then enter the whole statement in the corresponding text box. In the last box, add any relevant notes -- things like how you might want to workshop the statement, specific insights, assumptions in the statement that need validation, or opportunities for improvement or more research.")
+
 
 # st.markdown("""
 #     <style>
