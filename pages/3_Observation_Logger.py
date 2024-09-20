@@ -516,7 +516,7 @@ def get_case_date(case_id_with_title):
 
 
 
-# Function to update the observation date when a case is selected
+# Function to update the observation date when a case ID is selected
 def update_observation_date():
     # Retrieve the selected case ID and title from the session state
     case_id_with_title = st.session_state['selected_case_id_with_title']
@@ -526,6 +526,10 @@ def update_observation_date():
         case_date = get_case_date(case_id_with_title)  # Get the case date using your function
         if case_date:
             st.session_state['observation_date'] = case_date  # Update the observation date in session state
+
+# Ensure observation_date is in session state
+if 'observation_date' not in st.session_state:
+    st.session_state['observation_date'] = date.today()  # Default to today's date
 
 
 existing_case_ids_with_title = getExistingCaseIDS()
@@ -553,7 +557,8 @@ with col1:
     #edit this to be the same as the case date
     # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
 
-    st.date_input("Observation Date", key="unique_observation_date_key")
+    # Display the observation date input and make it reflect session state
+    st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date')
 
 
 with col2:
