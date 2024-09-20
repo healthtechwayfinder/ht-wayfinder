@@ -306,7 +306,7 @@ for idx, item in enumerate(filtered_items):
             st.text_input("Edit term", value=term, key=term_key)
 
             if variant:
-                st.text_input("Edit variant", value=variant, key=variant_key)
+                st.text_input("Edit relevant cases", value=variant, key=variant_key)
             else:
                 st.session_state[variant_key] = None
 
