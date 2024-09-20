@@ -611,6 +611,30 @@ def get_filtered_case_data(case, case_data):
     return filtered_data
 
 
+def update_observation(observation_id, updated_data):
+    try:
+        # Fetch the Google Sheet
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
+        data = sheet.get_all_records()
+        
+        # Get the list of column headers once
+        headers = list(data[0].keys())
+        
+        # Find the row corresponding to the observation_id and update it
+        for i, row in enumerate(data, start=2):  # Skip header row
+            if row["observation ID"] == observation_id:
+                # Update the necessary fields
+                for key, value in updated_data.items():
+                    if key in headers:
+                        col_index = headers.index(key) + 1  # Get the correct column index
+                        sheet.update_cell(i, col_index, value)
+                    else:
+                        print(f"Warning: {key} not found in Google Sheets columns")
+                return True  # Case updated
+        # Case ID not found
+        print(f"observation ID {observation_id} not found")
+        return False
+
 
 # If the user chooses "Add New Case"
 if action == "Add New Observation":
@@ -965,6 +989,17 @@ elif action == "Edit Existing Observation":
                             "Case Title": case_title,
                             
                         }
+                        if update_observation(observation_to_edit, updated_data):
+                            # Call the function to update the observation log
+                            # if update_observation_log(observation_ids_only, old_observation_ids, observation_to_edit):
+                            #     st.success("Changes and observation log saved successfully!")
+                            # else:
+                            #     st.error(f"Failed to save observation log for case '{case_to_edit}'")
+                            
+                            # Optionally clear the selected case after saving
+                            st.session_state.pop("selected_observation", None)
+                        else:
+                            st.error(f"Failed to save changes to '{observation_to_edit}'.")
             
             
             
