@@ -831,6 +831,7 @@ elif action == "Edit Existing Observation":
         if selected_observation != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
+            observation_id = selected_case.split(":")[0].strip()
             observation_details = fetch_observation_details(observation_id)
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_id}")
