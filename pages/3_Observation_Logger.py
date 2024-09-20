@@ -91,6 +91,23 @@ if 'observation_tags' not in st.session_state:
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 
+# Initialize session state for selected_observation if it doesn't exist
+if "selected_observation" not in st.session_state:
+    st.session_state["selected_observation"] = ""  # Set initial value to an empty string
+
+
+
+# Fetch case IDs and titles from Google Sheets
+def fetch_observation_ids_and_titles():
+    try:
+        sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")  # Ensure this is correct
+        data = sheet.get_all_records()
+        # Create a list of tuples with (case_id, title)
+        observation_info = [(row["Observation ID"], row["Title"]) for row in data if "Observation ID" in row and "Title" in row]
+        return observation_info
+    except Exception as e:
+        print(f"Error fetching Observation IDs and titles: {e}")
+        return []
 
 def generateObservationTags(observation):
     # Create the LLM model
@@ -540,7 +557,7 @@ def get_case_date(case_id_with_title):
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
     # Retrieve the selected case ID and title from the session state
-    case_id_with_title = st.session_state.get('selected_case_id_with_title', '')
+    case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
 
     # Ensure a case is selected (i.e., not an empty value)
     if case_id_with_title:
@@ -568,7 +585,7 @@ if action == "Add New Observation":
     case_id_with_title = st.selectbox(
         "Select a Related Case ID",
         [""] + existing_case_ids_with_title,
-        key='selected_case_id_with_title',
+        key='selected_observation_id_with_title',
         on_change=update_observation_date  # Call the update function only when a case ID is selected
     )
     
@@ -775,11 +792,21 @@ if action == "Add New Observation":
 # If the user chooses "Add New Case"
 elif action == "Edit Existing Observation":
 
+    st.markdown("### Edit an Existing Observation")
+
     # Load existing observations from Google Sheets (or another source)
-    existing_observations = get_existing_observations()  # Implement this function to load existing observation data
+    observation_info = fetch_observation_ids_and_titles()  # Implement this function to load existing observation data
     
-    # Display a dropdown for the user to select which observation to edit
-    selected_observation_id = st.selectbox("Select an Observation to Edit", [""] + existing_observations)
-    
-    
+    # Ensure case_info is not empty
+    if not observation_info:
+        st.error("No observations found.")
+    else:
+        # Create a list of display names in the format "case_id: title"
+        observation_options = [f"{observation_id}: {title}" for observation_id, title in observation_info]
+        # Display the dropdown with combined case_id and title
+        selected_observation = st.selectbox("Select an observation to edit", [""] + observation_options, key="selected_observation" )
+        if selected_observation != "":
+            # Extract the selected case_id from the dropdown (case_id is before the ":")
+            observation_to_edit = selected_observation.split(":")[0].strip()
+            st.write(observation_to_edit)
     
