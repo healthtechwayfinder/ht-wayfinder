@@ -913,8 +913,9 @@ elif action == "Edit Existing Observation":
                     selected_index = 0  # Default to the first item if not found
                 
                 # Use the index in st.selectbox
-                selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index)
-
+                selected_case = st.selectbox("Select Related Case:", all_cases, index=selected_index, on_change=update_observation_date)
+                
+                
                     # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
                 case_title = selected_case.split(" - ")[1]
