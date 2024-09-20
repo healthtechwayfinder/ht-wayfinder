@@ -531,6 +531,9 @@ def update_observation_date():
 # Ensure observation_date is in session state
 if 'observation_date' not in st.session_state:
     st.session_state['observation_date'] = date.today()  # Default to today's date
+# Ensure observation_id is in session state
+if 'observation_id' not in st.session_state:
+    update_observation_id()  # Initialize the observation ID
 
 
 existing_case_ids_with_title = getExistingCaseIDS()
