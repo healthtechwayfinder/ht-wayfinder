@@ -851,6 +851,19 @@ elif action == "Edit Existing Observation":
                 # st.write(f"Editing Observation ID: {observation_to_edit}")
             
                 observation_title = st.text_input("Title", observation_details.get("Observation Title", ""))
+                observation_description = st.text_input("Description", observation_details.get("Observation Description", ""))
+                # observation_stakeholders = st.text_input("Title", observation_details.get("Observation Title", ""))
+                observation_stakeholders = st_tags(
+                        label="Stakeholders:",
+                        text="Press enter to add more",
+                        value=observation_details.get("Stakeholders", "").split(",") if observation_details.get("Stakeholders") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=30,  # Max number of tags the user can add
+                    )
+
+                observation_sensory_observations = st.text_input("Sensory Observations", observation_details.get("Sensory Observations", ""))
+                
+                
                 observation_date_str = observation_details.get("Date", "")
                 try:
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
