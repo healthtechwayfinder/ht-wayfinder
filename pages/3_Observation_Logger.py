@@ -123,7 +123,7 @@ def fetch_observation_details(observation_id):
     # # Print the data being fetched
     # st.write(data)
     for row in data:
-        if "Observation ID" in row and row["Observation ID ID"].strip() == observation_id.strip():
+        if "Observation ID" in row and row["Observation ID"].strip() == observation_id.strip():
             return row
     st.error(f"Observation ID {observation_id} not found.")
     
