@@ -757,7 +757,7 @@ if action == "Add New Observation":
         switch_page("Dashboard")
 
 # If the user chooses "Edit Existing Case"
-elif action == "Edit Existing Case":
+elif action == "Edit Existing Observation":
     
     
     
