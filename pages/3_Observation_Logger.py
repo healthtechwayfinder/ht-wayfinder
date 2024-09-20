@@ -654,7 +654,7 @@ if action == "Add New Observation":
         st.info("Voice recording feature coming soon!")
     
     # Observation Text Area
-    st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200))
+    st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
     
     
     # Create columns to align the buttons
@@ -861,7 +861,7 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                 observation_date_input = st.date_input("Date", observation_date)
-                observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"], observation_details.get("Observer", "")
+                observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"], observation_details.get("Observer", ""))
                 
             else:
                 st.write("Observation not found.")
