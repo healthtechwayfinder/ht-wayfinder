@@ -848,12 +848,25 @@ elif action == "Edit Existing Observation":
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_to_edit}")
                 
-                # Loop through observation fields and display editable fields (except for Observation ID)
-                for field_name, field_value in observation_details.items():
-                    if field_name != "Observation ID":  # Ensure ID is not editable
-                        st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
+                # # Loop through observation fields and display editable fields (except for Observation ID)
+                # for field_name, field_value in observation_details.items():
+                #     if field_name != "Observation ID":  # Ensure ID is not editable
+                #         st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
+                # st.write(f"Editing Observation ID: {observation_to_edit}")
+            
+                observation_title = st.text_input("Title", observation_details.get("Observation Title", ""))
+                observation_date_str = observation_details.get("Date", "")
+                try:
+                    observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
+                except ValueError:
+                    observation_date = date.today()
+                observation_date_input = st.date_input("Date", observation_date)
+                observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"], observation_details.get("Observer", "")
+                
             else:
                 st.write("Observation not found.")
+
+            
         else:
             st.write("Please select an observation to edit.")
 
