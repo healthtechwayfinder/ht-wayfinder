@@ -911,7 +911,7 @@ elif action == "Edit Existing Observation":
                     observation_date = date.today()
                 observation_date_input = st.date_input("Date", observation_date)
 
-                observation_date_input = st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
+                # observation_date_input = st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
 
                 
                 # Find the index of formatted_case in all_cases
