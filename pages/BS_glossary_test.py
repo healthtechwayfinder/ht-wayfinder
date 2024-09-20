@@ -26,7 +26,7 @@ scope = [
 ]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
-glossary_sheet = client.open("Glossary").sheet1
+glossary_sheet = client.open("Glossary").Sheet1
 
 def clear_row_by_term(term_to_search, glossary_sheet):
     """
@@ -48,7 +48,7 @@ def clear_row_by_term(term_to_search, glossary_sheet):
         
         # Clear the contents of the row by replacing it with empty strings
         # glossary_sheet.update(f'A{row_index}:Z{row_index}', [[''] * num_cols])
-        sheet1.delete_row(row_index)
+        glossary_sheet.delete_row(row_index)
         
         print(f"Cleared contents of row {row_index} for term '{term_to_search}'")
         
