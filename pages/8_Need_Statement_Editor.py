@@ -27,6 +27,8 @@ import json
 import os
 import csv
 
+import pandas as pd
+
 # ////////////////////// INITIALIZATIONS ////////////////////// INITIALIZATIONS ////////////////////// INITIALIZATIONS ////////////////////// 
 
 OPENAI_API_KEY = st.secrets["openai_key"]
