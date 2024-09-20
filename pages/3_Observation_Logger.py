@@ -586,6 +586,7 @@ def update_observation_date():
             st.error("Error fetching the case date.")
 
 def update_observation_edit_date(case):
+    case = st.session_state.get('case', '')
     if case:
         case_id = case.split(" - ")[0]  # Extract case ID from the formatted string
         case_date = get_case_date(case_id)  # Fetch case date using the case ID
