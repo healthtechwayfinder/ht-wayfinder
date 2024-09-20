@@ -753,11 +753,17 @@ if action == "Add New Observation":
     # Create a button using Streamlit's native functionality
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # if st.button("Back to Dashboard"):
-    #     switch_page("Dashboard")
+    if st.button("Back to Dashboard"):
+        switch_page("Dashboard")
 
 # If the user chooses "Add New Case"
 elif action == "Edit Existing Observation":
+
+    # Load existing observations from Google Sheets (or another source)
+    existing_observations = get_existing_observations()  # Implement this function to load existing observation data
+    
+    # Display a dropdown for the user to select which observation to edit
+    selected_observation_id = st.selectbox("Select an Observation to Edit", [""] + existing_observations)
     
     
     
