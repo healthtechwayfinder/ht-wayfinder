@@ -927,9 +927,9 @@ elif action == "Edit Existing Observation":
                     "Select a Related Case",
                     all_cases,
                     index=selected_index,
+                    key='selected_observation_id_with_title',
                     on_change=update_observation_date  # Call the update function only when a case ID is selected
                 )
-
                 
                     # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
