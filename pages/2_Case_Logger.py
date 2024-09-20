@@ -22,6 +22,10 @@ import csv
 import random
 
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
+st.markdown("# Case Logger")
+st.write("Use this tool to record cases from your clinical observations. Include information like date, attendees, location, procedure, and what physically occurred during the encounter. For more information about recording cases, please refer to the User Guide.")
+
+
 
 # Dropdown menu for selecting action
 action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
@@ -74,7 +78,7 @@ if "selected_case" not in st.session_state:
 class caseRecord(BaseModel):
     location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room (OR), MGH (Massachusetts General Hospital), emergency room (ER), neurology clinic, step-down unit, intensive care unit (ICU)...")
     procedure: Optional[str] = Field(default=None, description="the main medical procedure being performed or discussed; use medical terminology")
-    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names) like a Patient (specify their condition or ailment), Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, Neurosurgeon, ...")
+    stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event (no names) like: Patient with a specific condition (specify their condition or ailment like diabetes, glioblastoma, Alzheimers, dementia, stroke, traumatic brain injury, etc...), Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, Neurosurgeon, ...")
     people_present: Optional[str] = Field(default=None, description="Names cited in the description")
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags (only noun) that are very relevant to the medical observation. The tags can be used to identify the type of procedure: (invasive procedure, minimally invasive, open procedure, noninvasive, in-clinic, in OR (operating room), in emergency room..) the medical specialty (e.g.: rhinology, oncology, ophthalmology,..)  area of medicine, or type of technology being used for example. Do not use numbers and separate them by commas. Give only the list of tags without any quotes or special characters.")
