@@ -744,9 +744,13 @@ if action == "Add New Observation":
     # Add Your Observation Text with larger font size
     st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
     
-    # Button for voice input (currently as a placeholder)
-    if st.button("🎤 Record Observation (Coming Soon)"):
-        st.info("Voice recording feature coming soon!")
+    # # Button for voice input (currently as a placeholder)
+    # if st.button("🎤 Record Observation (Coming Soon)"):
+    #     st.info("Voice recording feature coming soon!")
+
+    # # Button for voice input (currently as a placeholder)
+    # if st.button("🎤 Convert Handwriting to Observation (Coming Soon)"):
+    #     st.info("Voice recording feature coming soon!")
     
     # Observation Text Area
     st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
@@ -1072,7 +1076,10 @@ elif action == "Edit Existing Observation":
                     
                     
                     if update_observation(observation_to_edit, updated_data):
-                        st.session_state.pop("selected_observation", None)
+                        # st.session_state.pop("selected_observation", None)
+                        st.session_state["selected_observation"] = ""
+                        st.markdown("<script>window.location.reload();</script>", unsafe_allow_html=True)
+                        
                     else:
                         st.error(f"Failed to save changes to '{observation_to_edit}'.")
             
