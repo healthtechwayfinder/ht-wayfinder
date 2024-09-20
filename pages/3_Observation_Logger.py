@@ -1001,13 +1001,11 @@ elif action == "Edit Existing Observation":
                         else:
                             st.error(f"Failed to save changes to '{observation_to_edit}'.")
             
-            
-            
-            else:
-                st.write("Observation not found.")
+        
 
-            
-        else:
-            st.write("Please select an observation to edit.")
+# Create a button using Streamlit's native functionality
+st.markdown("<br>", unsafe_allow_html=True)
 
+if st.button("Back to Dashboard"):
+    switch_page("Dashboard")
     
