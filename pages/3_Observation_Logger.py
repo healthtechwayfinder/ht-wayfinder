@@ -828,7 +828,7 @@ elif action == "Edit Existing Observation":
         observation_options = [f"{observation_id}: {title}" for observation_id, title in observation_info]
         st.markdown("""
         <style>
-        h4 {
+        h2 {
             margin-bottom: 0rem;  /* No margin below the title */
             padding-bottom: 0rem; /* No padding below the title */
         }
@@ -837,7 +837,7 @@ elif action == "Edit Existing Observation":
             padding-top: 0rem; /* No padding above the dropdown */
         }
         </style>
-        <h3>Select an Observation to edit</h3>
+        <h2>Select an Observation to edit</h2>
         """, unsafe_allow_html=True)
         # Display the dropdown with combined case_id and title
         selected_observation = st.selectbox("", [""] + observation_options, key="selected_observation", label_visibility="collapsed")
