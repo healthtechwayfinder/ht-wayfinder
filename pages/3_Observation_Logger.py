@@ -846,14 +846,13 @@ if action == "Add New Observation":
                                 st.session_state['observation_date'],
                                 st.session_state['observation_id'],
                                 case_id_with_title)
-            clear_observation()
     
             # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
             # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
             if status:
                 st.session_state['result'] = "Observation added to your team's database."
                 st.session_state['rerun'] = True
-                clear_text()
+                clear_observation()
                 st.rerun()
     
             else:
