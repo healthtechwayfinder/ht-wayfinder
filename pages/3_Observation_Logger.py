@@ -993,17 +993,10 @@ elif action == "Edit Existing Observation":
                             "Case Title": case_title,
                             
                         }
-                        if update_observation(observation_to_edit, updated_data):
-                            # Call the function to update the observation log
-                            # if update_observation_log(observation_ids_only, old_observation_ids, observation_to_edit):
-                            #     st.success("Changes and observation log saved successfully!")
-                            # else:
-                            #     st.error(f"Failed to save observation log for case '{case_to_edit}'")
-                            
-                            # Optionally clear the selected case after saving
-                            st.session_state.pop("selected_observation", None)
-                        else:
-                            st.error(f"Failed to save changes to '{observation_to_edit}'.")
+                    if update_observation(observation_to_edit, updated_data):
+                        st.session_state.pop("selected_observation", None)
+                    else:
+                        st.error(f"Failed to save changes to '{observation_to_edit}'.")
             
         
 
