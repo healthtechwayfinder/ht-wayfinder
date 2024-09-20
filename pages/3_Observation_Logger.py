@@ -845,6 +845,7 @@ if action == "Add New Observation":
             if status:
                 st.session_state['result'] = "Observation added to your team's database."
                 st.session_state['rerun'] = True
+                clear_text()
                 st.rerun()
     
             else:
