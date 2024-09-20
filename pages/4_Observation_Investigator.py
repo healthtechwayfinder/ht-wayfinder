@@ -198,7 +198,7 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
         Question: {question}
         Set of Observations: {related_observations}
         Relevant Cases linked to Observations:{related_cases}
-        Semantailcally Relevant cases: {related_cases_similarity}
+        Semantically Relevant cases: {related_cases_similarity}
         Final Answer:
          """
     )
