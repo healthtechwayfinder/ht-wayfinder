@@ -622,7 +622,7 @@ def update_observation(observation_id, updated_data):
         
         # Find the row corresponding to the observation_id and update it
         for i, row in enumerate(data, start=2):  # Skip header row
-            if row["observation ID"] == observation_id:
+            if row["Observation ID"] == observation_id:
                 # Update the necessary fields
                 for key, value in updated_data.items():
                     if key in headers:
@@ -636,7 +636,7 @@ def update_observation(observation_id, updated_data):
         return False
         
     except Exception as e:
-        print(f"Error updating case: {e}")
+        print(f"Error updating observation: {e}")
         return False
 
 
