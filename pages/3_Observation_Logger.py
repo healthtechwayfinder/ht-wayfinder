@@ -580,15 +580,12 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    # Retrieve the selected case ID and title from the session state
     case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
-
-    # Ensure a case is selected (i.e., not an empty value)
     if case_id_with_title:
-        case_date = get_case_date(case_id_with_title)  # Get the case date using your function
+        case_date = get_case_date(case_id_with_title)
         if case_date:
-            st.session_state['observation_date'] = case_date  # Update the observation date in session state
-            update_observation_id()  # Ensure observation ID is updated when the date is updated
+            st.session_state['observation_date'] = case_date
+            update_observation_id()  # Also update the observation ID if the date changes
 
 
 def fetch_all_case_ids_and_titles():
@@ -913,6 +910,9 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                 observation_date_input = st.date_input("Date", observation_date)
+
+                observation_date_input = st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
+
                 
                 # Find the index of formatted_case in all_cases
                 if formatted_case in all_cases:
