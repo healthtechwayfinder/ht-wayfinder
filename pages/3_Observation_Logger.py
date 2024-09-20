@@ -580,13 +580,13 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
+    case_id_with_title = st.session_state.get('selected_observation', '')
     if case_id_with_title:
-        case_date = get_case_date(case_id_with_title)
+        case_id = case_id_with_title.split(" - ")[0]
+        case_date = get_case_date(case_id)  # Assuming get_case_date returns the date for the given case_id
         if case_date:
-            st.session_state['observation_date'] = case_date
-            update_observation_id()  # Also update the observation ID if the date changes
-
+            st.session_state['observation_date'] = case_date  # Update observation date
+            update_observation_id()  # Ensure the observation ID is updated
 
 def fetch_all_case_ids_and_titles():
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
@@ -910,7 +910,11 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
 
-                observation_date_input = st.date_input("Date", observation_date, key='observation_date', on_change=update_observation_id)
+                # Ensure observation date is in session state
+                st.session_state['observation_date'] = observation_date
+                # observation_date_input = st.date_input("Date", observation_date, key='observation_date', on_change=update_observation_id)
+                # Ensure that the session state is used for the observation date input
+                observation_date_input = st.date_input("Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
 
                 
                 # Find the index of formatted_case in all_cases
