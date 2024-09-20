@@ -943,6 +943,10 @@ elif action == "Edit Existing Observation":
                     on_change=update_observation_id  # Trigger any additional updates if necessary
                 )
 
+                # Display the updated observation ID
+                st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+
+
                                     # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
                 case_title = selected_case.split(" - ")[1]
