@@ -449,6 +449,7 @@ def update_observation_id():
    
     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
 
+
 def getExistingCaseIDS():
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -553,7 +554,7 @@ with col1:
     # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
 
     # Display the observation date input and make it reflect session state
-    st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date')
+    st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
 
 
 with col2:
