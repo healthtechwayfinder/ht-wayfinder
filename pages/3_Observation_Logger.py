@@ -478,6 +478,7 @@ def get_case_date(case_id_with_title):
     case_id = case_id_with_title.split(" - ")[0]
 
     try:
+        # Define Google API scope and credentials
         scope = [
             "https://www.googleapis.com/auth/spreadsheets",
             "https://www.googleapis.com/auth/drive.metadata.readonly"
@@ -493,24 +494,38 @@ def get_case_date(case_id_with_title):
 
         # Loop through the rows and find the case with the matching Case ID
         for row in case_data:
-            if row['Case ID'] == case_id:
-                case_date_str = row['Date']
-                case_date = datetime.strptime(case_date_str, '%Y-%m-%d').date()  # Adjust date format if needed
-                return case_date
+            if row.get('Case ID') == case_id:
+                case_date_str = row.get('Date')  # Check if 'Date' exists
+                if case_date_str:
+                    try:
+                        case_date = datetime.strptime(case_date_str, '%Y-%m-%d').date()  # Adjust date format if needed
+                        return case_date
+                    except ValueError:
+                        logging.error(f"Invalid date format for case ID {case_id}: {case_date_str}")
+                        return None
+                else:
+                    logging.warning(f"No date found for case ID {case_id}")
+                    return None
 
+    except gspread.exceptions.APIError as api_err:
+        logging.error(f"API error while fetching case date: {api_err}")
+        return None
     except Exception as e:
         logging.error(f"Error fetching case date: {e}")
         return None
 
 
+
 # Function to update the observation date when a case is selected
-def update_observation_date(case_id_with_title):
-    case_date = get_case_date(case_id_with_title)
-    if case_date:
-        st.session_state['observation_date'] = case_date  # Update observation date to match the case date
-        st.success(f"Observation date updated to match case date: {case_date}")
-    else:
-        st.error("Failed to retrieve case date.")
+def update_observation_date():
+    # Retrieve the selected case ID and title from the session state
+    case_id_with_title = st.session_state['selected_case_id_with_title']
+
+    # Ensure a case is selected (i.e., not an empty value)
+    if case_id_with_title:
+        case_date = get_case_date(case_id_with_title)  # Get the case date using your function
+        if case_date:
+            st.session_state['observation_date'] = case_date  # Update the observation date in session state
 
 
 existing_case_ids_with_title = getExistingCaseIDS()
@@ -518,6 +533,8 @@ existing_case_ids_with_title = getExistingCaseIDS()
     # put case ID dateinformation here
 # Create a dropdown for selecting a case, with a callback to update the observation date
 # Create a dropdown for selecting a case, with a callback to update the observation date
+
+# Selectbox for Related Case ID
 case_id_with_title = st.selectbox(
     "Select a Related Case ID",
     [""] + existing_case_ids_with_title,
