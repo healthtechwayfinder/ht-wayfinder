@@ -34,7 +34,7 @@ st.markdown("# Observation Logger")
 st.markdown("""
     <style>
     h3 {
-        margin-bottom: 0.3rem; /* Adjust this value to reduce or increase space */
+        margin-bottom: 0.8rem; /* Adjust this value to reduce or increase space */
     }
     </style>
     <h3>Choose an action</h4>
