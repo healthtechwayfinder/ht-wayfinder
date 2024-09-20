@@ -826,8 +826,21 @@ elif action == "Edit Existing Observation":
     else:
         # Create a list of display names in the format "case_id: title"
         observation_options = [f"{observation_id}: {title}" for observation_id, title in observation_info]
+        st.markdown("""
+        <style>
+        h4 {
+            margin-bottom: 0rem;  /* No margin below the title */
+            padding-bottom: 0rem; /* No padding below the title */
+        }
+        div[data-baseweb="select"] {
+            margin-top: 0rem; /* No margin above the dropdown */
+            padding-top: 0rem; /* No padding above the dropdown */
+        }
+        </style>
+        <h3>Select an Observation to edit</h3>
+        """, unsafe_allow_html=True)
         # Display the dropdown with combined case_id and title
-        selected_observation = st.selectbox("Select an observation to edit", [""] + observation_options, key="selected_observation" )
+        selected_observation = st.selectbox("", [""] + observation_options, key="selected_observation", label_visibility="collapsed")
         if selected_observation != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
