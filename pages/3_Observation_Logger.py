@@ -882,7 +882,20 @@ elif action == "Edit Existing Observation":
                 observation_product_interactions = st.text_input("Product Interactions", observation_details.get("Product Interactions", ""))
                 observation_people_interactions = st.text_input("People Interactions", observation_details.get("People Interactions", ""))
                 observation_process_actions = st.text_input("Process Actions", observation_details.get("Process Actions", ""))
-                
+                insider_language = st_tags(
+                        label="Insider Language:",
+                        text="Press enter to add more",
+                        value=observation_details.get("Insider Language", "").split(",") if observation_details.get("Insider Language") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=30,  # Max number of tags the user can add
+                    )
+                tags = st_tags(
+                        label="Insider Language:",
+                        text="Press enter to add more",
+                        value=observation_details.get("Tags", "").split(",") if observation_details.get("Tags") else [],  # Split tags into a list
+                        suggestions=['Urology', 'Minimally Invasive', 'Neurogenic Bladder', 'Surgery', 'Postoperative'],
+                        maxtags=30,  # Max number of tags the user can add
+                    )
                 
             else:
                 st.write("Observation not found.")
