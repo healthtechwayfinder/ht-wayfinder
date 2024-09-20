@@ -391,7 +391,7 @@ with st.form("my_form"):
     st.text_input("Notes:", key='notes')
 
     # Form submit button with a callback function
-    submitted = st.form_submit_button("Log Need", on_click=submit_form)
+    submitted = st.form_submit_button("Log Need Statement", on_click=submit_form)
 
 
 
