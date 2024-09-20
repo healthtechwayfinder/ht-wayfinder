@@ -47,8 +47,8 @@ def clear_row_by_term(term_to_search, glossary_sheet):
         num_cols = glossary_sheet.col_count
         
         # Clear the contents of the row by replacing it with empty strings
-        # glossary_sheet.update(f'A{row_index}:Z{row_index}', [[''] * num_cols])
-        glossary_sheet.delete_row(row_index)
+        glossary_sheet.update(f'A{row_index}:Z{row_index}', [[''] * num_cols])
+        # glossary_sheet.delete_row(row_index)
         
         print(f"Cleared contents of row {row_index} for term '{term_to_search}'")
         
