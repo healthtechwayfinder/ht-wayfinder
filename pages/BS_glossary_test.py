@@ -26,7 +26,7 @@ scope = [
 ]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 client = gspread.authorize(creds)
-glossary_sheet = client.open("Glossary").Sheet1
+glossary_sheet = client.open("Glossary").sheet1
 
 def clear_row_by_term(term_to_search, glossary_sheet):
     """
