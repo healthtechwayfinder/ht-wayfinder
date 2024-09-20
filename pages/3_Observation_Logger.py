@@ -829,12 +829,8 @@ elif action == "Edit Existing Observation":
         st.markdown("""
         <style>
         h4 {
-            margin-bottom: 0rem;  /* No margin below the title */
-            padding-bottom: 0rem; /* No padding below the title */
-        }
-        div[data-baseweb="select"] {
-            margin-top: 0rem; /* No margin above the dropdown */
-            padding-top: 0rem; /* No padding above the dropdown */
+            margin-bottom: 0.5rem;  /* No margin below the title */
+            padding-bottom: 0.3rem; /* No padding below the title */
         }
         </style>
         <h4>Select an Observation to edit</h4>
