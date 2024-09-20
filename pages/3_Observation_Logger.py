@@ -13,6 +13,7 @@ from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
+from streamlit_tags import st_tags
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
