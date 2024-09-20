@@ -635,7 +635,7 @@ if action == "Add New Observation":
     
     with col3:
         #Display Observer options 
-        observer = st.selectbox("Observer", [""] + ["Deb", "Kyle", "Ryan", "Lois"])
+        observer = st.selectbox("Observer", [""] + ["Deborah", "Kyle", "Ryan", "Lois"])
     
     
     # Initialize the observation text in session state if it doesn't exist
