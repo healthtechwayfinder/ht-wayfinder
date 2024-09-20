@@ -103,7 +103,7 @@ def fetch_observation_ids_and_titles():
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")  # Ensure this is correct
         data = sheet.get_all_records()
         # Create a list of tuples with (case_id, title)
-        observation_info = [(row["Observation ID"], row["Title"]) for row in data if "Observation ID" in row and "Title" in row]
+        observation_info = [(row["Observation ID"], row["Observation Title"]) for row in data if "Observation ID" in row and "Observation Title" in row]
         return observation_info
     except Exception as e:
         print(f"Error fetching Observation IDs and titles: {e}")
