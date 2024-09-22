@@ -2,6 +2,7 @@ import streamlit as st
 import gspread
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
+import ast  # Import ast to handle conversion of string to list
 
 # Connect to Google Sheets using Streamlit secrets
 def connect_to_google_sheet():
@@ -57,9 +58,15 @@ if need_id_selected:
     matching_row = need_statement_df[need_statement_df['need_ID'] == need_id_selected]
     
     if not matching_row.empty:
-        # Get the observation_IDs as a single string and split by commas
+        # Get the observation_IDs as a string and convert it into a list
         observation_ids_str = matching_row.iloc[0]['observation_ID']
-        observation_ids = [obs_id.strip() for obs_id in observation_ids_str.split(',')]  # Split and strip whitespace
+        try:
+            # Safely convert the string to a list using ast.literal_eval
+            observation_ids = ast.literal_eval(observation_ids_str)
+            observation_ids = [obs_id.strip() for obs_id in observation_ids]  # Strip whitespace from each ID
+        except (ValueError, SyntaxError):
+            st.error("Error parsing observation IDs. Please check the format in the Google Sheet.")
+            st.stop()
 
         # Find the Observation Titles corresponding to each observation_ID
         observation_ids_with_title = []
@@ -89,6 +96,7 @@ if need_id_selected:
 
     else:
         st.warning("No matching observations found for the selected need_ID.")
+
 
 
 
