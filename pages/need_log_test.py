@@ -63,7 +63,7 @@ if need_id_selected:
         # Find the Observation Titles corresponding to the observation_IDs
         observation_titles = []
         for obs_id in observation_ids:
-            obs_row = observation_log_df[observation_log_df['observation_ID'] == obs_id.strip()]
+            obs_row = observation_log_df[observation_log_df['Observation ID'] == obs_id.strip()]
             if not obs_row.empty:
                 observation_titles.append(obs_row.iloc[0]['Observation Title'])
         
@@ -71,7 +71,7 @@ if need_id_selected:
         observation_ids_with_title = [f"{obs_id.strip()} - {title}" for obs_id, title in zip(observation_ids, observation_titles)]
 
         # Get all observation IDs and Titles for the master list
-        all_observations = [f"{row['observation_ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
+        all_observations = [f"{row['Observation ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
         
         # Multiselect dropdown for user to select more or refine selection
         selected_observations = st.multiselect(
