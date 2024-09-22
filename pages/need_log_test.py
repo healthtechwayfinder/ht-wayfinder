@@ -39,7 +39,7 @@ sheet1 = client1.open(sheet_name1)
 
 # Load data from the specific worksheets
 def load_data(sheet1, worksheet_name1):
-    worksheet = sheet1.worksheet(worksheet_name1)
+    worksheet1 = sheet1.worksheet(worksheet_name1)
     data = worksheet1.get_all_records()
     return pd.DataFrame(data)
 
