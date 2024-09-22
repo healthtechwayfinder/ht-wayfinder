@@ -58,7 +58,7 @@ if need_id_selected:
     
     if not matching_row.empty:
         # Get the observation_IDs as a single string and split by commas
-        observation_ids_str = matching_row.iloc[0]['Observation ID']
+        observation_ids_str = matching_row.iloc[0]['observation_ID']
         observation_ids = [obs_id.strip() for obs_id in observation_ids_str.split(',')]  # Split and strip whitespace
 
         # Find the Observation Titles corresponding to each observation_ID
