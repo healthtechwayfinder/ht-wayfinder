@@ -58,19 +58,19 @@ if need_id_selected:
     
     if not matching_row.empty:
         # Get the observation_IDs as a single string and split by commas
-        observation_ids_str = matching_row.iloc[0]['observation_ID']
+        observation_ids_str = matching_row.iloc[0]['Observation ID']
         observation_ids = [obs_id.strip() for obs_id in observation_ids_str.split(',')]  # Split and strip whitespace
 
         # Find the Observation Titles corresponding to each observation_ID
         observation_ids_with_title = []
         for obs_id in observation_ids:
-            obs_row = observation_log_df[observation_log_df['observation_ID'] == obs_id]
+            obs_row = observation_log_df[observation_log_df['Observation ID'] == obs_id]
             if not obs_row.empty:
                 observation_title = obs_row.iloc[0]['Observation Title']
                 observation_ids_with_title.append(f"{obs_id} - {observation_title}")
         
         # Create a master list of all observations with ID and Title
-        all_observations = [f"{row['observation_ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
+        all_observations = [f"{row['Observation ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
         
         # Multiselect dropdown for the user to refine or add to their selection
         selected_observations = st.multiselect(
