@@ -1,48 +1,48 @@
-import streamlit as st
+# import streamlit as st
 import gspread
 import pandas as pd
+from oauth2client.service_account import ServiceAccountCredentials
 
+# Connect to Google Sheets using Streamlit secrets
+def connect_to_google_sheet():
+    # Access the credentials from Streamlit secrets
+    creds_dict = {
+        "type": st.secrets["gwf_service_account"]["type"],
+        "project_id": st.secrets["gwf_service_account"]["project_id"],
+        "private_key_id": st.secrets["gwf_service_account"]["private_key_id"],
+        "private_key": st.secrets["gwf_service_account"]["private_key"],
+        "client_email": st.secrets["gwf_service_account"]["client_email"],
+        "client_id": st.secrets["gwf_service_account"]["client_id"],
+        "auth_uri": st.secrets["gwf_service_account"]["auth_uri"],
+        "token_uri": st.secrets["gwf_service_account"]["token_uri"],
+        "auth_provider_x509_cert_url": st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+        "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
+        "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
+    }
 
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive.metadata.readonly"
+    ]
 
-OPENAI_API_KEY = st.secrets["openai_key"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    return client
 
-# Access the credentials from Streamlit secrets
-creds_dict = {
-    "type" : st.secrets["gwf_service_account"]["type"],
-    "project_id" : st.secrets["gwf_service_account"]["project_id"],
-    "private_key_id" : st.secrets["gwf_service_account"]["private_key_id"],
-    "private_key" : st.secrets["gwf_service_account"]["private_key"],
-    "client_email" : st.secrets["gwf_service_account"]["client_email"],
-    "client_id" : st.secrets["gwf_service_account"]["client_id"],
-    "auth_uri" : st.secrets["gwf_service_account"]["auth_uri"],
-    "token_uri" : st.secrets["gwf_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url" : st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url" : st.secrets["gwf_service_account"]["client_x509_cert_url"],
-    "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
-}
+# Initialize Google Sheets connection
+client = connect_to_google_sheet()
+sheet_name = "2024 Healthtech Identify Log"
 
+# Load the Google Sheet
+sheet = client.open(sheet_name)
 
-
-
-# Connect to Google Sheets
-def connect_to_google_sheet(json_keyfile_path, sheet_name):
-    gc = gspread.service_account(filename=json_keyfile_path)
-    sheet = gc.open(sheet_name)
-    return sheet
-
-# Load data from Google Sheet
+# Load data from the specific worksheets
 def load_data(sheet, worksheet_name):
     worksheet = sheet.worksheet(worksheet_name)
     data = worksheet.get_all_records()
     return pd.DataFrame(data)
 
-# Initialize Google Sheets connection
-json_keyfile_path = "path/to/your/credentials.json"  # Replace with your credentials JSON path
-sheet_name = "2024 Healthtech Identify Log"
-
-sheet = connect_to_google_sheet(json_keyfile_path, sheet_name)
-
-# Load data from the specific worksheets
+# Fetch data from sheets
 need_statement_df = load_data(sheet, "Need Statement Log")
 observation_log_df = load_data(sheet, "Observation Log")
 
@@ -90,8 +90,6 @@ if need_id_selected:
 
     else:
         st.warning("No matching observations found for the selected need_ID.")
-
-
 
 
 
