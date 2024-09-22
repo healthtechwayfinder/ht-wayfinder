@@ -27,25 +27,25 @@ def connect_to_google_sheet():
     ]
 
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    return client
+    client1 = gspread.authorize(creds)
+    return client1
 
 # Initialize Google Sheets connection
-client = connect_to_google_sheet()
-sheet_name = "2024 Healthtech Identify Log"
+client1 = connect_to_google_sheet()
+sheet_name1 = "2024 Healthtech Identify Log"
 
 # Load the Google Sheet
-sheet = client.open(sheet_name)
+sheet1 = client1.open(sheet_name1)
 
 # Load data from the specific worksheets
-def load_data(sheet, worksheet_name):
-    worksheet = sheet.worksheet(worksheet_name)
-    data = worksheet.get_all_records()
+def load_data(sheet1, worksheet_name1):
+    worksheet = sheet1.worksheet(worksheet_name1)
+    data = worksheet1.get_all_records()
     return pd.DataFrame(data)
 
 # Fetch data from sheets
-need_statement_df = load_data(sheet, "Need Statement Log")
-observation_log_df = load_data(sheet, "Observation Log")
+need_statement_df = load_data(sheet1, "Need Statement Log")
+observation_log_df = load_data(sheet1, "Observation Log")
 
 # Streamlit interface
 st.title("Healthtech Identify Log System")
