@@ -57,23 +57,22 @@ if need_id_selected:
     matching_row = need_statement_df[need_statement_df['need_ID'] == need_id_selected]
     
     if not matching_row.empty:
+        # Get the observation_IDs as a single string and split by commas
         observation_ids_str = matching_row.iloc[0]['observation_ID']
-        observation_ids = observation_ids_str.split(',')
+        observation_ids = [obs_id.strip() for obs_id in observation_ids_str.split(',')]  # Split and strip whitespace
 
-        # Find the Observation Titles corresponding to the observation_IDs
-        observation_titles = []
+        # Find the Observation Titles corresponding to each observation_ID
+        observation_ids_with_title = []
         for obs_id in observation_ids:
-            obs_row = observation_log_df[observation_log_df['Observation ID'] == obs_id.strip()]
+            obs_row = observation_log_df[observation_log_df['observation_ID'] == obs_id]
             if not obs_row.empty:
-                observation_titles.append(obs_row.iloc[0]['Observation Title'])
+                observation_title = obs_row.iloc[0]['Observation Title']
+                observation_ids_with_title.append(f"{obs_id} - {observation_title}")
         
-        # Combine observation_IDs and Titles
-        observation_ids_with_title = [f"{obs_id.strip()} - {title}" for obs_id, title in zip(observation_ids, observation_titles)]
-
-        # Get all observation IDs and Titles for the master list
-        all_observations = [f"{row['Observation ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
+        # Create a master list of all observations with ID and Title
+        all_observations = [f"{row['observation_ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
         
-        # Multiselect dropdown for user to select more or refine selection
+        # Multiselect dropdown for the user to refine or add to their selection
         selected_observations = st.multiselect(
             "Select Observation IDs with Titles:", 
             options=all_observations, 
@@ -90,6 +89,121 @@ if need_id_selected:
 
     else:
         st.warning("No matching observations found for the selected need_ID.")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# import streamlit as st
+# import gspread
+# import pandas as pd
+# from oauth2client.service_account import ServiceAccountCredentials
+
+# # Connect to Google Sheets using Streamlit secrets
+# def connect_to_google_sheet():
+#     # Access the credentials from Streamlit secrets
+#     creds_dict = {
+#         "type": st.secrets["gwf_service_account"]["type"],
+#         "project_id": st.secrets["gwf_service_account"]["project_id"],
+#         "private_key_id": st.secrets["gwf_service_account"]["private_key_id"],
+#         "private_key": st.secrets["gwf_service_account"]["private_key"],
+#         "client_email": st.secrets["gwf_service_account"]["client_email"],
+#         "client_id": st.secrets["gwf_service_account"]["client_id"],
+#         "auth_uri": st.secrets["gwf_service_account"]["auth_uri"],
+#         "token_uri": st.secrets["gwf_service_account"]["token_uri"],
+#         "auth_provider_x509_cert_url": st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
+#         "client_x509_cert_url": st.secrets["gwf_service_account"]["client_x509_cert_url"],
+#         "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
+#     }
+
+#     scope = [
+#         "https://www.googleapis.com/auth/spreadsheets",
+#         "https://www.googleapis.com/auth/drive.metadata.readonly"
+#     ]
+
+#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+#     client = gspread.authorize(creds)
+#     return client
+
+# # Initialize Google Sheets connection
+# client = connect_to_google_sheet()
+# sheet_name = "2024 Healthtech Identify Log"
+
+# # Load the Google Sheet
+# sheet = client.open(sheet_name)
+
+# # Load data from the specific worksheets
+# def load_data(sheet, worksheet_name):
+#     worksheet = sheet.worksheet(worksheet_name)
+#     data = worksheet.get_all_records()
+#     return pd.DataFrame(data)
+
+# # Fetch data from sheets
+# need_statement_df = load_data(sheet, "Need Statement Log")
+# observation_log_df = load_data(sheet, "Observation Log")
+
+# # Streamlit interface
+# st.title("Healthtech Identify Log System")
+
+# # Dropdown for selecting need_ID
+# need_id_selected = st.selectbox("Select a need_ID:", need_statement_df['need_ID'].unique())
+
+# if need_id_selected:
+#     # Fetch observation_IDs associated with the selected need_ID
+#     matching_row = need_statement_df[need_statement_df['need_ID'] == need_id_selected]
+    
+#     if not matching_row.empty:
+#         observation_ids_str = matching_row.iloc[0]['observation_ID']
+#         observation_ids = observation_ids_str.split(',')
+
+#         # Find the Observation Titles corresponding to the observation_IDs
+#         observation_titles = []
+#         for obs_id in observation_ids:
+#             obs_row = observation_log_df[observation_log_df['Observation ID'] == obs_id.strip()]
+#             if not obs_row.empty:
+#                 observation_titles.append(obs_row.iloc[0]['Observation Title'])
+        
+#         # Combine observation_IDs and Titles
+#         observation_ids_with_title = [f"{obs_id.strip()} - {title}" for obs_id, title in zip(observation_ids, observation_titles)]
+
+#         # Get all observation IDs and Titles for the master list
+#         all_observations = [f"{row['Observation ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
+        
+#         # Multiselect dropdown for user to select more or refine selection
+#         selected_observations = st.multiselect(
+#             "Select Observation IDs with Titles:", 
+#             options=all_observations, 
+#             default=observation_ids_with_title
+#         )
+        
+#         # Remove titles from the selected observation IDs
+#         selected_observation_ids = [obs.split(" - ")[0].strip() for obs in selected_observations]
+
+#         # Store them in the need_details dictionary
+#         need_details = {"observation_ID": selected_observation_ids}
+        
+#         st.write("Selected Observation IDs:", need_details.get("observation_ID"))
+
+#     else:
+#         st.warning("No matching observations found for the selected need_ID.")
 
 
 
