@@ -349,7 +349,7 @@ else:
             notes = st.text_area("Notes", need_details.get("notes", ""))
             
             
-            existing_obs_ids_with_title = getExistingObsIDS()
+            # existing_obs_ids_with_title = getExistingObsIDS()
 
 
     
