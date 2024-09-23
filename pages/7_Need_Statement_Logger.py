@@ -139,16 +139,28 @@ def addToGoogleSheets(need_dict):
 
 
 # put in correct format & call function to upload to google sheets
-def recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
+# def recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
     
-    all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes'] # + need_keys
-    need_values = [need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes] # + [parsed_need[key] for key in need_keys]
+#     all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes'] # + need_keys
+#     need_values = [need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes] # + [parsed_need[key] for key in need_keys]
+#     need_dict = dict(zip(all_need_keys, need_values))
+
+#     status = addToGoogleSheets(need_dict)
+
+#     return status
+
+def recordNeed(need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes):
+    # Convert observation_ID from list to a comma-separated string
+    if isinstance(observation_ID, list):
+        observation_ID = ', '.join(observation_ID)  # Convert the list to a comma-separated string
+
+    all_need_keys = ['need_ID', 'need_date', 'need_statement', 'problem', 'population', 'outcome', 'observation_ID', 'notes']
+    need_values = [need_ID, need_date, need_statement, problem, population, outcome, observation_ID, notes]
     need_dict = dict(zip(all_need_keys, need_values))
 
     status = addToGoogleSheets(need_dict)
 
     return status
-    
 
 # Initialize or retrieve the clear_need counters dictionary from session state
 if 'need_counters' not in st.session_state:
