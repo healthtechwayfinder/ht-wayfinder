@@ -762,25 +762,20 @@ if action == "Add New Observation":
         if st.button("Evaluate Observation"):
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-            # Generate tags for the observation
             st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
             
         
     if st.session_state['observation_summary'] != "":
-        st.session_state['observation_summary'] = st.text_area("Generated Summary (editable):", value=st.session_state['observation_summary'], height=50)
+        st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
     
     # here, add the function call to turn parsed results into editable text fields  
-    
     parsed_observation = st.session_state['parsed_observation']
     
      # Ensure 'result' exists
     if isinstance(parsed_observation, dict):
         
         input_fields = list(ObservationRecord.__fields__.keys())
-        # Find missing fields by checking if any field in parsed_observation is None or empty
         missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
-    
-    
     
         for field in input_fields:
             if field not in missing_fields and field != "tags":
@@ -793,12 +788,10 @@ if action == "Add New Observation":
                 updated_tags = st_tags(
                     label="**Tags**",
                     text="Press enter to add more",
-                    value=tags_values,  # Show the tags found in the result
+                    value=tags_values,  
                     maxtags=10,
-                    key="tags_input"  # Unique key to ensure it's updated correctly
+                    key="tags_input"  
                 )
-                
-                # Update tags_values with the modified tags from st_tags
                 tags_values = updated_tags
                 updated_tags_string = ", ".join(updated_tags)
                 st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
@@ -809,14 +802,6 @@ if action == "Add New Observation":
             for field in missing_fields:
                 field_clean = field.replace("_", " ").capitalize()
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
-    
-    
-    
-    
-    # # st.write(f":green[{st.session_state['result']}]")
-    # # Display the generated tags in a text area (editable by the user if needed)
-    # if st.session_state['observation_tags'] != "":
-    #     st.session_state['observation_tags'] = st.text_area("Generated Tags (editable):", value=st.session_state['observation_tags'], height=50)
     
     st.markdown(st.session_state['result'], unsafe_allow_html=True)
     
