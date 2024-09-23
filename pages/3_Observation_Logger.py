@@ -723,12 +723,13 @@ if action == "Add New Observation":
             )
         else:
             # update observation ID one last time to avoid accidental duplication with multiple users
+            if 
             update_observation_id() 
             status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                                 st.session_state['observation_tags'],
                                 st.session_state['observation_date'],
                                 st.session_state['observation_id'],
-                                case_id_with_title)
+                                st.session_state[case_id_with_title])
             if status:
                 st.session_state['result'] = "Observation added to your team's database."
                 st.session_state['rerun'] = True
