@@ -404,9 +404,9 @@ def clear_observation():
     if 'parsed_observation' in st.session_state:
         st.session_state['parsed_observation'] = ""
     if 'observer' in st.session_state:
-        st.session_state['observer'] = []
+        st.session_state['observer'] = ""
     if 'selected_case' in st.session_state:
-        st.session_state['selected_case'] = []
+        st.session_state['selected_case'] = ""
     clear_text()
     update_observation_id()
 
