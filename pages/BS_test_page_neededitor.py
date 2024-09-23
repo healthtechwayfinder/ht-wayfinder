@@ -72,8 +72,12 @@ if 'outcome_var' not in st.session_state:
 if 'notes' not in st.session_state:
     st.session_state['notes'] = ""
 
-if 'observation_ID' not in st.session_state:
-    st.session_state['observation_ID'] = ""
+if 'notes' not in st.session_state:
+    st.session_state['notes'] = ""
+
+
+if 'related_observation_ID_w_title' not in st.session_state:
+    st.session_state['related_observation_ID_w_title'] = ""
 
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
@@ -318,7 +322,7 @@ else:
                 all_observations = [f"{row['Observation ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
                 
                 # Multiselect dropdown for the user to refine or add to their selection
-                related_observation_ID_w_title = st.multiselect(
+                st.session_state['related_observation_ID_w_title'] = st.multiselect(
                     "Select Observation IDs with Titles:", 
                     options=all_observations, 
                     default=observation_ids_with_title
@@ -326,7 +330,7 @@ else:
 
                 display_selected_observations(st.session_state['related_observation_ID_w_title'])
                 # Remove titles from the selected observation IDs
-                selected_observation_ids = [obs.split(" - ")[0].strip() for obs in related_observation_ID_w_title]
+                selected_observation_ids = [obs.split(" - ")[0].strip() for obs in st.session_state['related_observation_ID_w_title']]
         
                 # Store them in the need_details dictionary
                 need_details = {"observation_ID": selected_observation_ids}
