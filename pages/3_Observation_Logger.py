@@ -653,7 +653,7 @@ if action == "Add New Observation":
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             
             # here, add the function call to turn parsed results into editable text fields  
-            parsed_observation = st.session_state['parsed_observation']
+    parsed_observation = st.session_state['parsed_observation']
     
     if isinstance(parsed_observation, dict) and parsed_observation:
 
