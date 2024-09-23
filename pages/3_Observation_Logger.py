@@ -66,6 +66,9 @@ for key in session_keys:
     if key not in st.session_state:
         st.session_state[key] = "" if key != 'observation_tags' else []
 
+if 'parsed_case' not in st.session_state:
+    st.session_state['parsed_case'] = {}
+
 def get_google_sheet(spreadsheet_name, worksheet_name):
     scope = ["https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive"]
