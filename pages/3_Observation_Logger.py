@@ -689,15 +689,15 @@ if action == "Add New Observation":
                 st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
 
         
-            st.markdown("### Missing Fields")
+    st.markdown("### Missing Fields")
             # Ensure missing_fields is a list and has elements to process
-        if missing_fields:
-            for field in missing_fields:
-                field_clean = field.replace("_", " ").capitalize()
+    if missing_fields:
+        for field in missing_fields:
+            field_clean = field.replace("_", " ").capitalize()
                     # Update the value of the parsed_case dictionary based on the text input
-                st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
-        else:
-            st.write("None")
+            st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+    else:
+        st.write("None")
 
     
     if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
