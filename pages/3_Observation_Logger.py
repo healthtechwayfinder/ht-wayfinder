@@ -403,6 +403,10 @@ def clear_observation():
         st.session_state['result'] = ""
     if 'parsed_observation' in st.session_state:
         st.session_state['parsed_observation'] = ""
+    if 'observer' in st.session_state:
+        st.session_state['observer'] = ""
+    if 'selected_case' in st.session_state:
+        st.session_state['selected_case'] = ""
     clear_text()
     update_observation_id()
 
@@ -658,20 +662,11 @@ if action == "Add New Observation":
         if st.button("Review Observation"):
             # Generate the observation summary
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-
-
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
-            # st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
-            # if st.session_state['observation_summary'] != "":
-            
             
     st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
-                
     # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
-
-    st.write("Parsed observation:", st.session_state['parsed_observation'])
-
     
     if isinstance(parsed_observation, dict) and parsed_observation:
     
