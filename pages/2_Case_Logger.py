@@ -609,12 +609,27 @@ if action == "Add New Case":
                 updated_tags_string = ", ".join(updated_tags)
                 st.session_state['parsed_case']['tags'] = updated_tags_string
         
+        # if st.session_state.get('parsed_case', '') != '':
+        #     st.markdown("### Missing Fields")
+            
+        #     for field in missing_fields:
+        #         field_clean = field.replace("_", " ").capitalize()
+        #         st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+        #     if missing_fields == '':
+        #         st.write("None")
+
         if st.session_state.get('parsed_case', '') != '':
             st.markdown("### Missing Fields")
             
-            for field in missing_fields:
-                field_clean = field.replace("_", " ").capitalize()
-                st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+            # Ensure missing_fields is a list and has elements to process
+            if missing_fields:
+                for field in missing_fields:
+                    field_clean = field.replace("_", " ").capitalize()
+                    # Update the value of the parsed_case dictionary based on the text input
+                    st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+            else:
+                st.write("None")
+
 
     if st.session_state['rerun']:
         # Ensure any unsaved changes are stored in session state before rerun
@@ -704,20 +719,13 @@ elif action == "Edit Existing Case":
                     if isinstance(observations, str):
                         observations = [obs.strip() for obs in observations.split(",")]  # Split by comma if needed
                     
-                    # Step 1: Print the list of observation IDs provided
-                    # st.write("Observation IDs to filter:", observations)
                     all_observations, observation_ids_with_title = fetch_all_observation_ids_and_titles()
                     # st.write("Full observation data:", all_observations)
                     formatted_observations = get_filtered_observation_data(observations,observation_ids_with_title)
-                    # st.write("Filtered observation data:", formatted_observations)
-                    # Multi-select dropdown with observation IDs
                     selected_observations = st.multiselect("Select Observation IDs:", all_observations, formatted_observations)  # Preselect the values
                     # Extract only the observation IDs from the selected_observations list
                     observation_ids_only = [obs.split(" - ")[0] for obs in selected_observations]
-    
-                    # Debugging to check the extracted observation IDs
-                    st.write("Selected Observation IDs:", observation_ids_only)
-                    # Editable field for tags using st_tags
+                    
                     tags = st_tags(
                         label="Enter tags:",
                         text="Press enter to add more",
