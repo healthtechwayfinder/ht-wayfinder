@@ -35,9 +35,9 @@ def main():
     """, unsafe_allow_html=True)
 
 
-    if st.button('Healthtech Wayfinder User Guide'):
-        st.write('Documentation Coming Soon!')
-    #st.link_button("Healthtech Wayfinder User Guide", "https://streamlit.io/gallery")
+    # if st.button('Healthtech Wayfinder User Guide'):
+    #     st.write('Documentation Coming Soon!')
+    st.link_button("Healthtech Wayfinder User Guide", "https://fixed-desert-9cd.notion.site/HealthTech-Wayfinder-User-Guide-1d770314f70c4dfbbb398f8a374e1dcb")
 
 
     
