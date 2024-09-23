@@ -690,12 +690,12 @@ if action == "Add New Observation":
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             
-    st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
-    # # here, add the function call to turn parsed results into editable text fields  
+   # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
     
     if isinstance(parsed_observation, dict) and parsed_observation:
-    
+
+        st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
         input_fields = list(ObservationRecord.__fields__.keys())
         missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
     
