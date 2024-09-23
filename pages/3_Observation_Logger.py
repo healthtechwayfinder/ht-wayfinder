@@ -71,28 +71,19 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 
-
+#Initialization
 if 'observation' not in st.session_state:
     st.session_state['observation'] = ""
 if 'parsed_observation' not in st.session_state:
     st.session_state['parsed_observation'] = ""
-
 if 'result' not in st.session_state:
     st.session_state['result'] = ""
-
 if 'observation_summary' not in st.session_state:
     st.session_state['observation_summary'] = ""
-
 if 'observation_tags' not in st.session_state:
     st.session_state['observation_tags'] = ""
-
-# if 'observation_date' not in st.session_state:
-#     st.session_state['observation_date'] = date.today()
-
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
-
-# Initialize session state for selected_observation if it doesn't exist
 if "selected_observation" not in st.session_state:
     st.session_state["selected_observation"] = ""  # Set initial value to an empty string
 
@@ -385,12 +376,6 @@ def embedObservation(observer, observation, observation_summary, observation_tag
     }])
 
     print("Added to Pinecone: ", observation_id)
-
-    # if 'parsed_observation' not in st.session_state:
-    #     st.session_state['parsed_observation'] = parseObservation(observation)
-    # else:
-    #     parsed_observation = st.session_state['parsed_observation']
-
 
     if 'parsed_observation' in st.session_state and len(st.session_state['parsed_observation'])>0:
         parsed_observation = st.session_state['parsed_observation']
@@ -769,7 +754,7 @@ if action == "Add New Observation":
         st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
     
     # # here, add the function call to turn parsed results into editable text fields  
-    # parsed_observation = st.session_state['parsed_observation']
+    parsed_observation = st.session_state['parsed_observation']
     
      # Ensure 'result' exists
     if isinstance(parsed_observation, dict):
