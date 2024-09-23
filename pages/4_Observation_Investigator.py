@@ -8,7 +8,7 @@ from utils.google_sheet_utils import create_new_chat_sheet, get_case_description
 from utils.llm_utils import create_llm
 from utils.page_formatting import add_investigator_formatting
 from utils.initialize_session import initialize_investigator_session
-from utils.chatbot_utils import fetch_similar_data
+from utils.chatbot_utils import fetch_similar_data, invoke_chain_and_update_session
 
 check_if_already_logged_in()
 add_investigator_formatting()
@@ -33,10 +33,8 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
         Final Answer:
          """
     )
-
-    llm = create_llm()
     
-    observation_chat_chain = (question_prompt | llm | StrOutputParser())
+    observation_chat_chain = (question_prompt | create_llm() | StrOutputParser())
 
     invoke_chain_and_update_session(observation_chat_chain, fetched_data_dict)
 
