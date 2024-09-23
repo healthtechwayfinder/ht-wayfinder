@@ -420,6 +420,9 @@ def clear_observation():
     st.session_state['observer'] = ""  # Clear observer selectbox
     st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox
     st.session_state['observation'] = ""  # Clear observation text area
+    st.session_state['observer_key'] = None  # Add unique key for observer reset
+    st.session_state['selected_observation_id_with_title'] = None  # Add unique key for case ID reset
+   
     
     clear_text()
     update_observation_id()
@@ -647,7 +650,7 @@ if action == "Add New Observation":
     
     with col3:
         #Display Observer options 
-        observer = st.selectbox("Observer", [""] + ["Deborah", "Kyle", "Ryan", "Lois"])
+        observer = st.selectbox("Observer", [""] + ["Deborah", "Kyle", "Ryan", "Lois"], key='observer_key')
     
     # # Initialize the observation text in session state if it doesn't exist
     # if "observation" not in st.session_state:
