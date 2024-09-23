@@ -744,7 +744,6 @@ if action == "Add New Observation":
         if st.button("Evaluate Observation"):
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-            st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
             
         
     if st.session_state['observation_summary'] != "":
@@ -752,7 +751,8 @@ if action == "Add New Observation":
     
     # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
-    
+    st.session_state['parsed_observation']['observation_tags'] = generateObservationTags(st.session_state['observation'])
+    #     st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
      # Ensure 'result' exists
     if isinstance(parsed_observation, dict):
         
@@ -765,8 +765,9 @@ if action == "Add New Observation":
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
     
             if field == "observation_tags":
-                tags_values = parsed_observation.get('observation_tags', '')
-                tags_values = [tag.strip() for tag in tags_values.split(",")]
+                # tags_values = parsed_observation.get('observation_tags', '')
+                # tags_values = [tag.strip() for tag in tags_values.split(",")]
+                tags_values = st.session_state['observation_tags']
                 updated_tags = st_tags(
                     label="**Tags**",
                     text="Press enter to add more",
