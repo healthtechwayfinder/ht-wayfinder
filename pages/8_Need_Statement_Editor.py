@@ -273,6 +273,7 @@ else:
                     observation_ids_with_title = [observation_ids_with_title]
                     st.write(f"Final observation_ids_with_title: {observation_ids_with_title}")
 
+                st.write(f"Final observation_ids_with_title: {observation_ids_with_title}")
 
                 
                 # Create a master list of all observations with ID and Title
