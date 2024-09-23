@@ -75,7 +75,7 @@ if "selected_case" not in st.session_state:
 
 # Clear session state if necessary
 if 'attendees_key' in st.session_state:
-    del st.session_state['attendees_key']
+    st.session_state["attendees_key"] = None 
 
 
 
