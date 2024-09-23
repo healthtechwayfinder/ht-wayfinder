@@ -723,7 +723,7 @@ if action == "Add New Observation":
             )
         else:
             # update observation ID one last time to avoid accidental duplication with multiple users
-            if 
+    
             update_observation_id() 
             status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                                 st.session_state['observation_tags'],
