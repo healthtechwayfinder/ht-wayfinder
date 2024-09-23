@@ -154,6 +154,8 @@ def update_need(selected_need_ID, updated_need_data):
                 return True
         return False
     except Exception as e:
+        st.write("Update failed")
+
         print(f"Error updating case: {e}")
         return False
 
@@ -335,10 +337,6 @@ else:
             # tags = st.text_input("Tags", need_details.get("Tags", ""))
             notes = st.text_area("Notes", need_details.get("notes", ""))
             
-            
-            # existing_obs_ids_with_title = getExistingObsIDS()
-
-
     
              # Get and validate the date field
             need_date_str = need_details.get("need_date", "")
