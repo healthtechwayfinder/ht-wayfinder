@@ -146,13 +146,23 @@ def get_google_sheet(sheet_name, worksheet_name):
 def fetch_need_details(selected_need_ID, need_df):
     # sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Statement Log")
     # need_data = need_df
-
-    for row in need_df:
-        if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
-            return row
+    # Iterate over rows of the DataFrame using iterrows()
+    for index, row in need_df.iterrows():
+        # Access the value using row["need_ID"]
+        if "need_ID" in row and row["need_ID"].strip() == selected_need_ID.strip():
+            return row.to_dict()  # Convert the row to a dictionary for easy handling
     
-    st.error(f"Need ID {st.session_state['selected_need_ID']} not found.")
+    st.error(f"Need ID {selected_need_ID} not found.")
     return None
+
+
+    
+    # for row in need_df:
+    #     if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
+    #         return row
+    
+    # st.error(f"Need ID {st.session_state['selected_need_ID']} not found.")
+    # return None
 
 
 # Update case details in Google Sheets
