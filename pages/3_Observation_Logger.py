@@ -164,7 +164,8 @@ class ObservationRecord(BaseModel):
     people_interactions: Optional[str] = Field(default=None, description="How people interact during the observation. This includes  verbal and non-verbal communication, such as the language users employ, their tone of voice, body language, and facial expressions. It also involves social dynamics, task performance patterns, and how users navigate challenges, user attitudes, and any unexpected behaviors or workarounds.")
     process_actions: Optional[str] = Field(default=None, description="specific step or task that is taken within a larger workflow or process to achieve a particular goal or outcome. In the context of biodesign or healthcare, a process action could involve any number of operations that contribute to the diagnosis, treatment, or management of a patient, or the development and deployment of medical technologies..")
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
-   
+    tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags (only noun) that are very relevant to the medical observation. The tags can be used to identify the type of procedure: (invasive procedure, minimally invasive, open procedure, noninvasive, in-clinic, in OR (operating room), in emergency room..) the medical specialty (e.g.: rhinology, oncology, ophthalmology,..)  area of medicine, or type of technology being used for example. Do not use numbers and separate them by commas. Give only the list of tags without any quotes or special characters.")
+
 
 def parseObservation(observation: str):
     llm = ChatOpenAI(
@@ -764,7 +765,6 @@ if action == "Add New Observation":
     
             if field == "observation_tags":
                 tags_values = parsed_observation.get('tags', '')
-               # Check if tags_values is not None or some invalid type
                 if tags_values is None:
                     tags_values = []  # Set as an empty list if it's None
                 elif isinstance(tags_values, str):
