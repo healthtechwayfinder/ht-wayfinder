@@ -1,24 +1,18 @@
 import streamlit as st
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain.chains import LLMChain
-from langchain.output_parsers import PydanticOutputParser
 from langchain.callbacks import get_openai_callback
 from langchain.schema import StrOutputParser
-from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
-from langchain_pinecone import PineconeVectorStore
 
 from utils.login_utils import check_if_already_logged_in
 from utils.google_sheet_utils import create_new_chat_sheet, get_case_descriptions_from_case_ids
+from utils.llm_utils import refresh_db, create_llm
 
 check_if_already_logged_in()
 
 # # Create a new sheet for the chat thread if not already created
 if "chat_sheet" not in st.session_state:
     st.session_state.chat_sheet = create_new_chat_sheet()
-
-OPENAI_API_KEY = st.secrets["openai_key"]
 
 st.set_page_config(page_title="Observation Investigator", page_icon="🤖")
 
@@ -51,34 +45,6 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-llm = ChatOpenAI(
-    # assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt',
-    model_name="gpt-4o",
-    temperature=0.7,
-    openai_api_key=OPENAI_API_KEY,
-    # assistant_id='asst_Qatnn7dh8SW5FeFCzbtuXmxt',
-    max_tokens=500,
-)
-
-
-def refresh_observations_db():
-    db = PineconeVectorStore(
-        index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-        namespace="observations",
-        embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-        pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-    )
-    return db
-
-def refresh_cases_db():
-    db = PineconeVectorStore(
-        index_name=st.secrets["pinecone-keys"]["index_to_connect"],
-        namespace="cases",
-        embedding=OpenAIEmbeddings(api_key=OPENAI_API_KEY),
-        pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
-    )
-    return db
-
 
 # Handle new input
 if prompt := st.chat_input("What would you like to ask?"):
@@ -87,7 +53,7 @@ if prompt := st.chat_input("What would you like to ask?"):
         st.markdown(prompt)
 
     # Perform similarity search using Pinecone
-    updated_observations_db = refresh_observations_db()
+    updated_observations_db = refresh_db(namespace_to_refresh="observations")
     related_observations = updated_observations_db.similarity_search(prompt, k=10)
     # related_observations = st.session_state['observation_google_sheet'] # Placeholder for now
     print(related_observations)
@@ -102,7 +68,7 @@ if prompt := st.chat_input("What would you like to ask?"):
     related_cases = get_case_descriptions_from_case_ids(case_ids)
     print(related_cases)
 
-    updated_cases_db = refresh_cases_db()
+    updated_cases_db = refresh_db(namespace_to_refresh="cases")
     related_cases_similarity = updated_cases_db.similarity_search(prompt, k=4)
 
        
@@ -121,6 +87,8 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
         Final Answer:
          """
     )
+
+    llm = create_llm()
     
     observation_chat_chain = (
         question_prompt | llm | StrOutputParser()
