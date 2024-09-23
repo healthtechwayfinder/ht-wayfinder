@@ -323,17 +323,18 @@ else:
                     options=all_observations, 
                     default=observation_ids_with_title
                 )
-                
+
+                display_selected_observations(st.session_state['related_observation_ID_w_title'])
                 # Remove titles from the selected observation IDs
                 selected_observation_ids = [obs.split(" - ")[0].strip() for obs in related_observation_ID_w_title]
         
                 # Store them in the need_details dictionary
                 need_details = {"observation_ID": selected_observation_ids}
                 
-                st.write("Selected Observation IDs:", need_details.get("observation_ID"))
+                # st.write("Selected Observation IDs:", need_details.get("observation_ID"))
         
             else:
-                st.warning("No matching observations found for the selected need_ID.")
+                st.warning("No matching observations found for the selected Need ID.")
 
             
 
