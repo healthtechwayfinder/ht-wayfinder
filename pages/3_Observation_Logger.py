@@ -718,11 +718,7 @@ if action == "Add New Observation":
     col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
     
     with col3:
-        # st.button("Clear Observation", on_click=clear_text)
         st.button("Clear Observation", on_click=clear_observation)
-        # Container for result display
-        # result_container = st.empty()
-        # clear_observation()
     
     with col1:
         if st.button("Review Observation"):
@@ -830,10 +826,10 @@ if action == "Add New Observation":
     
     
     # Create a button using Streamlit's native functionality
-    st.markdown("<br>", unsafe_allow_html=True)
+    # st.markdown("<br>", unsafe_allow_html=True)
     
-    if st.button("Back to Dashboard"):
-        switch_page("Dashboard")
+    # if st.button("Back to Dashboard"):
+    #     switch_page("Dashboard")
 
 # If the user chooses "Add New Case"
 elif action == "Edit Existing Observation":
