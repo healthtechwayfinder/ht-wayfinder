@@ -6,42 +6,19 @@ from langchain.prompts import PromptTemplate
 
 from utils.login_utils import check_if_already_logged_in
 from utils.google_sheet_utils import create_new_chat_sheet, get_case_descriptions_from_case_ids
-from utils.llm_utils import refresh_db, create_llm
+from utils.llm_utils import create_llm
 from utils.page_formatting import add_investigator_formatting
 from utils.initialize_session import initialize_investigator_session
+from utils.chatbot_utils import fetch_similar_data
 
 check_if_already_logged_in()
 add_investigator_formatting()
 initialize_investigator_session()
 
 
-
 # Handle new input
 if prompt := st.chat_input("What would you like to ask?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
-
-    # Perform similarity search using Pinecone
-    updated_observations_db = refresh_db(namespace_to_refresh="observations")
-    related_observations = updated_observations_db.similarity_search(prompt, k=10)
-    # related_observations = st.session_state['observation_google_sheet'] # Placeholder for now
-    print(related_observations)
-
-    # get case ids from metadata of related observations
-    case_ids = []
-    for observation in related_observations:
-        if 'case_id' in observation.metadata:
-            case_ids.append(observation.metadata['case_id'])
-
-    print("Fetching case descriptions for case ids: ", case_ids)
-    related_cases = get_case_descriptions_from_case_ids(case_ids)
-    print(related_cases)
-
-    updated_cases_db = refresh_db(namespace_to_refresh="cases")
-    related_cases_similarity = updated_cases_db.similarity_search(prompt, k=4)
-
-       
+    fetched_data_dict = fetch_similar_data(prompt)
     question_prompt = PromptTemplate.from_template(
           """
        
@@ -65,10 +42,7 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
     )
 
     with get_openai_callback() as cb:
-        output = observation_chat_chain.invoke({"question": prompt, 
-                                                "related_observations": related_observations,
-                                                "related_cases": related_cases,
-                                                "related_cases_similarity": related_cases_similarity},)
+        output = observation_chat_chain.invoke(fetched_data_dict,)
 
     # Update the conversation history
     st.session_state.messages.append({"role": "assistant", "content": output})
@@ -76,10 +50,6 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
     # Display the response
     with st.chat_message("assistant"):
         st.markdown(output)
-        # st.markdown("---")
-        # st.markdown("### Related Observations")
-        # for i, observation in enumerate(related_observations):
-        #     st.write(f"{i+1}. {observation}")
 
     # Store chat in the current sheet
     st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
