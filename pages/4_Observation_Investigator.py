@@ -1,6 +1,7 @@
 import streamlit as st
 
 from langchain.schema import StrOutputParser
+from langchain.callbacks import get_openai_callback
 
 from utils.login_utils import check_if_already_logged_in
 from utils.google_sheet_utils import create_new_chat_sheet, get_case_descriptions_from_case_ids
@@ -13,11 +14,15 @@ check_if_already_logged_in()
 add_investigator_formatting()
 initialize_investigator_session()
 
-observation_chat_chain = get_prompt() | create_llm() | StrOutputParser()
+llm = create_llm()
+observation_chat_chain = get_prompt() | llm | StrOutputParser()
 
 # Handle new input
 if prompt := st.chat_input("What would you like to ask?"):
-    new_output = invoke_chain(observation_chat_chain, fetch_similar_data(prompt))
+    
+    with get_openai_callback() as cb:
+        new_output = observation_chat_chain.invoke(fetch_similar_data(prompt),)
+
     update_session(new_output)
 
 st.markdown("---")

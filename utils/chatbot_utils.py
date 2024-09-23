@@ -1,7 +1,5 @@
 import streamlit as st
 
-from langchain.callbacks import get_openai_callback
-
 from utils.llm_utils import refresh_db
 from utils.google_sheet_utils import get_case_descriptions_from_case_ids
 
@@ -29,12 +27,6 @@ def fetch_similar_data(prompt):
             "related_observations": related_observations,
             "related_cases": related_cases,
             "related_cases_similarity": related_cases_similarity}
-
-def invoke_chain(observation_chat_chain, fetched_data_dict):
-    with get_openai_callback() as cb:
-        output = observation_chat_chain.invoke(fetched_data_dict,)
-    
-    return output
 
 def update_session(output):
     # Update the conversation history
