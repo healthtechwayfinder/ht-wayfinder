@@ -661,6 +661,7 @@ if action == "Add New Observation":
    
         input_fields = list(ObservationRecord.__fields__.keys())
         missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
+        st.write(missing_fields)
     
         for field in input_fields:
             if field not in missing_fields and field != "tags":
