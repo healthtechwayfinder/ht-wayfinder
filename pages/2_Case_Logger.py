@@ -531,7 +531,7 @@ if action == "Add New Case":
     
     with col3:
         #Display attendees options 
-        st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois"], , key='attendees_key')
+        st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois"], key='attendees_key')
     
     # Initialize the observation text in session state if it doesn't exist
     if "case_description" not in st.session_state:
