@@ -325,7 +325,7 @@ def clear_case():
         st.session_state['result'] = ""
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
-    st.session_state['attendees'] = ""
+    st.session_state['attendees'] = "choose"
     st.session_state['attendees_key'] = None
     update_case_ID()
     clear_text()
@@ -340,7 +340,7 @@ def clear_case_after_edit():
         st.session_state['result'] = ""
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
-    st.session_state['attendees'] = ""
+    st.session_state['attendees'] = "choose"
     clear_text()
 
 # Fetch case IDs and titles from Google Sheets
@@ -531,7 +531,7 @@ if action == "Add New Case":
     
     with col3:
         #Display attendees options 
-        attendees = st.multiselect("Attendees", ["", "Deborah", "Kyle", "Ryan", "Lois"], key='attendees_key')
+        attendees = st.multiselect("Attendees", ["choose", "Deborah", "Kyle", "Ryan", "Lois"], key='attendees_key')
 
     # Initialize the observation text in session state if it doesn't exist
     if "case_description" not in st.session_state:
