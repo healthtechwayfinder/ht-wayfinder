@@ -77,6 +77,11 @@ if "selected_case" not in st.session_state:
 # if 'attendees_key' in st.session_state:
 #     st.session_state["attendees_key"] = None 
 
+# Clear or ensure state is initialized properly
+if 'attendees_key' not in st.session_state:
+    st.session_state['attendees_key'] = []
+
+
 
 
 class caseRecord(BaseModel):
