@@ -7,43 +7,13 @@ from langchain.prompts import PromptTemplate
 from utils.login_utils import check_if_already_logged_in
 from utils.google_sheet_utils import create_new_chat_sheet, get_case_descriptions_from_case_ids
 from utils.llm_utils import refresh_db, create_llm
+from utils.page_formatting import add_investigator_formatting
+from utils.initialize_session import initialize_investigator_session
 
 check_if_already_logged_in()
+add_investigator_formatting()
+initialize_investigator_session()
 
-# # Create a new sheet for the chat thread if not already created
-if "chat_sheet" not in st.session_state:
-    st.session_state.chat_sheet = create_new_chat_sheet()
-
-st.set_page_config(page_title="Observation Investigator", page_icon="🤖")
-
-st.markdown("""
-    <style>
-    div.stButton > button {
-        background-color: #a51c30;
-        color: white;
-        font-size: 16px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-    }
-    div.stButton > button:hover {
-        background-color: #2c4a70;
-        color: white;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-st.markdown("# Observation Investigator")
-st.write("Use this tool to find relationships between cases, summarize elements in observations, and plan for future observations.")
-# Subtitle for the chat section
-
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# Display previous messages
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
 
 
 # Handle new input
@@ -118,6 +88,4 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
 st.markdown("---")
 
 # Spacer to push the button to the bottom
-
-# Add a spacer to push the button to the bottom of the page
 st.write(" " * 50)
