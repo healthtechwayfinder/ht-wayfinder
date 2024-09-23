@@ -683,7 +683,7 @@ if action == "Add New Observation":
                 field_clean = field.replace("_", " ").capitalize()
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=f"{field}_input", value=st.session_state['parsed_observation'].get(field, ""))
     
-            if field == "observation_tags":
+            if field == "tags":
                 tags_values = parsed_observation.get('tags', '')
                 
                 if tags_values is None:
