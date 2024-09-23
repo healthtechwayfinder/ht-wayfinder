@@ -143,13 +143,11 @@ def get_google_sheet(sheet_name, worksheet_name):
     return sheet
 
 # Fetch need details based on selected need ID
-def fetch_need_details(selected_need_ID):
-    sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Statement Log")
-    need_data = sheet.get_all_records()
-    need_statement_df = pd.DataFrame(need_data)
+def fetch_need_details(selected_need_ID, need_df):
+    # sheet = get_google_sheet("2024 Healthtech Identify Log", "Need Statement Log")
+    # need_data = need_df
 
-
-    for row in need_data:
+    for row in need_df:
         if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
             return row
     
@@ -284,7 +282,7 @@ else:
 
 # Step 2: Fetch and display need details for the selected need
     if  st.session_state['need_ID_with_preview']:
-        need_details = fetch_need_details(st.session_state['selected_need_ID'])
+        need_details = fetch_need_details(st.session_state['selected_need_ID'], need_statement_df)
 
 
 
