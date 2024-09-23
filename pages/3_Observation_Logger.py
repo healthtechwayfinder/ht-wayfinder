@@ -768,8 +768,8 @@ if action == "Add New Observation":
     if st.session_state['observation_summary'] != "":
         st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
     
-    # here, add the function call to turn parsed results into editable text fields  
-    parsed_observation = st.session_state['parsed_observation']
+    # # here, add the function call to turn parsed results into editable text fields  
+    # parsed_observation = st.session_state['parsed_observation']
     
      # Ensure 'result' exists
     if isinstance(parsed_observation, dict):
