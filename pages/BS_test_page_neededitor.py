@@ -276,13 +276,17 @@ else:
             if not matching_row.empty:
                 # Get the observation_IDs as a string and convert it into a list
                 observation_ids_str = matching_row.iloc[0]['observation_ID']
-                try:
-                    # Safely convert the string to a list using ast.literal_eval
-                    observation_ids = ast.literal_eval(observation_ids_str)
-                    observation_ids = [obs_id.strip() for obs_id in observation_ids]  # Strip whitespace from each ID
-                except (ValueError, SyntaxError):
-                    st.error("Error parsing observation IDs. Please check the format in the Google Sheet.")
-                    st.stop()
+                # Split the string by commas to convert it into a list
+                observation_ids = [obs_id.strip() for obs_id in observation_ids_str.split(',')]
+
+               
+                # try:
+                #     # Safely convert the string to a list using ast.literal_eval
+                #     observation_ids = ast.literal_eval(observation_ids_str)
+                #     observation_ids = [obs_id.strip() for obs_id in observation_ids]  # Strip whitespace from each ID
+                # except (ValueError, SyntaxError):
+                #     st.error("Error parsing observation IDs. Please check the format in the Google Sheet.")
+                #     st.stop()
         
                 # Find the Observation Titles corresponding to each observation_ID
                 observation_ids_with_title = []
