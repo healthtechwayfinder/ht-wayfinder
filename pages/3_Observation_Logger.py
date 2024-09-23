@@ -652,30 +652,23 @@ def update_case_log_with_observation(old_case_id, new_case_id, observation_id):
             update_observations(old_case_id, "remove")
 
         # Add the observation ID to the new case
-        update_observations(new_case_id, "add")
-        
+        update_observations(new_case_id, "add")  
         st.success(f"Observation ID '{observation_id}' updated from Case ID '{old_case_id}' to '{new_case_id}' successfully.")
     
     except Exception as e:
         logging.error(f"Error updating case log: {e}")
         st.error(f"Failed to update the case log for observation '{observation_id}'. Error: {str(e)}")
 
-
-
 # If the user chooses "Add New Case"
 if action == "Add New Observation":
-    
     # Ensure observation_date is in session state
     if 'observation_date' not in st.session_state:
         st.session_state['observation_date'] = date.today()  # Default to today's date
     # Ensure observation_id is in session state
     if 'observation_id' not in st.session_state:
         update_observation_id()  # Initialize the observation ID
-    
-    
+
     existing_case_ids_with_title = getExistingCaseIDS()
-    # case_id_with_title = st.selectbox("Related Case ID", [""] + existing_case_ids_with_title)
-    
     # Selectbox for Related Case ID
     case_id_with_title = st.selectbox(
         "Select a Related Case ID",
@@ -684,18 +677,11 @@ if action == "Add New Observation":
         on_change=update_observation_date  # Call the update function only when a case ID is selected
     )
     
-    
     # Use columns to place observation_date, observation_id, and observer side by side
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        # st calendar for date input with a callback to update the observation_id
-        #edit this to be the same as the case date
-        # st.date_input("Observation Date", date.today(), on_change=update_observation_id, key="observation_date")
-    
-        # Display the observation date input and make it reflect session state
         st.date_input("Observation Date", value=st.session_state['observation_date'], key='observation_date', on_change=update_observation_id)
-    
     
     with col2:
         # Ensure the observation ID is set the first time the script runs
@@ -728,23 +714,20 @@ if action == "Add New Observation":
     
     # Observation Text Area
     st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
-    
-    
     # Create columns to align the buttons
     col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
     
     with col3:
         st.button("Clear Observation", on_click=clear_text)
-        
+        clear_text()
         # Container for result display
         result_container = st.empty()
     
-    
-    
     with col1:
-        if st.button("Evaluate Observation"):
+        if st.button("Review Observation"):
+            # Generate the observation summary
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-            st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
+            # st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
             if st.session_state['observation_summary'] != "":
                 st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             
@@ -765,12 +748,14 @@ if action == "Add New Observation":
     
             if field == "observation_tags":
                 tags_values = parsed_observation.get('tags', '')
+                
                 if tags_values is None:
                     tags_values = []  # Set as an empty list if it's None
                 elif isinstance(tags_values, str):
                     tags_values = [tag.strip() for tag in tags_values.split(",")]
                 elif not isinstance(tags_values, list):
                     tags_values = list(tags_values)  # Try to convert to a list if it isn't already
+                    
                 updated_tags = st_tags(
                     label="**Tags**",
                     text="Press enter to add more",
