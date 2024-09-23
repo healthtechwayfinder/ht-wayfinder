@@ -328,7 +328,7 @@ else:
                     default=observation_ids_with_title
                 )
 
-                display_selected_observations(st.session_state['related_observation_ID_w_title'])
+                display_selected_observations(st.session_state['related_observation_ID_w_title'], observation_log_df)
                 # Remove titles from the selected observation IDs
                 selected_observation_ids = [obs.split(" - ")[0].strip() for obs in st.session_state['related_observation_ID_w_title']]
         
