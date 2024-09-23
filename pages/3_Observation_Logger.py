@@ -744,16 +744,32 @@ if action == "Add New Observation":
         if st.button("Evaluate Observation"):
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
+            st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
+
+            # Ensure observation_tags is initialized in session state if it hasn't been
+            if 'observation_tags' not in st.session_state:
+                st.session_state['observation_tags'] = []
             
+            # Display and allow user to update tags
+            updated_tags = st_tags(
+                label="**Tags**",
+                text="Press enter to add more tags",
+                value=st.session_state['observation_tags'],  # This uses the tags from session state
+                maxtags=10,
+                key="tags_input"
+            )
+            
+            # Update the session state with the new tags from user input
+            st.session_state['observation_tags'] = updated_tags
+            
+              
         
     if st.session_state['observation_summary'] != "":
         st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
     
     # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
-    st.session_state['parsed_observation']['observation_tags'] = generateObservationTags(st.session_state['observation'])
-    #     st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
-     # Ensure 'result' exists
+    
     if isinstance(parsed_observation, dict):
         
         input_fields = list(ObservationRecord.__fields__.keys())
