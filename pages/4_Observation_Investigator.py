@@ -1,6 +1,5 @@
 import streamlit as st
 
-from langchain.callbacks import get_openai_callback
 from langchain.schema import StrOutputParser
 from langchain.prompts import PromptTemplate
 
@@ -37,23 +36,9 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
 
     llm = create_llm()
     
-    observation_chat_chain = (
-        question_prompt | llm | StrOutputParser()
-    )
+    observation_chat_chain = (question_prompt | llm | StrOutputParser())
 
-    with get_openai_callback() as cb:
-        output = observation_chat_chain.invoke(fetched_data_dict,)
-
-    # Update the conversation history
-    st.session_state.messages.append({"role": "assistant", "content": output})
-
-    # Display the response
-    with st.chat_message("assistant"):
-        st.markdown(output)
-
-    # Store chat in the current sheet
-    st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
-
+    invoke_chain_and_update_session(observation_chat_chain, fetched_data_dict)
 
 st.markdown("---")
 
