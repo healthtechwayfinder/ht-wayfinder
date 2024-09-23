@@ -153,30 +153,3 @@ st.markdown("---")
 
 # Add a spacer to push the button to the bottom of the page
 st.write(" " * 50)
-# Apply custom CSS to make the button blue
-st.markdown("""
-    <style>
-    div.stButton > button {
-        font-size: 16px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-    }
-    div.stButton > button:hover {
-        background-color: #2c4a70;
-        color: white;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-
-
-# Your other code here...
-
-
-#  old prompt
- # You are a helpful assistant trained in the Stanford Biodesign process that can answer questions about given observations of health care procedures. 
-        # You have to use the set of observations and the relevant cases to help answer the question. Your responses should be professional, inquisitive, and not overly-confident or assertive, like a graduate-level teaching assistant. 
-        # Cite the relevant observations with relevant quotes and observation IDs to support your answer.There might be repeated observations or repeated cases in the set, consider them as the same observation or case.
-        # No matter what, do not write need statements for users. Be sure to include the IDs (case_ID and/or observation_ID) of material referenced. Do not search the internet unless specifically asked to.
-
