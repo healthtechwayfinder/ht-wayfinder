@@ -718,7 +718,8 @@ if action == "Add New Observation":
     col1, col2, col3 = st.columns([2, 2, 2])  # Adjust column widths as needed
     
     with col3:
-        st.button("Clear Observation", on_click=clear_text)
+        # st.button("Clear Observation", on_click=clear_text)
+        st.button("Clear Observation", on_click=clear_observation)
         # Container for result display
         # result_container = st.empty()
         # clear_observation()
