@@ -54,9 +54,6 @@ creds_dict = {
 if 'need_ID_with_preview' not in st.session_state:
     st.session_state['need_ID_with_preview'] = ''
 
-# if 'need_ID' not in st.session_state:
-#     st.session_state.need_ID = ''
-
 if 'need_statement' not in st.session_state:
     st.session_state['need_statement'] = ''
 
@@ -89,31 +86,6 @@ if 'selected_need_ID' not in st.session_state:
     st.session_state['selected_need_ID'] = ""
 
 # ////////////////////// FUNCTIONS ////////////////////// FUNCTIONS ////////////////////// FUNCTIONS ////////////////////// 
-
-
-# # get need IDs with preview
-# def getExistingNeedIDS_OLD():
-#     scope = [
-#         "https://www.googleapis.com/auth/spreadsheets",
-#         "https://www.googleapis.com/auth/drive.metadata.readonly"
-#         ]
-#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-#     client = gspread.authorize(creds)
-#     need_log = client.open("2024 Healthtech Identify Log").worksheet("Need Statement Log")
-#     need_ids = need_log.col_values(1)[1:]
-#     need_previews = need_log.col_values(3)[1:]
-
-    
-
-#     existing_need_ids_with_preview = dict(zip(need_ids, need_previews))
-
-#     # make strings with case id - preview
-#     existing_need_ids_with_preview = [f"{need_ids} - {need_previews}" for need_ids, need_previews in existing_need_ids_with_preview.items()]
-
-#     print("Existing Observation IDS: ")
-#     print(existing_need_ids_with_preview)
-#     return existing_need_ids_with_preview
-
 
 def getExistingNeedIDS(df):
     # Assume `df` is the DataFrame that corresponds to the "Need Statement Log" Google Sheet
@@ -342,8 +314,9 @@ else:
                 selected_observation_ids = [obs.split(" - ")[0].strip() for obs in st.session_state['related_observation_ID_w_title']]
         
                 # Store them in the need_details dictionary
-                need_details = {"observation_ID": selected_observation_ids}
-                
+                # need_details = {"observation_ID": selected_observation_ids}
+                need_details["observation_ID"] = selected_observation_ids
+
                 # st.write("Selected Observation IDs:", need_details.get("observation_ID"))
         
             else:
