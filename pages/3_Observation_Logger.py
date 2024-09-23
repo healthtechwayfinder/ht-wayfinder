@@ -1005,7 +1005,7 @@ elif action == "Edit Existing Observation":
                     
                 observer = st.selectbox("Observer", observer_list , index=observer_index)
                 observation_title = st.text_input("Title", observation_details.get("Observation Title", ""))
-                observation_description = st.text_input("Description", observation_details.get("Observation Description", ""))
+                observation_description = st.text_area("Description", observation_details.get("Observation Description", ""))
                 # observation_stakeholders = st.text_input("Title", observation_details.get("Observation Title", ""))
                 observation_stakeholders = st_tags(
                         label="Stakeholders:",
@@ -1015,10 +1015,10 @@ elif action == "Edit Existing Observation":
                         maxtags=30,  # Max number of tags the user can add
                     )
 
-                observation_sensory_observations = st.text_input("Sensory Observations", observation_details.get("Sensory Observations", ""))
-                observation_product_interactions = st.text_input("Product Interactions", observation_details.get("Product Interactions", ""))
-                observation_people_interactions = st.text_input("People Interactions", observation_details.get("People Interactions", ""))
-                observation_process_actions = st.text_input("Process Actions", observation_details.get("Process Actions", ""))
+                observation_sensory_observations = st.text_area("Sensory Observations", observation_details.get("Sensory Observations", ""))
+                observation_product_interactions = st.text_area("Product Interactions", observation_details.get("Product Interactions", ""))
+                observation_people_interactions = st.text_area("People Interactions", observation_details.get("People Interactions", ""))
+                observation_process_actions = st.text_area("Process Actions", observation_details.get("Process Actions", ""))
                 insider_language = st_tags(
                         label="Insider Language:",
                         text="Press enter to add more",
