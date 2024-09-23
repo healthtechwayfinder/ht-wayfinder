@@ -266,6 +266,9 @@ else:
                  # Make sure observation_ids_with_title is a list even if there's only one item
                 if isinstance(observation_ids_with_title, str):
                     observation_ids_with_title = [observation_ids_with_title]
+
+                st.write(observation_ids_with_title)
+
                 
                 # Create a master list of all observations with ID and Title
                 all_observations = [f"{row['Observation ID']} - {row['Observation Title']}" for _, row in observation_log_df.iterrows()]
