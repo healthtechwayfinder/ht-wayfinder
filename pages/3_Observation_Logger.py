@@ -681,7 +681,7 @@ if action == "Add New Observation":
         for field in input_fields:
             if field not in missing_fields and field != "tags":
                 field_clean = field.replace("_", " ").capitalize()
-                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=f"{field}_input", value=st.session_state['parsed_observation'].get(field, ""))
     
             if field == "observation_tags":
                 tags_values = parsed_observation.get('tags', '')
