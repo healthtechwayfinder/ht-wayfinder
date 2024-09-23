@@ -27,14 +27,9 @@ import os
 import csv
 import pandas as pd
 
-################## CHECK LOG IN ##################
-if "logged_in" not in st.session_state:
-    switch_page("streamlit app")
-else:
-    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
-        switch_page("streamlit app")
+from utils.login_utils import check_login
 
-##########################################################################################
+check_login()
 
 
 st.set_page_config(page_title="Create a New Need Statement", page_icon=":pencil2:")

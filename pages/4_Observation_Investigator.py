@@ -13,12 +13,9 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
-from utils.utils import check_login
+from utils.login_utils import check_login
 
-################## CHECK LOG IN ##################
 check_login()
-
-##########################################################################################
 
 # Access the credentials from Streamlit secrets
 creds_dict = {

@@ -30,14 +30,9 @@ import csv
 import pandas as pd
 import ast  # Import ast to handle conversion of string to list
 
-################## CHECK LOG IN ##################
-if "logged_in" not in st.session_state:
-    switch_page("streamlit app")
-else:
-    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
-        switch_page("streamlit app")
+from utils.login_utils import check_login
 
-##########################################################################################
+check_login()
 
 # ////////////////////// INITIALIZATIONS ////////////////////// INITIALIZATIONS ////////////////////// INITIALIZATIONS ////////////////////// 
 

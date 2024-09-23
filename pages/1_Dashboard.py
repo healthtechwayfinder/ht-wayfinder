@@ -16,14 +16,9 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-################## CHECK LOG IN ##################
-if "logged_in" not in st.session_state:
-    switch_page("streamlit app")
-else:
-    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
-        switch_page("streamlit app")
+from utils.login_utils import check_login
 
-##########################################################################################
+check_login()
 
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
 st.markdown(f"# Welcome {st.session_state['logged_in_username']}!")
