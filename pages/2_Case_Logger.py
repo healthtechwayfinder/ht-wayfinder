@@ -322,10 +322,22 @@ def clear_case():
         st.session_state['result'] = ""
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
+    st.session_state['attendees'] = ""
     update_case_ID()
     clear_text()
     # Refresh the page back to the initial state
 
+def clear_case_after_edit():
+    if 'case_description' in st.session_state:
+        st.session_state['case_description'] = ""
+    if 'case_title' in st.session_state:
+        st.session_state['case_title'] = ""
+    if 'result' in st.session_state:
+        st.session_state['result'] = ""
+    if 'parsed_case' in st.session_state:
+        st.session_state['parsed_case'] = ""
+    st.session_state['attendees'] = ""
+    clear_text()
 
 # Fetch case IDs and titles from Google Sheets
 def fetch_case_ids_and_titles():
@@ -727,7 +739,7 @@ elif action == "Edit Existing Case":
                             # Call the function to update the observation log
                             if update_observation_log(observation_ids_only, old_observation_ids, case_to_edit):
                                 st.success("Changes and observation log saved successfully!")
-                                clear_case()
+                                clear_case_after_edit()
                             else:
                                 st.error(f"Failed to save observation log for case '{case_to_edit}'")
                             
