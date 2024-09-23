@@ -293,7 +293,7 @@ else:
             
             
             # Fetch observation_IDs associated with the selected need_ID
-            matching_row = need_statement_df[need_statement_df['need_ID'] == selected_need_ID]
+            matching_row = need_statement_df[need_statement_df['need_ID'] == st.session_state['selected_need_ID']]
             
             if not matching_row.empty:
                 # Get the observation_IDs as a string and convert it into a list
