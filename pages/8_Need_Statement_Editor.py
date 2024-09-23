@@ -252,8 +252,13 @@ else:
             if not matching_row.empty:
                 # Get the observation_IDs as a string and convert it into a list
                 observation_ids_str = matching_row.iloc[0]['observation_ID']
+                st.write(f"Raw observation_ids_str: {observation_ids_str}")  # Debugging statement
+
+                
                 # Split the string by commas to convert it into a list
                 observation_ids = [obs_id.strip() for obs_id in observation_ids_str.split(',')]
+                st.write(f"Parsed observation_ids list: {observation_ids}")  # Debugging statement
+
         
                 # Find the Observation Titles corresponding to each observation_ID
                 observation_ids_with_title = []
@@ -266,8 +271,8 @@ else:
                  # Make sure observation_ids_with_title is a list even if there's only one item
                 if isinstance(observation_ids_with_title, str):
                     observation_ids_with_title = [observation_ids_with_title]
+                    st.write(f"Final observation_ids_with_title: {observation_ids_with_title}")
 
-                st.write(observation_ids_with_title)
 
                 
                 # Create a master list of all observations with ID and Title
