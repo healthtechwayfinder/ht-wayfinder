@@ -16,9 +16,9 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
 st.markdown(f"# Welcome {st.session_state['logged_in_username']}!")

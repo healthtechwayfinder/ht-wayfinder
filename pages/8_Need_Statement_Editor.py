@@ -30,9 +30,9 @@ import csv
 import pandas as pd
 import ast  # Import ast to handle conversion of string to list
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 # ////////////////////// INITIALIZATIONS ////////////////////// INITIALIZATIONS ////////////////////// INITIALIZATIONS ////////////////////// 
 

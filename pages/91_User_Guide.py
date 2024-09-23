@@ -2,9 +2,9 @@ import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 
 

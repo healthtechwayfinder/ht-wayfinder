@@ -9,47 +9,10 @@ from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
 
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-from datetime import datetime
+from utils.login_utils import check_if_already_logged_in
+from utils.google_sheet_utils import create_new_chat_sheet, get_case_descriptions_from_case_ids
 
-from utils.login_utils import check_login
-
-check_login()
-
-# Access the credentials from Streamlit secrets
-creds_dict = {
-    "type" : st.secrets["gwf_service_account"]["type"],
-    "project_id" : st.secrets["gwf_service_account"]["project_id"],
-    "private_key_id" : st.secrets["gwf_service_account"]["private_key_id"],
-    "private_key" : st.secrets["gwf_service_account"]["private_key"],
-    "client_email" : st.secrets["gwf_service_account"]["client_email"],
-    "client_id" : st.secrets["gwf_service_account"]["client_id"],
-    "auth_uri" : st.secrets["gwf_service_account"]["auth_uri"],
-    "token_uri" : st.secrets["gwf_service_account"]["token_uri"],
-    "auth_provider_x509_cert_url" : st.secrets["gwf_service_account"]["auth_provider_x509_cert_url"],
-    "client_x509_cert_url" : st.secrets["gwf_service_account"]["client_x509_cert_url"],
-    "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
-}
-
-
-# Google Sheets setup
-SCOPE = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-CREDS = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, SCOPE)
-CLIENT = gspread.authorize(CREDS)
-SPREADSHEET = CLIENT.open("Observation Investigator - Chat Log")  # Open the main spreadsheet
-
-
-
-def create_new_chat_sheet():
-    """Create a new sheet for the current chat thread."""
-    chat_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")  # Unique name based on timestamp
-    sheet = SPREADSHEET.add_worksheet(title=f"Chat_{chat_timestamp}", rows="1", cols="2")  # Create new sheet
-    sheet.append_row(["User Input", "Assistant Response"])  # Optional: Add headers
-    return sheet
+check_if_already_logged_in()
 
 # # Create a new sheet for the chat thread if not already created
 if "chat_sheet" not in st.session_state:
@@ -115,52 +78,6 @@ def refresh_cases_db():
         pinecone_api_key=st.secrets["pinecone-keys"]["api_key"],
     )
     return db
-
-def get_observation_sheet_as_dict():
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
-    data = observation_sheet.get_all_records()
-    return data
-
-def get_case_sheet_as_dict():
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-    data = case_sheet.get_all_records()
-    return data
-
-def get_case_descriptions_from_case_ids(case_ids):
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    case_sheet = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-    data = case_sheet.get_all_records()
-
-    cases = {}
-    for case in data:
-        if case['Case ID'] in case_ids:
-            cases[case['Case ID']] = case['Case Description']
-
-    return cases
-
-# if 'observation_google_sheet' not in st.session_state:
-#     st.session_state['observation_google_sheet'] = get_observation_sheet_as_dict()
-
-# if 'case_google_sheet' not in st.session_state:
-#     st.session_state['case_google_sheet'] = get_case_sheet_as_dict()
-
 
 
 # Handle new input

@@ -20,9 +20,9 @@ import os
 import csv
 import random
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 st.markdown("# Case Logger")

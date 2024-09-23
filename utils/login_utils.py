@@ -1,7 +1,7 @@
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
-def check_login():
+def check_if_already_logged_in():
     if "logged_in" not in st.session_state:
         switch_page("streamlit app")
     else:

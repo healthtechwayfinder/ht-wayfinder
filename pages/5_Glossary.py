@@ -21,9 +21,9 @@ import time
 
 OPENAI_API_KEY = st.secrets["openai_key"]
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 # Set up the Streamlit page
 st.set_page_config(page_title="Glossary", page_icon="📊")

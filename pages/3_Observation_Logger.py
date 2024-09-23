@@ -21,9 +21,9 @@ import json
 import os
 import csv
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
 st.markdown("# Observation Logger")

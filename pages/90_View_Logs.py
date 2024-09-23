@@ -5,9 +5,9 @@ import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
 
 
-from utils.login_utils import check_login
+from utils.login_utils import check_if_already_logged_in
 
-check_login()
+check_if_already_logged_in()
 
 # Set page configuration
 st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")
