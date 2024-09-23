@@ -788,7 +788,7 @@ if action == "Add New Observation":
                 field_clean = field.replace("_", " ").capitalize()
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
     
-    st.markdown(st.session_state['result'], unsafe_allow_html=True)
+    # st.markdown(st.session_state['result'], unsafe_allow_html=True)
     
     
     
