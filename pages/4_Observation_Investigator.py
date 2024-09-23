@@ -1,6 +1,4 @@
 import streamlit as st
-from streamlit_extras.switch_page_button import switch_page
-
 
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
@@ -15,12 +13,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
-################## CHECK LOG IN ##################
-if "logged_in" not in st.session_state:
-    switch_page("streamlit app")
-else:
-    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
-        switch_page("streamlit app")
+check_login()
 
 ##########################################################################################
 
@@ -236,9 +229,6 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
     # Store chat in the current sheet
     st.session_state.chat_sheet.append_row([st.session_state.messages[-2]['content'], st.session_state.messages[-1]['content']])
 
-# st.markdown("---")
-# if st.button("Back to Main Menu"):
-#     switch_page("main_menu")
 
 st.markdown("---")
 
@@ -265,14 +255,6 @@ st.markdown("""
 
 
 # Your other code here...
-
-# # Populate the reserved place with the button
-# if button_place.button("Back to Dashboard"):
-#     switch_page("Dashboard")
-
-# # Create a button using Streamlit's native functionality
-# if st.button("Back to Main Menu"):
-#     switch_page("main_menu")
 
 
 #  old prompt
