@@ -742,18 +742,18 @@ if action == "Add New Observation":
     
     with col1:
         if st.button("Evaluate Observation"):
-            st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
             st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
-        
-    if st.session_state['observation_summary'] != "":
-        st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
-    
+            if st.session_state['observation_summary'] != "":
+                st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
+            
     # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
     
     if isinstance(parsed_observation, dict):
-        
+
+        st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
+            
         input_fields = list(ObservationRecord.__fields__.keys())
         missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
     
@@ -762,10 +762,15 @@ if action == "Add New Observation":
                 field_clean = field.replace("_", " ").capitalize()
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
     
-            if field == "tags":
-                # tags_values = parsed_observation.get('observation_tags', '')
-                # tags_values = [tag.strip() for tag in tags_values.split(",")]
-                tags_values = st.session_state['observation_tags']
+            if field == "observation_tags":
+                 tags_values = parsed_observation.get('tags', '')
+               # Check if tags_values is not None or some invalid type
+                if tags_values is None:
+                    tags_values = []  # Set as an empty list if it's None
+                elif isinstance(tags_values, str):
+                    tags_values = [tag.strip() for tag in tags_values.split(",")]
+                elif not isinstance(tags_values, list):
+                    tags_values = list(tags_values)  # Try to convert to a list if it isn't already
                 updated_tags = st_tags(
                     label="**Tags**",
                     text="Press enter to add more",
