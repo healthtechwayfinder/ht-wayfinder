@@ -6,7 +6,6 @@ logging.basicConfig(level=logging.INFO)
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
-# from langchain.callbacks import get_openai_callback
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
@@ -44,6 +43,9 @@ st.markdown("""
 action = st.selectbox("", ["Add New Observation", "Edit Existing Observation"], label_visibility="collapsed")
 # observations_csv = "observations.csv"
 OPENAI_API_KEY = st.secrets["openai_key"]
+if "openai_key" not in st.secrets or not st.secrets["openai_key"]:
+    st.error("OpenAI API Key is missing from secrets!")
+    st.stop()
 # Access the credentials from Streamlit secrets
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
@@ -59,25 +61,11 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 #Initialization
-if 'observation' not in st.session_state:
-    st.session_state['observation'] = ""
-if 'parsed_observation' not in st.session_state:
-    st.session_state['parsed_observation'] = ""
-if 'result' not in st.session_state:
-    st.session_state['result'] = ""
-if 'observation_summary' not in st.session_state:
-    st.session_state['observation_summary'] = ""
-if 'observation_tags' not in st.session_state:
-    st.session_state['observation_tags'] = []
-if 'rerun' not in st.session_state:
-    st.session_state['rerun'] = False
-if 'observer' not in st.session_state:
-    st.session_state['observer'] = ""
-if 'selected_case_id_with_title' not in st.session_state:
-    st.session_state['selected_case_id_with_title'] = ""
-if "selected_observation" not in st.session_state:
-    st.session_state["selected_observation"] = ""  # Set initial value to an empty string
-    
+session_keys = ['observation', 'parsed_observation', 'result', 'observation_summary', 'observation_tags', 'rerun', 'observer', 'selected_case_id_with_title', 'selected_observation']
+for key in session_keys:
+    if key not in st.session_state:
+        st.session_state[key] = "" if key != 'observation_tags' else []
+
 def get_google_sheet(spreadsheet_name, worksheet_name):
     scope = ["https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive"]
