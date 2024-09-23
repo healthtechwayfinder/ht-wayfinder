@@ -143,12 +143,6 @@ def main():
         submit_button = st.form_submit_button("Log In")
     
     if submit_button:
-        if username:
-            allowed_usernames = st.secrets["allowed_usernames"]["usernames"]
-
-        if username not in allowed_usernames:
-            st.error("Unauthorized email. Access denied.")
-            return
 
         user_list = st.secrets["login-credentials"]
         for user_dict in user_list:
