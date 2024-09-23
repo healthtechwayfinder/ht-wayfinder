@@ -73,9 +73,9 @@ if 'parsed_case' not in st.session_state:
 if "selected_case" not in st.session_state:
     st.session_state["selected_case"] = ""  # Set initial value to an empty string
 
-# Clear session state if necessary
-if 'attendees_key' in st.session_state:
-    st.session_state["attendees_key"] = None 
+# # Clear session state if necessary
+# if 'attendees_key' in st.session_state:
+#     st.session_state["attendees_key"] = None 
 
 
 
