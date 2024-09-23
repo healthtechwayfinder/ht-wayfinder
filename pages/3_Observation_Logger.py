@@ -81,7 +81,7 @@ if 'result' not in st.session_state:
 if 'observation_summary' not in st.session_state:
     st.session_state['observation_summary'] = ""
 if 'observation_tags' not in st.session_state:
-    st.session_state['observation_tags'] = ""
+    st.session_state['observation_tags'] = []
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 if "selected_observation" not in st.session_state:
