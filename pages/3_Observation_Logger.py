@@ -763,7 +763,7 @@ if action == "Add New Observation":
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
     
             if field == "observation_tags":
-                 tags_values = parsed_observation.get('tags', '')
+                tags_values = parsed_observation.get('tags', '')
                # Check if tags_values is not None or some invalid type
                 if tags_values is None:
                     tags_values = []  # Set as an empty list if it's None
