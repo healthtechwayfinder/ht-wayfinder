@@ -1,10 +1,8 @@
 import time
 import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
-
 import logging
 logging.basicConfig(level=logging.INFO)
-
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
@@ -14,24 +12,17 @@ from langchain.schema.runnable import RunnableLambda
 from langchain.prompts import PromptTemplate
 from langchain_pinecone import PineconeVectorStore
 from streamlit_tags import st_tags
-
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
-
-
 from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import date, datetime
-
 import json
 import os
 import csv
 
 st.set_page_config(page_title="Add a New Observation", page_icon="🔍")
-
 st.markdown("# Observation Logger")
-# Add a title for choosing an action
-# Add a slightly smaller title with reduced space after
 st.markdown("""
     <style>
     h4 {
@@ -45,18 +36,11 @@ st.markdown("""
     </style>
     <h3>Choose an action</h3>
     """, unsafe_allow_html=True)
-
-
 # Dropdown menu for selecting action
 action = st.selectbox("", ["Add New Observation", "Edit Existing Observation"], label_visibility="collapsed")
-
-
-
-observations_csv = "observations.csv"
+# observations_csv = "observations.csv"
 OPENAI_API_KEY = st.secrets["openai_key"]
-
 # Access the credentials from Streamlit secrets
-#test
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],
     "project_id" : st.secrets["gwf_service_account"]["project_id"],
@@ -70,7 +54,6 @@ creds_dict = {
     "client_x509_cert_url" : st.secrets["gwf_service_account"]["client_x509_cert_url"],
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
-
 #Initialization
 if 'observation' not in st.session_state:
     st.session_state['observation'] = ""
@@ -86,7 +69,7 @@ if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
 if "selected_observation" not in st.session_state:
     st.session_state["selected_observation"] = ""  # Set initial value to an empty string
-
+    
 def get_google_sheet(spreadsheet_name, worksheet_name):
     scope = ["https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive"]
@@ -94,8 +77,6 @@ def get_google_sheet(spreadsheet_name, worksheet_name):
     client = gspread.authorize(creds)
     sheet = client.open(spreadsheet_name).worksheet(worksheet_name)
     return sheet
-
-
 # Fetch case IDs and titles from Google Sheets
 def fetch_observation_ids_and_titles():
     try:
@@ -107,7 +88,6 @@ def fetch_observation_ids_and_titles():
     except Exception as e:
         print(f"Error fetching Observation IDs and titles: {e}")
         return []
-
 # Sample function to simulate fetching observation details from Google Sheets
 def fetch_observation_details(observation_id):
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
@@ -120,9 +100,6 @@ def fetch_observation_details(observation_id):
     st.error(f"Observation ID {observation_id} not found.")
     
     return None
-
-
-
 
 def generateObservationTags(observation):
     # Create the LLM model
@@ -155,8 +132,6 @@ def generateObservationTags(observation):
     # Return the generated tags
     return output
 
-
-
 class ObservationRecord(BaseModel):
     stakeholders: Optional[str] = Field(default=None, description="Stakeholders involved in the healthcare event like a Patient, Care Partner, Advocacy & Support, Patient Advocacy Group, Patient Family, Patient Caretaker, Direct Patient Care Provider, Geriatrician, Chronic Disease Management Specialist, Cognitive Health Specialist, Psychologist, Psychiatrist, Nutritionist, Trainer, Physical Therapist, Occupational Therapist, End-of-Life / Palliative Care Specialist, Home Health Aide, Primary Care Physician, Social Support Assistant, Physical Therapist, Pharmacist, Nurse, Administrative & Support, Primary Care Physician, Facility Administrators, Nursing Home Associate, Assisted Living Facility Associate, Home Care Coordinator, Non-Healthcare Professional, Payer and Regulators, Government Official, Advocacy & Support, Professional Society Member, ...")
     sensory_observations: Optional[str] = Field(default=None, description="What is the observer sensing with sight, smell, sound, touch. e.g. sights, noises, textures, scents, ...")
@@ -165,7 +140,6 @@ class ObservationRecord(BaseModel):
     process_actions: Optional[str] = Field(default=None, description="specific step or task that is taken within a larger workflow or process to achieve a particular goal or outcome. In the context of biodesign or healthcare, a process action could involve any number of operations that contribute to the diagnosis, treatment, or management of a patient, or the development and deployment of medical technologies..")
     insider_language: Optional[str] = Field(default=None, description="Terminology used that is specific to this medical practice or procedure. e.g. specific words or phrases ...")
     tags: Optional[str] = Field(default=None, description="Generate a list of 3-5 tags (only noun) that are very relevant to the medical observation. The tags can be used to identify the type of procedure: (invasive procedure, minimally invasive, open procedure, noninvasive, in-clinic, in OR (operating room), in emergency room..) the medical specialty (e.g.: rhinology, oncology, ophthalmology,..)  area of medicine, or type of technology being used for example. Do not use numbers and separate them by commas. Give only the list of tags without any quotes or special characters.")
-
 
 def parseObservation(observation: str):
     llm = ChatOpenAI(
@@ -196,7 +170,6 @@ Output:"""
     return json.loads(output.json())
 
 def extractObservationFeatures(observation):
-
     # Parse the observation
     parsed_observation = parseObservation(observation)
     st.session_state['parsed_observation'] = parsed_observation
@@ -221,8 +194,6 @@ def extractObservationFeatures(observation):
             output += f" <span style='color:red;'>{field}</span>,"
     
     return f"{output}"
-
-
 
 # Function to add the observation (including tags) to Google Sheets
 def addToGoogleSheets(observation_dict):
@@ -350,8 +321,6 @@ def append_observation_to_case(case_log_sheet, case_id, new_observation_id):
             return
     st.error(f"Case ID '{case_id}' not found in the Case Log.")
 
-
-
 # Modified function to embed the observation and tags
 def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
     # Extract only the case ID (before the hyphen)
@@ -401,8 +370,6 @@ def embedObservation(observer, observation, observation_summary, observation_tag
 
     return status
 
-
-
 def generateObservationSummary(observation):
 
     llm = ChatOpenAI(
@@ -411,8 +378,6 @@ def generateObservationSummary(observation):
         openai_api_key=OPENAI_API_KEY,
         max_tokens=500,
     )
-
-
     observation_prompt = PromptTemplate.from_template(
 """
 You help me by giving me the a 3-8 word title of the following medical observation. Do not use quotes or special characters.
@@ -420,16 +385,12 @@ You help me by giving me the a 3-8 word title of the following medical observati
 Observation: {observation}
 Output Title:"""
 )
-
     observation_chain = (
         observation_prompt | llm | StrOutputParser()
     )
-
     # with get_openai_callback() as cb:
     output = observation_chain.invoke({"observation": observation})
-
     return output
-
 
 def clear_observation():
     if 'observation_description' in st.session_state:
@@ -452,8 +413,6 @@ from datetime import date
 if 'observation_counters' not in st.session_state:
     st.session_state['observation_counters'] = {}
 
-    
-
 # Function to generate observation ID with the format OBYYMMDDxxxx
 def generate_observation_id(observation_date, counter):
     return f"OB{observation_date.strftime('%y%m%d')}{counter:04d}"
@@ -471,19 +430,15 @@ def update_observation_id():
     client = gspread.authorize(creds)
     observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
     column_values = observation_sheet.col_values(1) 
-
     # find all observation ids with the same date
     obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")]
     obs_date_ids.sort()
-
     # get the counter from the last observation id
     if len(obs_date_ids) > 0:
         counter = int(obs_date_ids[-1][-4:])+1
     else:
         counter = 1
-   
     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
-
 
 def getExistingCaseIDS():
     scope = [
@@ -496,13 +451,10 @@ def getExistingCaseIDS():
     case_ids = case_log.col_values(1)[1:]
     case_dates_list = case_log.col_values(3)[1:]
     case_titles = case_log.col_values(2)[1:]
-
     # find all observation ids with the same date
     existing_case_ids_with_title = dict(zip(case_ids, case_titles))
-
     # make strings with case id - title
     existing_case_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_case_ids_with_title.items()]
-
     print("Existing Case IDS: ")
     print(existing_case_ids_with_title)
     return existing_case_ids_with_title
@@ -515,7 +467,6 @@ def clear_text():
 def get_case_date(case_id_with_title):
     # Extract the case ID from the selected case (before the hyphen)
     case_id = case_id_with_title.split(" - ")[0]
-
     try:
         # Define Google API scope and credentials
         scope = [
@@ -553,8 +504,6 @@ def get_case_date(case_id_with_title):
         logging.error(f"Error fetching case date: {e}")
         return None
 
-
-
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
     case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
@@ -567,33 +516,26 @@ def update_observation_date():
 
 def fetch_all_case_ids_and_titles():
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
-    
     # Fetch relevant columns from the sheet
     case_ids = sheet.col_values(1)[1:]  # Skip header
     case_titles = sheet.col_values(2)[1:]  # Titles
     case_ids_with_title = dict(zip(case_ids, case_titles))
-    
     # Create formatted list with ID - title format
     formatted_cases = [f"{case_id} - {title}" for case_id, title in case_ids_with_title.items()]
-
     return formatted_cases, case_ids_with_title
-  
 
 def get_filtered_case_data(case, case_data):
     # Generate a list of formatted "ID - Title" strings for the filtered observations
     filtered_data = [f"{case_id} - {case_data[case_id]}" for case_id in case if case_id in case_data]
     return filtered_data
 
-
 def update_observation(observation_id, updated_data):
     try:
         # Fetch the Google Sheet
         sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
         data = sheet.get_all_records()
-        
         # Get the list of column headers once
         headers = list(data[0].keys())
-        
         # Find the row corresponding to the observation_id and update it
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["Observation ID"] == observation_id:
@@ -615,20 +557,16 @@ def update_observation(observation_id, updated_data):
 
 def update_case_log_with_observation(old_case_id, new_case_id, observation_id):
     """Updates the case log, adding the observation ID to the new case and removing it from the old case."""
-
     try:
         scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
         case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
-
         # Get all data from the case log
         case_data = case_log.get_all_records()
         headers = case_log.row_values(1)
-        
         # Get the "Observations" column index
         obs_col_index = headers.index("Observations") + 1
-        
         # Helper function to update observations for a case ID
         def update_observations(case_id, action):
             """Adds or removes the observation ID from a case's 'Observations' field."""
@@ -636,13 +574,11 @@ def update_case_log_with_observation(old_case_id, new_case_id, observation_id):
                 if row.get("Case ID") == case_id:
                     current_observations = row.get("Observations", "")
                     observations_list = [obs.strip() for obs in current_observations.split(",") if obs.strip()]
-                    
                     # Modify the list based on the action
                     if action == "add" and observation_id not in observations_list:
                         observations_list.append(observation_id)
                     elif action == "remove" and observation_id in observations_list:
                         observations_list.remove(observation_id)
-                    
                     # Update the cell with the modified list of observations
                     case_log.update_cell(i, obs_col_index, ", ".join(observations_list))
                     break
@@ -695,11 +631,9 @@ if action == "Add New Observation":
         #Display Observer options 
         observer = st.selectbox("Observer", [""] + ["Deborah", "Kyle", "Ryan", "Lois"])
     
-    
-    # Initialize the observation text in session state if it doesn't exist
-    if "observation" not in st.session_state:
-        st.session_state["observation"] = ""
-
+    # # Initialize the observation text in session state if it doesn't exist
+    # if "observation" not in st.session_state:
+    #     st.session_state["observation"] = ""
     
     # Add Your Observation Text with larger font size
     st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
@@ -725,8 +659,9 @@ if action == "Add New Observation":
             # Generate the observation summary
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
             # st.session_state['observation_tags'] = generateObservationTags(st.session_state['observation'])
-            if st.session_state['observation_summary'] != "":
-                st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
+            # if st.session_state['observation_summary'] != "":
+            
+            st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             
     # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
