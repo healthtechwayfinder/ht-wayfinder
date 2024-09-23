@@ -67,6 +67,10 @@ if 'observation_tags' not in st.session_state:
     st.session_state['observation_tags'] = []
 if 'rerun' not in st.session_state:
     st.session_state['rerun'] = False
+if 'observer' not in st.session_state:
+    st.session_state['observer'] = ""
+if 'selected_case_id_with_title' not in st.session_state:
+    st.session_state['selected_case_id_with_title'] = ""
 if "selected_observation" not in st.session_state:
     st.session_state["selected_observation"] = ""  # Set initial value to an empty string
     
@@ -405,8 +409,8 @@ def clear_observation():
         st.session_state['parsed_observation'] = ""
     if 'observer' in st.session_state:
         st.session_state['observer'] = ""
-    if 'selected_case' in st.session_state:
-        st.session_state['selected_case'] = ""
+    if 'selected_case_id_with_title' in st.session_state:
+        st.session_state['selected_case_id_with_title'] = ""
     clear_text()
     update_observation_id()
 
