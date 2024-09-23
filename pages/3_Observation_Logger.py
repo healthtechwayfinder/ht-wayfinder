@@ -636,21 +636,8 @@ if action == "Add New Observation":
         #Display Observer options 
         observer = st.selectbox("Observer", [""] + ["Deborah", "Kyle", "Ryan", "Lois"], key='observer_key')
     
-    # # Initialize the observation text in session state if it doesn't exist
-    # if "observation" not in st.session_state:
-    #     st.session_state["observation"] = ""
-    
     # Add Your Observation Text with larger font size
     st.markdown("<h4 style='font-size:20px;'>Add Your Observation:</h4>", unsafe_allow_html=True)
-    
-    # # Button for voice input (currently as a placeholder)
-    # if st.button("🎤 Record Observation (Coming Soon)"):
-    #     st.info("Voice recording feature coming soon!")
-
-    # # Button for voice input (currently as a placeholder)
-    # if st.button("🎤 Convert Handwriting to Observation (Coming Soon)"):
-    #     st.info("Voice recording feature coming soon!")
-    
     # Observation Text Area
     st.session_state['observation'] = st.text_area("Observation:", value=st.session_state["observation"], height=200)
     # Create columns to align the buttons
@@ -665,12 +652,13 @@ if action == "Add New Observation":
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             
-    st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
-    # # here, add the function call to turn parsed results into editable text fields  
+     # # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
     
     if isinstance(parsed_observation, dict) and parsed_observation:
-    
+
+        st.session_state['observation_summary'] = st.text_area("Generated Title (editable):", value=st.session_state['observation_summary'], height=25)
+   
         input_fields = list(ObservationRecord.__fields__.keys())
         missing_fields = [field for field in input_fields if parsed_observation.get(field) in [None, ""]]
     
