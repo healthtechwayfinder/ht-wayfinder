@@ -41,3 +41,5 @@ Be sure to include the IDs (case_ID and/or observation_ID) of material reference
         Final Answer:
          """
     )
+
+    return question_prompt
