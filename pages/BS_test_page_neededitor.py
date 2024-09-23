@@ -150,6 +150,7 @@ def fetch_need_details(selected_need_ID, need_df):
     for index, row in need_df.iterrows():
         # Access the value using row["need_ID"]
         if "need_ID" in row and row["need_ID"].strip() == selected_need_ID.strip():
+            st.write(need_details)
             return row.to_dict()  # Convert the row to a dictionary for easy handling
     
     st.error(f"Need ID {selected_need_ID} not found.")
