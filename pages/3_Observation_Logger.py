@@ -721,7 +721,8 @@ if action == "Add New Observation":
         st.button("Clear Observation", on_click=clear_text)
         clear_text()
         # Container for result display
-        result_container = st.empty()
+        # result_container = st.empty()
+        clear_observation()
     
     with col1:
         if st.button("Review Observation"):
