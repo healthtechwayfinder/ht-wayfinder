@@ -259,9 +259,6 @@ def addToGoogleSheets(observation_dict):
 # Function to update the "observations" column for a specific case ID in Google Sheets
 import logging
 
-# Function to update the "observations" column for a specific case ID in Google Sheets
-import logging
-
 # Function to update the "Observations" column for a specific case ID in Google Sheets
 def update_case_observations(case_id, observation_id):
     try:
@@ -788,16 +785,9 @@ if action == "Add New Observation":
                 field_clean = field.replace("_", " ").capitalize()
                 st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
     
-    # st.markdown(st.session_state['result'], unsafe_allow_html=True)
-    
-    
-    
-    
-    
     
     if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
-        # st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
-        st.session_state["error"] = ""
+       st.session_state["error"] = ""
     
         if st.session_state['observation'] == "":
             st.session_state["error"] = "Error! Please enter observation first"
@@ -819,9 +809,6 @@ if action == "Add New Observation":
                                 st.session_state['observation_date'],
                                 st.session_state['observation_id'],
                                 case_id_with_title)
-    
-            # st.session_state['observation_summary'] = st.text_input("Generated Summary (editable):", value=st.session_state['observation_summary'])
-            # "Generated Summary: "+st.session_state['observation_summary']+"\n\n"
             if status:
                 st.session_state['result'] = "Observation added to your team's database."
                 st.session_state['rerun'] = True
@@ -831,22 +818,8 @@ if action == "Add New Observation":
             else:
                 st.session_state['result'] = "Error adding observation to your team's database, try again!"
             # clear_observation()
-    
-    # if st.session_state['rerun']:
-    #     time.sleep(3)
-    #     clear_observation()
-    #     st.session_state['rerun'] = False
-    #     st.rerun()
-    
-    
     st.markdown("---")
-    
-    
-    # st.markdown("---")
-    # Apply custom CSS to make the button blue
-    # add a break line
-    st.markdown("<br>", unsafe_allow_html=True)
-    
+    st.markdown("<br>", unsafe_allow_html=True) 
     st.markdown("""
         <style>
         div.stButton > button {
@@ -903,25 +876,11 @@ elif action == "Edit Existing Observation":
             observation_details = fetch_observation_details(observation_to_edit)
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_to_edit}")
-                
-                # # Loop through observation fields and display editable fields (except for Observation ID)
-                # for field_name, field_value in observation_details.items():
-                #     if field_name != "Observation ID":  # Ensure ID is not editable
-                #         st.text_input(field_name, value=field_value, key=field_name)  # Editable text field
-                # st.write(f"Editing Observation ID: {observation_to_edit}")
-
                 case = observation_details.get("Related Case ID", "")  
                 all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
-                # st.write("Full observation data:", all_observations)
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
-                    # st.write("Filtered observation data:", formatted_observations)
-                    # Multi-select dropdown with observation IDs
-
-                # Ensure session state for observation date and case selection
                 if 'observation_date' not in st.session_state:
-                    st.session_state['observation_date'] = date.today()
-                
-                                
+                    st.session_state['observation_date'] = date.today()             
                 observation_date_str = observation_details.get("Date", "")
                 try:
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
@@ -933,8 +892,7 @@ elif action == "Edit Existing Observation":
                 
                 case_id_from_observation = observation_details.get("Related Case ID", "")
                 formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
-                
-                # Ensure proper index selection
+              
                 if formatted_case in all_cases:
                     selected_index = all_cases.index(formatted_case)
                 else:
