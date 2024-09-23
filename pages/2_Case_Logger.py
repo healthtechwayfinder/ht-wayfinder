@@ -73,8 +73,10 @@ if 'parsed_case' not in st.session_state:
 if "selected_case" not in st.session_state:
     st.session_state["selected_case"] = ""  # Set initial value to an empty string
 
-if "attendees" not in st.session_state:
-    st.session_state["attendees"] = "" 
+# Clear session state if necessary
+if 'attendees_key' in st.session_state:
+    del st.session_state['attendees_key']
+
 
 
 class caseRecord(BaseModel):
