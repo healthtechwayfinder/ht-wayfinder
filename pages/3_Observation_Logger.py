@@ -652,8 +652,8 @@ if action == "Add New Observation":
             st.session_state['observation_summary']  = generateObservationSummary(st.session_state['observation'])
             st.session_state['result'] = extractObservationFeatures(st.session_state['observation'])
             
-     # # here, add the function call to turn parsed results into editable text fields  
-    parsed_observation = st.session_state['parsed_observation']
+            # here, add the function call to turn parsed results into editable text fields  
+            parsed_observation = st.session_state['parsed_observation']
     
     if isinstance(parsed_observation, dict) and parsed_observation:
 
@@ -688,9 +688,8 @@ if action == "Add New Observation":
                 updated_tags_string = ", ".join(updated_tags)
                 st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
 
-        if st.session_state.get('parsed_case', '') != '':
+        
             st.markdown("### Missing Fields")
-            
             # Ensure missing_fields is a list and has elements to process
             if missing_fields:
                 for field in missing_fields:
@@ -733,6 +732,7 @@ if action == "Add New Observation":
             else:
                 st.session_state['result'] = "Error adding observation to your team's database, try again!"
             # clear_observation()
+    
     st.markdown("---")
     st.markdown("<br>", unsafe_allow_html=True) 
     st.markdown("""
