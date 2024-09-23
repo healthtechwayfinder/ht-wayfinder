@@ -61,7 +61,7 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 #Initialization
-session_keys = ['observation', 'parsed_observation', 'result', 'observation_summary', 'observation_tags', 'rerun', 'observer', 'selected_case_id_with_title', 'selected_observation']
+session_keys = ['observation', 'parsed_observation', 'result', 'observation_summary', 'observation_tags', 'rerun', 'observer', 'selected_case_id_with_title', 'selected_observation', 'related_case_id_with_title']
 for key in session_keys:
     if key not in st.session_state:
         st.session_state[key] = "" if key != 'observation_tags' else []
@@ -706,6 +706,8 @@ if action == "Add New Observation":
     
     if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
         st.session_state["error"] = ""
+
+        
     
         if st.session_state['observation'] == "":
             st.session_state["error"] = "Error! Please enter observation first"
