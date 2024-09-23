@@ -974,8 +974,7 @@ elif action == "Edit Existing Observation":
                     all_cases, 
                     index=selected_index, 
                     key='selected_observation_id_with_title',
-                    on_change=update_observation_date
-                )
+                    on_change=update_observation_date)
 
 
                 observation_date_input = st.date_input(
