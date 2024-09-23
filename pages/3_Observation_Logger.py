@@ -397,20 +397,30 @@ Output Title:"""
     return output
 
 def clear_observation():
-    if 'observation_description' in st.session_state:
-        st.session_state['observation_description'] = ""
-    if 'observation_title' in st.session_state:
-        st.session_state['observation_title'] = ""
-    if 'observation_summary' in st.session_state:
-        st.session_state['observation_summary'] = ""
-    if 'result' in st.session_state:
-        st.session_state['result'] = ""
-    if 'parsed_observation' in st.session_state:
-        st.session_state['parsed_observation'] = ""
-    if 'observer' in st.session_state:
-        st.session_state['observer'] = ""  # Clear observer selectbox
-    if 'selected_case_id_with_title' in st.session_state:
-        st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox
+    # if 'observation_description' in st.session_state:
+    #     st.session_state['observation_description'] = ""
+    # if 'observation_title' in st.session_state:
+    #     st.session_state['observation_title'] = ""
+    # if 'observation_summary' in st.session_state:
+    #     st.session_state['observation_summary'] = ""
+    # if 'result' in st.session_state:
+    #     st.session_state['result'] = ""
+    # if 'parsed_observation' in st.session_state:
+    #     st.session_state['parsed_observation'] = ""
+    # if 'observer' in st.session_state:
+    #     st.session_state['observer'] = ""  # Clear observer selectbox
+    # if 'selected_case_id_with_title' in st.session_state:
+    #     st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox
+    # Clear observation-related session state variables
+    st.session_state['observation_description'] = ""
+    st.session_state['observation_title'] = ""
+    st.session_state['observation_summary'] = ""
+    st.session_state['result'] = ""
+    st.session_state['parsed_observation'] = ""
+    st.session_state['observer'] = ""  # Clear observer selectbox
+    st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox
+    st.session_state['observation'] = ""  # Clear observation text area
+    
     clear_text()
     update_observation_id()
 
