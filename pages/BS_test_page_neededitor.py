@@ -87,23 +87,41 @@ if 'selected_need_ID' not in st.session_state:
 # ////////////////////// FUNCTIONS ////////////////////// FUNCTIONS ////////////////////// FUNCTIONS ////////////////////// 
 
 
-# get need IDs with preview
-def getExistingNeedIDS():
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    need_log = client.open("2024 Healthtech Identify Log").worksheet("Need Statement Log")
-    need_ids = need_log.col_values(1)[1:]
-    need_previews = need_log.col_values(3)[1:]
+# # get need IDs with preview
+# def getExistingNeedIDS_OLD():
+#     scope = [
+#         "https://www.googleapis.com/auth/spreadsheets",
+#         "https://www.googleapis.com/auth/drive.metadata.readonly"
+#         ]
+#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+#     client = gspread.authorize(creds)
+#     need_log = client.open("2024 Healthtech Identify Log").worksheet("Need Statement Log")
+#     need_ids = need_log.col_values(1)[1:]
+#     need_previews = need_log.col_values(3)[1:]
 
-    # find all observation ids with the same date
+    
+
+#     existing_need_ids_with_preview = dict(zip(need_ids, need_previews))
+
+#     # make strings with case id - preview
+#     existing_need_ids_with_preview = [f"{need_ids} - {need_previews}" for need_ids, need_previews in existing_need_ids_with_preview.items()]
+
+#     print("Existing Observation IDS: ")
+#     print(existing_need_ids_with_preview)
+#     return existing_need_ids_with_preview
+
+
+def getExistingNeedIDS(df):
+    # Assume `df` is the DataFrame that corresponds to the "Need Statement Log" Google Sheet
+    # Extract the "need_ID" column (first column) and "preview" column (third column)
+    need_ids = df['need_ID'].tolist()  # Extract all values in the need_ID column
+    need_previews = df['need_statement'].tolist()  # Extract all values in the preview column
+
+    # Combine the need IDs and their previews into a dictionary
     existing_need_ids_with_preview = dict(zip(need_ids, need_previews))
 
-    # make strings with case id - preview
-    existing_need_ids_with_preview = [f"{need_ids} - {need_previews}" for need_ids, need_previews in existing_need_ids_with_preview.items()]
+    # Create strings in the format "need_ID - preview"
+    existing_need_ids_with_preview = [f"{need_id} - {preview}" for need_id, preview in existing_need_ids_with_preview.items()]
 
     print("Existing Observation IDS: ")
     print(existing_need_ids_with_preview)
@@ -155,32 +173,6 @@ def update_need(selected_need_ID, updated_need_data):
         print(f"Error updating case: {e}")
         return False
 
-
-
-# def getExistingObsIDS():
-#     scope = [
-#         "https://www.googleapis.com/auth/spreadsheets",
-#         "https://www.googleapis.com/auth/drive.metadata.readonly"
-#         ]
-#     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-#     client = gspread.authorize(creds)
-#     obs_log = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
-#     obs_ids = obs_log.col_values(1)[1:]
-#     # obs_descrip = obs_log.col_values(5)[1:]
-#     obs_titles = obs_log.col_values(2)[1:]
-
-#     # find all observation ids with the same date
-#     existing_obs_ids_with_title = dict(zip(obs_ids, obs_titles))
-
-#     # make strings with case id - title
-#     existing_obs_ids_with_title = [f"{case_id} - {case_title}" for case_id, case_title in existing_obs_ids_with_title.items()]
-
-#     # existing_obs_descrip = dict(zip(obs_ids, obs_descrip))
-
-
-#     print("Existing Observation IDS: ")
-#     print(existing_obs_ids_with_title)
-#     return existing_obs_ids_with_title
 
 
 def display_selected_observation(selected_obs_id):
@@ -259,9 +251,6 @@ def display_selected_observations(selected_obs_ids, obs_log_df):
 
 
 
-# FUNCTIONS here for observation ID handling ///////////////////////////
-
-
 
 # ////////////////////// CODE ON PAGE ////////////////////// CODE ON PAGE ////////////////////// CODE ON PAGE //////////////////////
 
@@ -271,22 +260,15 @@ st.markdown("# Edit a Need Statement")
 st.write("Use this tool to edit your need statements. Be sure to include notes about your revisions.")
 
 
-
-
-# Dropdown menu for selecting action
-# action = st.selectbox("Choose an action", ["Add New Case", "Edit Existing Case"])
-
-
-# select from a list of needs
-existing_need_ids_with_preview = getExistingNeedIDS()
 # Fetch data from sheets
-# need_statement_df = load_data(sheet1, "Need Statement Log")
+need_statement_df = load_data(sheet1, "Need Statement Log")
 observation_log_df = load_data(sheet1, "Observation Log")
 
+# select from a list of needs
+existing_need_ids_with_preview = getExistingNeedIDS(need_statement_df)
 
-# st.session_state['need_ID']
 
-# if selected_need_ID: #may need to make this session state whatever
+
 
 # Step 1: Fetch and display need IDs in a dropdown
 if not existing_need_ids_with_preview:
@@ -300,15 +282,12 @@ else:
     if  st.session_state['need_ID_with_preview']:
         need_details = fetch_need_details(st.session_state['selected_need_ID'])
 
-        #adding this for observation handling
-      #  need_details = fetch_observation_details(st.session_state['selected_need_ID'])
 
 
 
         # need_details = fetch_need_details(need_to_edit)
         if need_details:
            
-            # related_observation_ID = st.text_input("Observation", need_details.get("observation_ID", "")) # <- edit this
             
             # amend code here for observation ID handling ///////////////////////////
             
@@ -371,15 +350,6 @@ else:
             
             
             existing_obs_ids_with_title = getExistingObsIDS()
-            # st.session_state['obs_id_with_title'] = st.selectbox("Related Observation ID", existing_obs_ids_with_title)
-
-#  INSTEAD of ABOVE -- fetch observation ID from the sheet
-
-# df_descrips = pd.DataFrame(existing_obs_descrip)
-
-            # if st.session_state['obs_id_with_title']:
-            #     selected_obs_id = st.session_state['obs_id_with_title'].split(" - ")[0] if st.session_state['obs_id_with_title'] else None
-            #     display_selected_observation(selected_obs_id)
 
 
     
