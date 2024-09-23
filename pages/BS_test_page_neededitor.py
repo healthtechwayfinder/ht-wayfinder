@@ -128,15 +128,6 @@ def fetch_need_details(selected_need_ID, need_df):
     return None
 
 
-    
-    # for row in need_df:
-    #     if "need_ID" in row and row["need_ID"].strip() == st.session_state['selected_need_ID'].strip():
-    #         return row
-    
-    # st.error(f"Need ID {st.session_state['selected_need_ID']} not found.")
-    # return None
-
-
 # Update case details in Google Sheets
 def update_need(selected_need_ID, updated_need_data):
     # i = 2
@@ -357,7 +348,7 @@ else:
                     "problem": problem_var,
                     "population": population_var,
                     "outcome": outcome_var,
-                    "observation_ID": selected_observation_ids,
+                    "observation_ID": ', '.join(selected_observation_ids),  # Convert list to comma-separated string
                     "notes": notes,
                 }
                 
