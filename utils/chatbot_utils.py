@@ -30,11 +30,13 @@ def fetch_similar_data(prompt):
             "related_cases": related_cases,
             "related_cases_similarity": related_cases_similarity}
 
-
-def invoke_chain_and_update_session(observation_chat_chain, fetched_data_dict):
+def invoke_chain(observation_chat_chain, fetched_data_dict):
     with get_openai_callback() as cb:
         output = observation_chat_chain.invoke(fetched_data_dict,)
+    
+    return output
 
+def update_session(output):
     # Update the conversation history
     st.session_state.messages.append({"role": "assistant", "content": output})
 

@@ -7,19 +7,18 @@ from utils.google_sheet_utils import create_new_chat_sheet, get_case_description
 from utils.llm_utils import create_llm, get_prompt
 from utils.page_formatting import add_investigator_formatting
 from utils.initialize_session import initialize_investigator_session
-from utils.chatbot_utils import fetch_similar_data, invoke_chain_and_update_session
+from utils.chatbot_utils import fetch_similar_data, invoke_chain, update_session
 
 check_if_already_logged_in()
 add_investigator_formatting()
 initialize_investigator_session()
 
+observation_chat_chain = get_prompt() | create_llm() | StrOutputParser()
 
 # Handle new input
 if prompt := st.chat_input("What would you like to ask?"):
-    
-    observation_chat_chain = (get_prompt() | create_llm() | StrOutputParser())
-
-    invoke_chain_and_update_session(observation_chat_chain, fetch_similar_data(prompt))
+    new_output = invoke_chain(observation_chat_chain, fetch_similar_data(prompt))
+    update_session(new_output)
 
 st.markdown("---")
 
