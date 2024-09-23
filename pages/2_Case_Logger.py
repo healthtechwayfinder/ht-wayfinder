@@ -73,6 +73,9 @@ if 'parsed_case' not in st.session_state:
 if "selected_case" not in st.session_state:
     st.session_state["selected_case"] = ""  # Set initial value to an empty string
 
+if "attendees" not in st.session_state:
+    st.session_state["attendees"] = "" 
+
 
 class caseRecord(BaseModel):
     location: Optional[str] = Field(default=None, description="(only nouns) physical environment where the case took place. e.g: operating room (OR), MGH (Massachusetts General Hospital), emergency room (ER), neurology clinic, step-down unit, intensive care unit (ICU)...")
@@ -323,6 +326,7 @@ def clear_case():
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
     st.session_state['attendees'] = ""
+    st.session_state['attendees_key'] = None
     update_case_ID()
     clear_text()
     # Refresh the page back to the initial state
@@ -527,7 +531,7 @@ if action == "Add New Case":
     
     with col3:
         #Display attendees options 
-        st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois", "Fellowisa"])
+        st.session_state['attendees'] = st.multiselect("Attendees", ["Deborah", "Kyle", "Ryan", "Lois"], , key='attendees_key')
     
     # Initialize the observation text in session state if it doesn't exist
     if "case_description" not in st.session_state:
