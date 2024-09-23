@@ -359,6 +359,7 @@ else:
                     "problem": problem_var,
                     "population": population_var,
                     "outcome": outcome_var,
+                    "observation_ID": selected_observation_ids,
                     "notes": notes,
                 }
                 
