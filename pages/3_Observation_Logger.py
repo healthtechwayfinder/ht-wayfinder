@@ -323,7 +323,11 @@ def append_observation_to_case(case_log_sheet, case_id, new_observation_id):
 # Modified function to embed the observation and tags
 def embedObservation(observer, observation, observation_summary, observation_tags, observation_date, observation_id, related_case_id_with_title):
     # Extract only the case ID (before the hyphen)
-    related_case_id = related_case_id_with_title.split(" - ")[0]
+    if related_case_id_with_title == "" or related_case_id_with_title is None:
+        related_case_id = ""
+    else:
+        related_case_id = related_case_id_with_title.split(" - ")[0]
+
     
     db = PineconeVectorStore(
         index_name=st.secrets["pinecone-keys"]["index_to_connect"],
@@ -723,13 +727,13 @@ if action == "Add New Observation":
             )
         else:
             # update observation ID one last time to avoid accidental duplication with multiple users
-    
+            
             update_observation_id() 
             status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                                 st.session_state['observation_tags'],
                                 st.session_state['observation_date'],
                                 st.session_state['observation_id'],
-                                st.session_state[case_id_with_title])
+                                case_id_with_title)
             if status:
                 st.session_state['result'] = "Observation added to your team's database."
                 st.session_state['rerun'] = True
