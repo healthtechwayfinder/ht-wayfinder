@@ -22,6 +22,15 @@ import time
 OPENAI_API_KEY = st.secrets["openai_key"]
 
 
+################## CHECK LOG IN ##################
+if "logged_in" not in st.session_state:
+    switch_page("streamlit app")
+else:
+    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
+        switch_page("streamlit app")
+
+##########################################################################################
+
 # Set up the Streamlit page
 st.set_page_config(page_title="Glossary", page_icon="📊")
 st.markdown("# Glossary")

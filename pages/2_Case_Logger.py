@@ -20,6 +20,15 @@ import os
 import csv
 import random
 
+################## CHECK LOG IN ##################
+if "logged_in" not in st.session_state:
+    switch_page("streamlit app")
+else:
+    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
+        switch_page("streamlit app")
+
+##########################################################################################
+
 st.set_page_config(page_title="Add or Edit a Case", page_icon="🏥")
 st.markdown("# Case Logger")
 st.write("Use this tool to record cases from your clinical observations. Include information like date, attendees, location, procedure, and what physically occurred during the encounter. For more information about recording cases, please refer to the User Guide.")

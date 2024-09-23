@@ -15,6 +15,15 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
 
+################## CHECK LOG IN ##################
+if "logged_in" not in st.session_state:
+    switch_page("streamlit app")
+else:
+    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
+        switch_page("streamlit app")
+
+##########################################################################################
+
 # Access the credentials from Streamlit secrets
 creds_dict = {
     "type" : st.secrets["gwf_service_account"]["type"],

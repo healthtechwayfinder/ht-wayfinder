@@ -2,6 +2,17 @@ import streamlit as st
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
+from streamlit_extras.switch_page_button import switch_page
+
+
+################## CHECK LOG IN ##################
+if "logged_in" not in st.session_state:
+    switch_page("streamlit app")
+else:
+    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
+        switch_page("streamlit app")
+
+##########################################################################################
 
 # Set page configuration
 st.set_page_config(page_title="View Logs", page_icon="📒", layout="wide")

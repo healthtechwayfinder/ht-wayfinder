@@ -16,7 +16,17 @@ logging.basicConfig(level=logging.INFO)
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+################## CHECK LOG IN ##################
+if "logged_in" not in st.session_state:
+    switch_page("streamlit app")
+else:
+    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
+        switch_page("streamlit app")
+
+##########################################################################################
+
 st.set_page_config(page_title="HealthTech Wayfinder", page_icon="📍", layout="wide")
+st.markdown(f"# Welcome {st.session_state['logged_in_username']}!")
 
 
 if "worksheet_name" not in st.session_state:
@@ -86,26 +96,22 @@ def update_note():
 
 
 
-# Initialize cookies manager
-cookies = CookieManager()
-
-
-st.markdown("# Welcome!")
-
 
 # Function to handle logout
 def log_out():
-    # Clear session state to log out
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+    st.session_state["log_out"] = True
+    switch_page("streamlit app")
+    # # Clear session state to log out
+    # for key in list(st.session_state.keys()):
+    #     del st.session_state[key]
     
-    # Clear cookies if used for login
-    if "logged_in" in cookies:
-        cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
-        cookies.save()  # Save changes to the browser
+    # # Clear cookies if used for login
+    # if "logged_in" in cookies:
+    #     cookies["logged_in"] = None  # Clear the logged_in cookie by setting it to None
+    #     cookies.save()  # Save changes to the browser
 
-    # Redirect to the main URL of your app
-    st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
+    # # Redirect to the main URL of your app
+    # st.markdown('<meta http-equiv="refresh" content="0; url=https://healthtech-wayfinder.streamlit.app/">', unsafe_allow_html=True)
 
 
 

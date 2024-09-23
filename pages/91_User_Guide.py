@@ -2,6 +2,16 @@ import streamlit as st
 from streamlit_extras.switch_page_button import switch_page
 
 
+################## CHECK LOG IN ##################
+if "logged_in" not in st.session_state:
+    switch_page("streamlit app")
+else:
+    if st.session_state["logged_in"] == False or st.session_state["logged_in"] == 'false':
+        switch_page("streamlit app")
+
+##########################################################################################
+
+
 
 def main():
     st.markdown("<h1 style='text-align: left;'>Wayfinder User Guide:</h1>", unsafe_allow_html=True)
