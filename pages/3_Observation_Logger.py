@@ -989,7 +989,7 @@ elif action == "Edit Existing Observation":
                     st.write(observation_to_edit, st.session_state['observation_id'])
     
                     updated_data = {
-                            "Observation ID": observation_id,
+                            "Observation ID": st.session_state['observation_id'],
                             "Observation Title": observation_title,
                             "Date": observation_date_input.isoformat(),
                             "Observer": observer,
