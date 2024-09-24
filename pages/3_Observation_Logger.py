@@ -874,7 +874,7 @@ elif action == "Edit Existing Observation":
                 
                 # if 'observation_date' not in st.session_state:
                 observation_date_str = observation_details.get("Date", "")
-                st.write("Raw observation date string:", observation_date_str) 
+                # st.write("Raw observation date string:", observation_date_str) 
                 try:
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
                 except ValueError:
