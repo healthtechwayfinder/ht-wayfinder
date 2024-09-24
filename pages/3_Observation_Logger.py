@@ -749,8 +749,6 @@ if action == "Add New Observation":
     
     if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
         st.session_state["error"] = ""
-
-        
     
         if st.session_state['observation'] == "":
             st.session_state["error"] = "Error! Please enter observation first"
@@ -766,8 +764,7 @@ if action == "Add New Observation":
             )
         else:
             # update observation ID one last time to avoid accidental duplication with multiple users
-            
-            update_observation_id() 
+            # update_observation_id() 
             status = embedObservation(observer, st.session_state['observation'],  st.session_state['observation_summary'], 
                                 st.session_state['observation_tags'],
                                 st.session_state['observation_date'],
