@@ -985,7 +985,7 @@ elif action == "Edit Existing Observation":
                     old_case_id = observation_details.get("Related Case ID", "") 
     
                     updated_data = {
-                            # "Observation ID": observation_id,
+                            "Observation ID": observation_id,
                             "Observation Title": observation_title,
                             "Date": observation_date_input.isoformat(),
                             "Observer": observer,
