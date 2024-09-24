@@ -103,6 +103,7 @@ def fetch_observation_ids_and_titles():
         observation_info = [(row["Observation ID"], row["Observation Title"]) for row in data if "Observation ID" in row and "Observation Title" in row]
         return observation_info
     except Exception as e:
+        st.error(f"Error fetching Observation IDs and titles: {e}")
         print(f"Error fetching Observation IDs and titles: {e}")
         return []
 # Sample function to simulate fetching observation details from Google Sheets
