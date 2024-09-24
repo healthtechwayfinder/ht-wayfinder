@@ -612,26 +612,26 @@ def update_observation(observation_id, updated_data):
         data = sheet.get_all_records()
         # Get the list of column headers once
         headers = list(data[0].keys())
-        st.write(f"Sheet headers: {headers}")  # Debugging
+        # st.write(f"Sheet headers: {headers}")  # Debugging
         # Find the row corresponding to the observation_id and update it
         # Ensure observation_id types match
         observation_id = str(observation_id)
             
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["Observation ID"] == observation_id:
-                st.write(f"Updating row {i} for Observation ID: {observation_id}")  # Debugging
+                # st.write(f"Updating row {i} for Observation ID: {observation_id}")  # Debugging
                 # If updated_data contains a new observation_id, use it correctly
                 if "observation_id" in updated_data and updated_data["observation_id"] != observation_id:
                     observation_id = updated_data["observation_id"]
-                    st.write(f"Updated observation ID to: {observation_id}")
+                    # st.write(f"Updated observation ID to: {observation_id}")
                 
                 for key, value in updated_data.items():
                     if key in headers:
                         col_index = headers.index(key) + 1  # Get the correct column index
                         sheet.update_cell(i, col_index, value)
-                        st.write(f"Updating {key} at row {i}, column {col_index} with value {value}")  # Debugging
+                        # st.write(f"Updating {key} at row {i}, column {col_index} with value {value}")  # Debugging
                     else:
-                        st.write(f"Warning: {key} not found in Google Sheets columns")
+                        # st.write(f"Warning: {key} not found in Google Sheets columns")
                 return True  # Case updated
         # Case ID not found
         st.write(f"observation ID {observation_id} not found")
