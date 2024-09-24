@@ -454,6 +454,28 @@ def clear_observation():
     clear_text()
     update_observation_id()
 
+def clear_observation_edit():
+    # Resetting relevant session state variables
+    st.session_state['observation_description'] = ""
+    st.session_state['observation_title'] = ""
+    st.session_state['observation_summary'] = ""
+    st.session_state['result'] = ""
+    st.session_state['parsed_observation'] = {}
+    st.session_state['observer'] = ""  # Clear observer selectbox value
+    st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox value
+    st.session_state['observation'] = ""  # Clear observation text area
+
+    # Ensure 'selected_observation_id_with_title' exists before resetting it
+    if 'selected_case_id_with_title' not in st.session_state:
+        st.session_state['selected_case_id_with_title'] = ""  # Initialize it if not present
+
+    # Reset tags if they exist in the session state
+    if 'observation_tags' in st.session_state:
+        st.session_state['observation_tags'] = []  # Reset tags to an empty list if needed
+    
+    clear_text()
+    # update_observation_id()
+
     
 
 import streamlit as st
@@ -933,30 +955,13 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                     
-                st.session_state['observation_date'] = observation_date
+                # st.session_state['observation_date'] = observation_date
                 
                 if 'selected_case_id_with_title' not in st.session_state:
                     st.session_state['selected_case_id_with_title'] = ''
                 
                 case_id_from_observation = observation_details.get("Related Case ID", "")
                 formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
-              
-               
-                 # Check if the observation has an associated case
-                # if case:
-                #     # Format the case ID and title
-                #     formatted_case = f"{case} - {case_ids_with_title.get(case, 'Unknown')}".strip()
-            
-                #     if formatted_case in all_cases:
-                #         selected_index = all_cases.index(formatted_case)
-                #     else:
-                #         selected_index = 0  # Fallback if not found
-                #         st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
-                        
-                # else:
-                #     # If there's no related case, set the selected index to 0 (or handle it differently)
-                #     selected_index = 0
-                #     # st.warning("This observation has no related case. Please select a case.")
 
                 if formatted_case in all_cases:
                     st.session_state['select_index'] = all_cases.index(formatted_case)
@@ -1077,6 +1082,8 @@ elif action == "Edit Existing Observation":
                         # Optionally clear the selected case after saving
                         
                         st.session_state.pop("selected_observation", None)
+                        clear_observation_edit()
+            
                        
                     else:
                         st.error(f"Failed to save changes to '{observation_to_edit}'.")
