@@ -502,8 +502,10 @@ def update_observation_id():
         counter = int(obs_date_ids[-1][-4:])+1
     else:
         counter = 1
-    st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
-    st.write(observation_id)
+
+    new_observation_id = generate_observation_id(st.session_state['observation_date'], counter)
+    st.session_state['observation_id'] = new_observation_id
+    st.write(new_observation_id)
 
 def getExistingCaseIDS():
     case_log = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
