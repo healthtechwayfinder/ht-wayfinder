@@ -392,6 +392,24 @@ Output Title:"""
     output = observation_chain.invoke({"observation": observation})
     return output
 
+# def clear_observation():
+#     # Resetting relevant session state variables
+#     st.session_state['observation_description'] = ""
+#     st.session_state['observation_title'] = ""
+#     st.session_state['observation_summary'] = ""
+#     st.session_state['result'] = ""
+#     st.session_state['parsed_observation'] = {}
+#     st.session_state['observer'] = ""  # Clear observer selectbox value
+#     st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox value
+#     st.session_state['observation'] = ""  # Clear observation text area
+#     st.session_state['selected_observation_id_with_title'] = ""  # Use an empty string instead of None
+
+#     # If 'tags' or other fields are session state keys, reset them as well
+#     if 'observation_tags' in st.session_state:
+#         st.session_state['observation_tags'] = []  # Reset tags to an empty list if needed
+#     clear_text()
+#     update_observation_id()
+
 def clear_observation():
     # Resetting relevant session state variables
     st.session_state['observation_description'] = ""
@@ -402,13 +420,20 @@ def clear_observation():
     st.session_state['observer'] = ""  # Clear observer selectbox value
     st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox value
     st.session_state['observation'] = ""  # Clear observation text area
-    st.session_state['selected_observation_id_with_title'] = ""  # Use an empty string instead of None
 
-    # If 'tags' or other fields are session state keys, reset them as well
+    # Ensure 'selected_observation_id_with_title' exists before resetting it
+    if 'selected_observation_id_with_title' not in st.session_state:
+        st.session_state['selected_observation_id_with_title'] = ""  # Initialize it if not present
+    else:
+        st.session_state['selected_observation_id_with_title'] = ""  # Use an empty string
+
+    # Reset tags if they exist in the session state
     if 'observation_tags' in st.session_state:
         st.session_state['observation_tags'] = []  # Reset tags to an empty list if needed
+    
     clear_text()
     update_observation_id()
+
     
 
 import streamlit as st
