@@ -87,7 +87,7 @@ if "selected_observation" not in st.session_state:
 
 def get_google_sheet(spreadsheet_name, worksheet_name):
     if 'sheet' in st.session_state:
-        return st.session_sate['sheet']
+        return st.session_state['sheet']
     scope = ["https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
