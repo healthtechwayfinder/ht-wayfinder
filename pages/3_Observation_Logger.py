@@ -596,9 +596,11 @@ def update_observation(observation_id, updated_data):
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["Observation ID"] == observation_id:
                 st.write(f"Updating row {i} for Observation ID: {observation_id}")  # Debugging
-                if updated_data.observation_id != observation_id:
-                    observation_id = updated_data.observation_id
-                # Update the necessary fields
+                # If updated_data contains a new observation_id, use it correctly
+                if "observation_id" in updated_data and updated_data["observation_id"] != observation_id:
+                    observation_id = updated_data["observation_id"]
+                    st.write(f"Updated observation ID to: {observation_id}")
+                
                 for key, value in updated_data.items():
                     if key in headers:
                         col_index = headers.index(key) + 1  # Get the correct column index
