@@ -879,7 +879,7 @@ elif action == "Edit Existing Observation":
                     except ValueError:
                         observation_date = date.today()
                         
-                st.session_state['observation_date'] = observation_date
+                    st.session_state['observation_date'] = observation_date
                 
                 if 'selected_case_id_with_title' not in st.session_state:
                     st.session_state['selected_case_id_with_title'] = ''
