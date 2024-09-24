@@ -985,6 +985,8 @@ elif action == "Edit Existing Observation":
                     insider_language_string = ", ".join(insider_language)
                     observation_stakeholders_string = ", ".join(observation_stakeholders)
                     old_case_id = observation_details.get("Related Case ID", "") 
+
+                    st.write(observation_to_edit)
     
                     updated_data = {
                             "Observation ID": observation_id,
