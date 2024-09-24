@@ -839,9 +839,12 @@ elif action == "Edit Existing Observation":
             
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_to_edit}")
+                
                 case = observation_details.get("Related Case ID", "")  
                 all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
+
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
+                
                 if 'observation_date' not in st.session_state:
                     st.session_state['observation_date'] = date.today()             
                 observation_date_str = observation_details.get("Date", "")
@@ -871,6 +874,7 @@ elif action == "Edit Existing Observation":
                     else:
                         selected_index = 0  # Fallback if not found
                         st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
+                        formatted_case = ""
                 else:
                     # If there's no related case, set the selected index to 0 (or handle it differently)
                     selected_index = 0
