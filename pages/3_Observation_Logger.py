@@ -561,7 +561,7 @@ def update_observation_date():
             st.session_state['observation_date'] = case_date
             update_observation_id()
         else:
-        st.write("No case date found.")
+            st.write("No case date found.")
 
 def update_observation_date_new_observation():
     case_id_with_title = st.session_state.get('selected_case_id_with_title_new_observation', '')
