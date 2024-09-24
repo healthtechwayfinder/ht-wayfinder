@@ -1017,14 +1017,13 @@ elif action == "Edit Existing Observation":
                     if old_case_id != case_id:
                         # Update the case log to move the observation from old to new case
                         update_case_log_with_observation(old_case_id, case_id, observation_to_edit)
+
+                    print(f"observation_to_edit: {observation_to_edit}")
+                    print(f"updated_data: {updated_data}")
                     
                     
                     if update_observation(observation_to_edit, updated_data):
-                
-                        # Optionally clear the selected case after saving
                         # st.session_state.pop("selected_case", None)
-                        
-                        
                         st.markdown("<script>window.location.reload();</script>", unsafe_allow_html=True)
                         # Optionally clear the selected case after saving
                         
