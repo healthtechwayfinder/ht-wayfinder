@@ -692,7 +692,7 @@ if action == "Add New Observation":
                 st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
 
         # if st.session_state.get('parsed_observation', '') != '':
-            st.markdown("### Missing Fields")
+        st.markdown("### Missing Fields")
         
                 # Ensure missing_fields is a list and has elements to process
         if missing_fields:
