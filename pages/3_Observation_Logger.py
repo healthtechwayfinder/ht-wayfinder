@@ -424,8 +424,6 @@ def clear_observation():
     # Ensure 'selected_observation_id_with_title' exists before resetting it
     if 'selected_observation_id_with_title' not in st.session_state:
         st.session_state['selected_observation_id_with_title'] = ""  # Initialize it if not present
-    else:
-        st.session_state['selected_observation_id_with_title'] = ""  # Use an empty string
 
     # Reset tags if they exist in the session state
     if 'observation_tags' in st.session_state:
