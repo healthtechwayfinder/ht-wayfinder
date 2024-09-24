@@ -66,9 +66,6 @@ for key in session_keys:
     if key not in st.session_state:
         st.session_state[key] = "" if key != 'observation_tags' else []
 
-if 'parsed_case' not in st.session_state:
-    st.session_state['parsed_case'] = {}
-
 def get_google_sheet(spreadsheet_name, worksheet_name):
     scope = ["https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive"]
@@ -661,6 +658,8 @@ if action == "Add New Observation":
             
             # here, add the function call to turn parsed results into editable text fields  
     parsed_observation = st.session_state['parsed_observation']
+
+
     
     if isinstance(parsed_observation, dict) and parsed_observation:
 
@@ -703,8 +702,7 @@ if action == "Add New Observation":
             if missing_fields:
                 for field in missing_fields:
                     field_clean = field.replace("_", " ").capitalize()
-                            # Update the value of the parsed_case dictionary based on the text input
-                    st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
+                    st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
             else:
                 st.write("None")
 
