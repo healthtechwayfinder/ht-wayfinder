@@ -444,8 +444,8 @@ def clear_observation():
     st.session_state['observation'] = ""  # Clear observation text area
 
     # Ensure 'selected_observation_id_with_title' exists before resetting it
-    if 'selected_observation_id_with_title' not in st.session_state:
-        st.session_state['selected_observation_id_with_title'] = ""  # Initialize it if not present
+    if 'selected_case_id_with_title' not in st.session_state:
+        st.session_state['selected_case_id_with_title'] = ""  # Initialize it if not present
 
     # Reset tags if they exist in the session state
     if 'observation_tags' in st.session_state:
@@ -551,7 +551,7 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    case_id_with_title = st.session_state.get('selected_observation_id_with_title', '')
+    case_id_with_title = st.session_state.get('selected_case_id_with_title', '')
     if case_id_with_title:
         case_date = get_case_date(case_id_with_title)
         if case_date:
@@ -655,7 +655,7 @@ if action == "Add New Observation":
     case_id_with_title = st.selectbox(
         "Select a Related Case ID",
         [""] + existing_case_ids_with_title,
-        key='selected_observation_id_with_title',
+        key='selected_case_id_with_title_',
         on_change=update_observation_date  # Call the update function only when a case ID is selected
     )
     
@@ -873,8 +873,8 @@ elif action == "Edit Existing Observation":
                 except ValueError:
                     observation_date = date.today()
                 
-                if 'selected_observation_id_with_title' not in st.session_state:
-                    st.session_state['selected_observation_id_with_title'] = ''
+                if 'selected_case_id_with_title' not in st.session_state:
+                    st.session_state['selected_case_id_with_title'] = ''
                 
                 case_id_from_observation = observation_details.get("Related Case ID", "")
                 formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
@@ -899,14 +899,14 @@ elif action == "Edit Existing Observation":
                 if formatted_case in all_cases:
                     st.session_state['select_index'] = all_cases.index(formatted_case)
                 else:
-                    st.session_state['select_index'] = None  # Fallback to the first case if not found
+                    st.session_state['select_index'] = 0  # Fallback to the first case if not found
                 
                 st.write(f"Selected Index {st.session_state['select_index']}")
                 selected_case = st.selectbox(
                     "Select Related Case:", 
                     all_cases, 
                     index=st.session_state['select_index'], 
-                    key='selected_observation_id_with_title',
+                    key='selected_case_id_with_title',
                     on_change=update_observation_date)
     
                 observation_date_input = st.date_input(
