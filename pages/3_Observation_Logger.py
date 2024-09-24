@@ -851,6 +851,7 @@ elif action == "Edit Existing Observation":
         """, unsafe_allow_html=True)
         # Display the dropdown with combined case_id and title
         selected_observation = st.selectbox("", [""] + observation_options, key="selected_observation", label_visibility="collapsed")
+
         if selected_observation != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
@@ -861,7 +862,7 @@ elif action == "Edit Existing Observation":
                 
                 case = observation_details.get("Related Case ID", "")  
                 all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
-                all_cases += [""]
+                all_cases = [""] + all_cases
 
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
                 
