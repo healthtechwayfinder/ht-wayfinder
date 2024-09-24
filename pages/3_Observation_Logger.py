@@ -899,8 +899,7 @@ elif action == "Edit Existing Observation":
                 if formatted_case in all_cases:
                     st.session_state['select_index'] = all_cases.index(formatted_case)
                 else:
-                    st.session_state['select_index'] = 0  # Fallback to the first case if not found
-                time.sleep(0.5)
+                    st.session_state['select_index'] = None  # Fallback to the first case if not found
                 
                 st.write(f"Selected Index {st.session_state['select_index']}")
                 selected_case = st.selectbox(
