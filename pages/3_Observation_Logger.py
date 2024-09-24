@@ -954,6 +954,11 @@ elif action == "Edit Existing Observation":
                     observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
                 except ValueError:
                     observation_date = date.today()
+
+                # Check if the observation date from the observation details is different from the current session state
+                if 'observation_date' not in st.session_state or st.session_state['observation_date'] != observation_date:
+                    st.session_state['observation_date'] = observation_date
+
                     
                 # st.session_state['observation_date'] = observation_date
                 
