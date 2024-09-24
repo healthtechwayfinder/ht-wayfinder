@@ -632,7 +632,7 @@ def update_observation(observation_id, updated_data):
                         # st.write(f"Updating {key} at row {i}, column {col_index} with value {value}")  # Debugging
                     else:
                         # st.write(f"Warning: {key} not found in Google Sheets columns")
-                    return True  # Case updated
+                        return True  # Case updated
         # Case ID not found
         st.write(f"observation ID {observation_id} not found")
         return False
