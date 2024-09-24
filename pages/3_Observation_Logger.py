@@ -908,7 +908,7 @@ elif action == "Edit Existing Observation":
                 else:
                     st.session_state['select_index'] = 0  # Fallback to the first case if not found
                 
-                st.write(f"Selected Index {st.session_state['select_index']}")
+                # st.write(f"Selected Index {st.session_state['select_index']}")
                 selected_case = st.selectbox(
                     "Select Related Case:", 
                     all_cases, 
