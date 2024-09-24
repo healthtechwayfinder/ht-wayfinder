@@ -1001,9 +1001,21 @@ elif action == "Edit Existing Observation":
                     on_change=update_observation_id  # Trigger any additional updates if necessary
                 )
 
+                # # Display the updated observation ID
+                # st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+
+                # If 'observation_id' is not yet set, initialize it from the observation details
+                if 'observation_id' not in st.session_state:
+                    st.session_state['observation_id'] = observation_details.get("Observation ID", "")
                 
-                # Display the updated observation ID
-                st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
+                # Display observation ID as a text input (updatable)
+                observation_id_input = st.text_input(
+                    "Observation ID:",
+                    value=st.session_state['observation_id'],  # Set from session state
+                    key='observation_id',  # This key ensures it ties to session state
+                    on_change=update_observation_id  # This triggers when the value changes
+                )
+
     
                 case_id = ""
                 case_title = ""
