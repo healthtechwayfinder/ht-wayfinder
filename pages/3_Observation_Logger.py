@@ -862,7 +862,7 @@ elif action == "Edit Existing Observation":
             observation_details = fetch_observation_details(observation_to_edit)
             
             if observation_details:
-                st.write(f"Editing Observation ID: {observation_to_edit}")
+                # st.write(f"Editing Observation ID: {observation_to_edit}")
                 
                 case = observation_details.get("Related Case ID", "")  
                 all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
@@ -905,7 +905,7 @@ elif action == "Edit Existing Observation":
                 #     selected_index = 0
                 #     # st.warning("This observation has no related case. Please select a case.")
                 
-                st.write(f"Selected Index {st.session_state['select_index']}")
+                # st.write(f"Selected Index {st.session_state['select_index']}")
                 selected_case = st.selectbox(
                     "Select Related Case:", 
                     all_cases, 
