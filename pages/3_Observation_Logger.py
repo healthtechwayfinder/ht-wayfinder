@@ -895,6 +895,7 @@ elif action == "Edit Existing Observation":
                 #     # If there's no related case, set the selected index to 0 (or handle it differently)
                 #     selected_index = 0
                 #     # st.warning("This observation has no related case. Please select a case.")
+                st.session_state['select_index'] = 0
                 
                 st.write(f"Selected Index {st.session_state['select_index']}")
                 selected_case = st.selectbox(
