@@ -583,7 +583,7 @@ def update_observation_date():
             st.session_state['observation_date'] = case_date
             st.write(f"Updated observation date to {case_date} from selected case")
             update_observation_id()
-            st.rerun()
+            
         else:
             st.write("No case date found.")
 
@@ -961,7 +961,6 @@ elif action == "Edit Existing Observation":
                 if 'observation_date' not in st.session_state or st.session_state['observation_date'] != observation_date:
                     st.session_state['observation_date'] = observation_date
 
-                    
                 # st.session_state['observation_date'] = observation_date
                 
                 if 'selected_case_id_with_title' not in st.session_state:
@@ -982,6 +981,8 @@ elif action == "Edit Existing Observation":
                     index=st.session_state['select_index'], 
                     key='selected_case_id_with_title',
                     on_change=update_observation_date)
+
+                st.session_state['observation_date'] = observation_date
     
                 observation_date_input = st.date_input(
                     "Observation Date", 
