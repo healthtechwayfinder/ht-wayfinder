@@ -996,11 +996,11 @@ elif action == "Edit Existing Observation":
                     on_change=update_observation_id  # Trigger any additional updates if necessary
                 )
                 
-                observation_id_input = st.text_input(
-                    "Observation ID:",
-                    value=st.session_state['observation_id'],  # Set from session state
-                    disabled=True 
-                )
+                # observation_id_input = st.text_input(
+                #     "Observation ID:",
+                #     value=st.session_state['observation_id'],  # Set from session state
+                #     disabled=True 
+                # )
 
     
                 case_id = ""
