@@ -568,15 +568,15 @@ def get_case_date(case_id_with_title):
 
 # Function to update the observation date when a case ID is selected
 def update_observation_date():
-    st.write("update_observation_date triggered")
+    # st.write("update_observation_date triggered")
     case_id_with_title = st.session_state.get('selected_case_id_with_title', '')
-    st.write(f"Selected Case: {case_id_with_title}")
+    # st.write(f"Selected Case: {case_id_with_title}")
     if case_id_with_title:
         case_date = get_case_date(case_id_with_title)
         if case_date:
-            st.write(f"Case Date: {case_date}")
+            # st.write(f"Case Date: {case_date}")
             st.session_state['observation_date'] = case_date
-            st.write(f"Updated observation date to {case_date} from selected case")
+            # st.write(f"Updated observation date to {case_date} from selected case")
             update_observation_id()
             
         else:
