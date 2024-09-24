@@ -657,6 +657,43 @@ def update_case_log_with_observation(old_case_id, new_case_id, observation_id):
         logging.error(f"Error updating case log: {e}")
         st.error(f"Failed to update the case log for observation '{observation_id}'. Error: {str(e)}")
 
+
+def update_observation_id_in_cases(old_observation_id, new_observation_id):
+    """Updates the observation ID in all cases, removing the old observation ID and adding the new one where necessary."""
+    try:
+        scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+        client = gspread.authorize(creds)
+        case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+        # Get all data from the case log
+        case_data = case_log.get_all_records()
+        headers = case_log.row_values(1)
+        # Get the "Observations" column index
+        obs_col_index = headers.index("Observations") + 1
+        
+        # Iterate over all cases in the log
+        for i, row in enumerate(case_data, start=2):  # Start at row 2 (skipping header)
+            current_observations = row.get("Observations", "")
+            observations_list = [obs.strip() for obs in current_observations.split(",") if obs.strip()]
+            
+            # Remove the old observation ID if it exists in the list
+            if old_observation_id in observations_list:
+                observations_list.remove(old_observation_id)
+            
+            # Add the new observation ID if it's not already in the list
+            if new_observation_id and new_observation_id not in observations_list:
+                observations_list.append(new_observation_id)
+            
+            # Update the cell with the modified list of observations
+            case_log.update_cell(i, obs_col_index, ", ".join(observations_list))
+        
+        st.success(f"Observation ID '{old_observation_id}' updated to '{new_observation_id}' in all cases successfully.")
+    
+    except Exception as e:
+        st.error(f"Error updating observation ID: {e}")
+
+
+
         
 # If the user chooses "Add New Case"
 if action == "Add New Observation":
@@ -1023,6 +1060,9 @@ elif action == "Edit Existing Observation":
                     # Debugging: Check the values being passed to update_observation
                     st.write(f"observation_to_edit: {observation_to_edit}")
                     st.write(f"updated_data: {updated_data}")
+
+                    if observation_to_edit != observation_id
+                        update_observation_id_in_cases( observation_to_edit, observation_id)
                                         
                     
                     if update_observation(observation_to_edit, updated_data):
