@@ -665,7 +665,7 @@ if action == "Add New Case":
                 unsafe_allow_html=True
             )
         else:
-            status = embedCase(st.session_state['attendees'], st.session_state['case_description'],  st.session_state['case_title'], 
+            status = embedCase(attendees, st.session_state['case_description'],  st.session_state['case_title'], 
                                 st.session_state['case_date'],
                                 st.session_state['case_ID'])
             # st.session_state['case_title'] = st.text_input("Generated Summary (editable):", value=st.session_state['case_title'])
