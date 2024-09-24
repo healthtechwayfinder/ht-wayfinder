@@ -581,6 +581,7 @@ def update_observation_date():
         if case_date:
             st.write(f"Case Date: {case_date}")
             st.session_state['observation_date'] = case_date
+            st.write(f"Updated observation date to {case_date} from selected case")
             update_observation_id()
         else:
             st.write("No case date found.")
