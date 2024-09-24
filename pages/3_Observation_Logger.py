@@ -986,10 +986,12 @@ elif action == "Edit Existing Observation":
                     observation_stakeholders_string = ", ".join(observation_stakeholders)
                     old_case_id = observation_details.get("Related Case ID", "") 
 
-                    st.write(observation_to_edit, st.session_state['observation_id'])
+                    observation_id = st.session_state['observation_id']
+
+                    st.write(observation_to_edit, observation_id)
     
                     updated_data = {
-                            "Observation ID": st.session_state['observation_id'],
+                            "Observation ID": observation_id,
                             "Observation Title": observation_title,
                             "Date": observation_date_input.isoformat(),
                             "Observer": observer,
