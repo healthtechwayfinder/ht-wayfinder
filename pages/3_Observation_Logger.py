@@ -1060,7 +1060,7 @@ elif action == "Edit Existing Observation":
 
                     observation_id = st.session_state['observation_id']
 
-                    st.write(observation_to_edit, observation_id)
+                    # st.write(observation_to_edit, observation_id)
     
                     updated_data = {
                             "Observation ID": observation_id,
@@ -1084,9 +1084,9 @@ elif action == "Edit Existing Observation":
                         # Update the case log to move the observation from old to new case
                         update_case_log_with_observation(old_case_id, case_id, observation_to_edit)
 
-                    # Debugging: Check the values being passed to update_observation
-                    st.write(f"observation_to_edit: {observation_to_edit}")
-                    st.write(f"updated_data: {updated_data}")
+                    # # Debugging: Check the values being passed to update_observation
+                    # st.write(f"observation_to_edit: {observation_to_edit}")
+                    # st.write(f"updated_data: {updated_data}")
 
                     if observation_to_edit != observation_id:
                         update_observation_id_in_cases( observation_to_edit, observation_id)
@@ -1098,7 +1098,7 @@ elif action == "Edit Existing Observation":
                         # Optionally clear the selected case after saving
                         
                         st.session_state.pop("selected_observation", None)
-                        clear_observation_edit()
+                        # clear_observation_edit()
             
                        
                     else:
