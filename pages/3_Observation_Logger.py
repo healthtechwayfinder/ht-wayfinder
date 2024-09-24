@@ -419,7 +419,7 @@ def clear_observation():
     st.session_state['parsed_observation'] = {}
     st.session_state['observer'] = ""  # Clear observer selectbox value
     st.session_state['selected_case_id_with_title'] = ""  # Clear case ID selectbox value
-    # st.session_state['observation'] = ""  # Clear observation text area
+    st.session_state['observation'] = ""  # Clear observation text area
 
     # Ensure 'selected_observation_id_with_title' exists before resetting it
     if 'selected_observation_id_with_title' not in st.session_state:
