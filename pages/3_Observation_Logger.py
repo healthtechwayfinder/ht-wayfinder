@@ -974,7 +974,7 @@ elif action == "Edit Existing Observation":
                     "Select Related Case:", 
                     all_cases, 
                     index=st.session_state['select_index'], 
-                    key='selected_case_id_with_title',
+                    key='selected_case_id_with_title')
                     # on_change=update_observation_date)
 
                 # Ensure observation date is fetched and set only once
