@@ -61,10 +61,29 @@ creds_dict = {
     "universe_domain": st.secrets["gwf_service_account"]["universe_domain"],
 }
 #Initialization
-session_keys = ['observation', 'parsed_observation', 'result', 'observation_summary', 'observation_tags', 'rerun', 'observer', 'selected_case_id_with_title', 'selected_observation', 'related_case_id_with_title']
-for key in session_keys:
-    if key not in st.session_state:
-        st.session_state[key] = "" if key != 'observation_tags' else []
+# session_keys = ['observation', 'parsed_observation', 'result', 'observation_summary', 'observation_tags', 'rerun', 'observer', 'selected_case_id_with_title', 'selected_observation', 'related_case_id_with_title']
+# for key in session_keys:
+#     if key not in st.session_state:
+#         st.session_state[key] = "" if key != 'observation_tags' else []
+if 'observation' not in st.session_state:
+    st.session_state['observation'] = ""
+if 'parsed_observation' not in st.session_state:
+    st.session_state['parsed_observation'] = ""
+if 'result' not in st.session_state:
+    st.session_state['result'] = ""
+if 'observation_summary' not in st.session_state:
+    st.session_state['observation_summary'] = ""
+if 'observation_tags' not in st.session_state:
+    st.session_state['observation_tags'] = []
+if 'rerun' not in st.session_state:
+    st.session_state['rerun'] = False
+if 'observer' not in st.session_state:
+    st.session_state['observer'] = ""
+if 'selected_case_id_with_title' not in st.session_state:
+    st.session_state['selected_case_id_with_title'] = ""
+if "selected_observation" not in st.session_state:
+    st.session_state["selected_observation"] = ""
+
 
 def get_google_sheet(spreadsheet_name, worksheet_name):
     scope = ["https://www.googleapis.com/auth/spreadsheets",
@@ -874,11 +893,11 @@ elif action == "Edit Existing Observation":
                     else:
                         selected_index = 0  # Fallback if not found
                         st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
-                        formatted_case = ""
+                        
                 else:
                     # If there's no related case, set the selected index to 0 (or handle it differently)
                     selected_index = 0
-                    st.warning("This observation has no related case. Please select a case.")
+                    # st.warning("This observation has no related case. Please select a case.")
                 
                 
                 selected_case = st.selectbox(
