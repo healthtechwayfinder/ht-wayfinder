@@ -902,7 +902,7 @@ elif action == "Edit Existing Observation":
                 
                 selected_case = st.selectbox(
                     "Select Related Case:", 
-                    all_cases + [], 
+                    all_cases + [""], 
                     index=selected_index, 
                     key='selected_observation_id_with_title',
                     on_change=update_observation_date)
