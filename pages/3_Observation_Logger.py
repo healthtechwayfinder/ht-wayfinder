@@ -86,12 +86,14 @@ if "selected_observation" not in st.session_state:
 
 
 def get_google_sheet(spreadsheet_name, worksheet_name):
+    if 'sheet' in st.session_state:
+        return st.session_sate['sheet']
     scope = ["https://www.googleapis.com/auth/spreadsheets",
              "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
     client = gspread.authorize(creds)
-    sheet = client.open(spreadsheet_name).worksheet(worksheet_name)
-    return sheet
+    st.session_state['sheet'] = client.open(spreadsheet_name).worksheet(worksheet_name)
+    return st.session_state['sheet']
 # Fetch case IDs and titles from Google Sheets
 def fetch_observation_ids_and_titles():
     try:
