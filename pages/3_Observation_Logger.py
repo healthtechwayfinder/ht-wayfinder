@@ -1061,7 +1061,7 @@ elif action == "Edit Existing Observation":
                     st.write(f"observation_to_edit: {observation_to_edit}")
                     st.write(f"updated_data: {updated_data}")
 
-                    if observation_to_edit != observation_id
+                    if observation_to_edit != observation_id:
                         update_observation_id_in_cases( observation_to_edit, observation_id)
                                         
                     
