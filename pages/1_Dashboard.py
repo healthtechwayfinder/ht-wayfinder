@@ -121,16 +121,16 @@ with col1:
 
 
     with st.container(border=True):
-        if st.button("🏥 Record a New Case"):
+        if st.button("🏥 Log/Edit a Case"):
             switch_page("Case_Logger")
         
-        if st.button("🔍 Record a New Observation"):
+        if st.button("🔍 Log/Edit an Observation"):
             switch_page("Observation_Logger")
     
-        if st.button("🤖 Chat with Observations"):
+        if st.button("🤖 Chat with your Observations"):
             switch_page("Observation_Investigator")
     
-        if st.button("📒 View Logs"):
+        if st.button("📒 View Logs (Cases, Observations & Need Statements"):
             switch_page("View_Logs")
             
         if st.button("📊 View Glossary"):
