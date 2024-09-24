@@ -984,7 +984,7 @@ elif action == "Edit Existing Observation":
     
                 observation_date_input = st.date_input(
                     "Observation Date", 
-                    value=st.session_state.get('observation_date', date.today()),  # Fetch date from session state
+                    value=st.session_state['observation_date'],  # Fetch date from session state
                     key='observation_date',
                     on_change=update_observation_id  # Trigger any additional updates if necessary
                 )
