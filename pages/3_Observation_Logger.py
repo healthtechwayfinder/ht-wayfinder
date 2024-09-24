@@ -1018,9 +1018,10 @@ elif action == "Edit Existing Observation":
                         # Update the case log to move the observation from old to new case
                         update_case_log_with_observation(old_case_id, case_id, observation_to_edit)
 
-                    print(f"observation_to_edit: {observation_to_edit}")
-                    print(f"updated_data: {updated_data}")
-                    
+                    # Debugging: Check the values being passed to update_observation
+                    st.write(f"observation_to_edit: {observation_to_edit}")
+                    st.write(f"updated_data: {updated_data}")
+                                        
                     
                     if update_observation(observation_to_edit, updated_data):
                         # st.session_state.pop("selected_case", None)
