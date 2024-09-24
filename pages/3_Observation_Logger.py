@@ -471,14 +471,14 @@ def generate_observation_id(observation_date, counter):
 def update_observation_id():
     obs_date_str = st.session_state['observation_date'].strftime('%y%m%d')
 
-    # get all observation ids from the sheets and update the counter
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    observation_sheet = client.open("2024 Healthtech Identify Log").worksheet("Observation Log")
+    # # get all observation ids from the sheets and update the counter
+    # scope = [
+    #     "https://www.googleapis.com/auth/spreadsheets",
+    #     "https://www.googleapis.com/auth/drive.metadata.readonly"
+    #     ]
+    # creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    # client = gspread.authorize(creds)
+    observation_sheet = get_google_sheet("2024 Healthtech Identify Log", "Observation Log")
     column_values = observation_sheet.col_values(1) 
     # find all observation ids with the same date
     obs_date_ids = [obs_id for obs_id in column_values if obs_id.startswith(f"OB{obs_date_str}")]
@@ -922,7 +922,8 @@ elif action == "Edit Existing Observation":
                     key='observation_date',
                     on_change=update_observation_id  # Trigger any additional updates if necessary
                 )
-    
+
+                
                 # Display the updated observation ID
                 st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
     
