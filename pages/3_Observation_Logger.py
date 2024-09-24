@@ -692,16 +692,36 @@ if action == "Add New Observation":
                 st.session_state['parsed_observation']['observation_tags'] = updated_tags_string
 
         # if st.session_state.get('parsed_observation', '') != '':
-        st.markdown("### Missing Fields")
+        # st.markdown("### Missing Fields")
         
-                # Ensure missing_fields is a list and has elements to process
+        #         # Ensure missing_fields is a list and has elements to process
+        # if missing_fields:
+        #     if field in missing_fields and field != "tags":
+        #         for field in missing_fields:
+        #             field_clean = field.replace("_", " ").capitalize()
+        #             st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+        # else:
+        #     st.write("None")
+        # Ensure there are missing fields to display
         if missing_fields:
-            if field in missing_fields and field != "tags":
-                for field in missing_fields:
+            st.markdown("### Missing Fields")
+            
+            # Loop through each missing field
+            for field in missing_fields:
+                if field != "tags":  # Skip the "tags" field
+                    # Clean up the field name for display
                     field_clean = field.replace("_", " ").capitalize()
-                    st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+                    
+                    # Display a text input for the missing field, using session state to track the input value
+                    st.session_state['parsed_observation'][field] = st.text_input(
+                        f'{field_clean}', 
+                        key=field, 
+                        value=st.session_state['parsed_observation'].get(field, "")
+                    )
         else:
-            st.write("None")
+            # If there are no missing fields, display a message
+            st.write("No missing fields")
+        
 
     
     if st.button("Log Observation", disabled=st.session_state['observation_summary'] == ""):
