@@ -663,7 +663,7 @@ if action == "Add New Observation":
         "Select a Related Case ID",
         [""] + existing_case_ids_with_title,
         key='selected_case_id_with_title_new_observation',
-        on_change=update_observation_date  # Call the update function only when a case ID is selected
+        on_change=update_observation_date_new_observation# Call the update function only when a case ID is selected
     )
     
     # Use columns to place observation_date, observation_id, and observer side by side
