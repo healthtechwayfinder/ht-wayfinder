@@ -337,8 +337,9 @@ def clear_case():
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
     # st.session_state['attendees'] = ""
-    if 'attendees' in st.session_state:
-        st.session_state['attendees'] = ""
+    if 'attendees_key' in st.session_state:
+        del st.session_state['attendees_key']  # Remove the key first
+    st.session_state.attendees_key = []
     
     st.session_state.attendees_key = []
     
