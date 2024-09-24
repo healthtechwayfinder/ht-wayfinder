@@ -627,7 +627,7 @@ if action == "Add New Case":
             
             # Ensure missing_fields is a list and has elements to process
             if missing_fields:
-                for field in missing_fields:
+                for field in missing_fields and field != "tags":
                     field_clean = field.replace("_", " ").capitalize()
                     # Update the value of the parsed_case dictionary based on the text input
                     st.session_state['parsed_case'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_case'].get(field, ""))
