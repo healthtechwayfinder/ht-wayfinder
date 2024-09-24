@@ -986,7 +986,7 @@ elif action == "Edit Existing Observation":
                     observation_stakeholders_string = ", ".join(observation_stakeholders)
                     old_case_id = observation_details.get("Related Case ID", "") 
 
-                    st.write(observation_to_edit)
+                    st.write(observation_to_edit, observation_id)
     
                     updated_data = {
                             "Observation ID": observation_id,
