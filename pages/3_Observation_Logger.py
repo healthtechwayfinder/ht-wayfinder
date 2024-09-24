@@ -861,6 +861,7 @@ elif action == "Edit Existing Observation":
                 
                 case = observation_details.get("Related Case ID", "")  
                 all_cases, case_ids_with_title = fetch_all_case_ids_and_titles()
+                all_cases += [""]
 
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
                 
@@ -902,7 +903,7 @@ elif action == "Edit Existing Observation":
                 
                 selected_case = st.selectbox(
                     "Select Related Case:", 
-                    all_cases + [""], 
+                    all_cases, 
                     index=selected_index, 
                     key='selected_observation_id_with_title',
                     on_change=update_observation_date)
@@ -918,9 +919,13 @@ elif action == "Edit Existing Observation":
                 st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
 
                 # Extract only the observation IDs from the selected_observations list
-                case_id = selected_case.split(" - ")[0]
-                case_title = selected_case.split(" - ")[1]
-                st.write(case_id)
+                case_id = ""
+                case_title = ""
+                if len(selected_case) > 0:
+                    case_id = selected_case.split(" - ")[0]
+                    case_title = selected_case.split(" - ")[1]
+                    st.write(case_id)
+                    
 
                 observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
                 observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
