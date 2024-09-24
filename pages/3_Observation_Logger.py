@@ -696,10 +696,9 @@ if action == "Add New Observation":
         
                 # Ensure missing_fields is a list and has elements to process
         if missing_fields:
-            if field != "tags":
-                for field in missing_fields:
-                    field_clean = field.replace("_", " ").capitalize()
-                    st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
+            if field not in missing_fields and field != "tags":
+                field_clean = field.replace("_", " ").capitalize()
+                st.session_state['parsed_observation'][field] = st.text_input(f'**{field_clean}**', key=field, value=st.session_state['parsed_observation'].get(field, ""))
         else:
             st.write("None")
 
