@@ -593,7 +593,7 @@ def update_observation(observation_id, updated_data):
         for i, row in enumerate(data, start=2):  # Skip header row
             if row["Observation ID"] == observation_id:
                 if updated_data.observation_id != observation_id:
-                observation_id = updated_data.observation_id
+                    observation_id = updated_data.observation_id
                 # Update the necessary fields
                 for key, value in updated_data.items():
                     if key in headers:
