@@ -9,8 +9,8 @@ check_if_already_logged_in()
 
 
 def main():
+    # Title & basic info
     st.markdown("<h1 style='text-align: left;'>Wayfinder User Guide:</h1>", unsafe_allow_html=True)
-    # Create a button using Streamlit's native functionality
     st.markdown("<br>", unsafe_allow_html=True)
     st.write("Follow this link for documentationa and examples for each of Wayfinder's features.")
 
@@ -33,40 +33,12 @@ def main():
     }
     </style>
     """, unsafe_allow_html=True)
-
-
-    # if st.button('Healthtech Wayfinder User Guide'):
-    #     st.write('Documentation Coming Soon!')
+    
+    # Create a button to external user guide notion page
     st.link_button("Healthtech Wayfinder User Guide", "https://fixed-desert-9cd.notion.site/HealthTech-Wayfinder-User-Guide-1d770314f70c4dfbbb398f8a374e1dcb")
 
 
-    
-    # st.markdown("<h3 style='text-align: center;'>Add an Observation</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-    
-    # st.markdown("<h3 style='text-align: center;'>Chat with Observations</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-
-    # st.markdown("<h3 style='text-align: center;'>View Observations</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-
-    
-    # st.markdown("<h3 style='text-align: center;'>Glossary</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-
-    # st.markdown("<h1 style='text-align: center;'>User Guide: Need Statements</h1>", unsafe_allow_html=True)
-    # st.markdown("<h3 style='text-align: center;'>Create a Need Statement</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-
-    # st.markdown("<h3 style='text-align: center;'>Scope a Need Statement</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-
-    # st.markdown("<h3 style='text-align: center;'>Create Need Statement Variants</h3>", unsafe_allow_html=True)
-    # # add in a description of this feature
-
-
-
-    
+# run page    
 main()
 
 # if __name__ == "__main__":
