@@ -337,7 +337,11 @@ def clear_case():
     if 'parsed_case' in st.session_state:
         st.session_state['parsed_case'] = ""
     # st.session_state['attendees'] = ""
-    st.session_state['attendees_key'] = []
+    if 'attendees' in st.session_state:
+        st.session_state['attendees'] = ""
+    if 'attendees_key' in st.session_state:
+        st.session_state['attendees_key'] = []
+    # st.session_state['attendees_key'] = []
     update_case_ID()
     clear_text()
     # Refresh the page back to the initial state
