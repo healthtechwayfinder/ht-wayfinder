@@ -16,7 +16,7 @@ def feedback_support_page():
     # Create a dropdown for choosing between Report an Issue or Send Feedback
     feedback_type = st.selectbox(
         "Select an option",  # Title of the dropdown
-        ("Report an Issue", "Send Feedback or Ask a Question")
+        ("Send Feedback or Ask a Question", "Report an Issue")
     )
 
     if feedback_type == "Report an Issue":
@@ -24,7 +24,7 @@ def feedback_support_page():
         st.write("If you're experiencing a problem, please let us know using the form below:")
 
         # Add hyperlink to the form
-        report_issue_form_url = "https://docs.google.com/forms/d/e/1FAIpQLScQTy8j_HBSIM1Ukh6jdIfxCW2K1XJXr4ChVSqxJxtyLoP2hA/viewform?embedded=true"
+        report_issue_form_url = "https://docs.google.com/forms/d/1iV31NYOoEajolYT-j1nrC4D7t8GBABAZr_Ibvu-JbXI/prefill"
         st.write(f"[Click here to open the form in a new tab]({report_issue_form_url.replace('?embedded=true', '')})")
 
         # Embed the Google Form for reporting an issue
