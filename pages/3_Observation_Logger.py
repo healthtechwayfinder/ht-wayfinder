@@ -872,15 +872,15 @@ elif action == "Edit Existing Observation":
     
                 formatted_case = get_filtered_case_data(case,case_ids_with_title)
                 
-                if 'observation_date' not in st.session_state:
-                    observation_date_str = observation_details.get("Date", "")
-                    st.write("Raw observation date string:", observation_date_str)
-                    try:
-                        observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
-                    except ValueError:
-                        observation_date = date.today()
-                        
-                    st.session_state['observation_date'] = observation_date
+                # if 'observation_date' not in st.session_state:
+                observation_date_str = observation_details.get("Date", "")
+                st.write("Raw observation date string:", observation_date_str) 
+                try:
+                    observation_date = date.fromisoformat(observation_date_str) if observation_date_str else date.today()
+                except ValueError:
+                    observation_date = date.today()
+                    
+                st.session_state['observation_date'] = observation_date
                 
                 if 'selected_case_id_with_title' not in st.session_state:
                     st.session_state['selected_case_id_with_title'] = ''
