@@ -631,8 +631,8 @@ def update_observation(observation_id, updated_data):
                         sheet.update_cell(i, col_index, value)
                         # st.write(f"Updating {key} at row {i}, column {col_index} with value {value}")  # Debugging
                     else:
-                        # st.write(f"Warning: {key} not found in Google Sheets columns")
-                        return True  # Case updated
+                        st.write(f"Warning: {key} not found in Google Sheets columns")
+                return True  # Case updated
         # Case ID not found
         st.write(f"observation ID {observation_id} not found")
         return False
