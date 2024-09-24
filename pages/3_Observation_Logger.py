@@ -878,21 +878,21 @@ elif action == "Edit Existing Observation":
                 case_id_from_observation = observation_details.get("Related Case ID", "")
                 formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
               
-                # if formatted_case in all_cases:
-                #     selected_index = all_cases.index(formatted_case)
-                # else:
-                #     selected_index = 0  # Fallback to the first case if not found
+                if formatted_case in all_cases:
+                    selected_index = all_cases.index(formatted_case)
+                else:
+                    selected_index = 0  # Fallback to the first case if not found
 
                  # Check if the observation has an associated case
-                if case:
-                    # Format the case ID and title
-                    formatted_case = f"{case} - {case_ids_with_title.get(case, 'Unknown')}".strip()
+                # if case:
+                #     # Format the case ID and title
+                #     formatted_case = f"{case} - {case_ids_with_title.get(case, 'Unknown')}".strip()
             
-                    if formatted_case in all_cases:
-                        selected_index = all_cases.index(formatted_case)
-                    else:
-                        selected_index = 0  # Fallback if not found
-                        st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
+                #     if formatted_case in all_cases:
+                #         selected_index = all_cases.index(formatted_case)
+                #     else:
+                #         selected_index = 0  # Fallback if not found
+                #         st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
                         
                 else:
                     # If there's no related case, set the selected index to 0 (or handle it differently)
