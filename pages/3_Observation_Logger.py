@@ -894,10 +894,10 @@ elif action == "Edit Existing Observation":
                 #         selected_index = 0  # Fallback if not found
                 #         st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
                         
-                else:
-                    # If there's no related case, set the selected index to 0 (or handle it differently)
-                    selected_index = 0
-                    # st.warning("This observation has no related case. Please select a case.")
+                # else:
+                #     # If there's no related case, set the selected index to 0 (or handle it differently)
+                #     selected_index = 0
+                #     # st.warning("This observation has no related case. Please select a case.")
                 
                 
                 selected_case = st.selectbox(
