@@ -340,7 +340,7 @@ def clear_case():
     if 'attendees' in st.session_state:
         st.session_state['attendees'] = ""
     if 'attendees_key' in st.session_state:
-        st.session_state['attendees_key'] = []
+        st.session_state['attendees_key'] = ""
     # st.session_state['attendees_key'] = []
     update_case_ID()
     clear_text()
