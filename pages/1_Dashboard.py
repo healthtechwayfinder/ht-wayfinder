@@ -130,7 +130,7 @@ with col1:
         if st.button("🤖 Chat with your Observations"):
             switch_page("Observation_Investigator")
     
-        if st.button("📒 View Logs (Cases, Observations & Need Statements"):
+        if st.button("📒 View Logs (Cases, Observations & Need Statements)"):
             switch_page("View_Logs")
             
         if st.button("📊 View Glossary"):
