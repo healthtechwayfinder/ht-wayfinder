@@ -408,11 +408,9 @@ def clear_observation():
     # If 'tags' or other fields are session state keys, reset them as well
     if 'observation_tags' in st.session_state:
         st.session_state['observation_tags'] = []  # Reset tags to an empty list if needed
-
-   
-    
     clear_text()
     update_observation_id()
+    
 
 import streamlit as st
 from datetime import date
