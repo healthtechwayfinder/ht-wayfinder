@@ -905,6 +905,8 @@ elif action == "Edit Existing Observation":
         # Display the dropdown with combined case_id and title
         selected_observation = st.selectbox("", [""] + observation_options, key="selected_observation", label_visibility="collapsed")
 
+        st.session_state['observation_id'] = selected_observation.split(":")[0].strip()
+  
         if selected_observation != "":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
