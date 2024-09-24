@@ -932,7 +932,7 @@ elif action == "Edit Existing Observation":
                 if len(selected_case) > 0:
                     case_id = selected_case.split(" - ")[0]
                     case_title = selected_case.split(" - ")[1]
-                    st.write(case_id)
+                    # st.write(case_id)
                     
     
                 observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
