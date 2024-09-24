@@ -836,6 +836,7 @@ elif action == "Edit Existing Observation":
             # Extract the selected case_id from the dropdown (case_id is before the ":")
             observation_to_edit = selected_observation.split(":")[0].strip()
             observation_details = fetch_observation_details(observation_to_edit)
+            
             if observation_details:
                 st.write(f"Editing Observation ID: {observation_to_edit}")
                 case = observation_details.get("Related Case ID", "")  
@@ -855,10 +856,26 @@ elif action == "Edit Existing Observation":
                 case_id_from_observation = observation_details.get("Related Case ID", "")
                 formatted_case = f"{case_id_from_observation} - {case_ids_with_title.get(case_id_from_observation, 'Unknown')}"
               
-                if formatted_case in all_cases:
-                    selected_index = all_cases.index(formatted_case)
+                # if formatted_case in all_cases:
+                #     selected_index = all_cases.index(formatted_case)
+                # else:
+                #     selected_index = 0  # Fallback to the first case if not found
+
+                 # Check if the observation has an associated case
+                if case:
+                    # Format the case ID and title
+                    formatted_case = f"{case} - {case_ids_with_title.get(case, 'Unknown')}".strip()
+            
+                    if formatted_case in all_cases:
+                        selected_index = all_cases.index(formatted_case)
+                    else:
+                        selected_index = 0  # Fallback if not found
+                        st.warning(f"Case {formatted_case} not found. Defaulting to first case.")
                 else:
-                    selected_index = 0  # Fallback to the first case if not found
+                    # If there's no related case, set the selected index to 0 (or handle it differently)
+                    selected_index = 0
+                    st.warning("This observation has no related case. Please select a case.")
+                
                 
                 selected_case = st.selectbox(
                     "Select Related Case:", 
@@ -866,7 +883,6 @@ elif action == "Edit Existing Observation":
                     index=selected_index, 
                     key='selected_observation_id_with_title',
                     on_change=update_observation_date)
-
 
                 observation_date_input = st.date_input(
                     "Observation Date", 
@@ -878,13 +894,11 @@ elif action == "Edit Existing Observation":
                 # Display the updated observation ID
                 st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
 
-
-                                    # Extract only the observation IDs from the selected_observations list
+                # Extract only the observation IDs from the selected_observations list
                 case_id = selected_case.split(" - ")[0]
                 case_title = selected_case.split(" - ")[1]
                 st.write(case_id)
 
-                
                 observer_list = ["", "Deb", "Kyle", "Ryan", "Lois"]
                 observer_value = str(observation_details.get("Observer", ""))  # Ensure observer_value is a string
                 # Ensure the observer_value exists in the list, and get its index
