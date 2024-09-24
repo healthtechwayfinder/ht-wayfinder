@@ -491,13 +491,8 @@ def update_observation_id():
     st.session_state['observation_id'] = generate_observation_id(st.session_state['observation_date'], counter)
 
 def getExistingCaseIDS():
-    scope = [
-        "https://www.googleapis.com/auth/spreadsheets",
-        "https://www.googleapis.com/auth/drive.metadata.readonly"
-        ]
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    client = gspread.authorize(creds)
-    case_log = client.open("2024 Healthtech Identify Log").worksheet("Case Log")
+    case_log = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
+
     case_ids = case_log.col_values(1)[1:]
     case_dates_list = case_log.col_values(3)[1:]
     case_titles = case_log.col_values(2)[1:]
