@@ -1097,7 +1097,7 @@ elif action == "Edit Existing Observation":
                         st.markdown("<script>window.location.reload();</script>", unsafe_allow_html=True)
                         # Optionally clear the selected case after saving
                         st.session_state.pop("selected_observation", None)
-                        clear_observation_edit()
+                        # clear_observation_edit()
             
                        
                     else:
