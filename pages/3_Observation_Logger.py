@@ -734,7 +734,7 @@ if action == "Add New Observation":
         "Select a Related Case ID",
         [""] + existing_case_ids_with_title,
         key='selected_case_id_with_title_new_observation',
-        on_change=update_observation_date_new_observation# Call the update function only when a case ID is selected
+        # on_change=update_observation_date_new_observation# Call the update function only when a case ID is selected
     )
     
     # Use columns to place observation_date, observation_id, and observer side by side
@@ -975,7 +975,7 @@ elif action == "Edit Existing Observation":
                     all_cases, 
                     index=st.session_state['select_index'], 
                     key='selected_case_id_with_title',
-                    on_change=update_observation_date)
+                    # on_change=update_observation_date)
 
                 # Ensure observation date is fetched and set only once
                 if 'observation_date' not in st.session_state:
