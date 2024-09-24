@@ -558,6 +558,13 @@ def update_observation_date():
             st.session_state['observation_date'] = case_date
             update_observation_id()  # Also update the observation ID if the date changes
 
+def update_observation_date_new_observation():
+    case_id_with_title = st.session_state.get('selected_case_id_with_title_new_observation', '')
+    if case_id_with_title:
+        case_date = get_case_date(case_id_with_title)
+        if case_date:
+            st.session_state['observation_date'] = case_date
+            update_observation_id()  # Also update the observation ID if the date changes
 
 def fetch_all_case_ids_and_titles():
     sheet = get_google_sheet("2024 Healthtech Identify Log", "Case Log")
@@ -655,7 +662,7 @@ if action == "Add New Observation":
     case_id_with_title = st.selectbox(
         "Select a Related Case ID",
         [""] + existing_case_ids_with_title,
-        key='selected_case_id_with_title_',
+        key='selected_case_id_with_title_new_observation',
         on_change=update_observation_date  # Call the update function only when a case ID is selected
     )
     
