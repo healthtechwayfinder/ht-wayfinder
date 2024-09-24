@@ -915,7 +915,7 @@ elif action == "Edit Existing Observation":
                 st.text_input("Observation ID:", value=st.session_state['observation_id'], disabled=True)
     
                 # Extract only the observation IDs from the selected_observations list
-                 if formatted_case in all_cases:
+                if formatted_case in all_cases:
                     st.session_state['select_index'] = all_cases.index(formatted_case)
                 else:
                     st.session_state['select_index'] = 0  # Fallback to the first case if not found
