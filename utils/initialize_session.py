@@ -18,7 +18,7 @@ def initialize_investigator_session():
         st.session_state.observation_sheet_name = "2024 Healthtech Identify Log"
        
     if "observation_namespace" not in st.session_state:
-        st.session_state.observation_namespace = "healthtechwf"
+        st.session_state.observation_namespace = "observations_v1"
         sync_with_pinecone()
 
     # Display previous messages
